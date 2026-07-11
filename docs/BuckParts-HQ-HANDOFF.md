@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (`8361fba` — Apply GSWF wrong-part compatibility repair):** **Founder-approved GSWF 13-row compatibility repair applied** — see **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** below. Actual repo HEAD / `origin/main`: **`8361fba`**. Prior operational stopping points: **`4cbe40c`** — Add GSWF wrong-part repair owner approval; **`3b067ee`** — Add GSWF partial owner browser proof packet; **`31f9bf8`** — Add GSWF wrong-part guarded apply dry run (handoff docs **`4dc0c0f`** / **`b69a642`** / **`ecddcca`** / **`08a40e3`**). GSWF wrong-part repair apply-plan owner packet (`83f15ef` / **`3fdc809`** handoff), AP hub handoff commit-reference fix (**`297ba4f`**), GSWF family reconciliation owner packet (`2c90b2d` / **`2451e83`** handoff), AP Production Truth go-gate fix (`97f9fbe` / **`e4c623b`** handoff), Daily Operator read-only **`next_coverage_opportunities`** (`39c9e6f` / **`3a30c3e`** handoff), **`efc2fec`** demand-loop steering (**§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**), search/hub canonicals (`2c15bca`), model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete. **CSV repair applied for the approved 13 rows only** — observe → prioritize → **surface** live; **no** GSWF buy CTA; **no** Supabase compat sync claimed; **no** retailer_links / public-route / sitemap/robots mutation; **no** autonomous apply readiness claimed.
+> **Current operational stopping point (`84ae957` — Add BuckParts agent loop contract):** **Root `AGENTS.md` Agent Loop Contract landed** — see **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** below. Actual repo HEAD / `origin/main`: **`84ae957`**. Prior operational stopping points: **`fb8b7d7`** — Update HQ handoff after GSWF compatibility repair apply; **`8361fba`** — Apply GSWF wrong-part compatibility repair (owner approval **`4cbe40c`**; PARTIAL proof **`3b067ee`**; guarded dry-run **`31f9bf8`**; handoff docs **`4dc0c0f`** / **`b69a642`** / **`ecddcca`** / **`08a40e3`**). GSWF wrong-part repair apply-plan owner packet (`83f15ef` / **`3fdc809`** handoff), AP hub handoff commit-reference fix (**`297ba4f`**), GSWF family reconciliation owner packet (`2c90b2d` / **`2451e83`** handoff), AP Production Truth go-gate fix (`97f9fbe` / **`e4c623b`** handoff), Daily Operator read-only **`next_coverage_opportunities`** (`39c9e6f` / **`3a30c3e`** handoff), **`efc2fec`** demand-loop steering (**§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**), search/hub canonicals (`2c15bca`), model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete. **GSWF 13-row CSV repair remains applied** at **`8361fba`** — see that prior lane; **no** GSWF buy CTA; **no** Supabase compat sync claimed; **no** Product-snippet fix claimed; **no** autonomous apply readiness claimed.
 
 ## Execution Stack
 
@@ -53,16 +53,74 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)
+## Current stopping point — AGENTS.md agent loop contract (`84ae957`)
 
-**Read this section first** for LIVE **`filter::ge::gswf`** founder-approved **13**-row compatibility repair apply posture (CSV mutated; post-apply dry-run fail-closed).
+**Read this section first** for the root **`AGENTS.md`** BuckParts Agent Loop Contract (docs/operating contract only — **no** production mutation).
 
 ### Milestone summary (PROVEN)
 
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
-| Repo HEAD / `origin/main` | **`8361fba`** — Apply GSWF wrong-part compatibility repair |
+| Repo HEAD / `origin/main` | **`84ae957`** — Add BuckParts agent loop contract |
+| Prior operational stopping points | **`fb8b7d7`** — Update HQ handoff after GSWF compatibility repair apply; **`8361fba`** — Apply GSWF wrong-part compatibility repair |
+| Lane status | **Complete and pushed** — root agent operating contract only |
+| Scope | **`AGENTS.md`** (new) — **no** production logic, CSV, Supabase, retailer_links, routes, sitemap/robots, or buy CTA changes |
+
+### What changed (PROVEN — repo truth only)
+
+| Item | Detail |
+|------|--------|
+| **File** | Root **`AGENTS.md`** — BuckParts Agent Loop Contract |
+| **Authority** | Subordinate to **`docs/BuckParts-CONSTITUTION.md`**; current lane/stopping point → **`docs/BuckParts-HQ-HANDOFF.md`** |
+| **Purpose** | Reduce repeated prompt copy/paste; point agents at Constitution + HQ handoff |
+| **Required loop** | **Discover → Plan → Dry-run/read-only packet → Verify → Founder gate → Apply only if approved → Validate → Commit → Handoff** |
+| **Standing rules preserved** | No mixed dirty trees; no autonomous apply; no buy CTA without proof; no invented Product **`offers`** / **`review`** / **`aggregateRating`** without truthful bound evidence |
+| **Founder gates called out** | Compatibility CSV; retailer_links / public buy guidance; Supabase; public routes; sitemap/robots; trust-copy that alters homeowner buy guidance |
+
+**Not claimed:** production logic change; Product-snippet structured-data fix; Supabase sync; new buy CTA; autonomous apply readiness. Revenue/conversions remain **`UNKNOWN_NOT_CONNECTED`** unless repo proves otherwise. **GSWF CSV repair applied truth unchanged** — see **§ Prior completed lane — GSWF wrong-part compatibility repair apply (`8361fba`)** below.
+
+### Validation (PROVEN — founder terminal)
+
+| Check | Result |
+|-------|--------|
+| `test -f AGENTS.md && wc -l AGENTS.md` | **PASS** — root file present |
+| Contract keywords (`Discover` / `Founder gate` / `No autonomous apply` / `HQ handoff` / `Product`) | **PASS** |
+| `npm run build` | **PASS** |
+| `git status --short` after **`84ae957`** commit/push | **Clean** |
+
+### Current recommendation (NOT started — founder-gated)
+
+1. Use **`AGENTS.md`** as the default agent operating loop; still read HQ for the live stopping point.
+2. **Supabase compatibility sync** for the applied GSWF CSV repair remains **UNKNOWN / not performed**.
+3. **3 PARTIAL** GSWF slugs still need exact-model Tier-1 proof; **`ge-gte18gsnrss`** no-filter lane remains separate.
+4. **Product-snippet structured-data** issue remains **separate and untouched**.
+5. **No GSWF buy CTA**.
+
+```bash
+test -f AGENTS.md && wc -l AGENTS.md
+grep -n "Discover\|Founder gate\|No autonomous apply\|HQ handoff\|Product" AGENTS.md
+git rev-parse HEAD
+```
+
+---
+
+## Prior completed lane — HQ handoff after GSWF compatibility repair apply (`fb8b7d7`)
+
+**Docs-only** — recorded **`8361fba`** GSWF compatibility repair apply stopping point; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+
+---
+
+## Prior completed lane — GSWF wrong-part compatibility repair apply (`8361fba`)
+
+**Historical reference** for LIVE **`filter::ge::gswf`** founder-approved **13**-row compatibility repair apply posture (CSV mutated; post-apply dry-run fail-closed) — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above. **Applied CSV truth remains in force.**
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD at apply | **`8361fba`** — Apply GSWF wrong-part compatibility repair |
 | Prior operational stopping points | **`4cbe40c`** — Add GSWF wrong-part repair owner approval; **`3b067ee`** — Add GSWF partial owner browser proof packet; **`31f9bf8`** — Add GSWF wrong-part guarded apply dry run |
 | Lane status | **Complete and pushed** — founder-approved guarded **`--apply`** for the **13**-row plan only |
 | Scope | **`data/compatibility_mappings.csv`** mutated; dry-run drafts + guarded-apply tests updated — **no** `retailer_links.csv`, Supabase, public routes, sitemap/robots, or buy CTA changes |
@@ -90,13 +148,13 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | `npm run build` | **PASS** |
 | `git status --short` after **`8361fba`** commit/push | **Clean** |
 
-### Current recommendation (NOT started — founder-gated)
+### Next recommended lanes (NOT started — superseded by `84ae957`)
 
 1. **Supabase compatibility sync** for the applied CSV repair remains **UNKNOWN / not performed** — separate founder-gated lane.
 2. **Do not include** the **3** PARTIAL slugs (**`ge-gfe28hmkww`**, **`ge-gsc25frshss`**, **`ge-gse26gshess`**) in any further apply until **exact-model Tier-1** proof exists.
 3. **`ge-gte18gsnrss`** no-filter suppression remains a **separate** read-only / founder-gated lane.
 4. **Product-snippet structured-data** issue remains **separate and untouched**.
-5. **`AGENTS.md` loop contract** proposal remains **separate and not yet written**.
+5. ~~**`AGENTS.md` loop contract**~~ — **Completed** at **`84ae957`** — see **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)**.
 6. **No GSWF buy CTA**.
 
 ```bash
@@ -109,7 +167,7 @@ BUCKPARTS_TEST_FILES='scripts/lib/gswf-wrong-part-repair-guarded-apply-v1.test.t
 
 ## Prior completed lane — GSWF wrong-part repair owner approval (`4cbe40c`)
 
-**Historical reference** for founder owner-approval artifact that unlocked the **13**-row guarded apply — superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Historical reference** for founder owner-approval artifact that unlocked the **13**-row guarded apply — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 | Item | Value |
 |------|-------|
@@ -122,7 +180,7 @@ BUCKPARTS_TEST_FILES='scripts/lib/gswf-wrong-part-repair-guarded-apply-v1.test.t
 
 ## Prior completed lane — GSWF PARTIAL owner-browser proof packet (`3b067ee`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** PARTIAL slug owner-browser proof posture (3 excluded rows; **not** apply-ready) — superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Historical reference** for LIVE **`filter::ge::gswf`** PARTIAL slug owner-browser proof posture (3 excluded rows; **not** apply-ready) — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -161,7 +219,7 @@ BUCKPARTS_TEST_FILES='scripts/lib/gswf-wrong-part-repair-guarded-apply-v1.test.t
 ### Next recommended lanes (NOT started — superseded by `8361fba` apply)
 
 1. **Do not include** these **3** PARTIAL slugs in any apply plan until **exact-model Tier-1** proof exists.
-2. ~~Do not apply the GSWF **13**-row repair unless owner explicitly approves~~ — **Completed** at **`8361fba`** after **`4cbe40c`** owner approval — see **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)**.
+2. ~~Do not apply the GSWF **13**-row repair unless owner explicitly approves~~ — **Completed** at **`8361fba`** after **`4cbe40c`** owner approval — see **§ Prior completed lane — GSWF wrong-part compatibility repair apply (`8361fba`)**.
 3. **No GSWF buy CTA**.
 4. **Next lane** may be exact-model owner-browser proof **capture design** or **no-filter suppression** lane for **`ge-gte18gsnrss`** — still **read-only** / founder-gated.
 
@@ -175,7 +233,7 @@ npm run buckparts:gswf-wrong-part-repair-guarded-apply -- --dry-run
 
 ## Prior completed lane — GSWF wrong-part guarded apply dry-run (`31f9bf8`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair **guarded apply dry-run** posture (executor designed; **not** applied at this commit) — superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair **guarded apply dry-run** posture (executor designed; **not** applied at this commit) — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -224,7 +282,7 @@ npm run buckparts:gswf-wrong-part-repair-guarded-apply -- --dry-run
 ### Next recommended lanes (NOT started — superseded by `8361fba`)
 
 1. ~~Owner-browser proof packet for 3 PARTIAL slugs~~ — **Completed** at **`3b067ee`** — see **§ Prior completed lane — GSWF PARTIAL owner-browser proof packet (`3b067ee`)**.
-2. ~~Do not apply the **13**-row plan until owner approval artifact exists~~ — **Completed** at **`8361fba`** after **`4cbe40c`** — see **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)**.
+2. ~~Do not apply the **13**-row plan until owner approval artifact exists~~ — **Completed** at **`8361fba`** after **`4cbe40c`** — see **§ Prior completed lane — GSWF wrong-part compatibility repair apply (`8361fba`)**.
 3. **No-filter** (**`ge-gte18gsnrss`**) remains a **separate** read-only lane.
 4. **No GSWF buy CTA**.
 
@@ -238,13 +296,13 @@ npm run buckparts:gswf-wrong-part-repair-apply-plan-owner-review
 
 ## Prior completed lane — HQ handoff after GSWF guarded dry run / header truth (`4dc0c0f` / `b69a642` / `ecddcca`)
 
-**Docs-only** — recorded **`31f9bf8`** guarded dry-run stopping point and subsequent header/AP-hub reference truth fixes; superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Docs-only** — recorded **`31f9bf8`** guarded dry-run stopping point and subsequent header/AP-hub reference truth fixes; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ---
 
 ## Prior completed lane — GSWF wrong-part repair apply-plan owner packet (`83f15ef`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair apply-plan design posture (13 proven rows only; **not** applied) — superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair apply-plan design posture (13 proven rows only; **not** applied) — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -310,19 +368,19 @@ npm run buckparts:gswf-family-reconciliation-owner-review
 
 ## Prior completed lane — HQ handoff after GSWF repair plan (`3fdc809`)
 
-**Docs-only** — recorded **`83f15ef`** GSWF wrong-part repair apply-plan owner packet stopping point; superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Docs-only** — recorded **`83f15ef`** GSWF wrong-part repair apply-plan owner packet stopping point; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ---
 
 ## Prior completed lane — AP hub handoff commit reference fix (`297ba4f`)
 
-**Docs-only** — fixed AP hub handoff commit reference; superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Docs-only** — fixed AP hub handoff commit reference; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ---
 
 ## Prior completed lane — GSWF family reconciliation owner packet (`2c90b2d`)
 
-**Historical reference** for LIVE Daily Operator **`gswf`** coverage-opportunity investigation and **`filter::ge::gswf`** family reconciliation owner posture — superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Historical reference** for LIVE Daily Operator **`gswf`** coverage-opportunity investigation and **`filter::ge::gswf`** family reconciliation owner posture — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -384,13 +442,13 @@ npm run buckparts:daily
 
 ## Prior completed lane — HQ handoff after GSWF owner packet (`2451e83`)
 
-**Docs-only** — recorded **`2c90b2d`** GSWF family reconciliation owner packet stopping point; superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Docs-only** — recorded **`2c90b2d`** GSWF family reconciliation owner packet stopping point; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ---
 
 ## Prior completed lane — AP Production Truth go-gate fix (`97f9fbe`)
 
-**Historical reference** for LIVE Daily Operator + AP Production Truth posture after the false **`go_gate_safe`** blocker fix — superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Historical reference** for LIVE Daily Operator + AP Production Truth posture after the false **`go_gate_safe`** blocker fix — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -468,7 +526,7 @@ npm run buckparts:daily
 
 ## Prior completed lane — daily next coverage opportunities (`39c9e6f`)
 
-**Historical reference** for GOAT read-only **`next_coverage_opportunities`** surface at **`39c9e6f`** — superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Historical reference** for GOAT read-only **`next_coverage_opportunities`** surface at **`39c9e6f`** — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -546,19 +604,19 @@ npm run buckparts:production-truth:ap
 
 ## Prior completed lane — HQ handoff after AP production truth fix (`e4c623b`)
 
-**Docs-only** — recorded **`97f9fbe`** AP Production Truth go-gate stopping point; superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Docs-only** — recorded **`97f9fbe`** AP Production Truth go-gate stopping point; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ---
 
 ## Prior completed lane — HQ handoff after daily coverage opportunities (`3a30c3e`)
 
-**Docs-only** — recorded **`39c9e6f`** GOAT **`next_coverage_opportunities`** stopping point; superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Docs-only** — recorded **`39c9e6f`** GOAT **`next_coverage_opportunities`** stopping point; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ---
 
 ## Prior completed lane — search/hub canonicals (`2c15bca`)
 
-**Historical reference** for LIVE hub/search canonical metadata on indexable public surfaces at **`2c15bca`** — superseded for pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Historical reference** for LIVE hub/search canonical metadata on indexable public surfaces at **`2c15bca`** — superseded for pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -623,7 +681,7 @@ node --import tsx --test src/app/vertical-launch-metadata.test.ts
 
 ## Fresh GSC / search-miss demand loop — steering (`2026-07-06`)
 
-**Read this section** for founder-terminal GSC + search-miss steering recorded at **`efc2fec`**. **Docs-only update** — no production lane authorized by this section alone. Superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Read this section** for founder-terminal GSC + search-miss steering recorded at **`efc2fec`**. **Docs-only update** — no production lane authorized by this section alone. Superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ### Repo state (PROVEN)
 
@@ -690,7 +748,7 @@ git status --short
 
 ## Prior completed lane — HQ handoff fresh demand loop status (`efc2fec`)
 
-**Docs-only** — recorded **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**; superseded for operational pickup by **§ Current stopping point — GSWF wrong-part compatibility repair apply (`8361fba`)** above.
+**Docs-only** — recorded **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
 
 ---
 
