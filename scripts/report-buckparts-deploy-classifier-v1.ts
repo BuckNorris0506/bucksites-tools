@@ -28,9 +28,14 @@ function main(): void {
     range: cli.range,
     paths: cli.paths.length > 0 ? cli.paths : undefined,
     git: defaultDeployClassifierGitProvider(REPO_ROOT),
+    rootDir: REPO_ROOT,
   });
 
   process.stderr.write(`${report.operator_summary}\n`);
+  process.stderr.write(`${report.credit_control.operator_line}\n`);
+  if (report.credit_control.deploy_held && report.credit_control.push_with_deploy_hold_message) {
+    process.stderr.write(`${report.credit_control.push_with_deploy_hold_message}\n`);
+  }
   process.stderr.write(`recommended_next_action: ${report.recommended_next_action}\n`);
 
   if (!cli.summaryOnly) {

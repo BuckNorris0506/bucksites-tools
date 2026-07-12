@@ -5,6 +5,11 @@
 
 import { spawnSync } from "node:child_process";
 
+import {
+  loadCreditControlDeployAwarenessSummaryV1,
+  type CreditControlDeployAwarenessSummaryV1,
+} from "./buckparts-credit-control-center-v1";
+
 export const BUCKPARTS_DEPLOY_BATCHING_POLICY_CONTRACT_V1 =
   "buckparts_deploy_batching_policy_v1" as const;
 
@@ -180,6 +185,7 @@ export type BuckpartsDeployClassifierReportV1 = {
   aggregate_classification: DeployClassificationV1;
   operator_action: DeployOperatorActionV1;
   operator_summary: string;
+  credit_control: CreditControlDeployAwarenessSummaryV1;
   proven_facts: string[];
   unknown_facts: string[];
   recommended_next_action: string;
@@ -504,9 +510,12 @@ export function buildBuckpartsDeployClassifierReportV1(args: {
   paths?: string[];
   git?: DeployClassifierGitProviderV1;
   now?: () => Date;
+  rootDir?: string;
+  creditControl?: CreditControlDeployAwarenessSummaryV1;
 }): BuckpartsDeployClassifierReportV1 {
   const now = args.now ?? (() => new Date());
   const scope = args.scope ?? "push-ahead";
+  const rootDir = args.rootDir ?? process.cwd();
   const resolved = resolveDeployClassifierChangedFilesV1({
     scope,
     range: args.range,
@@ -523,16 +532,28 @@ export function buildBuckpartsDeployClassifierReportV1(args: {
   };
   const aggregate_classification = aggregateDeployClassificationV1(per_path);
   const operator_action = deployOperatorActionV1(aggregate_classification);
-  const operator_summary = deployOperatorSummaryV1({
+  let operator_summary = deployOperatorSummaryV1({
     aggregate: aggregate_classification,
     action: operator_action,
     changed_file_count: resolved.changed_files.length,
   });
 
+  const credit_control =
+    args.creditControl ??
+    loadCreditControlDeployAwarenessSummaryV1({
+      rootDir,
+      now,
+    });
+
+  if (credit_control.deploy_held) {
+    operator_summary = `${operator_summary} | ${credit_control.operator_line}`;
+  }
+
   const proven_facts = [
     "PROVEN: deploy batching policy v1 is read-only — no Netlify API, no production mutation.",
     `PROVEN: classified ${String(resolved.changed_files.length)} path(s) with scope=${scope}.`,
     `PROVEN: aggregate=${aggregate_classification}; operator_action=${operator_action}.`,
+    `PROVEN: credit_control posture=${credit_control.deployment_posture}; deploy_held=${String(credit_control.deploy_held)}; production_deploy_recommended=${String(credit_control.production_deploy_recommended)}.`,
   ];
 
   const unknown_facts = [...resolved.unknown_facts];
@@ -541,8 +562,13 @@ export function buildBuckpartsDeployClassifierReportV1(args: {
       `UNKNOWN: ${String(counts.unknown)} path(s) unclassified — fail closed to HOLD_REVIEW.`,
     );
   }
+  if (credit_control.deployment_posture === "UNKNOWN_CREDIT_STATE") {
+    unknown_facts.push(
+      "UNKNOWN: credit evidence missing/invalid — treat production deploy as held until owner updates netlify-credit-state-v1.json.",
+    );
+  }
 
-  const recommended_next_action =
+  let recommended_next_action =
     operator_action === "PUSH_AND_DEPLOY"
       ? "Push to origin/main when ready; Netlify build/deploy is required for production parity."
       : operator_action === "PUSH_BATCH_LOCALLY"
@@ -550,6 +576,12 @@ export function buildBuckpartsDeployClassifierReportV1(args: {
         : operator_action === "BATCH_LOCALLY"
           ? "Batch commits locally and push without urgency — skip Netlify deploy for this batch."
           : "Review unclassified paths, extend policy rules if appropriate, then re-run npm run buckparts:deploy-classifier.";
+
+  if (credit_control.deploy_held) {
+    recommended_next_action = credit_control.push_with_deploy_hold_message
+      ? `${credit_control.push_with_deploy_hold_message} Path batching still says: ${recommended_next_action}`
+      : `Netlify production deploy held (${credit_control.deployment_posture}). ${recommended_next_action}`;
+  }
 
   return {
     contract: BUCKPARTS_DEPLOY_BATCHING_POLICY_CONTRACT_V1,
@@ -568,6 +600,7 @@ export function buildBuckpartsDeployClassifierReportV1(args: {
     aggregate_classification,
     operator_action,
     operator_summary,
+    credit_control,
     proven_facts,
     unknown_facts,
     recommended_next_action,

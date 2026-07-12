@@ -4,20 +4,23 @@
   "data_mutation": false,
   "netlify_api_call_authorized": false,
   "credit_spend_authorized": false,
-  "generated_at": "2026-07-12T15:50:50.304Z",
+  "generated_at": "2026-07-12T16:08:58.325Z",
   "source_command": "npm run buckparts:credit-control",
   "deployment_posture": "DEPLOY_HOLD_CREDITS_EXHAUSTED",
-  "repo_head": "959cdf8",
-  "origin_main_head": "959cdf8",
+  "repo_head": "d609139",
+  "origin_main_head": "d609139",
   "git_status_clean": false,
   "changed_paths": [
     "data/ops/credit-control/credit-control-center-v1.json",
     "data/ops/credit-control/credit-control-center-v1.md",
-    "data/ops/credit-control/netlify-credit-state-v1.json",
-    "package.json",
+    "scripts/buckparts-pre-push-deploy-summary-v1.sh",
     "scripts/lib/buckparts-credit-control-center-v1.test.ts",
     "scripts/lib/buckparts-credit-control-center-v1.ts",
-    "scripts/report-buckparts-credit-control-center-v1.ts"
+    "scripts/lib/buckparts-deploy-classifier-v1.test.ts",
+    "scripts/lib/buckparts-deploy-classifier-v1.ts",
+    "scripts/lib/buckparts-ship-guard-v1.test.ts",
+    "scripts/lib/buckparts-ship-guard-v1.ts",
+    "scripts/report-buckparts-deploy-classifier-v1.ts"
   ],
   "changed_path_rows": [
     {
@@ -31,14 +34,9 @@
       "rule_id": "operator_reports"
     },
     {
-      "path": "data/ops/credit-control/netlify-credit-state-v1.json",
+      "path": "scripts/buckparts-pre-push-deploy-summary-v1.sh",
       "deploy_classification": "NO_DEPLOY_NEEDED",
-      "rule_id": "operator_reports"
-    },
-    {
-      "path": "package.json",
-      "deploy_classification": "DEPLOY_REQUIRED",
-      "rule_id": "runtime_dependencies"
+      "rule_id": "scripts_only"
     },
     {
       "path": "scripts/lib/buckparts-credit-control-center-v1.test.ts",
@@ -51,12 +49,32 @@
       "rule_id": "scripts_only"
     },
     {
-      "path": "scripts/report-buckparts-credit-control-center-v1.ts",
+      "path": "scripts/lib/buckparts-deploy-classifier-v1.test.ts",
+      "deploy_classification": "NO_DEPLOY_NEEDED",
+      "rule_id": "tests_only"
+    },
+    {
+      "path": "scripts/lib/buckparts-deploy-classifier-v1.ts",
+      "deploy_classification": "NO_DEPLOY_NEEDED",
+      "rule_id": "scripts_only"
+    },
+    {
+      "path": "scripts/lib/buckparts-ship-guard-v1.test.ts",
+      "deploy_classification": "NO_DEPLOY_NEEDED",
+      "rule_id": "tests_only"
+    },
+    {
+      "path": "scripts/lib/buckparts-ship-guard-v1.ts",
+      "deploy_classification": "NO_DEPLOY_NEEDED",
+      "rule_id": "scripts_only"
+    },
+    {
+      "path": "scripts/report-buckparts-deploy-classifier-v1.ts",
       "deploy_classification": "NO_DEPLOY_NEEDED",
       "rule_id": "scripts_only"
     }
   ],
-  "work_class": "production_impacting",
+  "work_class": "mixed_non_production",
   "credit_evidence_rel_path": "data/ops/credit-control/netlify-credit-state-v1.json",
   "credit_evidence_present": true,
   "credit_evidence": {
@@ -80,23 +98,22 @@
   },
   "credit_evidence_errors": [],
   "deploy_held": true,
-  "local_build_recommended": true,
-  "local_build_optional": false,
+  "local_build_recommended": false,
+  "local_build_optional": true,
   "push_allowed": true,
   "production_deploy_recommended": false,
   "governance_recommendations": [
     "Hold all Netlify production deploys until credits reset or owner purchases credits with an explicit spend decision.",
     "Prefer repo-only work (docs/scripts/tests/drafts). Push to origin/main is allowed only if Netlify auto-deploy is confirmed skipped/disabled.",
-    "Dirty production-impacting tree: do not recommend production deploy; finish/commit lane first.",
     "Do not buy/spend Netlify credits from this report alone — founder spend decision required."
   ],
   "proven_facts": [
     "PROVEN: read_only=true; data_mutation=false; netlify_api_call_authorized=false; credit_spend_authorized=false.",
     "PROVEN: deployment_posture=DEPLOY_HOLD_CREDITS_EXHAUSTED; deploy_held=true.",
-    "PROVEN: work_class=production_impacting; git_status_clean=false; changed_path_count=7.",
-    "PROVEN: repo_head=959cdf8; origin_main_head=959cdf8.",
+    "PROVEN: work_class=mixed_non_production; git_status_clean=false; changed_path_count=10.",
+    "PROVEN: repo_head=d609139; origin_main_head=d609139.",
     "PROVEN: credit_evidence_present=true; credit_status=exhausted.",
-    "PROVEN: local_build_recommended=true; local_build_optional=false; push_allowed=true; production_deploy_recommended=false.",
+    "PROVEN: local_build_recommended=false; local_build_optional=true; push_allowed=true; production_deploy_recommended=false.",
     "PROVEN: owner-recorded credit reset_at=2026-07-24T00:00:00.000Z.",
     "PROVEN: latest skipped production deploy recorded at/after 853ee79."
   ],

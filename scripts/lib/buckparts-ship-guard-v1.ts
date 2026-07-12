@@ -9,6 +9,11 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 
+import {
+  loadCreditControlDeployAwarenessSummaryV1,
+  type CreditControlDeployAwarenessSummaryV1,
+} from "./buckparts-credit-control-center-v1";
+
 export const BUCKPARTS_SHIP_GUARD_CONTRACT_V1 = "buckparts_ship_guard_v1" as const;
 export const BUCKPARTS_SHIP_GUARD_COMMAND_V1 = "npm run buckparts:ship-guard" as const;
 export const PROTECTED_RETAILER_LINKS_CSV_REL = "data/retailer_links.csv" as const;
@@ -93,6 +98,7 @@ export type ShipGuardReportV1 = {
   };
   protected_retailer_links_csv: ProtectedRetailerLinksCheckV1;
   netlify_ignore_dry_run: NetlifyIgnoreDryRunResultV1;
+  credit_control: CreditControlDeployAwarenessSummaryV1;
   recommended_validation_commands: string[];
   validation_results: Array<{ command: string; ok: boolean; exit_code: number | null }>;
   proven_facts: string[];
@@ -371,6 +377,7 @@ export function buildBuckpartsShipGuardReportV1(args: {
   mode?: ShipGuardModeV1;
   git?: ShipGuardGitProviderV1;
   runValidations?: boolean;
+  creditControl?: CreditControlDeployAwarenessSummaryV1;
 }): ShipGuardReportV1 {
   const rootDir = args.rootDir;
   const mode = args.mode ?? "dry_run";
@@ -398,6 +405,8 @@ export function buildBuckpartsShipGuardReportV1(args: {
   });
   const protected_file_checks = { retailer_links_csv: protectedRetailer };
   const netlify = classifyNetlifyIgnoreDryRunBatch({ rootDir, changedFiles: changed_files });
+  const credit_control =
+    args.creditControl ?? loadCreditControlDeployAwarenessSummaryV1({ rootDir });
   const recommended_validations = recommendValidationCommands(changed_files);
 
   const blockers: string[] = [...retailerLinksDriftBlockers(protectedRetailer)];
@@ -417,6 +426,7 @@ export function buildBuckpartsShipGuardReportV1(args: {
   if (blockers.length > 0) {
     push_assessment = "BLOCKED";
   } else if (originMain !== null && head !== null) {
+    // Credit hold does not block push; it surfaces deploy_held / production_deploy_recommended=false.
     push_assessment = "SAFE";
   }
 
@@ -437,7 +447,13 @@ export function buildBuckpartsShipGuardReportV1(args: {
     "PROVEN: ship guard defaults to read-only dry_run; commit_authorized=false; push_authorized=false; deploy_authorized=false.",
     "PROVEN: script does not call Netlify API, Supabase, or mutate data/retailer_links.csv.",
     "PROVEN: protected-file drift blockers use git diff --quiet semantics, not hash-only inference.",
+    `PROVEN: credit_control posture=${credit_control.deployment_posture}; deploy_held=${String(credit_control.deploy_held)}; production_deploy_recommended=${String(credit_control.production_deploy_recommended)}; push_allowed=${String(credit_control.push_allowed)}.`,
   ];
+  if (credit_control.deploy_held) {
+    proven_facts.push(
+      `PROVEN: Netlify production deploy is credit-held (${credit_control.deployment_posture}); ship guard does not authorize deploy spend.`,
+    );
+  }
   if (protectedRetailer.hash_check.origin_main_blob_sha256) {
     proven_facts.push(
       `PROVEN: origin/main ${PROTECTED_RETAILER_LINKS_CSV_REL} informational hash=${protectedRetailer.hash_check.origin_main_blob_sha256.slice(0, 12)}…`,
@@ -445,16 +461,27 @@ export function buildBuckpartsShipGuardReportV1(args: {
   }
 
   const unknown_facts = [
-    "UNKNOWN: live Netlify deploy state (local ignore dry-run only).",
+    "UNKNOWN: live Netlify deploy state (local ignore dry-run + owner credit evidence only).",
     "UNKNOWN: GitHub Actions live PASS/FAIL (no GitHub API in ship guard).",
   ];
+  if (credit_control.deployment_posture === "UNKNOWN_CREDIT_STATE") {
+    unknown_facts.unshift(
+      "UNKNOWN: credit evidence missing/invalid — treat production deploy as held until owner updates netlify-credit-state-v1.json.",
+    );
+  }
 
-  const recommended_next_action =
+  let recommended_next_action =
     push_assessment === "BLOCKED"
       ? "Resolve blockers before push; re-run npm run buckparts:ship-guard. Do not mutate protected paths without owner review."
       : mode === "dry_run"
         ? "Review report; run npm run buckparts:ship-guard -- --commit to execute recommended validations without committing."
         : "If validations passed, operator may git push manually — ship guard never pushes automatically.";
+
+  if (credit_control.deploy_held && push_assessment !== "BLOCKED") {
+    recommended_next_action = credit_control.push_with_deploy_hold_message
+      ? `${credit_control.push_with_deploy_hold_message} ${recommended_next_action}`
+      : `Netlify production deploy held (${credit_control.deployment_posture}). ${recommended_next_action}`;
+  }
 
   return {
     contract: BUCKPARTS_SHIP_GUARD_CONTRACT_V1,
@@ -487,6 +514,7 @@ export function buildBuckpartsShipGuardReportV1(args: {
     },
     protected_retailer_links_csv: protectedRetailer,
     netlify_ignore_dry_run: netlify,
+    credit_control,
     recommended_validation_commands: recommended_validations,
     validation_results,
     proven_facts,

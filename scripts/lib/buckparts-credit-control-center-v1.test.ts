@@ -11,6 +11,7 @@ import {
   BUCKPARTS_CREDIT_CONTROL_CENTER_MD_REL_V1,
   BUCKPARTS_NETLIFY_CREDIT_STATE_JSON_REL_V1,
   buildBuckpartsCreditControlCenterV1,
+  buildCreditControlDeployAwarenessSummaryV1,
   classifyCreditDeploymentPostureV1,
   classifyCreditWorkClassV1,
   deriveCreditGovernanceFlagsV1,
@@ -291,4 +292,29 @@ test("source does not call Netlify APIs or mutate production surfaces", () => {
   assert.ok(LIB_SOURCE.includes("netlify_api_call_authorized: false"));
   assert.ok(LIB_SOURCE.includes("credit_spend_authorized: false"));
   assert.ok(LIB_SOURCE.includes("Does not call Netlify APIs"));
+});
+
+test("deploy awareness summary surfaces exhausted hold for pre-push/ship-guard consumers", () => {
+  const summary = buildCreditControlDeployAwarenessSummaryV1({
+    deployment_posture: "DEPLOY_HOLD_CREDITS_EXHAUSTED",
+    deploy_held: true,
+    production_deploy_recommended: false,
+    push_allowed: true,
+    credit_evidence: {
+      contract: "buckparts_netlify_credit_state_v1",
+      read_only: true,
+      data_mutation: false,
+      provider: "netlify",
+      status: "exhausted",
+      observed_at: "2026-07-11T18:00:00.000Z",
+      reset_at: "2026-07-24T00:00:00.000Z",
+      source: "owner_screenshot",
+    },
+  });
+  assert.equal(summary.deployment_posture, "DEPLOY_HOLD_CREDITS_EXHAUSTED");
+  assert.equal(summary.deploy_held, true);
+  assert.equal(summary.production_deploy_recommended, false);
+  assert.equal(summary.push_allowed, true);
+  assert.match(summary.operator_line, /DEPLOY_HOLD_CREDITS_EXHAUSTED/);
+  assert.match(summary.push_with_deploy_hold_message ?? "", /production deploy is held/);
 });

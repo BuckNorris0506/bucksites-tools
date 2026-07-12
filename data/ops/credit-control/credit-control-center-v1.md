@@ -1,6 +1,6 @@
 # BuckParts Credit Control Center v1
 
-Generated: 2026-07-12T15:50:50.304Z
+Generated: 2026-07-12T16:08:58.325Z
 
 ## Status
 
@@ -14,11 +14,11 @@ Generated: 2026-07-12T15:50:50.304Z
 
 ## Repo
 
-- repo_head: `959cdf8`
-- origin_main_head: `959cdf8`
+- repo_head: `d609139`
+- origin_main_head: `d609139`
 - git_status_clean: **false**
-- work_class: **production_impacting**
-- changed_path_count: 7
+- work_class: **mixed_non_production**
+- changed_path_count: 10
 
 ## Credit evidence
 
@@ -31,8 +31,8 @@ Generated: 2026-07-12T15:50:50.304Z
 
 ## Governance flags
 
-- local_build_recommended: **true**
-- local_build_optional: **false**
+- local_build_recommended: **false**
+- local_build_optional: **true**
 - push_allowed: **true**
 - production_deploy_recommended: **false**
 
@@ -40,27 +40,29 @@ Generated: 2026-07-12T15:50:50.304Z
 
 - Hold all Netlify production deploys until credits reset or owner purchases credits with an explicit spend decision.
 - Prefer repo-only work (docs/scripts/tests/drafts). Push to origin/main is allowed only if Netlify auto-deploy is confirmed skipped/disabled.
-- Dirty production-impacting tree: do not recommend production deploy; finish/commit lane first.
 - Do not buy/spend Netlify credits from this report alone — founder spend decision required.
 
 ## Changed paths
 
 - `data/ops/credit-control/credit-control-center-v1.json` — NO_DEPLOY_NEEDED (`operator_reports`)
 - `data/ops/credit-control/credit-control-center-v1.md` — NO_DEPLOY_NEEDED (`operator_reports`)
-- `data/ops/credit-control/netlify-credit-state-v1.json` — NO_DEPLOY_NEEDED (`operator_reports`)
-- `package.json` — DEPLOY_REQUIRED (`runtime_dependencies`)
+- `scripts/buckparts-pre-push-deploy-summary-v1.sh` — NO_DEPLOY_NEEDED (`scripts_only`)
 - `scripts/lib/buckparts-credit-control-center-v1.test.ts` — NO_DEPLOY_NEEDED (`tests_only`)
 - `scripts/lib/buckparts-credit-control-center-v1.ts` — NO_DEPLOY_NEEDED (`scripts_only`)
-- `scripts/report-buckparts-credit-control-center-v1.ts` — NO_DEPLOY_NEEDED (`scripts_only`)
+- `scripts/lib/buckparts-deploy-classifier-v1.test.ts` — NO_DEPLOY_NEEDED (`tests_only`)
+- `scripts/lib/buckparts-deploy-classifier-v1.ts` — NO_DEPLOY_NEEDED (`scripts_only`)
+- `scripts/lib/buckparts-ship-guard-v1.test.ts` — NO_DEPLOY_NEEDED (`tests_only`)
+- `scripts/lib/buckparts-ship-guard-v1.ts` — NO_DEPLOY_NEEDED (`scripts_only`)
+- `scripts/report-buckparts-deploy-classifier-v1.ts` — NO_DEPLOY_NEEDED (`scripts_only`)
 
 ## Proven facts
 
 - PROVEN: read_only=true; data_mutation=false; netlify_api_call_authorized=false; credit_spend_authorized=false.
 - PROVEN: deployment_posture=DEPLOY_HOLD_CREDITS_EXHAUSTED; deploy_held=true.
-- PROVEN: work_class=production_impacting; git_status_clean=false; changed_path_count=7.
-- PROVEN: repo_head=959cdf8; origin_main_head=959cdf8.
+- PROVEN: work_class=mixed_non_production; git_status_clean=false; changed_path_count=10.
+- PROVEN: repo_head=d609139; origin_main_head=d609139.
 - PROVEN: credit_evidence_present=true; credit_status=exhausted.
-- PROVEN: local_build_recommended=true; local_build_optional=false; push_allowed=true; production_deploy_recommended=false.
+- PROVEN: local_build_recommended=false; local_build_optional=true; push_allowed=true; production_deploy_recommended=false.
 - PROVEN: owner-recorded credit reset_at=2026-07-24T00:00:00.000Z.
 - PROVEN: latest skipped production deploy recorded at/after 853ee79.
 

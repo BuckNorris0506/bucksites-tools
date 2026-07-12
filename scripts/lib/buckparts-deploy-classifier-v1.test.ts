@@ -198,7 +198,53 @@ test("live repo push-ahead classifier returns structured report", () => {
   const report = buildBuckpartsDeployClassifierReportV1({
     scope: "paths",
     paths: [],
+    creditControl: {
+      source_command: "npm run buckparts:credit-control",
+      deployment_posture: "DEPLOY_HOLD_CREDITS_EXHAUSTED",
+      deploy_held: true,
+      production_deploy_recommended: false,
+      push_allowed: true,
+      credit_spend_authorized: false,
+      netlify_api_call_authorized: false,
+      credit_status: "exhausted",
+      operator_line:
+        "credit_control: posture=DEPLOY_HOLD_CREDITS_EXHAUSTED deploy_held=true production_deploy_recommended=false push_allowed=true credit_spend_authorized=false",
+      push_with_deploy_hold_message:
+        "Push may proceed for repo bookkeeping, but Netlify production deploy is held (DEPLOY_HOLD_CREDITS_EXHAUSTED); production_deploy_recommended=false.",
+    },
   });
   assert.equal(report.aggregate_classification, "NO_DEPLOY_NEEDED");
   assert.ok(report.operator_summary.length > 0);
+  assert.equal(report.credit_control.deployment_posture, "DEPLOY_HOLD_CREDITS_EXHAUSTED");
+  assert.equal(report.credit_control.deploy_held, true);
+  assert.equal(report.credit_control.production_deploy_recommended, false);
+  assert.match(report.operator_summary, /DEPLOY_HOLD_CREDITS_EXHAUSTED/);
+  assert.match(report.recommended_next_action, /production deploy is held/);
+});
+
+test("deploy classifier surfaces exhausted credits without recommending production deploy", () => {
+  const report = buildBuckpartsDeployClassifierReportV1({
+    scope: "paths",
+    paths: ["src/app/page.tsx"],
+    creditControl: {
+      source_command: "npm run buckparts:credit-control",
+      deployment_posture: "DEPLOY_HOLD_CREDITS_EXHAUSTED",
+      deploy_held: true,
+      production_deploy_recommended: false,
+      push_allowed: true,
+      credit_spend_authorized: false,
+      netlify_api_call_authorized: false,
+      credit_status: "exhausted",
+      operator_line:
+        "credit_control: posture=DEPLOY_HOLD_CREDITS_EXHAUSTED deploy_held=true production_deploy_recommended=false push_allowed=true credit_spend_authorized=false",
+      push_with_deploy_hold_message:
+        "Push may proceed for repo bookkeeping, but Netlify production deploy is held (DEPLOY_HOLD_CREDITS_EXHAUSTED); production_deploy_recommended=false.",
+    },
+  });
+  assert.equal(report.aggregate_classification, "DEPLOY_REQUIRED");
+  assert.equal(report.credit_control.deployment_posture, "DEPLOY_HOLD_CREDITS_EXHAUSTED");
+  assert.equal(report.credit_control.production_deploy_recommended, false);
+  assert.equal(report.deploy_authorized, false);
+  assert.equal(report.netlify_api_authorized, false);
+  assert.ok(report.proven_facts.some((f) => f.includes("deploy_held=true")));
 });

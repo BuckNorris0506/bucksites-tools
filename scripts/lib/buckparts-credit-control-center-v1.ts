@@ -540,3 +540,69 @@ export function writeBuckpartsCreditControlCenterArtifactsV1(args: {
     md_rel_path: BUCKPARTS_CREDIT_CONTROL_CENTER_MD_REL_V1,
   };
 }
+
+/** Compact credit posture for deploy classifier / ship-guard / pre-push summaries. */
+export type CreditControlDeployAwarenessSummaryV1 = {
+  source_command: typeof BUCKPARTS_CREDIT_CONTROL_SOURCE_COMMAND_V1;
+  deployment_posture: CreditDeploymentPostureV1;
+  deploy_held: boolean;
+  production_deploy_recommended: boolean;
+  push_allowed: boolean;
+  credit_spend_authorized: false;
+  netlify_api_call_authorized: false;
+  credit_status: NetlifyCreditStatusV1 | null;
+  operator_line: string;
+  push_with_deploy_hold_message: string | null;
+};
+
+export function buildCreditControlDeployAwarenessSummaryV1(
+  report: Pick<
+    BuckpartsCreditControlCenterReportV1,
+    | "deployment_posture"
+    | "deploy_held"
+    | "production_deploy_recommended"
+    | "push_allowed"
+    | "credit_evidence"
+  >,
+): CreditControlDeployAwarenessSummaryV1 {
+  const credit_status = report.credit_evidence?.status ?? null;
+  const operator_line = [
+    `credit_control: posture=${report.deployment_posture}`,
+    `deploy_held=${String(report.deploy_held)}`,
+    `production_deploy_recommended=${String(report.production_deploy_recommended)}`,
+    `push_allowed=${String(report.push_allowed)}`,
+    `credit_spend_authorized=false`,
+  ].join(" ");
+
+  const push_with_deploy_hold_message =
+    report.deploy_held && report.push_allowed
+      ? `Push may proceed for repo bookkeeping, but Netlify production deploy is held (${report.deployment_posture}); production_deploy_recommended=false.`
+      : report.deploy_held
+        ? `Netlify production deploy is held (${report.deployment_posture}); production_deploy_recommended=false.`
+        : null;
+
+  return {
+    source_command: BUCKPARTS_CREDIT_CONTROL_SOURCE_COMMAND_V1,
+    deployment_posture: report.deployment_posture,
+    deploy_held: report.deploy_held,
+    production_deploy_recommended: report.production_deploy_recommended,
+    push_allowed: report.push_allowed,
+    credit_spend_authorized: false,
+    netlify_api_call_authorized: false,
+    credit_status,
+    operator_line,
+    push_with_deploy_hold_message,
+  };
+}
+
+export function loadCreditControlDeployAwarenessSummaryV1(args: {
+  rootDir: string;
+  now?: () => Date;
+  gitSnapshot?: CreditControlGitSnapshotV1;
+  creditEvidenceRelPath?: string;
+  readText?: (absPath: string) => string;
+  fileExists?: (absPath: string) => boolean;
+}): CreditControlDeployAwarenessSummaryV1 {
+  const report = buildBuckpartsCreditControlCenterV1(args);
+  return buildCreditControlDeployAwarenessSummaryV1(report);
+}

@@ -98,6 +98,20 @@ test("ship guard dry-run is read-only with mutation flags false", () => {
       filesChangedAheadOfOriginMain: () => [PROTECTED_RETAILER_LINKS_CSV_REL],
       pathHasDiffHeadVsOriginMain: () => true,
     }),
+    creditControl: {
+      source_command: "npm run buckparts:credit-control",
+      deployment_posture: "DEPLOY_HOLD_CREDITS_EXHAUSTED",
+      deploy_held: true,
+      production_deploy_recommended: false,
+      push_allowed: true,
+      credit_spend_authorized: false,
+      netlify_api_call_authorized: false,
+      credit_status: "exhausted",
+      operator_line:
+        "credit_control: posture=DEPLOY_HOLD_CREDITS_EXHAUSTED deploy_held=true production_deploy_recommended=false push_allowed=true credit_spend_authorized=false",
+      push_with_deploy_hold_message:
+        "Push may proceed for repo bookkeeping, but Netlify production deploy is held (DEPLOY_HOLD_CREDITS_EXHAUSTED); production_deploy_recommended=false.",
+    },
   });
 
   assert.equal(report.read_only, true);
@@ -107,6 +121,42 @@ test("ship guard dry-run is read-only with mutation flags false", () => {
   assert.equal(report.supabase_mutation_authorized, false);
   assert.equal(report.evidence_write_authorized, false);
   assert.equal(report.buckparts_verified_link_authorized, false);
+});
+
+test("ship guard surfaces exhausted credits while still allowing SAFE push assessment", () => {
+  const report = buildBuckpartsShipGuardReportV1({
+    rootDir: process.cwd(),
+    mode: "dry_run",
+    git: mockGit({
+      filesChangedAheadOfOriginMain: () => ["docs/BuckParts-HQ-HANDOFF.md"],
+    }),
+    creditControl: {
+      source_command: "npm run buckparts:credit-control",
+      deployment_posture: "DEPLOY_HOLD_CREDITS_EXHAUSTED",
+      deploy_held: true,
+      production_deploy_recommended: false,
+      push_allowed: true,
+      credit_spend_authorized: false,
+      netlify_api_call_authorized: false,
+      credit_status: "exhausted",
+      operator_line:
+        "credit_control: posture=DEPLOY_HOLD_CREDITS_EXHAUSTED deploy_held=true production_deploy_recommended=false push_allowed=true credit_spend_authorized=false",
+      push_with_deploy_hold_message:
+        "Push may proceed for repo bookkeeping, but Netlify production deploy is held (DEPLOY_HOLD_CREDITS_EXHAUSTED); production_deploy_recommended=false.",
+    },
+  });
+
+  assert.equal(report.push_assessment, "SAFE");
+  assert.equal(report.credit_control.deployment_posture, "DEPLOY_HOLD_CREDITS_EXHAUSTED");
+  assert.equal(report.credit_control.deploy_held, true);
+  assert.equal(report.credit_control.production_deploy_recommended, false);
+  assert.equal(report.deploy_authorized, false);
+  assert.match(report.recommended_next_action, /production deploy is held/);
+  assert.ok(
+    report.proven_facts.some((f) =>
+      f.includes("DEPLOY_HOLD_CREDITS_EXHAUSTED") && f.includes("deploy_held=true"),
+    ),
+  );
 });
 
 test("recommendValidationCommands includes CC test when command center scripts change", () => {
