@@ -174,6 +174,8 @@
     "buckparts:gswf-wrong-part-repair-guarded-apply": "tsx scripts/apply-gswf-wrong-part-repair-guarded-v1.ts",
     "buckparts:gswf-partial-owner-browser-proof-packet": "tsx scripts/report-gswf-partial-owner-browser-proof-packet-v1.ts",
     "buckparts:gswf-gte18gsnrss-no-filter-suppression-apply-plan-owner-review": "tsx scripts/report-gswf-gte18gsnrss-no-filter-suppression-apply-plan-owner-review-v1.ts",
+    "buckparts:gswf-gte18gsnrss-no-filter-suppression-guarded-apply": "tsx scripts/apply-gswf-gte18gsnrss-no-filter-suppression-guarded-v1.ts",
+    "buckparts:gswf-gte18gsnrss-no-filter-suppression-guarded-apply:dry-run": "tsx scripts/apply-gswf-gte18gsnrss-no-filter-suppression-guarded-v1.ts --dry-run --write-artifacts",
     "buckparts:fridge-buyer-path-batch-proposal": "tsx scripts/report-fridge-buyer-path-batch-proposal-v1.ts",
     "buckparts:fridge-buyer-path-batch-approval": "tsx scripts/report-fridge-buyer-path-batch-approval-v1.ts",
     "buckparts:owner-drift-detector": "tsx scripts/report-owner-drift-detector-v1.ts",
