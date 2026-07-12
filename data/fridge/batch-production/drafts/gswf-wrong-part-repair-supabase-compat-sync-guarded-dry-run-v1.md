@@ -1,6 +1,6 @@
 # GSWF wrong-part repair — Supabase compatibility sync guarded dry-run v1
 
-Generated: 2026-07-12T17:43:37.712Z
+Generated: 2026-07-12T17:55:10.536Z
 
 ## Status
 
@@ -11,10 +11,10 @@ Generated: 2026-07-12T17:43:37.712Z
 - data_mutation: **false**
 - supabase_mutation_authorized: **false**
 - mutation_flag_enabled: **false**
-- owner_approval_present: **false**
-- owner_approval_valid: **false**
+- owner_approval_present: **true**
+- owner_approval_valid: **true**
 - owner_approval_required_for_apply: **true**
-- owner_approval_decision_id: `none`
+- owner_approval_decision_id: `decision-2026-07-12-gswf-supabase-compat-sync-approve`
 
 ## Sources
 
@@ -85,10 +85,9 @@ Generated: 2026-07-12T17:43:37.712Z
 - PROVEN: mode=dry_run; apply_status=DRY_RUN_READY; data_mutation=false; supabase_mutation_authorized=false; mutation_flag_enabled=false.
 - PROVEN: sync_plan_rel_path=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json.
 - PROVEN: planned_slug_count=13; planned_removals=26; planned_additions=13.
-- PROVEN: owner_approval_present=false; owner_approval_valid=false; decision_id=none.
+- PROVEN: owner_approval_present=true; owner_approval_valid=true; decision_id=decision-2026-07-12-gswf-supabase-compat-sync-approve.
 - PROVEN: excluded_slugs_untouched=ge-gfe28hmkww|ge-gsc25frshss|ge-gse26gshess|ge-gte18gsnrss.
 - PROVEN: csv_apply_commit=8361fba.
-- PROVEN: no founder approval artifact at data/owner-decisions/gswf-wrong-part-repair-supabase-compat-sync-owner-approval-v1.json (expected for this dry-run lane).
 - PROVEN: sync plan shape verified (read_only=true; plan supabase_mutation_authorized=false; removals=26; additions=13; CONFLICT_REQUIRES_REVIEW=13).
 
 ## Unknown facts

@@ -130,7 +130,7 @@ function mockSuccessfulWriter(): {
   };
 }
 
-test("repo dry-run is DRY_RUN_READY for committed sync plan and does not mutate Supabase", async () => {
+test("repo dry-run is DRY_RUN_READY even with approval present and does not mutate Supabase", async () => {
   let writerCalled = false;
   const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
     rootDir: ROOT,
@@ -154,8 +154,14 @@ test("repo dry-run is DRY_RUN_READY for committed sync plan and does not mutate 
   assert.equal(report.data_mutation, false);
   assert.equal(report.supabase_mutation_authorized, false);
   assert.equal(report.read_only, true);
-  assert.equal(report.owner_approval_present, false);
-  assert.equal(report.owner_approval_valid, false);
+  // Real repo may include founder approval; dry-run must still not authorize writes either way.
+  const approvalOnDisk = existsSync(
+    path.join(ROOT, GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_OWNER_APPROVAL_JSON_REL_V1),
+  );
+  assert.equal(report.owner_approval_present, approvalOnDisk);
+  if (approvalOnDisk) {
+    assert.equal(report.owner_approval_valid, true);
+  }
   assert.equal(report.planned_removals, GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_removals);
   assert.equal(report.planned_additions, GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_additions);
   assert.equal(report.planned_slug_count, 13);
@@ -169,40 +175,45 @@ test("repo dry-run is DRY_RUN_READY for committed sync plan and does not mutate 
   );
   assert.equal(report.blocked_reasons.length, 0);
   assert.equal(writerCalled, false);
-  assert.ok(
-    report.proven_facts.some((fact) =>
-      fact.includes("no founder approval artifact"),
-    ),
-  );
+  assert.equal(report.applied_supabase_row_keys.length, 0);
 });
 
 test("apply mode without approval is BLOCKED and never mutates", async () => {
-  let writerCalled = false;
-  const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
-    rootDir: ROOT,
-    mode: "apply",
-    now: FIXED_NOW,
-    mutationEnabled: true,
-    applySupabaseCompatSyncDeltas: async () => {
-      writerCalled = true;
-      return {
-        ok: true,
-        errors: [],
-        applied_removal_count: 26,
-        applied_addition_count: 13,
-        applied_row_keys: [],
-      };
-    },
-  });
-  assert.equal(report.apply_status, "BLOCKED");
-  assert.equal(report.data_mutation, false);
-  assert.equal(report.supabase_mutation_authorized, false);
-  assert.equal(writerCalled, false);
-  assert.ok(
-    report.blocked_reasons.some((reason) =>
-      reason.includes("matching founder supabase compat sync owner approval required"),
-    ),
-  );
+  const tmp = mkdtempSync(path.join(tmpdir(), "gswf-supabase-sync-no-approval-"));
+  try {
+    // Isolated fixture: plan present, approval intentionally absent.
+    writeFixture({ root: tmp, includeApproval: false });
+    let writerCalled = false;
+    const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
+      rootDir: tmp,
+      mode: "apply",
+      now: FIXED_NOW,
+      mutationEnabled: true,
+      applySupabaseCompatSyncDeltas: async () => {
+        writerCalled = true;
+        return {
+          ok: true,
+          errors: [],
+          applied_removal_count: 26,
+          applied_addition_count: 13,
+          applied_row_keys: [],
+        };
+      },
+    });
+    assert.equal(report.owner_approval_present, false);
+    assert.equal(report.owner_approval_valid, false);
+    assert.equal(report.apply_status, "BLOCKED");
+    assert.equal(report.data_mutation, false);
+    assert.equal(report.supabase_mutation_authorized, false);
+    assert.equal(writerCalled, false);
+    assert.ok(
+      report.blocked_reasons.some((reason) =>
+        reason.includes("matching founder supabase compat sync owner approval required"),
+      ),
+    );
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
 });
 
 test("apply mode with matching approval but mutation flag absent is BLOCKED", async () => {
@@ -372,5 +383,10 @@ test("source stays fail-closed by default and does not mutate CSV/retailer_links
   assert.ok(LIB_SOURCE.includes('.from("compatibility_mappings")'));
   assert.ok(LIB_SOURCE.includes(".delete()"));
   assert.ok(LIB_SOURCE.includes(".insert({"));
-  assert.ok(!existsSync(path.join(ROOT, GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_OWNER_APPROVAL_JSON_REL_V1)));
+  // Approval may exist in the real repo; static safety must not require its absence.
+  assert.ok(
+    LIB_SOURCE.includes("apply mode blocked — mutation flag absent") ||
+      LIB_SOURCE.includes(`${GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_MUTATION_ENV_FLAG_V1}=1 required`),
+  );
+  assert.ok(LIB_SOURCE.includes("matching founder supabase compat sync owner approval required"));
 });

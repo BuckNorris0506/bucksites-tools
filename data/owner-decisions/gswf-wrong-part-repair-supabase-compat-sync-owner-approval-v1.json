@@ -1,0 +1,59 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-07-12-gswf-supabase-compat-sync-approve",
+      "source_queue_row_id": "queue-gswf-supabase-compat-sync",
+      "source_decision_packet_id": "gswf_wrong_part_repair_supabase_compat_sync_owner_approval_packet_v1",
+      "decided_at": "2026-07-12T17:52:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "Jared approves GSWF Supabase compatibility sync only for the exact current plan: 13 planned fridge slugs; 26 removals of wrong gswf/gswf2 rows; 13 additions of corrected rpwfe/xwfe rows; excluded slugs ge-gfe28hmkww, ge-gsc25frshss, ge-gse26gshess, and ge-gte18gsnrss remain untouched. Bound to data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json. This row unlocks an explicit founder-run of npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-guarded-apply -- --apply only when BUCKPARTS_GSWF_SUPABASE_COMPAT_SYNC_MUTATION_ENABLED=1 is also set in that session — not autonomous apply, not CSV mutation, not retailer_links, not buy CTA.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "expires_at": "2027-07-12T17:52:00.000Z",
+      "prohibited_actions_still_apply": [
+        "Do not include the PARTIAL slugs ge-gfe28hmkww, ge-gsc25frshss, or ge-gse26gshess in this sync.",
+        "Do not include the no-filter slug ge-gte18gsnrss in this sync.",
+        "Do not mutate data/compatibility_mappings.csv from this approval.",
+        "Do not mutate retailer_links.csv from this approval.",
+        "Do not authorize buy CTA or GSWF buy CTA from this approval.",
+        "Do not change public routes, sitemap, robots, or Product JSON-LD from this approval.",
+        "Do not run autonomous or scheduled apply — only an explicit founder-run --apply with BUCKPARTS_GSWF_SUPABASE_COMPAT_SYNC_MUTATION_ENABLED=1 for this exact plan.",
+        "Approval alone does not mutate Supabase; mutation env flag and explicit --apply are still required.",
+        "Do not expand beyond the 13 planned slugs / 26 removals / 13 additions bound to this sync plan."
+      ],
+      "gswf_wrong_part_repair_supabase_compat_sync_owner_approval_context_v1": {
+        "founder_option_id": "approve_supabase_compat_sync_plan",
+        "option_id": "approve_supabase_compat_sync_plan",
+        "sync_plan_rel_path": "data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+        "approved_slug_count": 13,
+        "approved_removals": 26,
+        "approved_additions": 13,
+        "excluded_partial_slugs": [
+          "ge-gfe28hmkww",
+          "ge-gsc25frshss",
+          "ge-gse26gshess"
+        ],
+        "excluded_no_filter_slugs": [
+          "ge-gte18gsnrss"
+        ],
+        "mutation_authorized": false,
+        "apply_not_executed": true,
+        "autonomous_apply_authorized": false,
+        "separate_guarded_apply_executor_required": true,
+        "mutation_env_flag_required": "BUCKPARTS_GSWF_SUPABASE_COMPAT_SYNC_MUTATION_ENABLED=1",
+        "owner_approved_by": "Jared",
+        "approved_at": "2026-07-12T17:52:00.000Z"
+      },
+      "bound_artifacts_v1": [
+        {
+          "artifact_rel_path": "data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+          "sha256_at_binding": "b8080c0e70782fb4e292153fd9e1ae85f7c088b26ccfeb26907a8b7e8dbe3f67",
+          "entry_type": "apply_plan"
+        }
+      ]
+    }
+  ]
+}
