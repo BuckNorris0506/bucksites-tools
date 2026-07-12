@@ -67,7 +67,7 @@
   "csv_row_count_before": 907,
   "csv_row_count_after": 907,
   "applied_removal_row_keys": [],
-  "generated_at": "2026-07-12T22:22:12.641Z",
+  "generated_at": "2026-07-12T22:27:52.066Z",
   "source_command": "npm run buckparts:gswf-gte18gsnrss-no-filter-suppression-guarded-apply",
   "proven_facts": [
     "PROVEN: mode=dry_run; apply_status=ALREADY_APPLIED; data_mutation=false; csv_mutation_authorized=false; mutation_flag_enabled=false.",
