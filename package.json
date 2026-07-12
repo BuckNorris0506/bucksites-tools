@@ -82,6 +82,7 @@
     "buckparts:ship-guard": "tsx scripts/buckparts-ship-guard.ts",
     "buckparts:deploy-classifier": "tsx scripts/report-buckparts-deploy-classifier-v1.ts",
     "buckparts:deploy-classifier:pre-push-summary": "tsx scripts/report-buckparts-deploy-classifier-v1.ts --push-ahead --summary-only",
+    "buckparts:credit-control": "tsx scripts/report-buckparts-credit-control-center-v1.ts",
     "buckparts:security-gate": "tsx scripts/report-buckparts-security-gate-v1.ts",
     "buckparts:mcp-supabase-exposure:audit": "tsx scripts/audit-buckparts-mcp-supabase-exposure-v1.ts --enforce",
     "buckparts:deploy:preflight": "npm run buckparts:mcp-supabase-exposure:audit && npm run buckparts:repo-runtime-convergence:check -- --enforce",

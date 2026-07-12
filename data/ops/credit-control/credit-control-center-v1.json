@@ -1,0 +1,113 @@
+{
+  "contract": "buckparts_credit_control_center_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "netlify_api_call_authorized": false,
+  "credit_spend_authorized": false,
+  "generated_at": "2026-07-12T15:50:50.304Z",
+  "source_command": "npm run buckparts:credit-control",
+  "deployment_posture": "DEPLOY_HOLD_CREDITS_EXHAUSTED",
+  "repo_head": "959cdf8",
+  "origin_main_head": "959cdf8",
+  "git_status_clean": false,
+  "changed_paths": [
+    "data/ops/credit-control/credit-control-center-v1.json",
+    "data/ops/credit-control/credit-control-center-v1.md",
+    "data/ops/credit-control/netlify-credit-state-v1.json",
+    "package.json",
+    "scripts/lib/buckparts-credit-control-center-v1.test.ts",
+    "scripts/lib/buckparts-credit-control-center-v1.ts",
+    "scripts/report-buckparts-credit-control-center-v1.ts"
+  ],
+  "changed_path_rows": [
+    {
+      "path": "data/ops/credit-control/credit-control-center-v1.json",
+      "deploy_classification": "NO_DEPLOY_NEEDED",
+      "rule_id": "operator_reports"
+    },
+    {
+      "path": "data/ops/credit-control/credit-control-center-v1.md",
+      "deploy_classification": "NO_DEPLOY_NEEDED",
+      "rule_id": "operator_reports"
+    },
+    {
+      "path": "data/ops/credit-control/netlify-credit-state-v1.json",
+      "deploy_classification": "NO_DEPLOY_NEEDED",
+      "rule_id": "operator_reports"
+    },
+    {
+      "path": "package.json",
+      "deploy_classification": "DEPLOY_REQUIRED",
+      "rule_id": "runtime_dependencies"
+    },
+    {
+      "path": "scripts/lib/buckparts-credit-control-center-v1.test.ts",
+      "deploy_classification": "NO_DEPLOY_NEEDED",
+      "rule_id": "tests_only"
+    },
+    {
+      "path": "scripts/lib/buckparts-credit-control-center-v1.ts",
+      "deploy_classification": "NO_DEPLOY_NEEDED",
+      "rule_id": "scripts_only"
+    },
+    {
+      "path": "scripts/report-buckparts-credit-control-center-v1.ts",
+      "deploy_classification": "NO_DEPLOY_NEEDED",
+      "rule_id": "scripts_only"
+    }
+  ],
+  "work_class": "production_impacting",
+  "credit_evidence_rel_path": "data/ops/credit-control/netlify-credit-state-v1.json",
+  "credit_evidence_present": true,
+  "credit_evidence": {
+    "contract": "buckparts_netlify_credit_state_v1",
+    "read_only": true,
+    "data_mutation": false,
+    "provider": "netlify",
+    "status": "exhausted",
+    "observed_at": "2026-07-11T18:00:00.000Z",
+    "reset_at": "2026-07-24T00:00:00.000Z",
+    "source": "owner_screenshot",
+    "production_deploy_posture": "skipped_or_disabled",
+    "latest_skipped_production_deploy": {
+      "branch": "main",
+      "at_or_after_commit": "853ee79",
+      "note": "Owner screenshot showed production deploy skipped/disabled while credits exhausted; latest skipped deploy involved main at/after 853ee79."
+    },
+    "notes": "Owner screenshot truth: Netlify credits exhausted; production deploys skipped/disabled; credits reset Friday July 24 2026. Manual owner updates only — this file is not auto-written by Netlify API calls.",
+    "live_netlify_api_state": "UNKNOWN",
+    "netlify_api_call_authorized": false
+  },
+  "credit_evidence_errors": [],
+  "deploy_held": true,
+  "local_build_recommended": true,
+  "local_build_optional": false,
+  "push_allowed": true,
+  "production_deploy_recommended": false,
+  "governance_recommendations": [
+    "Hold all Netlify production deploys until credits reset or owner purchases credits with an explicit spend decision.",
+    "Prefer repo-only work (docs/scripts/tests/drafts). Push to origin/main is allowed only if Netlify auto-deploy is confirmed skipped/disabled.",
+    "Dirty production-impacting tree: do not recommend production deploy; finish/commit lane first.",
+    "Do not buy/spend Netlify credits from this report alone — founder spend decision required."
+  ],
+  "proven_facts": [
+    "PROVEN: read_only=true; data_mutation=false; netlify_api_call_authorized=false; credit_spend_authorized=false.",
+    "PROVEN: deployment_posture=DEPLOY_HOLD_CREDITS_EXHAUSTED; deploy_held=true.",
+    "PROVEN: work_class=production_impacting; git_status_clean=false; changed_path_count=7.",
+    "PROVEN: repo_head=959cdf8; origin_main_head=959cdf8.",
+    "PROVEN: credit_evidence_present=true; credit_status=exhausted.",
+    "PROVEN: local_build_recommended=true; local_build_optional=false; push_allowed=true; production_deploy_recommended=false.",
+    "PROVEN: owner-recorded credit reset_at=2026-07-24T00:00:00.000Z.",
+    "PROVEN: latest skipped production deploy recorded at/after 853ee79."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Live Netlify billing/credit balance was not queried via API (no safe read-only Netlify credit API authorized in this lane).",
+    "UNKNOWN: Whether origin/main auto-deploy is currently hard-disabled in Netlify UI beyond owner screenshot evidence."
+  ],
+  "risk_notes": [
+    "This control center does not spend credits and does not call Netlify APIs.",
+    "Do not treat production_deploy_recommended=true as authorization to buy credits or force-deploy.",
+    "Avoid unnecessary production builds/deploys while status=exhausted.",
+    "Manual owner updates to netlify-credit-state-v1.json are the durable credit evidence source for this v1."
+  ]
+}
