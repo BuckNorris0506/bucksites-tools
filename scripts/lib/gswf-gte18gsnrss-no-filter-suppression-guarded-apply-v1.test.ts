@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import {
   existsSync,
   mkdirSync,
@@ -42,15 +43,28 @@ const FIXED_NOW = () => new Date("2026-07-12T21:00:00.000Z");
 const COMPAT_REL = "data/compatibility_mappings.csv";
 const PLAN_REL = GSWF_GTE18GSNRSS_NO_FILTER_SUPPRESSION_APPLY_PLAN_JSON_REL_V1;
 
+/** Pre-apply CSV from HEAD — independent of working-tree post-apply suppressions. */
+function readHeadCompatCsv(): string {
+  return execFileSync("git", ["show", `HEAD:${COMPAT_REL}`], {
+    cwd: ROOT,
+    encoding: "utf8",
+  });
+}
+
 function seedFixtureRoot(args: {
   root: string;
   includeApproval?: boolean;
+  csvSource?: "head_pre_apply" | "working_tree";
   planMutator?: (plan: Record<string, unknown>) => void;
 }): void {
   mkdirSync(path.join(args.root, "data/fridge/batch-production/drafts"), { recursive: true });
   mkdirSync(path.join(args.root, "data/owner-decisions"), { recursive: true });
   mkdirSync(path.join(args.root, "data"), { recursive: true });
-  writeFileSync(path.join(args.root, COMPAT_REL), readFileSync(path.join(ROOT, COMPAT_REL)));
+  const csvText =
+    args.csvSource === "working_tree"
+      ? readFileSync(path.join(ROOT, COMPAT_REL), "utf8")
+      : readHeadCompatCsv();
+  writeFileSync(path.join(args.root, COMPAT_REL), csvText);
 
   const plan = JSON.parse(readFileSync(path.join(ROOT, PLAN_REL), "utf8")) as Record<string, unknown>;
   args.planMutator?.(plan);
@@ -106,7 +120,7 @@ function seedFixtureRoot(args: {
   }
 }
 
-test("dry-run is read-only and DRY_RUN_READY for exact 2 removals", () => {
+test("post-apply repo dry-run reports ALREADY_APPLIED and does not mutate", () => {
   let wroteCsv = false;
   const report = runGswfGte18gsnrssNoFilterSuppressionGuardedApplyV1({
     rootDir: ROOT,
@@ -119,7 +133,8 @@ test("dry-run is read-only and DRY_RUN_READY for exact 2 removals", () => {
       writeFileSync(absPath, content, "utf8");
     },
   });
-  assert.equal(report.apply_status, "DRY_RUN_READY");
+  assert.equal(report.apply_status, "ALREADY_APPLIED");
+  assert.equal(report.csv_sync_state, "already_applied");
   assert.equal(report.read_only, true);
   assert.equal(report.data_mutation, false);
   assert.equal(report.csv_mutation_authorized, false);
@@ -133,20 +148,76 @@ test("dry-run is read-only and DRY_RUN_READY for exact 2 removals", () => {
     "ge-gte18gsnrss,gswf",
     "ge-gte18gsnrss,gswf2",
   ]);
-  assert.deepEqual(report.planned_addition_row_keys, []);
+  assert.deepEqual(report.before_mappings, []);
   assert.deepEqual(report.after_mappings, []);
   assert.equal(wroteCsv, false);
-  // Approval may be present on disk after founder artifact lands; dry-run must still not mutate.
   if (report.owner_approval_present) {
     assert.equal(report.owner_approval_valid, true);
   }
-  assert.equal(report.csv_mutation_authorized, false);
+});
+
+test("pre-apply fixture dry-run is DRY_RUN_READY for exact 2 removals", () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), "gte18-pre-apply-dry-"));
+  try {
+    seedFixtureRoot({ root: tmp, includeApproval: false, csvSource: "head_pre_apply" });
+    let wroteCsv = false;
+    const report = runGswfGte18gsnrssNoFilterSuppressionGuardedApplyV1({
+      rootDir: tmp,
+      mode: "dry_run",
+      now: FIXED_NOW,
+      writeText: (absPath, content) => {
+        if (absPath.endsWith("compatibility_mappings.csv")) {
+          wroteCsv = true;
+        }
+        writeFileSync(absPath, content, "utf8");
+      },
+    });
+    assert.equal(report.apply_status, "DRY_RUN_READY");
+    assert.equal(report.csv_sync_state, "pending_suppression");
+    assert.equal(report.data_mutation, false);
+    assert.deepEqual(report.before_mappings, ["gswf", "gswf2"]);
+    assert.deepEqual(report.after_mappings, []);
+    assert.deepEqual(report.planned_removal_row_keys, [
+      "ge-gte18gsnrss,gswf",
+      "ge-gte18gsnrss,gswf2",
+    ]);
+    assert.equal(wroteCsv, false);
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("apply mode against already-applied CSV is ALREADY_APPLIED and never writes", () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), "gte18-already-applied-"));
+  try {
+    seedFixtureRoot({
+      root: tmp,
+      includeApproval: true,
+      csvSource: "working_tree",
+    });
+    const before = readFileSync(path.join(tmp, COMPAT_REL), "utf8");
+    const report = runGswfGte18gsnrssNoFilterSuppressionGuardedApplyV1({
+      rootDir: tmp,
+      mode: "apply",
+      now: FIXED_NOW,
+      mutationEnabled: true,
+    });
+    assert.equal(report.apply_status, "ALREADY_APPLIED");
+    assert.equal(report.csv_sync_state, "already_applied");
+    assert.equal(report.data_mutation, false);
+    assert.equal(report.csv_mutation_authorized, false);
+    assert.deepEqual(report.applied_removal_row_keys, []);
+    assert.equal(readFileSync(path.join(tmp, COMPAT_REL), "utf8"), before);
+    assert.ok(!before.split("\n").some((line) => line.startsWith("ge-gte18gsnrss,")));
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
 });
 
 test("apply is blocked without matching founder approval", () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "gte18-no-approval-"));
   try {
-    seedFixtureRoot({ root: tmp, includeApproval: false });
+    seedFixtureRoot({ root: tmp, includeApproval: false, csvSource: "head_pre_apply" });
     const before = readFileSync(path.join(tmp, COMPAT_REL), "utf8");
     const report = runGswfGte18gsnrssNoFilterSuppressionGuardedApplyV1({
       rootDir: tmp,
@@ -155,6 +226,7 @@ test("apply is blocked without matching founder approval", () => {
       mutationEnabled: true,
     });
     assert.equal(report.apply_status, "BLOCKED");
+    assert.equal(report.csv_sync_state, "pending_suppression");
     assert.equal(report.data_mutation, false);
     assert.equal(report.csv_mutation_authorized, false);
     assert.ok(
@@ -171,7 +243,7 @@ test("apply is blocked without matching founder approval", () => {
 test("apply is blocked without explicit mutation env flag", () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "gte18-no-flag-"));
   try {
-    seedFixtureRoot({ root: tmp, includeApproval: true });
+    seedFixtureRoot({ root: tmp, includeApproval: true, csvSource: "head_pre_apply" });
     const before = readFileSync(path.join(tmp, COMPAT_REL), "utf8");
     const report = runGswfGte18gsnrssNoFilterSuppressionGuardedApplyV1({
       rootDir: tmp,
@@ -200,6 +272,7 @@ test("apply is blocked if planned removals differ from exactly those 2 rows", ()
     seedFixtureRoot({
       root: tmp,
       includeApproval: true,
+      csvSource: "head_pre_apply",
       planMutator: (plan) => {
         plan.planned_csv_removals = [
           { fridge_slug: "ge-gte18gsnrss", filter_slug: "gswf", row_key: "ge-gte18gsnrss,gswf" },
@@ -233,6 +306,7 @@ test("apply is blocked if additions are nonzero", () => {
     seedFixtureRoot({
       root: tmp,
       includeApproval: true,
+      csvSource: "head_pre_apply",
       planMutator: (plan) => {
         plan.planned_csv_additions = [
           { fridge_slug: "ge-gte18gsnrss", filter_slug: "mwf", row_key: "ge-gte18gsnrss,mwf" },
@@ -260,6 +334,7 @@ test("apply cannot touch PARTIAL / GSWF-13 / other scopes; source forbids forbid
     mode: "dry_run",
     now: FIXED_NOW,
   });
+  assert.equal(report.apply_status, "ALREADY_APPLIED");
   assert.deepEqual(report.excluded_partial_slugs, [...GSWF_WRONG_PART_EXCLUDED_PARTIAL_SLUGS_V1]);
   assert.deepEqual(report.excluded_gswf_repaired_slugs, [...GSWF_WRONG_PART_PLANNED_FRIDGE_SLUGS_V1]);
   assert.equal(report.supabase_mutation_authorized, false);
@@ -269,15 +344,11 @@ test("apply cannot touch PARTIAL / GSWF-13 / other scopes; source forbids forbid
   for (const needle of [
     'writeFileSync(path.join(args.rootDir, "data/retailer_links.csv")',
     "docs/BuckParts-HQ-HANDOFF",
-    "sitemap",
-    "Product JSON-LD",
   ]) {
-    // Source may mention these as out-of-scope strings; forbid write targets only for retailer_links/HQ.
-    if (needle.startsWith("writeFileSync") || needle.includes("HQ")) {
-      assert.ok(!LIB_SOURCE.includes(needle), `must not write ${needle}`);
-      assert.ok(!APPLY_SCRIPT_SOURCE.includes(needle), `apply script must not write ${needle}`);
-    }
+    assert.ok(!LIB_SOURCE.includes(needle), `must not write ${needle}`);
+    assert.ok(!APPLY_SCRIPT_SOURCE.includes(needle), `apply script must not write ${needle}`);
   }
+  assert.ok(LIB_SOURCE.includes("ALREADY_APPLIED"));
   assert.ok(LIB_SOURCE.includes(GSWF_GTE18GSNRSS_NO_FILTER_SUPPRESSION_MUTATION_ENV_FLAG_V1));
   assert.ok(APPLY_SCRIPT_SOURCE.includes('process.argv.includes("--apply") ? "apply" : "dry_run"'));
 });
@@ -290,6 +361,7 @@ test("write dry-run artifacts only to allowlisted draft paths", () => {
       mode: "dry_run",
       now: FIXED_NOW,
     });
+    assert.equal(report.apply_status, "ALREADY_APPLIED");
     const written = writeGswfGte18gsnrssNoFilterSuppressionGuardedDryRunArtifactsV1({
       rootDir: tmp,
       report,
@@ -309,6 +381,8 @@ test("write dry-run artifacts only to allowlisted draft paths", () => {
     );
     assert.ok(existsSync(path.join(tmp, written.json_rel_path)));
     assert.ok(existsSync(path.join(tmp, written.md_rel_path)));
+    const md = readFileSync(path.join(tmp, written.md_rel_path), "utf8");
+    assert.match(md, /ALREADY_APPLIED/);
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }

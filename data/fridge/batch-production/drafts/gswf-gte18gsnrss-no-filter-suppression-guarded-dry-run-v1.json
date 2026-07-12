@@ -8,7 +8,7 @@
   "buy_cta_authorized": false,
   "retailer_links_mutation_authorized": false,
   "mutation_flag_enabled": false,
-  "apply_status": "DRY_RUN_READY",
+  "apply_status": "ALREADY_APPLIED",
   "blocked_reasons": [],
   "apply_plan_rel_path": "data/fridge/batch-production/drafts/gswf-gte18gsnrss-no-filter-suppression-apply-plan-owner-review-v1.json",
   "apply_plan_sha256": "959c12acec8a70fdc86f6b4daf4b110f8b77791d2b82b9a0eaa083c61baf7bdc",
@@ -61,31 +61,28 @@
     "ge-pfe28kynbb",
     "ge-pvd28bymfs"
   ],
-  "before_mappings": [
-    "gswf",
-    "gswf2"
-  ],
+  "csv_sync_state": "already_applied",
+  "before_mappings": [],
   "after_mappings": [],
-  "csv_row_count_before": 909,
+  "csv_row_count_before": 907,
   "csv_row_count_after": 907,
   "applied_removal_row_keys": [],
-  "generated_at": "2026-07-12T22:06:09.282Z",
+  "generated_at": "2026-07-12T22:22:12.641Z",
   "source_command": "npm run buckparts:gswf-gte18gsnrss-no-filter-suppression-guarded-apply",
   "proven_facts": [
-    "PROVEN: mode=dry_run; apply_status=DRY_RUN_READY; data_mutation=false; csv_mutation_authorized=false; mutation_flag_enabled=false.",
-    "PROVEN: target_fridge_slug=ge-gte18gsnrss; planned_removals=2; planned_additions=0.",
+    "PROVEN: mode=dry_run; apply_status=ALREADY_APPLIED; data_mutation=false; csv_mutation_authorized=false; mutation_flag_enabled=false.",
+    "PROVEN: target_fridge_slug=ge-gte18gsnrss; csv_sync_state=already_applied; current_mappings=(none).",
+    "PROVEN: historical before_mappings were gswf|gswf2; planned removals ge-gte18gsnrss,gswf + ge-gte18gsnrss,gswf2 are already absent.",
     "PROVEN: owner_approval_present=true; owner_approval_valid=true.",
     "PROVEN: supabase_mutation_authorized=false; buy_cta_authorized=false; retailer_links_mutation_authorized=false.",
     "PROVEN: PARTIAL 3 and GSWF 13 repaired slugs are out of scope for this executor.",
-    "PROVEN: dry-run verified exact removals ge-gte18gsnrss,gswf + ge-gte18gsnrss,gswf2 with empty after_mappings."
+    "PROVEN: post-apply dry-run/apply will not mutate compatibility_mappings.csv."
   ],
   "unknown_facts": [
-    "UNKNOWN: Whether founder will create gswf-gte18gsnrss-no-filter-suppression-owner-approval-v1.json.",
     "UNKNOWN: Whether live Supabase still maps gswf/gswf2 for ge-gte18gsnrss after CSV apply."
   ],
   "risk_notes": [
-    "Dry-run never mutates compatibility_mappings.csv.",
-    "Apply requires matching founder approval + BUCKPARTS_GSWF_GTE18GSNRSS_NO_FILTER_SUPPRESSION_MUTATION_ENABLED=1 + exact 2 removals / 0 additions.",
+    "CSV suppression already applied — executor will not re-remove historical gswf/gswf2 rows.",
     "Do not mutate Supabase, retailer_links, buy CTA, sitemap, robots, or Product JSON-LD from this executor.",
     "Do not include PARTIAL or GSWF-13 repaired slugs."
   ]

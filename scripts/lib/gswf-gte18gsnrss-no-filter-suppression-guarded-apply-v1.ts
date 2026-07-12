@@ -77,7 +77,7 @@ export type GswfGte18gsnrssNoFilterSuppressionGuardedApplyReportV1 = {
   buy_cta_authorized: false;
   retailer_links_mutation_authorized: false;
   mutation_flag_enabled: boolean;
-  apply_status: "DRY_RUN_READY" | "APPLIED" | "BLOCKED";
+  apply_status: "DRY_RUN_READY" | "ALREADY_APPLIED" | "APPLIED" | "BLOCKED";
   blocked_reasons: string[];
   apply_plan_rel_path: string;
   apply_plan_sha256: string | null;
@@ -96,6 +96,7 @@ export type GswfGte18gsnrssNoFilterSuppressionGuardedApplyReportV1 = {
   planned_csv_row_deltas: Gte18NoFilterPlannedChangeV1[];
   excluded_partial_slugs: string[];
   excluded_gswf_repaired_slugs: string[];
+  csv_sync_state: "pending_suppression" | "already_applied";
   before_mappings: string[];
   after_mappings: string[];
   csv_row_count_before: number;
@@ -393,6 +394,85 @@ export function runGswfGte18gsnrssNoFilterSuppressionGuardedApplyV1(
     readText,
   });
 
+  const compatCsvRelPath = deps.compatCsvRelPath ?? targetCsvRelPath;
+  const compatAbsPath = path.join(deps.rootDir, compatCsvRelPath);
+  const rowsBefore = readCompatRows(compatAbsPath, readText);
+  const csv_row_count_before = rowsBefore.length;
+  const currentMappings = mappingsForSlug(rowsBefore, GSWF_GTE18GSNRSS_NO_FILTER_TARGET_SLUG_V1);
+  const csvKeySet = new Set(rowsBefore.map((row) => rowKey(row)));
+  const plannedRemovalKeys = removals.map((row) => row.csv_row_key).sort();
+  const expectedBeforeMappings = [...GSWF_GTE18GSNRSS_NO_FILTER_PLANNED_REMOVALS_V1.map((r) => r.filter_slug)].sort();
+  const planShapeOk =
+    Boolean(loaded.plan) &&
+    removals.length === GSWF_GTE18GSNRSS_NO_FILTER_SUPPRESSION_EXPECTED_COUNTS_V1.planned_removals &&
+    blocked_reasons.length === 0 &&
+    JSON.stringify(before_mappings) === JSON.stringify(expectedBeforeMappings);
+  const removalsAlreadyAbsent = plannedRemovalKeys.every((key) => !csvKeySet.has(key));
+  const csv_sync_state: GswfGte18gsnrssNoFilterSuppressionGuardedApplyReportV1["csv_sync_state"] =
+    planShapeOk && currentMappings.length === 0 && removalsAlreadyAbsent
+      ? "already_applied"
+      : "pending_suppression";
+
+  // Post-apply / already suppressed: never re-remove rows; report explicit ALREADY_APPLIED.
+  if (csv_sync_state === "already_applied") {
+    const proven_facts = [
+      `PROVEN: mode=${deps.mode}; apply_status=ALREADY_APPLIED; data_mutation=false; csv_mutation_authorized=false; mutation_flag_enabled=${String(mutation_flag_enabled)}.`,
+      `PROVEN: target_fridge_slug=${GSWF_GTE18GSNRSS_NO_FILTER_TARGET_SLUG_V1}; csv_sync_state=already_applied; current_mappings=(none).`,
+      `PROVEN: historical before_mappings were ${expectedBeforeMappings.join("|")}; planned removals ${plannedRemovalKeys.join(" + ")} are already absent.`,
+      `PROVEN: owner_approval_present=${String(approval.present)}; owner_approval_valid=${String(approval.row != null)}.`,
+      "PROVEN: supabase_mutation_authorized=false; buy_cta_authorized=false; retailer_links_mutation_authorized=false.",
+      "PROVEN: PARTIAL 3 and GSWF 13 repaired slugs are out of scope for this executor.",
+      "PROVEN: post-apply dry-run/apply will not mutate compatibility_mappings.csv.",
+    ];
+    return {
+      contract: GSWF_GTE18GSNRSS_NO_FILTER_SUPPRESSION_GUARDED_APPLY_CONTRACT_V1,
+      mode: deps.mode,
+      read_only: true,
+      data_mutation: false,
+      csv_mutation_authorized: false,
+      supabase_mutation_authorized: false,
+      buy_cta_authorized: false,
+      retailer_links_mutation_authorized: false,
+      mutation_flag_enabled,
+      apply_status: "ALREADY_APPLIED",
+      blocked_reasons: [],
+      apply_plan_rel_path: applyPlanRelPath,
+      apply_plan_sha256: loaded.sha256,
+      owner_approval_rel_path: ownerApprovalRelPath,
+      owner_approval_present: approval.present,
+      owner_approval_valid: approval.row != null,
+      owner_approval_decision_id: approval.row?.decision_id ?? null,
+      owner_approval_required_for_apply: true,
+      target_csv_rel_path: compatCsvRelPath,
+      target_fridge_slug: GSWF_GTE18GSNRSS_NO_FILTER_TARGET_SLUG_V1,
+      planned_slug_count: GSWF_GTE18GSNRSS_NO_FILTER_SUPPRESSION_EXPECTED_COUNTS_V1.planned_slug_count,
+      planned_removals: removals.length,
+      planned_additions: 0,
+      planned_removal_row_keys: plannedRemovalKeys,
+      planned_addition_row_keys: [],
+      planned_csv_row_deltas: [...removals].sort((a, b) => a.csv_row_key.localeCompare(b.csv_row_key)),
+      excluded_partial_slugs: [...GSWF_WRONG_PART_EXCLUDED_PARTIAL_SLUGS_V1],
+      excluded_gswf_repaired_slugs: [...GSWF_WRONG_PART_PLANNED_FRIDGE_SLUGS_V1],
+      csv_sync_state,
+      before_mappings: currentMappings,
+      after_mappings: [],
+      csv_row_count_before,
+      csv_row_count_after: csv_row_count_before,
+      applied_removal_row_keys: [],
+      generated_at: generatedAt,
+      source_command: GSWF_GTE18GSNRSS_NO_FILTER_SUPPRESSION_GUARDED_SOURCE_COMMAND_V1,
+      proven_facts,
+      unknown_facts: [
+        "UNKNOWN: Whether live Supabase still maps gswf/gswf2 for ge-gte18gsnrss after CSV apply.",
+      ],
+      risk_notes: [
+        "CSV suppression already applied — executor will not re-remove historical gswf/gswf2 rows.",
+        "Do not mutate Supabase, retailer_links, buy CTA, sitemap, robots, or Product JSON-LD from this executor.",
+        "Do not include PARTIAL or GSWF-13 repaired slugs.",
+      ],
+    };
+  }
+
   if (deps.mode === "apply") {
     if (!approval.row) {
       blocked_reasons.push(...approval.errors);
@@ -406,12 +486,6 @@ export function runGswfGte18gsnrssNoFilterSuppressionGuardedApplyV1(
       );
     }
   }
-
-  const compatCsvRelPath = deps.compatCsvRelPath ?? targetCsvRelPath;
-  const compatAbsPath = path.join(deps.rootDir, compatCsvRelPath);
-  const rowsBefore = readCompatRows(compatAbsPath, readText);
-  const csv_row_count_before = rowsBefore.length;
-  const currentMappings = mappingsForSlug(rowsBefore, GSWF_GTE18GSNRSS_NO_FILTER_TARGET_SLUG_V1);
 
   if (before_mappings.length > 0 && JSON.stringify(currentMappings) !== JSON.stringify(before_mappings)) {
     blocked_reasons.push(
@@ -497,7 +571,7 @@ export function runGswfGte18gsnrssNoFilterSuppressionGuardedApplyV1(
 
   const proven_facts = [
     `PROVEN: mode=${deps.mode}; apply_status=${apply_status}; data_mutation=${String(data_mutation)}; csv_mutation_authorized=${String(csv_mutation_authorized)}; mutation_flag_enabled=${String(mutation_flag_enabled)}.`,
-    `PROVEN: target_fridge_slug=${GSWF_GTE18GSNRSS_NO_FILTER_TARGET_SLUG_V1}; planned_removals=${String(removals.length)}; planned_additions=0.`,
+    `PROVEN: target_fridge_slug=${GSWF_GTE18GSNRSS_NO_FILTER_TARGET_SLUG_V1}; planned_removals=${String(removals.length)}; planned_additions=0; csv_sync_state=${csv_sync_state}.`,
     `PROVEN: owner_approval_present=${String(approval.present)}; owner_approval_valid=${String(approval.row != null)}.`,
     "PROVEN: supabase_mutation_authorized=false; buy_cta_authorized=false; retailer_links_mutation_authorized=false.",
     "PROVEN: PARTIAL 3 and GSWF 13 repaired slugs are out of scope for this executor.",
@@ -542,6 +616,7 @@ export function runGswfGte18gsnrssNoFilterSuppressionGuardedApplyV1(
     planned_csv_row_deltas: [...removals].sort((a, b) => a.csv_row_key.localeCompare(b.csv_row_key)),
     excluded_partial_slugs: [...GSWF_WRONG_PART_EXCLUDED_PARTIAL_SLUGS_V1],
     excluded_gswf_repaired_slugs: [...GSWF_WRONG_PART_PLANNED_FRIDGE_SLUGS_V1],
+    csv_sync_state,
     before_mappings: currentMappings,
     after_mappings,
     csv_row_count_before,
@@ -557,6 +632,7 @@ export function runGswfGte18gsnrssNoFilterSuppressionGuardedApplyV1(
     risk_notes: [
       "Dry-run never mutates compatibility_mappings.csv.",
       "Apply requires matching founder approval + BUCKPARTS_GSWF_GTE18GSNRSS_NO_FILTER_SUPPRESSION_MUTATION_ENABLED=1 + exact 2 removals / 0 additions.",
+      "Already-applied CSV state returns ALREADY_APPLIED and does not re-remove rows.",
       "Do not mutate Supabase, retailer_links, buy CTA, sitemap, robots, or Product JSON-LD from this executor.",
       "Do not include PARTIAL or GSWF-13 repaired slugs.",
     ],
@@ -576,6 +652,7 @@ export function buildGswfGte18gsnrssNoFilterSuppressionGuardedDryRunMarkdownV1(
     `- contract: \`${report.contract}\``,
     `- mode: **${report.mode}**`,
     `- apply_status: **${report.apply_status}**`,
+    `- csv_sync_state: **${report.csv_sync_state}**`,
     `- read_only: **${String(report.read_only)}**`,
     `- data_mutation: **${String(report.data_mutation)}**`,
     `- csv_mutation_authorized: **${String(report.csv_mutation_authorized)}**`,

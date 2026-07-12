@@ -1,12 +1,13 @@
 # GSWF ge-gte18gsnrss no-filter suppression guarded dry-run v1
 
-Generated: 2026-07-12T22:06:09.282Z
+Generated: 2026-07-12T22:22:12.641Z
 
 ## Status
 
 - contract: `gswf_gte18gsnrss_no_filter_suppression_guarded_apply_v1`
 - mode: **dry_run**
-- apply_status: **DRY_RUN_READY**
+- apply_status: **ALREADY_APPLIED**
+- csv_sync_state: **already_applied**
 - read_only: **true**
 - data_mutation: **false**
 - csv_mutation_authorized: **false**
@@ -19,7 +20,7 @@ Generated: 2026-07-12T22:06:09.282Z
 - target_fridge_slug: `ge-gte18gsnrss`
 - planned_removals: **2**
 - planned_additions: **0**
-- before_mappings: `gswf|gswf2`
+- before_mappings: `(none)`
 - after_mappings: `(none)`
 
 ### Planned removal keys
