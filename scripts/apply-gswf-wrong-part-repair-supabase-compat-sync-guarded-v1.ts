@@ -5,8 +5,12 @@
  *   npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-guarded-apply -- --dry-run --write-artifacts
  *   npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-guarded-apply -- --apply
  *
- * Apply is blocked unless a future founder approval artifact exists and matches this exact plan.
- * This executor never mutates Supabase or CSV (mutation surface disabled even after approval).
+ * Apply remains fail-closed unless ALL of:
+ *   - matching founder approval (approve_supabase_compat_sync_plan + bound plan sha)
+ *   - exact 13/26/13 plan shape with exclusions untouched
+ *   - BUCKPARTS_GSWF_SUPABASE_COMPAT_SYNC_MUTATION_ENABLED=1
+ *
+ * Dry-run never mutates Supabase or CSV.
  */
 
 import path from "node:path";
@@ -19,12 +23,12 @@ import {
 
 const REPO_ROOT = path.resolve(path.join(path.dirname(fileURLToPath(import.meta.url)), ".."));
 
-function main(): void {
+async function main(): Promise<void> {
   const mode = process.argv.includes("--apply") ? "apply" : "dry_run";
   const writeArtifacts =
     process.argv.includes("--write-artifacts") || process.argv.includes("--write-report");
 
-  const report = runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
+  const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
     rootDir: REPO_ROOT,
     mode,
   });
@@ -35,7 +39,7 @@ function main(): void {
       report,
     });
     process.stderr.write(
-      `Wrote ${written.json_rel_path} and ${written.md_rel_path} (mode=${mode}; data_mutation=false; supabase_mutation_authorized=false).\n`,
+      `Wrote ${written.json_rel_path} and ${written.md_rel_path} (mode=${mode}; data_mutation=${String(report.data_mutation)}; supabase_mutation_authorized=${String(report.supabase_mutation_authorized)}).\n`,
     );
   }
 
@@ -46,4 +50,7 @@ function main(): void {
   }
 }
 
-main();
+main().catch((err) => {
+  process.stderr.write(`${err instanceof Error ? err.stack ?? err.message : String(err)}\n`);
+  process.exitCode = 1;
+});

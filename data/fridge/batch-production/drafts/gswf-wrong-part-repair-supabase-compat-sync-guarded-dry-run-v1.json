@@ -5,9 +5,11 @@
   "data_mutation": false,
   "supabase_mutation_authorized": false,
   "csv_mutation_authorized": false,
+  "mutation_flag_enabled": false,
   "apply_status": "DRY_RUN_READY",
   "blocked_reasons": [],
   "sync_plan_rel_path": "data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+  "sync_plan_sha256": "b8080c0e70782fb4e292153fd9e1ae85f7c088b26ccfeb26907a8b7e8dbe3f67",
   "owner_approval_rel_path": "data/owner-decisions/gswf-wrong-part-repair-supabase-compat-sync-owner-approval-v1.json",
   "owner_approval_present": false,
   "owner_approval_decision_id": null,
@@ -309,26 +311,28 @@
     "ge-pfe28kynbb,rpwfe",
     "ge-pvd28bymfs,xwfe"
   ],
-  "generated_at": "2026-07-12T17:16:22.520Z",
+  "applied_supabase_row_keys": [],
+  "generated_at": "2026-07-12T17:43:37.712Z",
   "source_command": "npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-guarded-apply",
   "proven_facts": [
-    "PROVEN: mode=dry_run; apply_status=DRY_RUN_READY; data_mutation=false; supabase_mutation_authorized=false.",
+    "PROVEN: mode=dry_run; apply_status=DRY_RUN_READY; data_mutation=false; supabase_mutation_authorized=false; mutation_flag_enabled=false.",
     "PROVEN: sync_plan_rel_path=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json.",
     "PROVEN: planned_slug_count=13; planned_removals=26; planned_additions=13.",
     "PROVEN: owner_approval_present=false; owner_approval_valid=false; decision_id=none.",
     "PROVEN: excluded_slugs_untouched=ge-gfe28hmkww|ge-gsc25frshss|ge-gse26gshess|ge-gte18gsnrss.",
     "PROVEN: csv_apply_commit=8361fba.",
     "PROVEN: no founder approval artifact at data/owner-decisions/gswf-wrong-part-repair-supabase-compat-sync-owner-approval-v1.json (expected for this dry-run lane).",
-    "PROVEN: sync plan shape verified (read_only=true; supabase_mutation_authorized=false; removals=26; additions=13; CONFLICT_REQUIRES_REVIEW=13)."
+    "PROVEN: sync plan shape verified (read_only=true; plan supabase_mutation_authorized=false; removals=26; additions=13; CONFLICT_REQUIRES_REVIEW=13)."
   ],
   "unknown_facts": [
     "UNKNOWN: When founder will create gswf-wrong-part-repair-supabase-compat-sync-owner-approval-v1.json.",
-    "UNKNOWN: Whether a future apply session will enable the Supabase mutation surface after approval."
+    "UNKNOWN: Whether a future founder session will set BUCKPARTS_GSWF_SUPABASE_COMPAT_SYNC_MUTATION_ENABLED=1 for an authorized apply."
   ],
   "risk_notes": [
-    "This executor does not mutate Supabase or CSV.",
+    "Dry-run never mutates Supabase or CSV.",
+    "Apply requires matching founder approval + BUCKPARTS_GSWF_SUPABASE_COMPAT_SYNC_MUTATION_ENABLED=1 + exact 13/26/13 plan.",
     "Do not run retailer_links / buy CTA / sitemap / robots / Product JSON-LD changes from this executor.",
-    "Do not include PARTIAL or no-filter excluded slugs in any future Supabase sync apply.",
-    "Apply mode remains fail-closed without a matching founder approval artifact for this exact sync plan."
+    "Do not include PARTIAL or no-filter excluded slugs in any Supabase sync apply.",
+    "Do not mutate data/compatibility_mappings.csv from this executor."
   ]
 }

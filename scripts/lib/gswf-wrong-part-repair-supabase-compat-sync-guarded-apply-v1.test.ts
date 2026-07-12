@@ -10,9 +10,12 @@ import {
   GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_GUARDED_ALLOWED_WRITE_REL_PATHS_V1,
   GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_GUARDED_DRY_RUN_JSON_REL_V1,
   GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_GUARDED_DRY_RUN_MD_REL_V1,
+  GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_MUTATION_ENV_FLAG_V1,
   GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_OWNER_APPROVAL_JSON_REL_V1,
   runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1,
   writeGswfWrongPartRepairSupabaseCompatSyncGuardedDryRunArtifactsV1,
+  type SupabaseCompatSyncPlannedChangeV1,
+  type SupabaseCompatSyncWriteResultV1,
 } from "./gswf-wrong-part-repair-supabase-compat-sync-guarded-apply-v1";
 import {
   GSWF_WRONG_PART_EXCLUDED_NO_FILTER_SLUGS_V1,
@@ -105,11 +108,45 @@ function writeFixture(args: { root: string; includeApproval?: boolean; mutatePla
   }
 }
 
-test("repo dry-run is DRY_RUN_READY for committed sync plan and does not mutate Supabase", () => {
-  const report = runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
+function mockSuccessfulWriter(): {
+  calls: SupabaseCompatSyncPlannedChangeV1[][];
+  fn: (deltas: SupabaseCompatSyncPlannedChangeV1[]) => Promise<SupabaseCompatSyncWriteResultV1>;
+} {
+  const calls: SupabaseCompatSyncPlannedChangeV1[][] = [];
+  return {
+    calls,
+    fn: async (deltas) => {
+      calls.push(deltas);
+      const removals = deltas.filter((d) => d.operation === "remove");
+      const additions = deltas.filter((d) => d.operation === "add");
+      return {
+        ok: true,
+        errors: [],
+        applied_removal_count: removals.length,
+        applied_addition_count: additions.length,
+        applied_row_keys: deltas.map((d) => d.row_key),
+      };
+    },
+  };
+}
+
+test("repo dry-run is DRY_RUN_READY for committed sync plan and does not mutate Supabase", async () => {
+  let writerCalled = false;
+  const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
     rootDir: ROOT,
     mode: "dry_run",
     now: FIXED_NOW,
+    mutationEnabled: true,
+    applySupabaseCompatSyncDeltas: async () => {
+      writerCalled = true;
+      return {
+        ok: true,
+        errors: [],
+        applied_removal_count: 0,
+        applied_addition_count: 0,
+        applied_row_keys: [],
+      };
+    },
   });
 
   assert.equal(report.apply_status, "DRY_RUN_READY");
@@ -122,6 +159,7 @@ test("repo dry-run is DRY_RUN_READY for committed sync plan and does not mutate 
   assert.equal(report.planned_removals, GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_removals);
   assert.equal(report.planned_additions, GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_additions);
   assert.equal(report.planned_slug_count, 13);
+  assert.equal(report.planned_supabase_row_deltas.length, 39);
   assert.equal(report.classification_counts?.CONFLICT_REQUIRES_REVIEW, 13);
   assert.deepEqual(
     report.excluded_slugs_untouched.sort(),
@@ -130,6 +168,7 @@ test("repo dry-run is DRY_RUN_READY for committed sync plan and does not mutate 
       .sort(),
   );
   assert.equal(report.blocked_reasons.length, 0);
+  assert.equal(writerCalled, false);
   assert.ok(
     report.proven_facts.some((fact) =>
       fact.includes("no founder approval artifact"),
@@ -137,43 +176,66 @@ test("repo dry-run is DRY_RUN_READY for committed sync plan and does not mutate 
   );
 });
 
-test("apply mode without approval is BLOCKED and never mutates", () => {
-  const report = runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
+test("apply mode without approval is BLOCKED and never mutates", async () => {
+  let writerCalled = false;
+  const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
     rootDir: ROOT,
     mode: "apply",
     now: FIXED_NOW,
+    mutationEnabled: true,
+    applySupabaseCompatSyncDeltas: async () => {
+      writerCalled = true;
+      return {
+        ok: true,
+        errors: [],
+        applied_removal_count: 26,
+        applied_addition_count: 13,
+        applied_row_keys: [],
+      };
+    },
   });
   assert.equal(report.apply_status, "BLOCKED");
   assert.equal(report.data_mutation, false);
   assert.equal(report.supabase_mutation_authorized, false);
+  assert.equal(writerCalled, false);
   assert.ok(
     report.blocked_reasons.some((reason) =>
       reason.includes("matching founder supabase compat sync owner approval required"),
     ),
   );
-  assert.ok(
-    report.blocked_reasons.some((reason) =>
-      reason.includes("supabase mutation surface is disabled"),
-    ),
-  );
 });
 
-test("apply mode with matching approval still BLOCKED — mutation surface disabled", () => {
+test("apply mode with matching approval but mutation flag absent is BLOCKED", async () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "gswf-supabase-sync-guarded-"));
   try {
     writeFixture({ root: tmp, includeApproval: true });
-    const report = runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
+    let writerCalled = false;
+    const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
       rootDir: tmp,
       mode: "apply",
       now: FIXED_NOW,
+      mutationEnabled: false,
+      applySupabaseCompatSyncDeltas: async () => {
+        writerCalled = true;
+        return {
+          ok: true,
+          errors: [],
+          applied_removal_count: 26,
+          applied_addition_count: 13,
+          applied_row_keys: [],
+        };
+      },
     });
     assert.equal(report.owner_approval_present, true);
     assert.equal(report.owner_approval_valid, true);
+    assert.equal(report.mutation_flag_enabled, false);
     assert.equal(report.apply_status, "BLOCKED");
     assert.equal(report.data_mutation, false);
+    assert.equal(report.supabase_mutation_authorized, false);
+    assert.equal(writerCalled, false);
     assert.ok(
       report.blocked_reasons.some((reason) =>
-        reason.includes("supabase mutation surface is disabled"),
+        reason.includes(`${GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_MUTATION_ENV_FLAG_V1}=1 required`),
       ),
     );
   } finally {
@@ -181,11 +243,79 @@ test("apply mode with matching approval still BLOCKED — mutation surface disab
   }
 });
 
-test("dry-run blocks when plan removals/additions do not match 26/13", () => {
+test("apply mode with approval + mutation flag authorizes and applies exact 39 mocked deltas", async () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), "gswf-supabase-sync-apply-ok-"));
+  try {
+    writeFixture({ root: tmp, includeApproval: true });
+    const mock = mockSuccessfulWriter();
+    const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
+      rootDir: tmp,
+      mode: "apply",
+      now: FIXED_NOW,
+      mutationEnabled: true,
+      applySupabaseCompatSyncDeltas: mock.fn,
+    });
+    assert.equal(report.owner_approval_valid, true);
+    assert.equal(report.mutation_flag_enabled, true);
+    assert.equal(report.supabase_mutation_authorized, true);
+    assert.equal(report.apply_status, "APPLIED");
+    assert.equal(report.data_mutation, true);
+    assert.equal(report.read_only, false);
+    assert.equal(mock.calls.length, 1);
+    assert.equal(mock.calls[0]?.length, 39);
+    assert.equal(
+      mock.calls[0]?.filter((d) => d.operation === "remove").length,
+      26,
+    );
+    assert.equal(
+      mock.calls[0]?.filter((d) => d.operation === "add").length,
+      13,
+    );
+    assert.equal(report.applied_supabase_row_keys.length, 39);
+    for (const slug of [
+      ...GSWF_WRONG_PART_EXCLUDED_PARTIAL_SLUGS_V1,
+      ...GSWF_WRONG_PART_EXCLUDED_NO_FILTER_SLUGS_V1,
+    ]) {
+      assert.ok(
+        !report.planned_supabase_row_deltas.some((d) => d.fridge_slug === slug.toLowerCase()),
+      );
+    }
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("apply mode with approval + flag but writer failure stays BLOCKED with no data_mutation", async () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), "gswf-supabase-sync-apply-fail-"));
+  try {
+    writeFixture({ root: tmp, includeApproval: true });
+    const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
+      rootDir: tmp,
+      mode: "apply",
+      now: FIXED_NOW,
+      mutationEnabled: true,
+      applySupabaseCompatSyncDeltas: async () => ({
+        ok: false,
+        errors: ["mock write refused"],
+        applied_removal_count: 0,
+        applied_addition_count: 0,
+        applied_row_keys: [],
+      }),
+    });
+    assert.equal(report.supabase_mutation_authorized, true);
+    assert.equal(report.apply_status, "BLOCKED");
+    assert.equal(report.data_mutation, false);
+    assert.ok(report.blocked_reasons.some((r) => r.includes("mock write refused")));
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("dry-run blocks when plan removals/additions do not match 26/13", async () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "gswf-supabase-sync-bad-plan-"));
   try {
     writeFixture({ root: tmp, mutatePlan: true });
-    const report = runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
+    const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
       rootDir: tmp,
       mode: "dry_run",
       now: FIXED_NOW,
@@ -197,10 +327,10 @@ test("dry-run blocks when plan removals/additions do not match 26/13", () => {
   }
 });
 
-test("write artifacts only to allowlisted draft paths", () => {
+test("write artifacts only to allowlisted draft paths", async () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "gswf-supabase-sync-artifacts-"));
   try {
-    const report = runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
+    const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
       rootDir: ROOT,
       mode: "dry_run",
       now: FIXED_NOW,
@@ -226,14 +356,10 @@ test("write artifacts only to allowlisted draft paths", () => {
   }
 });
 
-test("source does not mutate CSV/Supabase/retailer_links and defaults dry-run", () => {
+test("source stays fail-closed by default and does not mutate CSV/retailer_links", () => {
   const forbidden = [
     'writeFileSync(path.join(args.rootDir, "data/compatibility_mappings.csv")',
     'writeFileSync(path.join(args.rootDir, "data/retailer_links.csv")',
-    '.from("compatibility_mappings").delete',
-    '.from("compatibility_mappings").insert',
-    '.from("compatibility_mappings").upsert',
-    "getSupabaseAdmin",
   ];
   for (const needle of forbidden) {
     assert.ok(!LIB_SOURCE.includes(needle), `lib must not include ${needle}`);
@@ -241,6 +367,10 @@ test("source does not mutate CSV/Supabase/retailer_links and defaults dry-run", 
   }
   assert.ok(APPLY_SCRIPT_SOURCE.includes("--write-artifacts"));
   assert.ok(APPLY_SCRIPT_SOURCE.includes('process.argv.includes("--apply") ? "apply" : "dry_run"'));
-  assert.ok(LIB_SOURCE.includes("supabase_mutation_authorized: false"));
+  assert.ok(LIB_SOURCE.includes(GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_MUTATION_ENV_FLAG_V1));
+  assert.ok(LIB_SOURCE.includes("defaultApplyGswfSupabaseCompatSyncDeltasV1"));
+  assert.ok(LIB_SOURCE.includes('.from("compatibility_mappings")'));
+  assert.ok(LIB_SOURCE.includes(".delete()"));
+  assert.ok(LIB_SOURCE.includes(".insert({"));
   assert.ok(!existsSync(path.join(ROOT, GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_OWNER_APPROVAL_JSON_REL_V1)));
 });
