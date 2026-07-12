@@ -9,7 +9,7 @@
   "apply_plan_authorized": false,
   "include_in_gswf_wrong_part_apply_plan": false,
   "owner_review_required": true,
-  "generated_at": "2026-07-11T04:11:48.408Z",
+  "generated_at": "2026-07-12T18:45:37.093Z",
   "source_command": "npm run buckparts:gswf-partial-owner-browser-proof-packet",
   "family_key": "filter::ge::gswf",
   "target_slugs": [

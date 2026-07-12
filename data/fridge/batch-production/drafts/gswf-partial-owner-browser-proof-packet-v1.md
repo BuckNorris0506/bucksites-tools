@@ -1,6 +1,6 @@
 # GSWF PARTIAL owner-browser proof packet v1
 
-Generated: 2026-07-11T04:11:48.408Z
+Generated: 2026-07-12T18:45:37.093Z
 
 ## Status
 
