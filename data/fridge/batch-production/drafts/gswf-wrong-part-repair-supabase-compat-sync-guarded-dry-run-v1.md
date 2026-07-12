@@ -1,6 +1,6 @@
 # GSWF wrong-part repair — Supabase compatibility sync guarded dry-run v1
 
-Generated: 2026-07-11T23:48:17.499Z
+Generated: 2026-07-12T17:16:22.520Z
 
 ## Status
 

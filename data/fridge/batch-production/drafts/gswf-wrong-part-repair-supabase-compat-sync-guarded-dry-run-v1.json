@@ -309,7 +309,7 @@
     "ge-pfe28kynbb,rpwfe",
     "ge-pvd28bymfs,xwfe"
   ],
-  "generated_at": "2026-07-11T23:48:17.499Z",
+  "generated_at": "2026-07-12T17:16:22.520Z",
   "source_command": "npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-guarded-apply",
   "proven_facts": [
     "PROVEN: mode=dry_run; apply_status=DRY_RUN_READY; data_mutation=false; supabase_mutation_authorized=false.",
