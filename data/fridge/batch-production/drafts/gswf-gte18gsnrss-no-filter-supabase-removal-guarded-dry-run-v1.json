@@ -14,9 +14,9 @@
   "apply_plan_rel_path": "data/fridge/batch-production/drafts/gswf-gte18gsnrss-no-filter-supabase-removal-apply-plan-owner-review-v1.json",
   "apply_plan_sha256": "f5982b1f7238b8544cb460b11793f4fcc76b3395462bb7025ce67edff36af50b",
   "owner_approval_rel_path": "data/owner-decisions/gswf-gte18gsnrss-no-filter-supabase-removal-owner-approval-v1.json",
-  "owner_approval_present": false,
-  "owner_approval_valid": false,
-  "owner_approval_decision_id": null,
+  "owner_approval_present": true,
+  "owner_approval_valid": true,
+  "owner_approval_decision_id": "decision-2026-07-12-gswf-gte18gsnrss-no-filter-supabase-removal-approve",
   "owner_approval_required_for_apply": true,
   "target_fridge_slug": "ge-gte18gsnrss",
   "planned_slug_count": 1,
@@ -62,12 +62,12 @@
     "ge-pvd28bymfs"
   ],
   "applied_supabase_row_keys": [],
-  "generated_at": "2026-07-12T22:56:04.780Z",
+  "generated_at": "2026-07-12T23:18:56.330Z",
   "source_command": "npm run buckparts:gswf-gte18gsnrss-no-filter-supabase-removal-guarded-apply",
   "proven_facts": [
     "PROVEN: mode=dry_run; apply_status=DRY_RUN_READY; data_mutation=false; supabase_mutation_authorized=false; mutation_flag_enabled=false.",
     "PROVEN: target_fridge_slug=ge-gte18gsnrss; planned_removals=2; planned_additions=0; plan_sync_state=pending_removal.",
-    "PROVEN: owner_approval_present=false; owner_approval_valid=false.",
+    "PROVEN: owner_approval_present=true; owner_approval_valid=true.",
     "PROVEN: csv_mutation_authorized=false; buy_cta_authorized=false; retailer_links_mutation_authorized=false.",
     "PROVEN: PARTIAL 3 and GSWF 13 repaired slugs are out of scope for this executor.",
     "PROVEN: dry-run verified exact Supabase removals ge-gte18gsnrss,gswf + ge-gte18gsnrss,gswf2 with zero additions."

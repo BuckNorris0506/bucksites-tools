@@ -1,6 +1,6 @@
 # GSWF ge-gte18gsnrss no-filter Supabase removal guarded dry-run v1
 
-Generated: 2026-07-12T22:56:04.780Z
+Generated: 2026-07-12T23:18:56.330Z
 
 ## Status
 
@@ -12,8 +12,8 @@ Generated: 2026-07-12T22:56:04.780Z
 - data_mutation: **false**
 - supabase_mutation_authorized: **false**
 - mutation_flag_enabled: **false**
-- owner_approval_present: **false**
-- owner_approval_valid: **false**
+- owner_approval_present: **true**
+- owner_approval_valid: **true**
 
 ## Scope
 
