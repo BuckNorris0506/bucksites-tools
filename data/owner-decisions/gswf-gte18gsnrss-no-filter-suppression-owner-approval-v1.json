@@ -1,0 +1,69 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-07-12-gswf-gte18gsnrss-no-filter-suppression-approve",
+      "source_queue_row_id": "queue-gswf-gte18gsnrss-no-filter-suppression",
+      "source_decision_packet_id": "gswf_gte18gsnrss_no_filter_suppression_owner_approval_packet_v1",
+      "decided_at": "2026-07-12T22:00:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "Jared approves GTE18 no-filter suppression only for ge-gte18gsnrss: remove exactly ge-gte18gsnrss,gswf and ge-gte18gsnrss,gswf2 from data/compatibility_mappings.csv; zero additions. Bound to data/fridge/batch-production/drafts/gswf-gte18gsnrss-no-filter-suppression-apply-plan-owner-review-v1.json (sha256 959c12acec8a70fdc86f6b4daf4b110f8b77791d2b82b9a0eaa083c61baf7bdc) and guarded dry-run evidence. This row unlocks an explicit founder-run of npm run buckparts:gswf-gte18gsnrss-no-filter-suppression-guarded-apply -- --apply only when BUCKPARTS_GSWF_GTE18GSNRSS_NO_FILTER_SUPPRESSION_MUTATION_ENABLED=1 is also set — not autonomous apply, not Supabase, not retailer_links, not buy CTA.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "expires_at": "2027-07-12T22:00:00.000Z",
+      "prohibited_actions_still_apply": [
+        "Do not include PARTIAL slugs ge-gfe28hmkww, ge-gsc25frshss, or ge-gse26gshess in this apply.",
+        "Do not include any of the GSWF 13 repaired slugs in this apply.",
+        "Do not add any compatibility_mappings.csv rows from this approval.",
+        "Do not mutate Supabase from this approval.",
+        "Do not mutate retailer_links.csv from this approval.",
+        "Do not authorize buy CTA or GSWF buy CTA from this approval.",
+        "Do not change public routes, sitemap, robots, or Product JSON-LD from this approval.",
+        "Do not mutate filters.csv, fridge_models.csv, or filter_aliases.csv.",
+        "Do not run autonomous or scheduled apply — only an explicit founder-run --apply with BUCKPARTS_GSWF_GTE18GSNRSS_NO_FILTER_SUPPRESSION_MUTATION_ENABLED=1 for this exact plan.",
+        "Approval alone does not mutate CSV; mutation env flag and explicit --apply are still required.",
+        "Do not expand beyond ge-gte18gsnrss / 2 removals / 0 additions bound to this plan."
+      ],
+      "gswf_gte18gsnrss_no_filter_suppression_owner_approval_context_v1": {
+        "founder_option_id": "approve_no_filter_suppression_plan",
+        "option_id": "approve_no_filter_suppression_plan",
+        "apply_plan_rel_path": "data/fridge/batch-production/drafts/gswf-gte18gsnrss-no-filter-suppression-apply-plan-owner-review-v1.json",
+        "guarded_dry_run_rel_path": "data/fridge/batch-production/drafts/gswf-gte18gsnrss-no-filter-suppression-guarded-dry-run-v1.json",
+        "target_csv_rel_path": "data/compatibility_mappings.csv",
+        "target_fridge_slug": "ge-gte18gsnrss",
+        "approved_slug_count": 1,
+        "approved_removals": 2,
+        "approved_additions": 0,
+        "approved_removal_row_keys": [
+          "ge-gte18gsnrss,gswf",
+          "ge-gte18gsnrss,gswf2"
+        ],
+        "proposed_compat_action": "suppress_all_filter_mappings",
+        "evidence_label": "PROVEN_NO_FILTER",
+        "supabase_mutation_authorized": false,
+        "retailer_links_mutation_authorized": false,
+        "buy_cta_authorized": false,
+        "sitemap_robots_mutation_authorized": false,
+        "product_json_ld_mutation_authorized": false,
+        "partial_slugs_approved": false,
+        "gswf_13_repaired_slugs_approved": false,
+        "mutation_authorized": false,
+        "apply_not_executed": true,
+        "autonomous_apply_authorized": false,
+        "separate_guarded_apply_executor_required": true,
+        "mutation_env_flag_required": "BUCKPARTS_GSWF_GTE18GSNRSS_NO_FILTER_SUPPRESSION_MUTATION_ENABLED=1",
+        "owner_approved_by": "Jared",
+        "approved_at": "2026-07-12T22:00:00.000Z"
+      },
+      "bound_artifacts_v1": [
+        {
+          "artifact_rel_path": "data/fridge/batch-production/drafts/gswf-gte18gsnrss-no-filter-suppression-apply-plan-owner-review-v1.json",
+          "sha256_at_binding": "959c12acec8a70fdc86f6b4daf4b110f8b77791d2b82b9a0eaa083c61baf7bdc",
+          "entry_type": "apply_plan"
+        }
+      ]
+    }
+  ]
+}

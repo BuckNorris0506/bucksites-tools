@@ -136,7 +136,11 @@ test("dry-run is read-only and DRY_RUN_READY for exact 2 removals", () => {
   assert.deepEqual(report.planned_addition_row_keys, []);
   assert.deepEqual(report.after_mappings, []);
   assert.equal(wroteCsv, false);
-  assert.equal(report.owner_approval_present, false);
+  // Approval may be present on disk after founder artifact lands; dry-run must still not mutate.
+  if (report.owner_approval_present) {
+    assert.equal(report.owner_approval_valid, true);
+  }
+  assert.equal(report.csv_mutation_authorized, false);
 });
 
 test("apply is blocked without matching founder approval", () => {

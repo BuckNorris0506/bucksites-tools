@@ -1,6 +1,6 @@
 # GSWF ge-gte18gsnrss no-filter suppression guarded dry-run v1
 
-Generated: 2026-07-12T21:15:50.054Z
+Generated: 2026-07-12T22:06:09.282Z
 
 ## Status
 
@@ -11,8 +11,8 @@ Generated: 2026-07-12T21:15:50.054Z
 - data_mutation: **false**
 - csv_mutation_authorized: **false**
 - mutation_flag_enabled: **false**
-- owner_approval_present: **false**
-- owner_approval_valid: **false**
+- owner_approval_present: **true**
+- owner_approval_valid: **true**
 
 ## Scope
 
