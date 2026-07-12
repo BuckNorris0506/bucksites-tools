@@ -1,0 +1,88 @@
+{
+  "contract": "gswf_gte18gsnrss_no_filter_supabase_removal_apply_plan_owner_review_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "apply_authorized": false,
+  "apply_plan_authorized": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "sitemap_robots_mutation_authorized": false,
+  "product_json_ld_mutation_authorized": false,
+  "owner_approval_required": true,
+  "generated_at": "2026-07-12T22:56:03.473Z",
+  "source_command": "npm run buckparts:gswf-gte18gsnrss-no-filter-supabase-removal-apply-plan-owner-review",
+  "target_fridge_slug": "ge-gte18gsnrss",
+  "parity_artifact_rel_path": "data/fridge/batch-production/drafts/gswf-gte18gsnrss-no-filter-supabase-compat-parity-owner-review-v1.json",
+  "target_csv_rel_path": "data/compatibility_mappings.csv",
+  "plan_sync_state": "pending_removal",
+  "classification": "SUPABASE_STILL_HAS_GSWF_FAMILY",
+  "planned_slug_count": 1,
+  "planned_supabase_row_removals": 2,
+  "planned_supabase_row_additions": 0,
+  "planned_supabase_removals": [
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gte18gsnrss",
+      "filter_slug": "gswf",
+      "row_key": "ge-gte18gsnrss,gswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gte18gsnrss",
+      "filter_slug": "gswf2",
+      "row_key": "ge-gte18gsnrss,gswf2"
+    }
+  ],
+  "planned_supabase_additions": [],
+  "csv_intent_mappings": [],
+  "csv_current_mappings": [],
+  "supabase_status": "CHECKED",
+  "supabase_mappings": [
+    "gswf",
+    "gswf2"
+  ],
+  "excluded_partial_slugs": [
+    "ge-gfe28hmkww",
+    "ge-gsc25frshss",
+    "ge-gse26gshess"
+  ],
+  "excluded_gswf_repaired_slugs": [
+    "ge-cwe23sshww",
+    "ge-gfe24jgkww",
+    "ge-gfe27jmkes",
+    "ge-gfe28gmkbb",
+    "ge-gfe28gskes",
+    "ge-gfe28hskss",
+    "ge-gne25jmkww",
+    "ge-gne27jstss",
+    "ge-gse25hskss",
+    "ge-gye22gskww",
+    "ge-pfe28kmkww",
+    "ge-pfe28kynbb",
+    "ge-pvd28bymfs"
+  ],
+  "proven_facts": [
+    "PROVEN: read_only=true; data_mutation=false; supabase_mutation_authorized=false; csv_mutation_authorized=false.",
+    "PROVEN: buy_cta_authorized=false; retailer_links_mutation_authorized=false.",
+    "PROVEN: target_fridge_slug=ge-gte18gsnrss; planned_slug_count=1; planned_additions=0.",
+    "PROVEN: csv_current_mappings=(none); csv_intent_mappings=(none).",
+    "PROVEN: classification=SUPABASE_STILL_HAS_GSWF_FAMILY; plan_sync_state=pending_removal.",
+    "PROVEN: planned_supabase_removals=ge-gte18gsnrss,gswf | ge-gte18gsnrss,gswf2.",
+    "PROVEN: PARTIAL 3 and GSWF 13 repaired slugs are out of scope for this plan.",
+    "PROVEN: supabase_mappings=gswf|gswf2."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether founder will create a matching supabase-removal owner-approval artifact.",
+    "UNKNOWN: Whether live public pages currently resolve filters from CSV, Supabase, or both after deploy."
+  ],
+  "risk_notes": [
+    "Pending exact removals ge-gte18gsnrss,gswf + ge-gte18gsnrss,gswf2 from live Supabase only.",
+    "This packet does not mutate Supabase or CSV.",
+    "Do not mutate retailer_links, buy CTA, sitemap, robots, or Product JSON-LD from this packet.",
+    "Do not include PARTIAL or GSWF-13 repaired slugs.",
+    "Future Supabase apply requires a separate founder approval artifact + guarded executor + env flag."
+  ]
+}
