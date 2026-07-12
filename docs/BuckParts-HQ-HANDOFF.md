@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (`234e7d4` — Surface Credit Control in deploy guards):** **Credit Control posture now surfaces in deploy/pre-push guards** — see **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** below. Actual repo HEAD / `origin/main`: **`234e7d4`**. Prior operational stopping points: **`d609139`** — Update HQ handoff after Credit Control Center; **`08ca292`** — Add BuckParts Credit Control Center; **`959cdf8`** — Update HQ handoff after GSWF Supabase guarded dry run; **`d5c0c95`** — Add GSWF Supabase compatibility guarded dry run; **`853ee79`** — Update HQ handoff after GSWF Supabase sync plan; **`4337055`** — Add GSWF Supabase compatibility sync plan; **`77eeeb8`** — Update HQ handoff after Product JSON-LD suppression; **`7d099c2`** — Suppress fridge Product JSON-LD without truthful offer; **`3ad4eea`** — Update HQ handoff after agent loop contract; **`84ae957`** — Add BuckParts agent loop contract; **`fb8b7d7`** — Update HQ handoff after GSWF compatibility repair apply; **`8361fba`** — Apply GSWF wrong-part compatibility repair (owner approval **`4cbe40c`**; PARTIAL proof **`3b067ee`**; guarded dry-run **`31f9bf8`**; handoff docs **`4dc0c0f`** / **`b69a642`** / **`ecddcca`** / **`08a40e3`**). GSWF wrong-part repair apply-plan owner packet (`83f15ef` / **`3fdc809`** handoff), AP hub handoff commit-reference fix (**`297ba4f`**), GSWF family reconciliation owner packet (`2c90b2d` / **`2451e83`** handoff), AP Production Truth go-gate fix (`97f9fbe` / **`e4c623b`** handoff), Daily Operator read-only **`next_coverage_opportunities`** (`39c9e6f` / **`3a30c3e`** handoff), **`efc2fec`** demand-loop steering (**§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**), search/hub canonicals (`2c15bca`), model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete. **Root `AGENTS.md` remains the agent operating contract** (`84ae957` / handoff **`3ad4eea`**). **GSWF 13-row CSV repair remains applied** at **`8361fba`**. Credit Control Center v1 remains documented at **`08ca292`** / handoff **`d609139`**. GSWF Supabase guarded dry-run remains documented at **`d5c0c95`** / handoff **`959cdf8`**. Supabase sync plan remains documented at **`4337055`** / handoff **`853ee79`**. Product JSON-LD suppression remains documented at **`7d099c2`** / handoff **`77eeeb8`**. **Deployment posture:** **`DEPLOY_HOLD_CREDITS_EXHAUSTED`** (**`deploy_held=true`**; **`production_deploy_recommended=false`**; **`credit_spend_authorized=false`**). Push may proceed for repo bookkeeping while Netlify production deploy is held. **No** credit purchase; **no** Netlify live deploy; **no** Supabase mutation; **no** public buyer guidance / Product JSON-LD / buy CTA / retailer_links / sitemap / robots change claimed; **no** autonomous apply readiness claimed.
+> **Current operational stopping point (`67c5c70` — Update Netlify credit evidence):** **Owner-reported Netlify credits available (1000); Credit Control posture now `REPO_ONLY_SAFE` for this evidence update** — see **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** below. Actual repo HEAD / `origin/main`: **`67c5c70`**. Prior operational stopping points: **`94f6842`** — Update HQ handoff after Credit Control guard integration; **`234e7d4`** — Surface Credit Control in deploy guards; **`d609139`** — Update HQ handoff after Credit Control Center; **`08ca292`** — Add BuckParts Credit Control Center; **`959cdf8`** — Update HQ handoff after GSWF Supabase guarded dry run; **`d5c0c95`** — Add GSWF Supabase compatibility guarded dry run; **`853ee79`** — Update HQ handoff after GSWF Supabase sync plan; **`4337055`** — Add GSWF Supabase compatibility sync plan; **`77eeeb8`** — Update HQ handoff after Product JSON-LD suppression; **`7d099c2`** — Suppress fridge Product JSON-LD without truthful offer; **`3ad4eea`** — Update HQ handoff after agent loop contract; **`84ae957`** — Add BuckParts agent loop contract; **`fb8b7d7`** — Update HQ handoff after GSWF compatibility repair apply; **`8361fba`** — Apply GSWF wrong-part compatibility repair (owner approval **`4cbe40c`**; PARTIAL proof **`3b067ee`**; guarded dry-run **`31f9bf8`**; handoff docs **`4dc0c0f`** / **`b69a642`** / **`ecddcca`** / **`08a40e3`**). GSWF wrong-part repair apply-plan owner packet (`83f15ef` / **`3fdc809`** handoff), AP hub handoff commit-reference fix (**`297ba4f`**), GSWF family reconciliation owner packet (`2c90b2d` / **`2451e83`** handoff), AP Production Truth go-gate fix (`97f9fbe` / **`e4c623b`** handoff), Daily Operator read-only **`next_coverage_opportunities`** (`39c9e6f` / **`3a30c3e`** handoff), **`efc2fec`** demand-loop steering (**§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**), search/hub canonicals (`2c15bca`), model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete. **Root `AGENTS.md` remains the agent operating contract** (`84ae957` / handoff **`3ad4eea`**). **GSWF 13-row CSV repair remains applied** at **`8361fba`**. Credit Control guard integration remains documented at **`234e7d4`** / handoff **`94f6842`**. Credit Control Center v1 remains documented at **`08ca292`** / handoff **`d609139`**. GSWF Supabase guarded dry-run remains documented at **`d5c0c95`** / handoff **`959cdf8`**. Product JSON-LD suppression remains documented at **`7d099c2`** / handoff **`77eeeb8`**. **Deployment posture (this evidence update):** **`REPO_ONLY_SAFE`** (**`deploy_held=false`**; **`production_deploy_recommended=false`**; **`credit_spend_authorized=false`**). **Important:** credits available does **not** authorize production deploys by itself. **No** live Netlify deploy verified; **no** Netlify API balance check; **no** Supabase mutation; **no** public buyer guidance / Product JSON-LD / buy CTA / retailer_links / sitemap / robots change claimed.
 
 ## Execution Stack
 
@@ -53,9 +53,70 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — Credit Control deploy-guard integration (`234e7d4`)
+## Current stopping point — Netlify credit evidence update (`67c5c70`)
 
-**Read this section first** for LIVE Credit Control **deploy/pre-push awareness** posture (read-only surfacing; **no** credit spend; **no** Netlify API call; production deploy remains held).
+**Read this section first** for LIVE Netlify credit evidence posture (owner-reported **1000** credits available; Credit Control **`REPO_ONLY_SAFE`** for this evidence-only update; **no** Netlify API call; credits available ≠ deploy authorization).
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD / `origin/main` | **`67c5c70`** — Update Netlify credit evidence |
+| Prior operational stopping points | **`94f6842`** — Update HQ handoff after Credit Control guard integration; **`234e7d4`** — Surface Credit Control in deploy guards |
+| Lane status | **Complete and pushed** — owner credit evidence update only |
+| Scope | **`data/ops/credit-control/netlify-credit-state-v1.json`** (+ refreshed Credit Control artifacts as applicable) — **no** CSV / Supabase / retailer_links / buy CTA / sitemap / robots / Product JSON-LD / public buyer-guidance mutation |
+
+### Credit evidence truth (PROVEN — repo truth only)
+
+| Item | Detail |
+|------|--------|
+| **Owner report** | Netlify has **1000** credits available |
+| **Evidence file** | `data/ops/credit-control/netlify-credit-state-v1.json` |
+| **Posture change** | **`DEPLOY_HOLD_CREDITS_EXHAUSTED` → `REPO_ONLY_SAFE`** (for this repo-only evidence update) |
+| **deploy_held** | **false** |
+| **production_deploy_recommended** | **false** (evidence-only update) |
+| **credit_spend_authorized** | **false** |
+| **Netlify API** | **Not called** (`live_netlify_api_state=UNKNOWN`) |
+| **Standing rule** | Credits available does **not** itself authorize production deploys |
+
+### Before any deploy / purchase / spend decision (required)
+
+```bash
+npm run buckparts:credit-control
+npm run buckparts:deploy-classifier:pre-push-summary
+npm run buckparts:ship-guard
+```
+
+**Not claimed:** live Netlify deploy verified; Netlify API balance check; Supabase mutation; public buyer guidance change; Product JSON-LD change; buy CTA / retailer_links / sitemap / robots change; credit purchase authorization; autonomous deploy readiness; traffic/ranking/revenue/conversion improvement. Revenue/conversions remain **`UNKNOWN_NOT_CONNECTED`** unless repo proves otherwise. **Root `AGENTS.md` operating contract unchanged**. **Credit Control guard integration remains** at **`234e7d4`** / handoff **`94f6842`**. **GSWF Supabase guarded dry-run remains** at **`d5c0c95`** / handoff **`959cdf8`**. **Product JSON-LD suppression remains** at **`7d099c2`** / handoff **`77eeeb8`**. **GSWF CSV repair remains applied** at **`8361fba`**.
+
+### Current recommendation (NOT started — founder-gated)
+
+1. Do **not** treat `REPO_ONLY_SAFE` / credits available as production-deploy authorization.
+2. Before any push that would risk Netlify production deploy, or any credit purchase/spend decision, re-run Credit Control + deploy-classifier pre-push summary + ship-guard.
+3. Prefer explicit founder authorization before any production deploy spend.
+4. GSWF Supabase apply remains **not** authorized (mutation surface disabled; no founder approval).
+5. **Offer JSON-LD lane** remains **not started**.
+6. **No GSWF buy CTA**.
+
+```bash
+git rev-parse HEAD
+npm run buckparts:credit-control -- --write-artifacts
+npm run buckparts:deploy-classifier:pre-push-summary
+npm run --silent buckparts:ship-guard
+```
+
+---
+
+## Prior completed lane — HQ handoff after Credit Control guard integration (`94f6842`)
+
+**Docs-only** — recorded **`234e7d4`** Credit Control deploy-guard integration stopping point; superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
+
+---
+
+## Prior completed lane — Credit Control deploy-guard integration (`234e7d4`)
+
+**Historical reference** for LIVE Credit Control **deploy/pre-push awareness** posture (read-only surfacing; **no** credit spend; **no** Netlify API call) — superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above. **Guard integration truth remains in force;** owner credit evidence later updated at **`67c5c70`**.
 
 ### Milestone summary (PROVEN)
 
@@ -94,11 +155,11 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | `npm run build` | **PASS** |
 | `git status --short` after **`234e7d4`** commit/push | **Clean** |
 
-### Current recommendation (NOT started — founder-gated)
+### Next recommended lanes (NOT started — superseded by `67c5c70`)
 
-1. Keep production deploys **held** until credits reset (**`2026-07-24`**) or founder explicitly authorizes a credit purchase / spend decision.
+1. ~~Credits exhausted hold~~ — owner evidence later updated at **`67c5c70`** (**1000** available / **`REPO_ONLY_SAFE`**). Credits available still does **not** authorize production deploy by itself — see **§ Current stopping point — Netlify credit evidence update (`67c5c70`)**.
 2. Before push/deploy decisions, run `npm run buckparts:deploy-classifier:pre-push-summary` and/or `npm run buckparts:ship-guard` and read Credit Control hold lines.
-3. Prefer repo-only lanes while **`DEPLOY_HOLD_CREDITS_EXHAUSTED`**.
+3. Prefer repo-only / evidence-safe lanes until an explicit founder-authorized production deploy decision exists.
 4. GSWF Supabase apply remains **not** authorized (mutation surface disabled; no founder approval).
 5. **Offer JSON-LD lane** remains **not started**.
 6. **No GSWF buy CTA**.
@@ -114,13 +175,13 @@ npm run --silent buckparts:ship-guard
 
 ## Prior completed lane — HQ handoff after Credit Control Center (`d609139`)
 
-**Docs-only** — recorded **`08ca292`** BuckParts Credit Control Center stopping point; superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Docs-only** — recorded **`08ca292`** BuckParts Credit Control Center stopping point; superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ---
 
 ## Prior completed lane — BuckParts Credit Control Center (`08ca292`)
 
-**Historical reference** for LIVE Netlify credit / deploy-spend governance posture (read-only Credit Control Center v1; **no** credit spend; **no** Netlify API call) — superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above. **Credit Control Center truth remains in force;** deploy/pre-push surfacing landed at **`234e7d4`**.
+**Historical reference** for LIVE Netlify credit / deploy-spend governance posture (read-only Credit Control Center v1; **no** credit spend; **no** Netlify API call) — superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above. **Credit Control Center truth remains in force;** deploy/pre-push surfacing landed at **`234e7d4`**.
 
 ### Milestone summary (PROVEN)
 
@@ -159,11 +220,11 @@ npm run --silent buckparts:ship-guard
 | `npm run build` | **PASS** |
 | `git status --short` after **`08ca292`** commit/push | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by `234e7d4`)
+### Next recommended lanes (NOT started — superseded by `67c5c70`)
 
 1. Keep production deploys **held** until credits reset (**`2026-07-24`**) or founder explicitly authorizes a credit purchase / spend decision.
 2. Prefer repo-only lanes (docs/scripts/tests/drafts) while **`DEPLOY_HOLD_CREDITS_EXHAUSTED`**.
-3. ~~Deploy/pre-push Credit Control surfacing~~ — **Completed** at **`234e7d4`** — see **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)**. Still re-run credit-control after owner evidence updates.
+3. ~~Deploy/pre-push Credit Control surfacing~~ — **Completed** at **`234e7d4`** — see **§ Prior completed lane — Credit Control deploy-guard integration (`234e7d4`)**. Still re-run credit-control after owner evidence updates.
 4. GSWF Supabase apply remains **not** authorized (mutation surface disabled; no founder approval).
 5. **Offer JSON-LD lane** remains **not started**.
 6. **No GSWF buy CTA**.
@@ -178,13 +239,13 @@ BUCKPARTS_TEST_FILES='scripts/lib/buckparts-credit-control-center-v1.test.ts' ba
 
 ## Prior completed lane — HQ handoff after GSWF Supabase guarded dry run (`959cdf8`)
 
-**Docs-only** — recorded **`d5c0c95`** GSWF Supabase compatibility guarded dry-run stopping point; superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Docs-only** — recorded **`d5c0c95`** GSWF Supabase compatibility guarded dry-run stopping point; superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ---
 
 ## Prior completed lane — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)
 
-**Historical reference** for LIVE GSWF Supabase compatibility sync **guarded dry-run executor** posture (default dry-run; mutation surface disabled; **no** Supabase mutation) — superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above. **Dry-run executor truth remains in force.**
+**Historical reference** for LIVE GSWF Supabase compatibility sync **guarded dry-run executor** posture (default dry-run; mutation surface disabled; **no** Supabase mutation) — superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above. **Dry-run executor truth remains in force.**
 
 ### Milestone summary (PROVEN)
 
@@ -224,7 +285,7 @@ BUCKPARTS_TEST_FILES='scripts/lib/buckparts-credit-control-center-v1.test.ts' ba
 | `npm run build` | **PASS** |
 | `git status --short` after **`d5c0c95`** commit/push | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by `234e7d4`)
+### Next recommended lanes (NOT started — superseded by `67c5c70`)
 
 1. Founder review whether to create a Supabase compat sync owner-approval artifact for this exact plan (**not** created in this lane).
 2. Do **not** enable Supabase mutation surface / `--apply` until founder explicitly authorizes a future apply lane.
@@ -243,13 +304,13 @@ npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-guarded-apply -- -
 
 ## Prior completed lane — HQ handoff after GSWF Supabase sync plan (`853ee79`)
 
-**Docs-only** — recorded **`4337055`** GSWF Supabase compatibility sync plan stopping point; superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Docs-only** — recorded **`4337055`** GSWF Supabase compatibility sync plan stopping point; superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ---
 
 ## Prior completed lane — GSWF Supabase compatibility sync plan (`4337055`)
 
-**Historical reference** for LIVE GSWF post-CSV-apply Supabase compatibility sync **owner-review** posture (read-only compare; **no** Supabase mutation) — superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above. **Plan packet truth remains in force.**
+**Historical reference** for LIVE GSWF post-CSV-apply Supabase compatibility sync **owner-review** posture (read-only compare; **no** Supabase mutation) — superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above. **Plan packet truth remains in force.**
 
 ### Milestone summary (PROVEN)
 
@@ -287,7 +348,7 @@ npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-guarded-apply -- -
 | `npm run build` | **PASS** |
 | `git status --short` after **`4337055`** commit/push | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by `234e7d4`)
+### Next recommended lanes (NOT started — superseded by `67c5c70`)
 
 1. ~~Guarded Supabase sync dry-run executor~~ — **Completed** at **`d5c0c95`** — see **§ Prior completed lane — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)**. Founder approval / mutation surface still **not** authorized.
 2. Do **not** include excluded slugs (**`ge-gfe28hmkww`**, **`ge-gsc25frshss`**, **`ge-gse26gshess`**, **`ge-gte18gsnrss`**) in any future Supabase sync apply.
@@ -305,13 +366,13 @@ npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review 
 
 ## Prior completed lane — HQ handoff after Product JSON-LD suppression (`77eeeb8`)
 
-**Docs-only** — recorded **`7d099c2`** fridge Product JSON-LD suppress stopping point; superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Docs-only** — recorded **`7d099c2`** fridge Product JSON-LD suppress stopping point; superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ---
 
 ## Prior completed lane — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)
 
-**Historical reference** for LIVE fridge filter Product-snippet structured-data posture (suppress incomplete Product; **no** invented offers/reviews) — superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above. **Suppression truth remains in force.**
+**Historical reference** for LIVE fridge filter Product-snippet structured-data posture (suppress incomplete Product; **no** invented offers/reviews) — superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above. **Suppression truth remains in force.**
 
 ### Milestone summary (PROVEN)
 
@@ -345,7 +406,7 @@ npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review 
 | `npm run build` | **PASS** |
 | `git status --short` after **`7d099c2`** commit/push | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by `234e7d4`)
+### Next recommended lanes (NOT started — superseded by `67c5c70`)
 
 1. Recrawl / monitor GSC Product-snippet status for **`/filter/4396710`**, **`/filter/4396508`**, **`/filter/4396395`** after deploy (read-only ops).
 2. **Offer JSON-LD lane** remains **not started** — requires truthful bound price/availability + founder policy to allow Offer keys.
@@ -363,13 +424,13 @@ BUCKPARTS_TEST_FILES='src/lib/seo/structured-data.test.ts src/lib/seo/fridge-pha
 
 ## Prior completed lane — HQ handoff after agent loop contract (`3ad4eea`)
 
-**Docs-only** — recorded **`84ae957`** root **`AGENTS.md`** Agent Loop Contract stopping point; superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Docs-only** — recorded **`84ae957`** root **`AGENTS.md`** Agent Loop Contract stopping point; superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ---
 
 ## Prior completed lane — AGENTS.md agent loop contract (`84ae957`)
 
-**Historical reference** for the root **`AGENTS.md`** BuckParts Agent Loop Contract (docs/operating contract only — **no** production mutation) — superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above. **`AGENTS.md` remains in force as the agent operating contract.**
+**Historical reference** for the root **`AGENTS.md`** BuckParts Agent Loop Contract (docs/operating contract only — **no** production mutation) — superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above. **`AGENTS.md` remains in force as the agent operating contract.**
 
 ### Milestone summary (PROVEN)
 
@@ -403,7 +464,7 @@ BUCKPARTS_TEST_FILES='src/lib/seo/structured-data.test.ts src/lib/seo/fridge-pha
 | `npm run build` | **PASS** |
 | `git status --short` after **`84ae957`** commit/push | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by `234e7d4`)
+### Next recommended lanes (NOT started — superseded by `67c5c70`)
 
 1. Use **`AGENTS.md`** as the default agent operating loop; still read HQ for the live stopping point.
 2. ~~**Supabase compatibility sync** plan~~ — **Completed** at **`4337055`** (read-only; apply still not performed) — see **§ Prior completed lane — GSWF Supabase compatibility sync plan (`4337055`)**.
@@ -421,13 +482,13 @@ git rev-parse HEAD
 
 ## Prior completed lane — HQ handoff after GSWF compatibility repair apply (`fb8b7d7`)
 
-**Docs-only** — recorded **`8361fba`** GSWF compatibility repair apply stopping point; superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Docs-only** — recorded **`8361fba`** GSWF compatibility repair apply stopping point; superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ---
 
 ## Prior completed lane — GSWF wrong-part compatibility repair apply (`8361fba`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** founder-approved **13**-row compatibility repair apply posture (CSV mutated; post-apply dry-run fail-closed) — superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above. **Applied CSV truth remains in force.**
+**Historical reference** for LIVE **`filter::ge::gswf`** founder-approved **13**-row compatibility repair apply posture (CSV mutated; post-apply dry-run fail-closed) — superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above. **Applied CSV truth remains in force.**
 
 ### Milestone summary (PROVEN)
 
@@ -462,7 +523,7 @@ git rev-parse HEAD
 | `npm run build` | **PASS** |
 | `git status --short` after **`8361fba`** commit/push | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by `234e7d4`)
+### Next recommended lanes (NOT started — superseded by `67c5c70`)
 
 1. ~~**Supabase compatibility sync** plan~~ — **Completed** at **`4337055`** (read-only packet; Supabase apply still founder-gated) — see **§ Prior completed lane — GSWF Supabase compatibility sync plan (`4337055`)**.
 2. **Do not include** the **3** PARTIAL slugs (**`ge-gfe28hmkww`**, **`ge-gsc25frshss`**, **`ge-gse26gshess`**) in any further apply until **exact-model Tier-1** proof exists.
@@ -481,7 +542,7 @@ BUCKPARTS_TEST_FILES='scripts/lib/gswf-wrong-part-repair-guarded-apply-v1.test.t
 
 ## Prior completed lane — GSWF wrong-part repair owner approval (`4cbe40c`)
 
-**Historical reference** for founder owner-approval artifact that unlocked the **13**-row guarded apply — superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Historical reference** for founder owner-approval artifact that unlocked the **13**-row guarded apply — superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 | Item | Value |
 |------|-------|
@@ -494,7 +555,7 @@ BUCKPARTS_TEST_FILES='scripts/lib/gswf-wrong-part-repair-guarded-apply-v1.test.t
 
 ## Prior completed lane — GSWF PARTIAL owner-browser proof packet (`3b067ee`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** PARTIAL slug owner-browser proof posture (3 excluded rows; **not** apply-ready) — superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Historical reference** for LIVE **`filter::ge::gswf`** PARTIAL slug owner-browser proof posture (3 excluded rows; **not** apply-ready) — superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -547,7 +608,7 @@ npm run buckparts:gswf-wrong-part-repair-guarded-apply -- --dry-run
 
 ## Prior completed lane — GSWF wrong-part guarded apply dry-run (`31f9bf8`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair **guarded apply dry-run** posture (executor designed; **not** applied at this commit) — superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair **guarded apply dry-run** posture (executor designed; **not** applied at this commit) — superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -610,13 +671,13 @@ npm run buckparts:gswf-wrong-part-repair-apply-plan-owner-review
 
 ## Prior completed lane — HQ handoff after GSWF guarded dry run / header truth (`4dc0c0f` / `b69a642` / `ecddcca`)
 
-**Docs-only** — recorded **`31f9bf8`** guarded dry-run stopping point and subsequent header/AP-hub reference truth fixes; superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Docs-only** — recorded **`31f9bf8`** guarded dry-run stopping point and subsequent header/AP-hub reference truth fixes; superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ---
 
 ## Prior completed lane — GSWF wrong-part repair apply-plan owner packet (`83f15ef`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair apply-plan design posture (13 proven rows only; **not** applied) — superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair apply-plan design posture (13 proven rows only; **not** applied) — superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -682,19 +743,19 @@ npm run buckparts:gswf-family-reconciliation-owner-review
 
 ## Prior completed lane — HQ handoff after GSWF repair plan (`3fdc809`)
 
-**Docs-only** — recorded **`83f15ef`** GSWF wrong-part repair apply-plan owner packet stopping point; superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Docs-only** — recorded **`83f15ef`** GSWF wrong-part repair apply-plan owner packet stopping point; superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ---
 
 ## Prior completed lane — AP hub handoff commit reference fix (`297ba4f`)
 
-**Docs-only** — fixed AP hub handoff commit reference; superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Docs-only** — fixed AP hub handoff commit reference; superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ---
 
 ## Prior completed lane — GSWF family reconciliation owner packet (`2c90b2d`)
 
-**Historical reference** for LIVE Daily Operator **`gswf`** coverage-opportunity investigation and **`filter::ge::gswf`** family reconciliation owner posture — superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Historical reference** for LIVE Daily Operator **`gswf`** coverage-opportunity investigation and **`filter::ge::gswf`** family reconciliation owner posture — superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -756,13 +817,13 @@ npm run buckparts:daily
 
 ## Prior completed lane — HQ handoff after GSWF owner packet (`2451e83`)
 
-**Docs-only** — recorded **`2c90b2d`** GSWF family reconciliation owner packet stopping point; superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Docs-only** — recorded **`2c90b2d`** GSWF family reconciliation owner packet stopping point; superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ---
 
 ## Prior completed lane — AP Production Truth go-gate fix (`97f9fbe`)
 
-**Historical reference** for LIVE Daily Operator + AP Production Truth posture after the false **`go_gate_safe`** blocker fix — superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Historical reference** for LIVE Daily Operator + AP Production Truth posture after the false **`go_gate_safe`** blocker fix — superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -840,7 +901,7 @@ npm run buckparts:daily
 
 ## Prior completed lane — daily next coverage opportunities (`39c9e6f`)
 
-**Historical reference** for GOAT read-only **`next_coverage_opportunities`** surface at **`39c9e6f`** — superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Historical reference** for GOAT read-only **`next_coverage_opportunities`** surface at **`39c9e6f`** — superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -918,19 +979,19 @@ npm run buckparts:production-truth:ap
 
 ## Prior completed lane — HQ handoff after AP production truth fix (`e4c623b`)
 
-**Docs-only** — recorded **`97f9fbe`** AP Production Truth go-gate stopping point; superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Docs-only** — recorded **`97f9fbe`** AP Production Truth go-gate stopping point; superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ---
 
 ## Prior completed lane — HQ handoff after daily coverage opportunities (`3a30c3e`)
 
-**Docs-only** — recorded **`39c9e6f`** GOAT **`next_coverage_opportunities`** stopping point; superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Docs-only** — recorded **`39c9e6f`** GOAT **`next_coverage_opportunities`** stopping point; superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ---
 
 ## Prior completed lane — search/hub canonicals (`2c15bca`)
 
-**Historical reference** for LIVE hub/search canonical metadata on indexable public surfaces at **`2c15bca`** — superseded for pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Historical reference** for LIVE hub/search canonical metadata on indexable public surfaces at **`2c15bca`** — superseded for pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -1062,7 +1123,7 @@ git status --short
 
 ## Prior completed lane — HQ handoff fresh demand loop status (`efc2fec`)
 
-**Docs-only** — recorded **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**; superseded for operational pickup by **§ Current stopping point — Credit Control deploy-guard integration (`234e7d4`)** above.
+**Docs-only** — recorded **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**; superseded for operational pickup by **§ Current stopping point — Netlify credit evidence update (`67c5c70`)** above.
 
 ---
 
