@@ -9,7 +9,7 @@
   "buy_cta_authorized": false,
   "owner_approval_required_for_future_supabase_apply": true,
   "apply_authorized": false,
-  "generated_at": "2026-07-11T22:16:07.391Z",
+  "generated_at": "2026-07-12T18:13:30.392Z",
   "source_command": "npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review",
   "csv_apply_commit": "8361fba",
   "apply_plan_rel_path": "data/fridge/batch-production/drafts/gswf-wrong-part-repair-apply-plan-owner-review-v1.json",
@@ -21,16 +21,16 @@
     "ge-gte18gsnrss"
   ],
   "classification_counts": {
-    "IN_SYNC": 0,
+    "IN_SYNC": 13,
     "SUPABASE_HAS_REMOVED_WRONG_ROWS_PENDING": 0,
     "SUPABASE_MISSING_ADDED_ROWS_PENDING": 0,
-    "CONFLICT_REQUIRES_REVIEW": 13,
+    "CONFLICT_REQUIRES_REVIEW": 0,
     "UNKNOWN_READ_FAILED": 0
   },
   "rows": [
     {
       "fridge_slug": "ge-cwe23sshww",
-      "classification": "CONFLICT_REQUIRES_REVIEW",
+      "classification": "IN_SYNC",
       "csv_intent_mappings": [
         "rpwfe"
       ],
@@ -38,39 +38,19 @@
         "rpwfe"
       ],
       "supabase_mappings": [
-        "gswf",
-        "gswf2"
-      ],
-      "wrong_family_still_in_supabase": [
-        "gswf",
-        "gswf2"
-      ],
-      "missing_from_supabase": [
         "rpwfe"
       ],
+      "wrong_family_still_in_supabase": [],
+      "missing_from_supabase": [],
       "unexpected_in_supabase": [],
-      "proposed_supabase_removals": [
-        {
-          "fridge_slug": "ge-cwe23sshww",
-          "filter_slug": "gswf"
-        },
-        {
-          "fridge_slug": "ge-cwe23sshww",
-          "filter_slug": "gswf2"
-        }
-      ],
-      "proposed_supabase_additions": [
-        {
-          "fridge_slug": "ge-cwe23sshww",
-          "filter_slug": "rpwfe"
-        }
-      ],
+      "proposed_supabase_removals": [],
+      "proposed_supabase_additions": [],
       "read_error": null,
       "supabase_mutation_authorized": false
     },
     {
       "fridge_slug": "ge-gfe24jgkww",
-      "classification": "CONFLICT_REQUIRES_REVIEW",
+      "classification": "IN_SYNC",
       "csv_intent_mappings": [
         "smartwater-mwfp",
         "xwfe"
@@ -80,40 +60,20 @@
         "xwfe"
       ],
       "supabase_mappings": [
-        "gswf",
-        "gswf2",
-        "smartwater-mwfp"
-      ],
-      "wrong_family_still_in_supabase": [
-        "gswf",
-        "gswf2"
-      ],
-      "missing_from_supabase": [
+        "smartwater-mwfp",
         "xwfe"
       ],
+      "wrong_family_still_in_supabase": [],
+      "missing_from_supabase": [],
       "unexpected_in_supabase": [],
-      "proposed_supabase_removals": [
-        {
-          "fridge_slug": "ge-gfe24jgkww",
-          "filter_slug": "gswf"
-        },
-        {
-          "fridge_slug": "ge-gfe24jgkww",
-          "filter_slug": "gswf2"
-        }
-      ],
-      "proposed_supabase_additions": [
-        {
-          "fridge_slug": "ge-gfe24jgkww",
-          "filter_slug": "xwfe"
-        }
-      ],
+      "proposed_supabase_removals": [],
+      "proposed_supabase_additions": [],
       "read_error": null,
       "supabase_mutation_authorized": false
     },
     {
       "fridge_slug": "ge-gfe27jmkes",
-      "classification": "CONFLICT_REQUIRES_REVIEW",
+      "classification": "IN_SYNC",
       "csv_intent_mappings": [
         "xwfe"
       ],
@@ -121,39 +81,19 @@
         "xwfe"
       ],
       "supabase_mappings": [
-        "gswf",
-        "gswf2"
-      ],
-      "wrong_family_still_in_supabase": [
-        "gswf",
-        "gswf2"
-      ],
-      "missing_from_supabase": [
         "xwfe"
       ],
+      "wrong_family_still_in_supabase": [],
+      "missing_from_supabase": [],
       "unexpected_in_supabase": [],
-      "proposed_supabase_removals": [
-        {
-          "fridge_slug": "ge-gfe27jmkes",
-          "filter_slug": "gswf"
-        },
-        {
-          "fridge_slug": "ge-gfe27jmkes",
-          "filter_slug": "gswf2"
-        }
-      ],
-      "proposed_supabase_additions": [
-        {
-          "fridge_slug": "ge-gfe27jmkes",
-          "filter_slug": "xwfe"
-        }
-      ],
+      "proposed_supabase_removals": [],
+      "proposed_supabase_additions": [],
       "read_error": null,
       "supabase_mutation_authorized": false
     },
     {
       "fridge_slug": "ge-gfe28gmkbb",
-      "classification": "CONFLICT_REQUIRES_REVIEW",
+      "classification": "IN_SYNC",
       "csv_intent_mappings": [
         "rpwfe"
       ],
@@ -161,39 +101,19 @@
         "rpwfe"
       ],
       "supabase_mappings": [
-        "gswf",
-        "gswf2"
-      ],
-      "wrong_family_still_in_supabase": [
-        "gswf",
-        "gswf2"
-      ],
-      "missing_from_supabase": [
         "rpwfe"
       ],
+      "wrong_family_still_in_supabase": [],
+      "missing_from_supabase": [],
       "unexpected_in_supabase": [],
-      "proposed_supabase_removals": [
-        {
-          "fridge_slug": "ge-gfe28gmkbb",
-          "filter_slug": "gswf"
-        },
-        {
-          "fridge_slug": "ge-gfe28gmkbb",
-          "filter_slug": "gswf2"
-        }
-      ],
-      "proposed_supabase_additions": [
-        {
-          "fridge_slug": "ge-gfe28gmkbb",
-          "filter_slug": "rpwfe"
-        }
-      ],
+      "proposed_supabase_removals": [],
+      "proposed_supabase_additions": [],
       "read_error": null,
       "supabase_mutation_authorized": false
     },
     {
       "fridge_slug": "ge-gfe28gskes",
-      "classification": "CONFLICT_REQUIRES_REVIEW",
+      "classification": "IN_SYNC",
       "csv_intent_mappings": [
         "rpwfe"
       ],
@@ -201,39 +121,19 @@
         "rpwfe"
       ],
       "supabase_mappings": [
-        "gswf",
-        "gswf2"
-      ],
-      "wrong_family_still_in_supabase": [
-        "gswf",
-        "gswf2"
-      ],
-      "missing_from_supabase": [
         "rpwfe"
       ],
+      "wrong_family_still_in_supabase": [],
+      "missing_from_supabase": [],
       "unexpected_in_supabase": [],
-      "proposed_supabase_removals": [
-        {
-          "fridge_slug": "ge-gfe28gskes",
-          "filter_slug": "gswf"
-        },
-        {
-          "fridge_slug": "ge-gfe28gskes",
-          "filter_slug": "gswf2"
-        }
-      ],
-      "proposed_supabase_additions": [
-        {
-          "fridge_slug": "ge-gfe28gskes",
-          "filter_slug": "rpwfe"
-        }
-      ],
+      "proposed_supabase_removals": [],
+      "proposed_supabase_additions": [],
       "read_error": null,
       "supabase_mutation_authorized": false
     },
     {
       "fridge_slug": "ge-gfe28hskss",
-      "classification": "CONFLICT_REQUIRES_REVIEW",
+      "classification": "IN_SYNC",
       "csv_intent_mappings": [
         "rpwfe",
         "smartwater-mwfp"
@@ -243,40 +143,20 @@
         "smartwater-mwfp"
       ],
       "supabase_mappings": [
-        "gswf",
-        "gswf2",
+        "rpwfe",
         "smartwater-mwfp"
       ],
-      "wrong_family_still_in_supabase": [
-        "gswf",
-        "gswf2"
-      ],
-      "missing_from_supabase": [
-        "rpwfe"
-      ],
+      "wrong_family_still_in_supabase": [],
+      "missing_from_supabase": [],
       "unexpected_in_supabase": [],
-      "proposed_supabase_removals": [
-        {
-          "fridge_slug": "ge-gfe28hskss",
-          "filter_slug": "gswf"
-        },
-        {
-          "fridge_slug": "ge-gfe28hskss",
-          "filter_slug": "gswf2"
-        }
-      ],
-      "proposed_supabase_additions": [
-        {
-          "fridge_slug": "ge-gfe28hskss",
-          "filter_slug": "rpwfe"
-        }
-      ],
+      "proposed_supabase_removals": [],
+      "proposed_supabase_additions": [],
       "read_error": null,
       "supabase_mutation_authorized": false
     },
     {
       "fridge_slug": "ge-gne25jmkww",
-      "classification": "CONFLICT_REQUIRES_REVIEW",
+      "classification": "IN_SYNC",
       "csv_intent_mappings": [
         "xwfe"
       ],
@@ -284,39 +164,19 @@
         "xwfe"
       ],
       "supabase_mappings": [
-        "gswf",
-        "gswf2"
-      ],
-      "wrong_family_still_in_supabase": [
-        "gswf",
-        "gswf2"
-      ],
-      "missing_from_supabase": [
         "xwfe"
       ],
+      "wrong_family_still_in_supabase": [],
+      "missing_from_supabase": [],
       "unexpected_in_supabase": [],
-      "proposed_supabase_removals": [
-        {
-          "fridge_slug": "ge-gne25jmkww",
-          "filter_slug": "gswf"
-        },
-        {
-          "fridge_slug": "ge-gne25jmkww",
-          "filter_slug": "gswf2"
-        }
-      ],
-      "proposed_supabase_additions": [
-        {
-          "fridge_slug": "ge-gne25jmkww",
-          "filter_slug": "xwfe"
-        }
-      ],
+      "proposed_supabase_removals": [],
+      "proposed_supabase_additions": [],
       "read_error": null,
       "supabase_mutation_authorized": false
     },
     {
       "fridge_slug": "ge-gne27jstss",
-      "classification": "CONFLICT_REQUIRES_REVIEW",
+      "classification": "IN_SYNC",
       "csv_intent_mappings": [
         "xwf",
         "xwfe"
@@ -326,40 +186,20 @@
         "xwfe"
       ],
       "supabase_mappings": [
-        "gswf",
-        "gswf2",
-        "xwf"
-      ],
-      "wrong_family_still_in_supabase": [
-        "gswf",
-        "gswf2"
-      ],
-      "missing_from_supabase": [
+        "xwf",
         "xwfe"
       ],
+      "wrong_family_still_in_supabase": [],
+      "missing_from_supabase": [],
       "unexpected_in_supabase": [],
-      "proposed_supabase_removals": [
-        {
-          "fridge_slug": "ge-gne27jstss",
-          "filter_slug": "gswf"
-        },
-        {
-          "fridge_slug": "ge-gne27jstss",
-          "filter_slug": "gswf2"
-        }
-      ],
-      "proposed_supabase_additions": [
-        {
-          "fridge_slug": "ge-gne27jstss",
-          "filter_slug": "xwfe"
-        }
-      ],
+      "proposed_supabase_removals": [],
+      "proposed_supabase_additions": [],
       "read_error": null,
       "supabase_mutation_authorized": false
     },
     {
       "fridge_slug": "ge-gse25hskss",
-      "classification": "CONFLICT_REQUIRES_REVIEW",
+      "classification": "IN_SYNC",
       "csv_intent_mappings": [
         "xwf",
         "xwfe"
@@ -369,40 +209,20 @@
         "xwfe"
       ],
       "supabase_mappings": [
-        "gswf",
-        "gswf2",
-        "xwf"
-      ],
-      "wrong_family_still_in_supabase": [
-        "gswf",
-        "gswf2"
-      ],
-      "missing_from_supabase": [
+        "xwf",
         "xwfe"
       ],
+      "wrong_family_still_in_supabase": [],
+      "missing_from_supabase": [],
       "unexpected_in_supabase": [],
-      "proposed_supabase_removals": [
-        {
-          "fridge_slug": "ge-gse25hskss",
-          "filter_slug": "gswf"
-        },
-        {
-          "fridge_slug": "ge-gse25hskss",
-          "filter_slug": "gswf2"
-        }
-      ],
-      "proposed_supabase_additions": [
-        {
-          "fridge_slug": "ge-gse25hskss",
-          "filter_slug": "xwfe"
-        }
-      ],
+      "proposed_supabase_removals": [],
+      "proposed_supabase_additions": [],
       "read_error": null,
       "supabase_mutation_authorized": false
     },
     {
       "fridge_slug": "ge-gye22gskww",
-      "classification": "CONFLICT_REQUIRES_REVIEW",
+      "classification": "IN_SYNC",
       "csv_intent_mappings": [
         "rpwfe"
       ],
@@ -410,39 +230,19 @@
         "rpwfe"
       ],
       "supabase_mappings": [
-        "gswf",
-        "gswf2"
-      ],
-      "wrong_family_still_in_supabase": [
-        "gswf",
-        "gswf2"
-      ],
-      "missing_from_supabase": [
         "rpwfe"
       ],
+      "wrong_family_still_in_supabase": [],
+      "missing_from_supabase": [],
       "unexpected_in_supabase": [],
-      "proposed_supabase_removals": [
-        {
-          "fridge_slug": "ge-gye22gskww",
-          "filter_slug": "gswf"
-        },
-        {
-          "fridge_slug": "ge-gye22gskww",
-          "filter_slug": "gswf2"
-        }
-      ],
-      "proposed_supabase_additions": [
-        {
-          "fridge_slug": "ge-gye22gskww",
-          "filter_slug": "rpwfe"
-        }
-      ],
+      "proposed_supabase_removals": [],
+      "proposed_supabase_additions": [],
       "read_error": null,
       "supabase_mutation_authorized": false
     },
     {
       "fridge_slug": "ge-pfe28kmkww",
-      "classification": "CONFLICT_REQUIRES_REVIEW",
+      "classification": "IN_SYNC",
       "csv_intent_mappings": [
         "rpwfe",
         "xwf"
@@ -452,40 +252,20 @@
         "xwf"
       ],
       "supabase_mappings": [
-        "gswf",
-        "gswf2",
+        "rpwfe",
         "xwf"
       ],
-      "wrong_family_still_in_supabase": [
-        "gswf",
-        "gswf2"
-      ],
-      "missing_from_supabase": [
-        "rpwfe"
-      ],
+      "wrong_family_still_in_supabase": [],
+      "missing_from_supabase": [],
       "unexpected_in_supabase": [],
-      "proposed_supabase_removals": [
-        {
-          "fridge_slug": "ge-pfe28kmkww",
-          "filter_slug": "gswf"
-        },
-        {
-          "fridge_slug": "ge-pfe28kmkww",
-          "filter_slug": "gswf2"
-        }
-      ],
-      "proposed_supabase_additions": [
-        {
-          "fridge_slug": "ge-pfe28kmkww",
-          "filter_slug": "rpwfe"
-        }
-      ],
+      "proposed_supabase_removals": [],
+      "proposed_supabase_additions": [],
       "read_error": null,
       "supabase_mutation_authorized": false
     },
     {
       "fridge_slug": "ge-pfe28kynbb",
-      "classification": "CONFLICT_REQUIRES_REVIEW",
+      "classification": "IN_SYNC",
       "csv_intent_mappings": [
         "rpwfe"
       ],
@@ -493,39 +273,19 @@
         "rpwfe"
       ],
       "supabase_mappings": [
-        "gswf",
-        "gswf2"
-      ],
-      "wrong_family_still_in_supabase": [
-        "gswf",
-        "gswf2"
-      ],
-      "missing_from_supabase": [
         "rpwfe"
       ],
+      "wrong_family_still_in_supabase": [],
+      "missing_from_supabase": [],
       "unexpected_in_supabase": [],
-      "proposed_supabase_removals": [
-        {
-          "fridge_slug": "ge-pfe28kynbb",
-          "filter_slug": "gswf"
-        },
-        {
-          "fridge_slug": "ge-pfe28kynbb",
-          "filter_slug": "gswf2"
-        }
-      ],
-      "proposed_supabase_additions": [
-        {
-          "fridge_slug": "ge-pfe28kynbb",
-          "filter_slug": "rpwfe"
-        }
-      ],
+      "proposed_supabase_removals": [],
+      "proposed_supabase_additions": [],
       "read_error": null,
       "supabase_mutation_authorized": false
     },
     {
       "fridge_slug": "ge-pvd28bymfs",
-      "classification": "CONFLICT_REQUIRES_REVIEW",
+      "classification": "IN_SYNC",
       "csv_intent_mappings": [
         "xwfe"
       ],
@@ -533,206 +293,28 @@
         "xwfe"
       ],
       "supabase_mappings": [
-        "gswf",
-        "gswf2"
-      ],
-      "wrong_family_still_in_supabase": [
-        "gswf",
-        "gswf2"
-      ],
-      "missing_from_supabase": [
         "xwfe"
       ],
+      "wrong_family_still_in_supabase": [],
+      "missing_from_supabase": [],
       "unexpected_in_supabase": [],
-      "proposed_supabase_removals": [
-        {
-          "fridge_slug": "ge-pvd28bymfs",
-          "filter_slug": "gswf"
-        },
-        {
-          "fridge_slug": "ge-pvd28bymfs",
-          "filter_slug": "gswf2"
-        }
-      ],
-      "proposed_supabase_additions": [
-        {
-          "fridge_slug": "ge-pvd28bymfs",
-          "filter_slug": "xwfe"
-        }
-      ],
+      "proposed_supabase_removals": [],
+      "proposed_supabase_additions": [],
       "read_error": null,
       "supabase_mutation_authorized": false
     }
   ],
   "proposed_supabase_change_summary": {
-    "removals": [
-      {
-        "fridge_slug": "ge-cwe23sshww",
-        "filter_slug": "gswf"
-      },
-      {
-        "fridge_slug": "ge-cwe23sshww",
-        "filter_slug": "gswf2"
-      },
-      {
-        "fridge_slug": "ge-gfe24jgkww",
-        "filter_slug": "gswf"
-      },
-      {
-        "fridge_slug": "ge-gfe24jgkww",
-        "filter_slug": "gswf2"
-      },
-      {
-        "fridge_slug": "ge-gfe27jmkes",
-        "filter_slug": "gswf"
-      },
-      {
-        "fridge_slug": "ge-gfe27jmkes",
-        "filter_slug": "gswf2"
-      },
-      {
-        "fridge_slug": "ge-gfe28gmkbb",
-        "filter_slug": "gswf"
-      },
-      {
-        "fridge_slug": "ge-gfe28gmkbb",
-        "filter_slug": "gswf2"
-      },
-      {
-        "fridge_slug": "ge-gfe28gskes",
-        "filter_slug": "gswf"
-      },
-      {
-        "fridge_slug": "ge-gfe28gskes",
-        "filter_slug": "gswf2"
-      },
-      {
-        "fridge_slug": "ge-gfe28hskss",
-        "filter_slug": "gswf"
-      },
-      {
-        "fridge_slug": "ge-gfe28hskss",
-        "filter_slug": "gswf2"
-      },
-      {
-        "fridge_slug": "ge-gne25jmkww",
-        "filter_slug": "gswf"
-      },
-      {
-        "fridge_slug": "ge-gne25jmkww",
-        "filter_slug": "gswf2"
-      },
-      {
-        "fridge_slug": "ge-gne27jstss",
-        "filter_slug": "gswf"
-      },
-      {
-        "fridge_slug": "ge-gne27jstss",
-        "filter_slug": "gswf2"
-      },
-      {
-        "fridge_slug": "ge-gse25hskss",
-        "filter_slug": "gswf"
-      },
-      {
-        "fridge_slug": "ge-gse25hskss",
-        "filter_slug": "gswf2"
-      },
-      {
-        "fridge_slug": "ge-gye22gskww",
-        "filter_slug": "gswf"
-      },
-      {
-        "fridge_slug": "ge-gye22gskww",
-        "filter_slug": "gswf2"
-      },
-      {
-        "fridge_slug": "ge-pfe28kmkww",
-        "filter_slug": "gswf"
-      },
-      {
-        "fridge_slug": "ge-pfe28kmkww",
-        "filter_slug": "gswf2"
-      },
-      {
-        "fridge_slug": "ge-pfe28kynbb",
-        "filter_slug": "gswf"
-      },
-      {
-        "fridge_slug": "ge-pfe28kynbb",
-        "filter_slug": "gswf2"
-      },
-      {
-        "fridge_slug": "ge-pvd28bymfs",
-        "filter_slug": "gswf"
-      },
-      {
-        "fridge_slug": "ge-pvd28bymfs",
-        "filter_slug": "gswf2"
-      }
-    ],
-    "additions": [
-      {
-        "fridge_slug": "ge-cwe23sshww",
-        "filter_slug": "rpwfe"
-      },
-      {
-        "fridge_slug": "ge-gfe24jgkww",
-        "filter_slug": "xwfe"
-      },
-      {
-        "fridge_slug": "ge-gfe27jmkes",
-        "filter_slug": "xwfe"
-      },
-      {
-        "fridge_slug": "ge-gfe28gmkbb",
-        "filter_slug": "rpwfe"
-      },
-      {
-        "fridge_slug": "ge-gfe28gskes",
-        "filter_slug": "rpwfe"
-      },
-      {
-        "fridge_slug": "ge-gfe28hskss",
-        "filter_slug": "rpwfe"
-      },
-      {
-        "fridge_slug": "ge-gne25jmkww",
-        "filter_slug": "xwfe"
-      },
-      {
-        "fridge_slug": "ge-gne27jstss",
-        "filter_slug": "xwfe"
-      },
-      {
-        "fridge_slug": "ge-gse25hskss",
-        "filter_slug": "xwfe"
-      },
-      {
-        "fridge_slug": "ge-gye22gskww",
-        "filter_slug": "rpwfe"
-      },
-      {
-        "fridge_slug": "ge-pfe28kmkww",
-        "filter_slug": "rpwfe"
-      },
-      {
-        "fridge_slug": "ge-pfe28kynbb",
-        "filter_slug": "rpwfe"
-      },
-      {
-        "fridge_slug": "ge-pvd28bymfs",
-        "filter_slug": "xwfe"
-      }
-    ],
+    "removals": [],
+    "additions": [],
     "note": "Future founder-gated apply plan only — this report does not mutate Supabase."
   },
   "proven_facts": [
     "PROVEN: read_only=true; data_mutation=false; supabase_mutation_authorized=false.",
     "PROVEN: planned_slug_count=13; csv_apply_commit=8361fba.",
     "PROVEN: excluded_slugs_untouched=ge-gfe28hmkww|ge-gsc25frshss|ge-gse26gshess|ge-gte18gsnrss.",
-    "PROVEN: classification_counts={\"IN_SYNC\":0,\"SUPABASE_HAS_REMOVED_WRONG_ROWS_PENDING\":0,\"SUPABASE_MISSING_ADDED_ROWS_PENDING\":0,\"CONFLICT_REQUIRES_REVIEW\":13,\"UNKNOWN_READ_FAILED\":0}.",
-    "PROVEN: proposed_supabase_removals=26; proposed_supabase_additions=13 (plan only — not applied).",
+    "PROVEN: classification_counts={\"IN_SYNC\":13,\"SUPABASE_HAS_REMOVED_WRONG_ROWS_PENDING\":0,\"SUPABASE_MISSING_ADDED_ROWS_PENDING\":0,\"CONFLICT_REQUIRES_REVIEW\":0,\"UNKNOWN_READ_FAILED\":0}.",
+    "PROVEN: proposed_supabase_removals=0; proposed_supabase_additions=0 (plan only — not applied).",
     "PROVEN: committed CSV current mappings match apply-plan after_mappings for all 13 repaired slugs."
   ],
   "unknown_facts": [

@@ -78,6 +78,11 @@ export type ApplySupabaseCompatSyncDeltasFnV1 = (
   deltas: SupabaseCompatSyncPlannedChangeV1[],
 ) => Promise<SupabaseCompatSyncWriteResultV1>;
 
+export type GswfSupabaseCompatSyncPlanSyncStateV1 =
+  | "pending_conflict_sync"
+  | "already_in_sync"
+  | "invalid";
+
 export type GswfWrongPartRepairSupabaseCompatSyncGuardedApplyReportV1 = {
   contract: typeof GSWF_WRONG_PART_REPAIR_SUPABASE_COMPAT_SYNC_GUARDED_APPLY_CONTRACT_V1;
   mode: "dry_run" | "apply";
@@ -86,7 +91,8 @@ export type GswfWrongPartRepairSupabaseCompatSyncGuardedApplyReportV1 = {
   supabase_mutation_authorized: boolean;
   csv_mutation_authorized: false;
   mutation_flag_enabled: boolean;
-  apply_status: "DRY_RUN_READY" | "APPLIED" | "BLOCKED";
+  plan_sync_state: GswfSupabaseCompatSyncPlanSyncStateV1;
+  apply_status: "DRY_RUN_READY" | "ALREADY_IN_SYNC" | "APPLIED" | "BLOCKED";
   blocked_reasons: string[];
   sync_plan_rel_path: string;
   sync_plan_sha256: string | null;
@@ -281,6 +287,7 @@ function validatePlanShape(plan: GswfWrongPartRepairSupabaseCompatSyncPlanOwnerR
   removals: SupabaseCompatSyncPlannedChangeV1[];
   additions: SupabaseCompatSyncPlannedChangeV1[];
   excludedSlugs: string[];
+  plan_sync_state: GswfSupabaseCompatSyncPlanSyncStateV1;
 } {
   const errors: string[] = [];
   const family = new Set(GSWF_WRONG_PART_FAMILY_FILTER_SLUGS_V1 as readonly string[]);
@@ -338,14 +345,6 @@ function validatePlanShape(plan: GswfWrongPartRepairSupabaseCompatSyncPlanOwnerR
     }
   }
 
-  if (
-    plan.classification_counts.CONFLICT_REQUIRES_REVIEW !==
-    GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.conflict_requires_review
-  ) {
-    errors.push(
-      `classification_counts.CONFLICT_REQUIRES_REVIEW expected ${String(GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.conflict_requires_review)}, got ${String(plan.classification_counts.CONFLICT_REQUIRES_REVIEW)}`,
-    );
-  }
   if (plan.classification_counts.UNKNOWN_READ_FAILED !== 0) {
     errors.push(
       `classification_counts.UNKNOWN_READ_FAILED expected 0, got ${String(plan.classification_counts.UNKNOWN_READ_FAILED)}`,
@@ -354,14 +353,24 @@ function validatePlanShape(plan: GswfWrongPartRepairSupabaseCompatSyncPlanOwnerR
 
   const summaryRemovals = plan.proposed_supabase_change_summary?.removals ?? [];
   const summaryAdditions = plan.proposed_supabase_change_summary?.additions ?? [];
-  if (summaryRemovals.length !== GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_removals) {
+  const inSyncCount = plan.classification_counts.IN_SYNC;
+  const conflictCount = plan.classification_counts.CONFLICT_REQUIRES_REVIEW;
+
+  const looksAlreadyInSync =
+    inSyncCount === GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_slug_count &&
+    conflictCount === 0 &&
+    summaryRemovals.length === 0 &&
+    summaryAdditions.length === 0;
+
+  const looksPendingConflict =
+    conflictCount === GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.conflict_requires_review &&
+    inSyncCount === 0 &&
+    summaryRemovals.length === GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_removals &&
+    summaryAdditions.length === GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_additions;
+
+  if (!looksAlreadyInSync && !looksPendingConflict) {
     errors.push(
-      `proposed removals expected ${String(GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_removals)}, got ${String(summaryRemovals.length)}`,
-    );
-  }
-  if (summaryAdditions.length !== GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_additions) {
-    errors.push(
-      `proposed additions expected ${String(GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_additions)}, got ${String(summaryAdditions.length)}`,
+      `sync plan is neither pending 13/26/13 conflict sync nor already IN_SYNC=13 (IN_SYNC=${String(inSyncCount)}, CONFLICT=${String(conflictCount)}, removals=${String(summaryRemovals.length)}, additions=${String(summaryAdditions.length)})`,
     );
   }
 
@@ -421,14 +430,32 @@ function validatePlanShape(plan: GswfWrongPartRepairSupabaseCompatSyncPlanOwnerR
     );
   }
 
-  const totalDeltas = removals.length + additions.length;
-  if (totalDeltas !== GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_row_deltas) {
-    errors.push(
-      `planned row deltas expected ${String(GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_row_deltas)}, got ${String(totalDeltas)}`,
-    );
+  if (looksPendingConflict) {
+    const totalDeltas = removals.length + additions.length;
+    if (totalDeltas !== GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_row_deltas) {
+      errors.push(
+        `planned row deltas expected ${String(GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_row_deltas)}, got ${String(totalDeltas)}`,
+      );
+    }
   }
 
-  return { errors, removals, additions, excludedSlugs: expectedExcluded };
+  if (errors.length > 0) {
+    return {
+      errors,
+      removals,
+      additions,
+      excludedSlugs: expectedExcluded,
+      plan_sync_state: "invalid",
+    };
+  }
+
+  return {
+    errors: [],
+    removals,
+    additions,
+    excludedSlugs: expectedExcluded,
+    plan_sync_state: looksAlreadyInSync ? "already_in_sync" : "pending_conflict_sync",
+  };
 }
 
 async function resolveFridgeModelId(
@@ -596,6 +623,7 @@ export async function runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1(
   let classification_counts: GswfWrongPartRepairSupabaseCompatSyncPlanOwnerReviewV1["classification_counts"] | null =
     null;
   let planned_slug_count = 0;
+  let plan_sync_state: GswfSupabaseCompatSyncPlanSyncStateV1 = "invalid";
 
   if (loaded.plan) {
     classification_counts = loaded.plan.classification_counts;
@@ -605,6 +633,7 @@ export async function runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1(
     removals = shape.removals;
     additions = shape.additions;
     excludedSlugs = shape.excludedSlugs;
+    plan_sync_state = shape.plan_sync_state;
   }
 
   const approvalAbs = path.join(deps.rootDir, ownerApprovalRelPath);
@@ -621,6 +650,62 @@ export async function runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1(
     readText,
   });
 
+  const planned_supabase_row_deltas = [...removals, ...additions].sort((a, b) =>
+    a.row_key.localeCompare(b.row_key),
+  );
+
+  // Post-apply / already-synced plan: never re-apply deltas; report explicit ALREADY_IN_SYNC.
+  if (plan_sync_state === "already_in_sync" && blocked_reasons.length === 0) {
+    const proven_facts = [
+      `PROVEN: mode=${deps.mode}; apply_status=ALREADY_IN_SYNC; data_mutation=false; supabase_mutation_authorized=false; mutation_flag_enabled=${String(mutation_flag_enabled)}.`,
+      `PROVEN: sync_plan_rel_path=${syncPlanRelPath}.`,
+      `PROVEN: plan_sync_state=already_in_sync; IN_SYNC=13; CONFLICT_REQUIRES_REVIEW=0; planned_removals=0; planned_additions=0.`,
+      `PROVEN: owner_approval_present=${String(approvalFilePresent)}; owner_approval_valid=${String(approval.row != null)}; decision_id=${approval.row?.decision_id ?? "none"}.`,
+      `PROVEN: excluded_slugs_untouched=${excludedSlugs.join("|")}.`,
+      `PROVEN: csv_apply_commit=${GSWF_WRONG_PART_REPAIR_CSV_APPLY_COMMIT_V1}.`,
+      "PROVEN: no Supabase writes attempted — plan already in sync.",
+    ];
+    return {
+      contract: GSWF_WRONG_PART_REPAIR_SUPABASE_COMPAT_SYNC_GUARDED_APPLY_CONTRACT_V1,
+      mode: deps.mode,
+      read_only: true,
+      data_mutation: false,
+      supabase_mutation_authorized: false,
+      csv_mutation_authorized: false,
+      mutation_flag_enabled,
+      plan_sync_state,
+      apply_status: "ALREADY_IN_SYNC",
+      blocked_reasons: [],
+      sync_plan_rel_path: syncPlanRelPath,
+      sync_plan_sha256: loaded.sha256,
+      owner_approval_rel_path: ownerApprovalRelPath,
+      owner_approval_present: approvalFilePresent,
+      owner_approval_decision_id: approval.row?.decision_id ?? null,
+      owner_approval_valid: approval.row != null,
+      owner_approval_required_for_apply: true,
+      csv_apply_commit: GSWF_WRONG_PART_REPAIR_CSV_APPLY_COMMIT_V1,
+      planned_slug_count,
+      planned_removals: 0,
+      planned_additions: 0,
+      classification_counts,
+      excluded_slugs_untouched: excludedSlugs,
+      planned_supabase_row_deltas: [],
+      planned_removal_row_keys: [],
+      planned_addition_row_keys: [],
+      applied_supabase_row_keys: [],
+      generated_at: generatedAt,
+      source_command: GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_GUARDED_SOURCE_COMMAND_V1,
+      proven_facts,
+      unknown_facts: [
+        "UNKNOWN: Whether future drift will reopen CONFLICT_REQUIRES_REVIEW for these 13 slugs.",
+      ],
+      risk_notes: [
+        "Plan is already IN_SYNC — executor will not re-apply historical 26/13 deltas.",
+        "Do not mutate retailer_links / buy CTA / sitemap / robots / Product JSON-LD / CSV from this executor.",
+      ],
+    };
+  }
+
   if (deps.mode === "apply") {
     if (!approval.row) {
       blocked_reasons.push(...approval.errors);
@@ -635,15 +720,12 @@ export async function runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1(
     }
   }
 
-  const planned_supabase_row_deltas = [...removals, ...additions].sort((a, b) =>
-    a.row_key.localeCompare(b.row_key),
-  );
-
   const gates_pass_for_apply =
     deps.mode === "apply" &&
     blocked_reasons.length === 0 &&
     approval.row != null &&
     mutation_flag_enabled &&
+    plan_sync_state === "pending_conflict_sync" &&
     removals.length === GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_removals &&
     additions.length === GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_additions &&
     planned_supabase_row_deltas.length ===
@@ -689,7 +771,7 @@ export async function runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1(
   const proven_facts = [
     `PROVEN: mode=${deps.mode}; apply_status=${apply_status}; data_mutation=${String(data_mutation)}; supabase_mutation_authorized=${String(supabase_mutation_authorized)}; mutation_flag_enabled=${String(mutation_flag_enabled)}.`,
     `PROVEN: sync_plan_rel_path=${syncPlanRelPath}.`,
-    `PROVEN: planned_slug_count=${String(planned_slug_count)}; planned_removals=${String(removals.length)}; planned_additions=${String(additions.length)}.`,
+    `PROVEN: plan_sync_state=${plan_sync_state}; planned_slug_count=${String(planned_slug_count)}; planned_removals=${String(removals.length)}; planned_additions=${String(additions.length)}.`,
     `PROVEN: owner_approval_present=${String(approvalFilePresent)}; owner_approval_valid=${String(approval.row != null)}; decision_id=${approval.row?.decision_id ?? "none"}.`,
     `PROVEN: excluded_slugs_untouched=${excludedSlugs.join("|")}.`,
     `PROVEN: csv_apply_commit=${GSWF_WRONG_PART_REPAIR_CSV_APPLY_COMMIT_V1}.`,
@@ -701,7 +783,7 @@ export async function runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1(
   }
   if (apply_status === "DRY_RUN_READY") {
     proven_facts.push(
-      "PROVEN: sync plan shape verified (read_only=true; plan supabase_mutation_authorized=false; removals=26; additions=13; CONFLICT_REQUIRES_REVIEW=13).",
+      "PROVEN: sync plan shape verified (pending_conflict_sync; removals=26; additions=13; CONFLICT_REQUIRES_REVIEW=13).",
     );
   }
   if (apply_status === "APPLIED") {
@@ -717,7 +799,8 @@ export async function runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1(
 
   const risk_notes = [
     "Dry-run never mutates Supabase or CSV.",
-    "Apply requires matching founder approval + BUCKPARTS_GSWF_SUPABASE_COMPAT_SYNC_MUTATION_ENABLED=1 + exact 13/26/13 plan.",
+    "Apply requires matching founder approval + BUCKPARTS_GSWF_SUPABASE_COMPAT_SYNC_MUTATION_ENABLED=1 + exact pending 13/26/13 conflict plan.",
+    "Already-synced IN_SYNC=13 plans return ALREADY_IN_SYNC and do not re-apply deltas.",
     "Do not run retailer_links / buy CTA / sitemap / robots / Product JSON-LD changes from this executor.",
     "Do not include PARTIAL or no-filter excluded slugs in any Supabase sync apply.",
     "Do not mutate data/compatibility_mappings.csv from this executor.",
@@ -731,6 +814,7 @@ export async function runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1(
     supabase_mutation_authorized,
     csv_mutation_authorized: false,
     mutation_flag_enabled,
+    plan_sync_state,
     apply_status,
     blocked_reasons,
     sync_plan_rel_path: syncPlanRelPath,
@@ -775,6 +859,7 @@ export function buildGswfWrongPartRepairSupabaseCompatSyncGuardedDryRunMarkdownV
     `- data_mutation: **${String(report.data_mutation)}**`,
     `- supabase_mutation_authorized: **${String(report.supabase_mutation_authorized)}**`,
     `- mutation_flag_enabled: **${String(report.mutation_flag_enabled)}**`,
+    `- plan_sync_state: **${report.plan_sync_state}**`,
     `- owner_approval_present: **${String(report.owner_approval_present)}**`,
     `- owner_approval_valid: **${String(report.owner_approval_valid)}**`,
     `- owner_approval_required_for_apply: **true**`,

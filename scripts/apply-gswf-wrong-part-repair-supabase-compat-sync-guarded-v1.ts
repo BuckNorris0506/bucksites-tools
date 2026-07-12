@@ -7,9 +7,10 @@
  *
  * Apply remains fail-closed unless ALL of:
  *   - matching founder approval (approve_supabase_compat_sync_plan + bound plan sha)
- *   - exact 13/26/13 plan shape with exclusions untouched
+ *   - exact pending 13/26/13 conflict plan shape with exclusions untouched
  *   - BUCKPARTS_GSWF_SUPABASE_COMPAT_SYNC_MUTATION_ENABLED=1
  *
+ * Post-apply IN_SYNC=13 plans report ALREADY_IN_SYNC and never re-apply deltas.
  * Dry-run never mutates Supabase or CSV.
  */
 
@@ -39,7 +40,7 @@ async function main(): Promise<void> {
       report,
     });
     process.stderr.write(
-      `Wrote ${written.json_rel_path} and ${written.md_rel_path} (mode=${mode}; data_mutation=${String(report.data_mutation)}; supabase_mutation_authorized=${String(report.supabase_mutation_authorized)}).\n`,
+      `Wrote ${written.json_rel_path} and ${written.md_rel_path} (mode=${mode}; apply_status=${report.apply_status}; plan_sync_state=${report.plan_sync_state}; data_mutation=${String(report.data_mutation)}; supabase_mutation_authorized=${String(report.supabase_mutation_authorized)}).\n`,
     );
   }
 

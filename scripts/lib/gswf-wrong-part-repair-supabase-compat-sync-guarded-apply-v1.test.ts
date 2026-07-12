@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 
 import {
-  GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1,
   GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_GUARDED_ALLOWED_WRITE_REL_PATHS_V1,
   GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_GUARDED_DRY_RUN_JSON_REL_V1,
   GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_GUARDED_DRY_RUN_MD_REL_V1,
@@ -34,22 +34,44 @@ const APPLY_SCRIPT_SOURCE = readFileSync(
 );
 const FIXED_NOW = () => new Date("2026-07-11T23:30:00.000Z");
 
-function writeFixture(args: { root: string; includeApproval?: boolean; mutatePlan?: boolean }): void {
+/** Pre-apply conflict plan (13/26/13) from committed HEAD — independent of working-tree IN_SYNC refresh. */
+function loadCommittedConflictPlanText(): string {
+  return execFileSync(
+    "git",
+    ["show", `HEAD:${GSWF_WRONG_PART_REPAIR_SUPABASE_COMPAT_SYNC_PLAN_JSON_REL_V1}`],
+    { cwd: ROOT, encoding: "utf8" },
+  );
+}
+
+function writeFixture(args: {
+  root: string;
+  includeApproval?: boolean;
+  planMode?: "conflict" | "in_sync" | "bad_partial";
+}): void {
   mkdirSync(path.join(args.root, "data/fridge/batch-production/drafts"), { recursive: true });
   mkdirSync(path.join(args.root, "data/owner-decisions"), { recursive: true });
 
-  const planText = readFileSync(
-    path.join(ROOT, GSWF_WRONG_PART_REPAIR_SUPABASE_COMPAT_SYNC_PLAN_JSON_REL_V1),
-    "utf8",
-  );
-  let planOut = planText;
-  if (args.mutatePlan) {
-    const plan = JSON.parse(planText) as {
-      proposed_supabase_change_summary: { removals: unknown[]; additions: unknown[] };
-    };
-    plan.proposed_supabase_change_summary.removals = [];
-    planOut = `${JSON.stringify(plan, null, 2)}\n`;
+  const planMode = args.planMode ?? "conflict";
+  let planOut: string;
+  if (planMode === "in_sync") {
+    planOut = readFileSync(
+      path.join(ROOT, GSWF_WRONG_PART_REPAIR_SUPABASE_COMPAT_SYNC_PLAN_JSON_REL_V1),
+      "utf8",
+    );
+  } else {
+    const conflictText = loadCommittedConflictPlanText();
+    if (planMode === "bad_partial") {
+      const plan = JSON.parse(conflictText) as {
+        proposed_supabase_change_summary: { removals: unknown[]; additions: unknown[] };
+        classification_counts: Record<string, number>;
+      };
+      plan.proposed_supabase_change_summary.removals = [];
+      planOut = `${JSON.stringify(plan, null, 2)}\n`;
+    } else {
+      planOut = conflictText.endsWith("\n") ? conflictText : `${conflictText}\n`;
+    }
   }
+
   writeFileSync(
     path.join(args.root, GSWF_WRONG_PART_REPAIR_SUPABASE_COMPAT_SYNC_PLAN_JSON_REL_V1),
     planOut,
@@ -130,7 +152,7 @@ function mockSuccessfulWriter(): {
   };
 }
 
-test("repo dry-run is DRY_RUN_READY even with approval present and does not mutate Supabase", async () => {
+test("repo dry-run after apply reports ALREADY_IN_SYNC and does not mutate", async () => {
   let writerCalled = false;
   const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
     rootDir: ROOT,
@@ -149,40 +171,57 @@ test("repo dry-run is DRY_RUN_READY even with approval present and does not muta
     },
   });
 
-  assert.equal(report.apply_status, "DRY_RUN_READY");
+  assert.equal(report.apply_status, "ALREADY_IN_SYNC");
+  assert.equal(report.plan_sync_state, "already_in_sync");
   assert.equal(report.mode, "dry_run");
   assert.equal(report.data_mutation, false);
   assert.equal(report.supabase_mutation_authorized, false);
   assert.equal(report.read_only, true);
-  // Real repo may include founder approval; dry-run must still not authorize writes either way.
-  const approvalOnDisk = existsSync(
-    path.join(ROOT, GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_OWNER_APPROVAL_JSON_REL_V1),
-  );
-  assert.equal(report.owner_approval_present, approvalOnDisk);
-  if (approvalOnDisk) {
-    assert.equal(report.owner_approval_valid, true);
-  }
-  assert.equal(report.planned_removals, GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_removals);
-  assert.equal(report.planned_additions, GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_EXPECTED_COUNTS_V1.planned_additions);
-  assert.equal(report.planned_slug_count, 13);
-  assert.equal(report.planned_supabase_row_deltas.length, 39);
-  assert.equal(report.classification_counts?.CONFLICT_REQUIRES_REVIEW, 13);
-  assert.deepEqual(
-    report.excluded_slugs_untouched.sort(),
-    [...GSWF_WRONG_PART_EXCLUDED_PARTIAL_SLUGS_V1, ...GSWF_WRONG_PART_EXCLUDED_NO_FILTER_SLUGS_V1]
-      .map((s) => s.toLowerCase())
-      .sort(),
-  );
+  assert.equal(report.planned_removals, 0);
+  assert.equal(report.planned_additions, 0);
+  assert.equal(report.planned_supabase_row_deltas.length, 0);
+  assert.equal(report.classification_counts?.IN_SYNC, 13);
+  assert.equal(report.classification_counts?.CONFLICT_REQUIRES_REVIEW, 0);
   assert.equal(report.blocked_reasons.length, 0);
   assert.equal(writerCalled, false);
-  assert.equal(report.applied_supabase_row_keys.length, 0);
+});
+
+test("apply mode against already-synced plan is ALREADY_IN_SYNC and never writes", async () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), "gswf-supabase-sync-already-"));
+  try {
+    writeFixture({ root: tmp, includeApproval: true, planMode: "in_sync" });
+    let writerCalled = false;
+    const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
+      rootDir: tmp,
+      mode: "apply",
+      now: FIXED_NOW,
+      mutationEnabled: true,
+      applySupabaseCompatSyncDeltas: async (deltas) => {
+        writerCalled = true;
+        return {
+          ok: true,
+          errors: [],
+          applied_removal_count: deltas.length,
+          applied_addition_count: 0,
+          applied_row_keys: deltas.map((d) => d.row_key),
+        };
+      },
+    });
+    assert.equal(report.apply_status, "ALREADY_IN_SYNC");
+    assert.equal(report.plan_sync_state, "already_in_sync");
+    assert.equal(report.data_mutation, false);
+    assert.equal(report.supabase_mutation_authorized, false);
+    assert.equal(report.planned_supabase_row_deltas.length, 0);
+    assert.equal(writerCalled, false);
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
 });
 
 test("apply mode without approval is BLOCKED and never mutates", async () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "gswf-supabase-sync-no-approval-"));
   try {
-    // Isolated fixture: plan present, approval intentionally absent.
-    writeFixture({ root: tmp, includeApproval: false });
+    writeFixture({ root: tmp, includeApproval: false, planMode: "conflict" });
     let writerCalled = false;
     const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
       rootDir: tmp,
@@ -200,6 +239,7 @@ test("apply mode without approval is BLOCKED and never mutates", async () => {
         };
       },
     });
+    assert.equal(report.plan_sync_state, "pending_conflict_sync");
     assert.equal(report.owner_approval_present, false);
     assert.equal(report.owner_approval_valid, false);
     assert.equal(report.apply_status, "BLOCKED");
@@ -219,7 +259,7 @@ test("apply mode without approval is BLOCKED and never mutates", async () => {
 test("apply mode with matching approval but mutation flag absent is BLOCKED", async () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "gswf-supabase-sync-guarded-"));
   try {
-    writeFixture({ root: tmp, includeApproval: true });
+    writeFixture({ root: tmp, includeApproval: true, planMode: "conflict" });
     let writerCalled = false;
     const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
       rootDir: tmp,
@@ -237,6 +277,7 @@ test("apply mode with matching approval but mutation flag absent is BLOCKED", as
         };
       },
     });
+    assert.equal(report.plan_sync_state, "pending_conflict_sync");
     assert.equal(report.owner_approval_present, true);
     assert.equal(report.owner_approval_valid, true);
     assert.equal(report.mutation_flag_enabled, false);
@@ -257,7 +298,7 @@ test("apply mode with matching approval but mutation flag absent is BLOCKED", as
 test("apply mode with approval + mutation flag authorizes and applies exact 39 mocked deltas", async () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "gswf-supabase-sync-apply-ok-"));
   try {
-    writeFixture({ root: tmp, includeApproval: true });
+    writeFixture({ root: tmp, includeApproval: true, planMode: "conflict" });
     const mock = mockSuccessfulWriter();
     const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
       rootDir: tmp,
@@ -266,6 +307,7 @@ test("apply mode with approval + mutation flag authorizes and applies exact 39 m
       mutationEnabled: true,
       applySupabaseCompatSyncDeltas: mock.fn,
     });
+    assert.equal(report.plan_sync_state, "pending_conflict_sync");
     assert.equal(report.owner_approval_valid, true);
     assert.equal(report.mutation_flag_enabled, true);
     assert.equal(report.supabase_mutation_authorized, true);
@@ -274,14 +316,8 @@ test("apply mode with approval + mutation flag authorizes and applies exact 39 m
     assert.equal(report.read_only, false);
     assert.equal(mock.calls.length, 1);
     assert.equal(mock.calls[0]?.length, 39);
-    assert.equal(
-      mock.calls[0]?.filter((d) => d.operation === "remove").length,
-      26,
-    );
-    assert.equal(
-      mock.calls[0]?.filter((d) => d.operation === "add").length,
-      13,
-    );
+    assert.equal(mock.calls[0]?.filter((d) => d.operation === "remove").length, 26);
+    assert.equal(mock.calls[0]?.filter((d) => d.operation === "add").length, 13);
     assert.equal(report.applied_supabase_row_keys.length, 39);
     for (const slug of [
       ...GSWF_WRONG_PART_EXCLUDED_PARTIAL_SLUGS_V1,
@@ -299,7 +335,7 @@ test("apply mode with approval + mutation flag authorizes and applies exact 39 m
 test("apply mode with approval + flag but writer failure stays BLOCKED with no data_mutation", async () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "gswf-supabase-sync-apply-fail-"));
   try {
-    writeFixture({ root: tmp, includeApproval: true });
+    writeFixture({ root: tmp, includeApproval: true, planMode: "conflict" });
     const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
       rootDir: tmp,
       mode: "apply",
@@ -322,17 +358,43 @@ test("apply mode with approval + flag but writer failure stays BLOCKED with no d
   }
 });
 
-test("dry-run blocks when plan removals/additions do not match 26/13", async () => {
+test("dry-run blocks when conflict plan removals/additions do not match 26/13", async () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "gswf-supabase-sync-bad-plan-"));
   try {
-    writeFixture({ root: tmp, mutatePlan: true });
+    writeFixture({ root: tmp, planMode: "bad_partial" });
     const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
       rootDir: tmp,
       mode: "dry_run",
       now: FIXED_NOW,
     });
     assert.equal(report.apply_status, "BLOCKED");
-    assert.ok(report.blocked_reasons.some((reason) => reason.includes("proposed removals expected 26")));
+    assert.equal(report.plan_sync_state, "invalid");
+    assert.ok(
+      report.blocked_reasons.some((reason) =>
+        reason.includes("neither pending 13/26/13 conflict sync nor already IN_SYNC=13"),
+      ),
+    );
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("isolated conflict dry-run remains DRY_RUN_READY for 13/26/13 fixture", async () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), "gswf-supabase-sync-conflict-dry-"));
+  try {
+    writeFixture({ root: tmp, planMode: "conflict" });
+    const report = await runGswfWrongPartRepairSupabaseCompatSyncGuardedApplyV1({
+      rootDir: tmp,
+      mode: "dry_run",
+      now: FIXED_NOW,
+    });
+    assert.equal(report.apply_status, "DRY_RUN_READY");
+    assert.equal(report.plan_sync_state, "pending_conflict_sync");
+    assert.equal(report.planned_removals, 26);
+    assert.equal(report.planned_additions, 13);
+    assert.equal(report.planned_supabase_row_deltas.length, 39);
+    assert.equal(report.classification_counts?.CONFLICT_REQUIRES_REVIEW, 13);
+    assert.equal(report.data_mutation, false);
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }
@@ -361,7 +423,8 @@ test("write artifacts only to allowlisted draft paths", async () => {
     assert.ok(existsSync(path.join(tmp, written.md_rel_path)));
     const md = readFileSync(path.join(tmp, written.md_rel_path), "utf8");
     assert.match(md, /supabase_mutation_authorized: \*\*false\*\*/);
-    assert.match(md, /DRY_RUN_READY/);
+    assert.match(md, /ALREADY_IN_SYNC|DRY_RUN_READY/);
+    assert.match(md, /plan_sync_state: \*\*/);
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }
@@ -380,13 +443,10 @@ test("source stays fail-closed by default and does not mutate CSV/retailer_links
   assert.ok(APPLY_SCRIPT_SOURCE.includes('process.argv.includes("--apply") ? "apply" : "dry_run"'));
   assert.ok(LIB_SOURCE.includes(GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_MUTATION_ENV_FLAG_V1));
   assert.ok(LIB_SOURCE.includes("defaultApplyGswfSupabaseCompatSyncDeltasV1"));
+  assert.ok(LIB_SOURCE.includes("ALREADY_IN_SYNC"));
+  assert.ok(LIB_SOURCE.includes("already_in_sync"));
   assert.ok(LIB_SOURCE.includes('.from("compatibility_mappings")'));
   assert.ok(LIB_SOURCE.includes(".delete()"));
   assert.ok(LIB_SOURCE.includes(".insert({"));
-  // Approval may exist in the real repo; static safety must not require its absence.
-  assert.ok(
-    LIB_SOURCE.includes("apply mode blocked — mutation flag absent") ||
-      LIB_SOURCE.includes(`${GSWF_WRONG_PART_SUPABASE_COMPAT_SYNC_MUTATION_ENV_FLAG_V1}=1 required`),
-  );
   assert.ok(LIB_SOURCE.includes("matching founder supabase compat sync owner approval required"));
 });
