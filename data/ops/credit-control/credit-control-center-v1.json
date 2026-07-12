@@ -4,74 +4,20 @@
   "data_mutation": false,
   "netlify_api_call_authorized": false,
   "credit_spend_authorized": false,
-  "generated_at": "2026-07-12T16:08:58.325Z",
+  "generated_at": "2026-07-12T16:25:29.838Z",
   "source_command": "npm run buckparts:credit-control",
-  "deployment_posture": "DEPLOY_HOLD_CREDITS_EXHAUSTED",
-  "repo_head": "d609139",
-  "origin_main_head": "d609139",
+  "deployment_posture": "REPO_ONLY_SAFE",
+  "repo_head": "94f6842",
+  "origin_main_head": "94f6842",
   "git_status_clean": false,
   "changed_paths": [
-    "data/ops/credit-control/credit-control-center-v1.json",
-    "data/ops/credit-control/credit-control-center-v1.md",
-    "scripts/buckparts-pre-push-deploy-summary-v1.sh",
-    "scripts/lib/buckparts-credit-control-center-v1.test.ts",
-    "scripts/lib/buckparts-credit-control-center-v1.ts",
-    "scripts/lib/buckparts-deploy-classifier-v1.test.ts",
-    "scripts/lib/buckparts-deploy-classifier-v1.ts",
-    "scripts/lib/buckparts-ship-guard-v1.test.ts",
-    "scripts/lib/buckparts-ship-guard-v1.ts",
-    "scripts/report-buckparts-deploy-classifier-v1.ts"
+    "data/ops/credit-control/netlify-credit-state-v1.json"
   ],
   "changed_path_rows": [
     {
-      "path": "data/ops/credit-control/credit-control-center-v1.json",
+      "path": "data/ops/credit-control/netlify-credit-state-v1.json",
       "deploy_classification": "NO_DEPLOY_NEEDED",
       "rule_id": "operator_reports"
-    },
-    {
-      "path": "data/ops/credit-control/credit-control-center-v1.md",
-      "deploy_classification": "NO_DEPLOY_NEEDED",
-      "rule_id": "operator_reports"
-    },
-    {
-      "path": "scripts/buckparts-pre-push-deploy-summary-v1.sh",
-      "deploy_classification": "NO_DEPLOY_NEEDED",
-      "rule_id": "scripts_only"
-    },
-    {
-      "path": "scripts/lib/buckparts-credit-control-center-v1.test.ts",
-      "deploy_classification": "NO_DEPLOY_NEEDED",
-      "rule_id": "tests_only"
-    },
-    {
-      "path": "scripts/lib/buckparts-credit-control-center-v1.ts",
-      "deploy_classification": "NO_DEPLOY_NEEDED",
-      "rule_id": "scripts_only"
-    },
-    {
-      "path": "scripts/lib/buckparts-deploy-classifier-v1.test.ts",
-      "deploy_classification": "NO_DEPLOY_NEEDED",
-      "rule_id": "tests_only"
-    },
-    {
-      "path": "scripts/lib/buckparts-deploy-classifier-v1.ts",
-      "deploy_classification": "NO_DEPLOY_NEEDED",
-      "rule_id": "scripts_only"
-    },
-    {
-      "path": "scripts/lib/buckparts-ship-guard-v1.test.ts",
-      "deploy_classification": "NO_DEPLOY_NEEDED",
-      "rule_id": "tests_only"
-    },
-    {
-      "path": "scripts/lib/buckparts-ship-guard-v1.ts",
-      "deploy_classification": "NO_DEPLOY_NEEDED",
-      "rule_id": "scripts_only"
-    },
-    {
-      "path": "scripts/report-buckparts-deploy-classifier-v1.ts",
-      "deploy_classification": "NO_DEPLOY_NEEDED",
-      "rule_id": "scripts_only"
     }
   ],
   "work_class": "mixed_non_production",
@@ -82,37 +28,36 @@
     "read_only": true,
     "data_mutation": false,
     "provider": "netlify",
-    "status": "exhausted",
-    "observed_at": "2026-07-11T18:00:00.000Z",
+    "status": "available",
+    "observed_at": "2026-07-12T16:25:29.593109Z",
     "reset_at": "2026-07-24T00:00:00.000Z",
-    "source": "owner_screenshot",
-    "production_deploy_posture": "skipped_or_disabled",
+    "source": "owner_reported_netlify_credits",
+    "production_deploy_posture": "credits_available_owner_reported",
     "latest_skipped_production_deploy": {
       "branch": "main",
       "at_or_after_commit": "853ee79",
       "note": "Owner screenshot showed production deploy skipped/disabled while credits exhausted; latest skipped deploy involved main at/after 853ee79."
     },
-    "notes": "Owner screenshot truth: Netlify credits exhausted; production deploys skipped/disabled; credits reset Friday July 24 2026. Manual owner updates only — this file is not auto-written by Netlify API calls.",
+    "notes": "Owner reported Netlify has 1000 credits available. Manual owner update only; no Netlify API call was made.",
     "live_netlify_api_state": "UNKNOWN",
-    "netlify_api_call_authorized": false
+    "netlify_api_call_authorized": false,
+    "available_credits": 1000
   },
   "credit_evidence_errors": [],
-  "deploy_held": true,
+  "deploy_held": false,
   "local_build_recommended": false,
   "local_build_optional": true,
   "push_allowed": true,
   "production_deploy_recommended": false,
   "governance_recommendations": [
-    "Hold all Netlify production deploys until credits reset or owner purchases credits with an explicit spend decision.",
-    "Prefer repo-only work (docs/scripts/tests/drafts). Push to origin/main is allowed only if Netlify auto-deploy is confirmed skipped/disabled.",
     "Do not buy/spend Netlify credits from this report alone — founder spend decision required."
   ],
   "proven_facts": [
     "PROVEN: read_only=true; data_mutation=false; netlify_api_call_authorized=false; credit_spend_authorized=false.",
-    "PROVEN: deployment_posture=DEPLOY_HOLD_CREDITS_EXHAUSTED; deploy_held=true.",
-    "PROVEN: work_class=mixed_non_production; git_status_clean=false; changed_path_count=10.",
-    "PROVEN: repo_head=d609139; origin_main_head=d609139.",
-    "PROVEN: credit_evidence_present=true; credit_status=exhausted.",
+    "PROVEN: deployment_posture=REPO_ONLY_SAFE; deploy_held=false.",
+    "PROVEN: work_class=mixed_non_production; git_status_clean=false; changed_path_count=1.",
+    "PROVEN: repo_head=94f6842; origin_main_head=94f6842.",
+    "PROVEN: credit_evidence_present=true; credit_status=available.",
     "PROVEN: local_build_recommended=false; local_build_optional=true; push_allowed=true; production_deploy_recommended=false.",
     "PROVEN: owner-recorded credit reset_at=2026-07-24T00:00:00.000Z.",
     "PROVEN: latest skipped production deploy recorded at/after 853ee79."

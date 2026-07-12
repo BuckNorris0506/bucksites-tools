@@ -3,17 +3,18 @@
   "read_only": true,
   "data_mutation": false,
   "provider": "netlify",
-  "status": "exhausted",
-  "observed_at": "2026-07-11T18:00:00.000Z",
+  "status": "available",
+  "observed_at": "2026-07-12T16:25:29.593109Z",
   "reset_at": "2026-07-24T00:00:00.000Z",
-  "source": "owner_screenshot",
-  "production_deploy_posture": "skipped_or_disabled",
+  "source": "owner_reported_netlify_credits",
+  "production_deploy_posture": "credits_available_owner_reported",
   "latest_skipped_production_deploy": {
     "branch": "main",
     "at_or_after_commit": "853ee79",
     "note": "Owner screenshot showed production deploy skipped/disabled while credits exhausted; latest skipped deploy involved main at/after 853ee79."
   },
-  "notes": "Owner screenshot truth: Netlify credits exhausted; production deploys skipped/disabled; credits reset Friday July 24 2026. Manual owner updates only — this file is not auto-written by Netlify API calls.",
+  "notes": "Owner reported Netlify has 1000 credits available. Manual owner update only; no Netlify API call was made.",
   "live_netlify_api_state": "UNKNOWN",
-  "netlify_api_call_authorized": false
+  "netlify_api_call_authorized": false,
+  "available_credits": 1000
 }
