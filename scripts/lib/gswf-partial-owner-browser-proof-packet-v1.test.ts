@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -9,6 +9,7 @@ import {
   GSWF_PARTIAL_OWNER_BROWSER_PROOF_PACKET_CONTRACT_V1,
   GSWF_PARTIAL_OWNER_BROWSER_PROOF_PACKET_JSON_REL_V1,
   GSWF_PARTIAL_OWNER_BROWSER_PROOF_PACKET_MD_REL_V1,
+  GSWF_PARTIAL_OWNER_BROWSER_PROOF_RESULT_JSON_REL_V1,
   GSWF_PARTIAL_OWNER_BROWSER_PROOF_TARGET_SLUGS_V1,
   writeGswfPartialOwnerBrowserProofPacketArtifactsV1,
 } from "./gswf-partial-owner-browser-proof-packet-v1";
@@ -49,33 +50,38 @@ test("covers exactly the 3 PARTIAL slugs and none of the 13 apply-plan rows", ()
     assert.equal(row.buy_cta_authorized, false);
     assert.equal(row.mutation_authorized, false);
     assert.equal(row.csv_apply_authorized, false);
+    assert.equal(row.hypothesis_promotion_authorized, false);
   }
 });
 
-test("all three require browser proof; hypothesized remaps are INFERRED only", () => {
+test("HyperAgent result records all three as UNKNOWN_NOT_PROVEN with rating-plate next proof", () => {
+  assert.ok(existsSync(path.join(ROOT, GSWF_PARTIAL_OWNER_BROWSER_PROOF_RESULT_JSON_REL_V1)));
   const packet = buildGswfPartialOwnerBrowserProofPacketV1({ rootDir: ROOT, now: FIXED_NOW });
-  assert.equal(packet.summary_counts.browser_proof_required, 3);
+  assert.equal(packet.summary_counts.unknown_not_proven, 3);
   assert.equal(packet.summary_counts.exact_model_tier1_proven, 0);
-  assert.equal(packet.summary_counts.unknown, 0);
+  assert.equal(packet.summary_counts.browser_proof_required, 0);
+  assert.equal(packet.summary_counts.unknown, 3);
+  assert.equal(
+    packet.source_artifacts.owner_browser_proof_result_rel_path,
+    GSWF_PARTIAL_OWNER_BROWSER_PROOF_RESULT_JSON_REL_V1,
+  );
 
   const bySlug = Object.fromEntries(packet.slug_rows.map((row) => [row.fridge_slug, row]));
-  assert.equal(bySlug["ge-gfe28hmkww"]!.proof_status, "BROWSER_PROOF_REQUIRED");
-  assert.equal(bySlug["ge-gfe28hmkww"]!.hypothesized_remap_target_filter_slug, "rpwfe");
-  assert.equal(bySlug["ge-gfe28hmkww"]!.hypothesized_remap_confidence, "INFERRED");
-  assert.equal(bySlug["ge-gfe28hmkww"]!.exact_model_tier1_proven, false);
-
-  assert.equal(bySlug["ge-gsc25frshss"]!.proof_status, "BROWSER_PROOF_REQUIRED");
-  assert.equal(bySlug["ge-gsc25frshss"]!.hypothesized_remap_target_filter_slug, "mwf");
-  assert.equal(bySlug["ge-gsc25frshss"]!.hypothesized_remap_confidence, "INFERRED");
-
-  assert.equal(bySlug["ge-gse26gshess"]!.proof_status, "BROWSER_PROOF_REQUIRED");
-  assert.equal(bySlug["ge-gse26gshess"]!.hypothesized_remap_target_filter_slug, "mwf");
-  assert.equal(bySlug["ge-gse26gshess"]!.hypothesized_remap_confidence, "INFERRED");
-
-  for (const row of packet.slug_rows) {
-    assert.equal(row.existing_repo_evidence.manual_evidence_exists, false);
-    assert.ok(row.missing_proof.length >= 3);
+  for (const slug of GSWF_PARTIAL_OWNER_BROWSER_PROOF_TARGET_SLUGS_V1) {
+    const row = bySlug[slug]!;
+    assert.equal(row.proof_status, "UNKNOWN_NOT_PROVEN");
+    assert.equal(row.exact_model_tier1_proven, false);
+    assert.equal(row.next_required_proof, "RATING_PLATE_OR_CORRECTED_MODEL_VERIFICATION");
+    assert.equal(row.hypothesized_remap_target_filter_slug, null);
+    assert.equal(row.hypothesized_remap_confidence, "UNKNOWN");
+    assert.equal(row.hypothesis_promotion_authorized, false);
+    assert.equal(row.existing_repo_evidence.owner_browser_proof_result_exists, true);
+    assert.match(row.recommended_owner_browser_action, /rating-plate/i);
+    assert.ok(row.missing_proof.some((item) => /rating-plate/i.test(item)));
   }
+
+  assert.match(packet.recommended_next_action, /UNKNOWN_NOT_PROVEN/);
+  assert.ok(packet.proven_facts.some((f) => f.includes("UNKNOWN_NOT_PROVEN")));
 });
 
 test("build path does not mutate compatibility_mappings.csv or write product data", () => {
@@ -110,9 +116,44 @@ test("write artifacts to draft paths", () => {
     const json = JSON.parse(readFileSync(path.join(tmp, written.json_rel_path), "utf8")) as {
       buy_cta_authorized: boolean;
       include_in_gswf_wrong_part_apply_plan: boolean;
+      summary_counts: { unknown_not_proven: number };
     };
     assert.equal(json.buy_cta_authorized, false);
     assert.equal(json.include_in_gswf_wrong_part_apply_plan, false);
+    assert.equal(json.summary_counts.unknown_not_proven, 3);
+    const md = readFileSync(path.join(tmp, written.md_rel_path), "utf8");
+    assert.match(md, /UNKNOWN_NOT_PROVEN/);
+    assert.match(md, /RATING_PLATE_OR_CORRECTED_MODEL_VERIFICATION/);
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("without HyperAgent result artifact, rows stay BROWSER_PROOF_REQUIRED", () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), "gswf-partial-no-result-"));
+  try {
+    // Mirror required source artifacts from ROOT into tmp, omitting the HyperAgent result.
+    const requiredRels = [
+      "data/fridge/batch-production/drafts/gswf-family-reconciliation-owner-review-v1.json",
+      "data/fridge/batch-production/drafts/gswf-wrong-part-repair-apply-plan-owner-review-v1.json",
+      "data/fridge/batch-production/drafts/gswf-wrong-part-repair-guarded-apply-dry-run-v1.json",
+      "data/fridge/batch-production/drafts/gswf-bounded-evidence-slice-5a735d4a-cursor-validation-v1.json",
+      "data/compatibility_mappings.csv",
+      "data/fridge_models.csv",
+    ];
+    for (const rel of requiredRels) {
+      const dest = path.join(tmp, rel);
+      mkdirSync(path.dirname(dest), { recursive: true });
+      writeFileSync(dest, readFileSync(path.join(ROOT, rel)));
+    }
+    const packet = buildGswfPartialOwnerBrowserProofPacketV1({ rootDir: tmp, now: FIXED_NOW });
+    assert.equal(packet.summary_counts.browser_proof_required, 3);
+    assert.equal(packet.summary_counts.unknown_not_proven, 0);
+    assert.equal(packet.source_artifacts.owner_browser_proof_result_rel_path, null);
+    for (const row of packet.slug_rows) {
+      assert.equal(row.proof_status, "BROWSER_PROOF_REQUIRED");
+      assert.equal(row.existing_repo_evidence.owner_browser_proof_result_exists, false);
+    }
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }

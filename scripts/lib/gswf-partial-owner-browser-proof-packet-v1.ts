@@ -1,6 +1,7 @@
 /**
  * Read-only GSWF PARTIAL slug owner-browser proof packet v1.
  * Captures what Tier-1 exact-model proof is missing for the 3 excluded PARTIAL GSWF rows.
+ * Consumes optional HyperAgent/browser result artifact when present.
  * Does not mutate compat, retailer_links, evidence, Supabase, pages, sitemap, robots, or HQ handoff.
  */
 
@@ -30,6 +31,9 @@ export const GSWF_PARTIAL_OWNER_BROWSER_PROOF_PACKET_JSON_REL_V1 =
 export const GSWF_PARTIAL_OWNER_BROWSER_PROOF_PACKET_MD_REL_V1 =
   "data/fridge/batch-production/drafts/gswf-partial-owner-browser-proof-packet-v1.md" as const;
 
+export const GSWF_PARTIAL_OWNER_BROWSER_PROOF_RESULT_JSON_REL_V1 =
+  "data/fridge/batch-production/drafts/gswf-partial-owner-browser-proof-result-v1.json" as const;
+
 export const GSWF_PARTIAL_OWNER_BROWSER_PROOF_PACKET_SOURCE_COMMAND_V1 =
   "npm run buckparts:gswf-partial-owner-browser-proof-packet" as const;
 
@@ -40,6 +44,7 @@ export const GSWF_PARTIAL_OWNER_BROWSER_PROOF_TARGET_SLUGS_V1 = [
 export type GswfPartialProofStatusV1 =
   | "EXACT_MODEL_TIER1_PROVEN"
   | "BROWSER_PROOF_REQUIRED"
+  | "UNKNOWN_NOT_PROVEN"
   | "UNKNOWN";
 
 export type GswfPartialOwnerBrowserProofSlugRowV1 = {
@@ -52,13 +57,16 @@ export type GswfPartialOwnerBrowserProofSlugRowV1 = {
   hyperagent_source_type: string | null;
   hypothesized_remap_target_filter_slug: string | null;
   hypothesized_remap_confidence: "INFERRED" | "UNKNOWN";
+  hypothesis_promotion_authorized: false;
   proof_status: GswfPartialProofStatusV1;
   exact_model_tier1_proven: false;
+  next_required_proof: string | null;
   missing_proof: string[];
   existing_repo_evidence: {
     manual_evidence_rel_path: string | null;
     manual_evidence_exists: boolean;
     owner_browser_proof_result_exists: boolean;
+    owner_browser_proof_result_rel_path: string | null;
     cursor_validation_reason: string | null;
   };
   include_in_apply_plan: false;
@@ -88,11 +96,13 @@ export type GswfPartialOwnerBrowserProofPacketV1 = {
     wrong_part_apply_plan_rel_path: typeof GSWF_WRONG_PART_REPAIR_APPLY_PLAN_OWNER_REVIEW_JSON_REL_V1;
     guarded_apply_dry_run_rel_path: typeof GSWF_WRONG_PART_GUARDED_APPLY_DRY_RUN_JSON_REL_V1;
     cursor_validation_rel_path: typeof GSWF_CURSOR_VALIDATION_JSON_REL_V1;
+    owner_browser_proof_result_rel_path: typeof GSWF_PARTIAL_OWNER_BROWSER_PROOF_RESULT_JSON_REL_V1 | null;
   };
   summary_counts: {
     total_partial_slugs: number;
     exact_model_tier1_proven: number;
     browser_proof_required: number;
+    unknown_not_proven: number;
     unknown: number;
   };
   slug_rows: GswfPartialOwnerBrowserProofSlugRowV1[];
@@ -139,9 +149,29 @@ type ApplyPlanPacketV1 = {
   planned_rows?: Array<{ fridge_slug?: string }>;
 };
 
+type HyperAgentResultSlugV1 = {
+  fridge_slug?: string;
+  proof_status?: string;
+  hypothesized_filter_confirmed?: boolean;
+  ge_first_party_product_spec_resolved?: boolean;
+  recommended_next_action?: string;
+  unknown_observations?: string[];
+  proven_observations?: string[];
+};
+
+type HyperAgentResultPacketV1 = {
+  contract?: string;
+  batch_verdict?: string;
+  next_required_proof?: string;
+  hypothesis_promotion_authorized?: boolean;
+  session_conclusion?: string;
+  slug_results?: HyperAgentResultSlugV1[];
+};
+
 const COMPATIBILITY_MAPPINGS_CSV_REL_V1 = "data/compatibility_mappings.csv" as const;
 const FRIDGE_MODELS_CSV_REL_V1 = "data/fridge_models.csv" as const;
 const MANUAL_EVIDENCE_DIR_REL_V1 = "data/manual-evidence/refrigerator" as const;
+const HYPERAGENT_RESULT_CONTRACT_V1 = "gswf_partial_owner_browser_proof_result_v1" as const;
 
 function normalizeSlug(value: string): string {
   return value.trim().toLowerCase();
@@ -202,8 +232,17 @@ function buildMissingProof(args: {
   fridgeSlug: string;
   modelNumber: string | null;
   sourceType: string | null;
+  unknownNotProven: boolean;
 }): string[] {
   const modelLabel = args.modelNumber ?? args.fridgeSlug.toUpperCase().replace(/^GE-/, "");
+  if (args.unknownNotProven) {
+    return [
+      `Physical rating-plate photo or corrected exact model verification for ${modelLabel}.`,
+      "GE first-party product/spec backend did not resolve this exact model string in HyperAgent/browser session.",
+      "Do not promote hypothesized remap targets until rating-plate / corrected-model proof exists.",
+      "Repo manual-evidence JSON under data/manual-evidence/refrigerator/ for this exact fridge_slug.",
+    ];
+  }
   return [
     `Exact-model owner-browser Tier-1 capture on ${modelLabel} (not sibling/platform inference).`,
     "Official manufacturer filter_specification / parts page naming the replacement filter for this exact model.",
@@ -218,12 +257,62 @@ function buildRecommendedAction(args: {
   fridgeSlug: string;
   modelNumber: string | null;
   hypothesizedTarget: string | null;
+  unknownNotProven: boolean;
+  resultRecommended?: string | null;
 }): string {
+  if (args.unknownNotProven) {
+    return (
+      args.resultRecommended ??
+      `Require physical rating-plate photo or corrected exact model verification for ${args.modelNumber ?? args.fridgeSlug} — do not promote remap hypotheses; do not edit compatibility_mappings.csv.`
+    );
+  }
   const model = args.modelNumber ?? args.fridgeSlug;
   const targetHint = args.hypothesizedTarget
     ? ` Confirm or refute hypothesized remap target \`${args.hypothesizedTarget}\` only after exact-model proof.`
     : "";
   return `Owner-browser Tier-1 on exact model ${model}: open GE OEM product/parts/support page for this exact SKU, capture filter part number screenshot/URL, write manual-evidence JSON — do not edit compatibility_mappings.csv yet.${targetHint}`;
+}
+
+function loadHyperAgentResult(
+  rootDir: string,
+): { present: boolean; packet: HyperAgentResultPacketV1 | null; bySlug: Map<string, HyperAgentResultSlugV1> } {
+  const abs = path.join(rootDir, GSWF_PARTIAL_OWNER_BROWSER_PROOF_RESULT_JSON_REL_V1);
+  if (!existsSync(abs)) {
+    return { present: false, packet: null, bySlug: new Map() };
+  }
+  const packet = readJsonFile<HyperAgentResultPacketV1>(
+    rootDir,
+    GSWF_PARTIAL_OWNER_BROWSER_PROOF_RESULT_JSON_REL_V1,
+  );
+  if (packet.contract !== HYPERAGENT_RESULT_CONTRACT_V1) {
+    throw new Error("GSWF PARTIAL owner-browser proof result contract mismatch");
+  }
+  if (packet.batch_verdict !== "UNKNOWN_NOT_PROVEN") {
+    throw new Error(
+      `GSWF PARTIAL owner-browser proof result batch_verdict expected UNKNOWN_NOT_PROVEN, got ${String(packet.batch_verdict)}`,
+    );
+  }
+  if (packet.hypothesis_promotion_authorized !== false) {
+    throw new Error("GSWF PARTIAL owner-browser proof result must keep hypothesis_promotion_authorized=false");
+  }
+  const bySlug = new Map<string, HyperAgentResultSlugV1>();
+  for (const row of packet.slug_results ?? []) {
+    if (!row.fridge_slug) continue;
+    bySlug.set(normalizeSlug(row.fridge_slug), row);
+  }
+  for (const slug of GSWF_PARTIAL_OWNER_BROWSER_PROOF_TARGET_SLUGS_V1) {
+    const row = bySlug.get(normalizeSlug(slug));
+    if (!row) {
+      throw new Error(`GSWF PARTIAL owner-browser proof result missing slug ${slug}`);
+    }
+    if (row.proof_status !== "UNKNOWN_NOT_PROVEN") {
+      throw new Error(`GSWF PARTIAL result for ${slug} must be UNKNOWN_NOT_PROVEN`);
+    }
+    if (row.hypothesized_filter_confirmed === true) {
+      throw new Error(`GSWF PARTIAL result for ${slug} must not confirm hypothesized filter`);
+    }
+  }
+  return { present: true, packet, bySlug };
 }
 
 export function buildGswfPartialOwnerBrowserProofPacketV1(args: {
@@ -253,6 +342,7 @@ export function buildGswfPartialOwnerBrowserProofPacketV1(args: {
     GSWF_WRONG_PART_GUARDED_APPLY_DRY_RUN_JSON_REL_V1,
   );
   const cursor = readJsonFile<CursorPacketV1>(args.rootDir, GSWF_CURSOR_VALIDATION_JSON_REL_V1);
+  const hyperagent = loadHyperAgentResult(args.rootDir);
 
   const familyPartial = family.browser_proof_required_rows ?? [];
   const familySlugs = familyPartial.map((row) => normalizeSlug(row.fridge_slug)).sort();
@@ -307,19 +397,24 @@ export function buildGswfPartialOwnerBrowserProofPacketV1(args: {
       throw new Error(`family packet missing PARTIAL row ${slug}`);
     }
     const cursorRow = cursorBySlug.get(slug);
+    const resultRow = hyperagent.bySlug.get(slug);
     const modelNumber = modelBySlug.get(slug) ?? null;
     const manualRel = manualEvidenceRelPath(slug);
     const manualExists = existsSync(path.join(args.rootDir, manualRel));
     const sourceType = cursorRow?.hyperagent_source_type ?? null;
-    const hypothesized = familyRow.proposed_remap_target_filter_slug
+    const historicalHypothesis = familyRow.proposed_remap_target_filter_slug
       ? normalizeSlug(familyRow.proposed_remap_target_filter_slug)
       : null;
+    const unknownNotProven = hyperagent.present;
 
-    // Exact-model Tier-1 is not proven in repo for these PARTIAL rows (no manual-evidence JSON).
-    // Platform/OEM-adjacent HyperAgent discovery remains INFERRED for apply purposes.
-    const proof_status: GswfPartialProofStatusV1 = manualExists
-      ? "EXACT_MODEL_TIER1_PROVEN"
-      : "BROWSER_PROOF_REQUIRED";
+    // HyperAgent result present: record UNKNOWN_NOT_PROVEN and do not promote hypotheses.
+    // Without result: remain BROWSER_PROOF_REQUIRED until Tier-1 capture.
+    let proof_status: GswfPartialProofStatusV1 = "BROWSER_PROOF_REQUIRED";
+    if (manualExists) {
+      proof_status = "EXACT_MODEL_TIER1_PROVEN";
+    } else if (unknownNotProven) {
+      proof_status = "UNKNOWN_NOT_PROVEN";
+    }
 
     slug_rows.push({
       fridge_slug: slug,
@@ -327,21 +422,37 @@ export function buildGswfPartialOwnerBrowserProofPacketV1(args: {
       repo_mapped_filter_slugs: compatBySlug.get(slug) ?? familyRow.repo_mapped_filter_slugs,
       cursor_verdict: familyRow.cursor_verdict,
       hyperagent_actual_filter: familyRow.hyperagent_actual_filter,
-      hyperagent_evidence_confidence: familyRow.hyperagent_evidence_confidence,
+      hyperagent_evidence_confidence: unknownNotProven
+        ? "UNKNOWN_NOT_PROVEN"
+        : familyRow.hyperagent_evidence_confidence,
       hyperagent_source_type: sourceType,
-      hypothesized_remap_target_filter_slug: hypothesized,
-      hypothesized_remap_confidence: hypothesized ? "INFERRED" : "UNKNOWN",
-      proof_status: proof_status === "EXACT_MODEL_TIER1_PROVEN" ? proof_status : "BROWSER_PROOF_REQUIRED",
+      // Do not promote historical hypotheses after UNKNOWN_NOT_PROVEN browser session.
+      hypothesized_remap_target_filter_slug: unknownNotProven ? null : historicalHypothesis,
+      hypothesized_remap_confidence: unknownNotProven
+        ? "UNKNOWN"
+        : historicalHypothesis
+          ? "INFERRED"
+          : "UNKNOWN",
+      hypothesis_promotion_authorized: false,
+      proof_status,
       exact_model_tier1_proven: false,
+      next_required_proof: unknownNotProven
+        ? (hyperagent.packet?.next_required_proof ??
+          "RATING_PLATE_OR_CORRECTED_MODEL_VERIFICATION")
+        : null,
       missing_proof: buildMissingProof({
         fridgeSlug: slug,
         modelNumber,
         sourceType,
+        unknownNotProven,
       }),
       existing_repo_evidence: {
         manual_evidence_rel_path: manualExists ? manualRel : null,
         manual_evidence_exists: manualExists,
-        owner_browser_proof_result_exists: false,
+        owner_browser_proof_result_exists: hyperagent.present,
+        owner_browser_proof_result_rel_path: hyperagent.present
+          ? GSWF_PARTIAL_OWNER_BROWSER_PROOF_RESULT_JSON_REL_V1
+          : null,
         cursor_validation_reason: cursorRow?.reason ?? null,
       },
       include_in_apply_plan: false,
@@ -351,16 +462,20 @@ export function buildGswfPartialOwnerBrowserProofPacketV1(args: {
       recommended_owner_browser_action: buildRecommendedAction({
         fridgeSlug: slug,
         modelNumber,
-        hypothesizedTarget: hypothesized,
+        hypothesizedTarget: historicalHypothesis,
+        unknownNotProven,
+        resultRecommended: resultRow?.recommended_next_action ?? null,
       }),
     });
   }
 
-  // Force exact_model_tier1_proven false when no manual evidence (repo truth for these three).
+  // Never claim Tier-1 proven without manual evidence.
   for (const row of slug_rows) {
     if (!row.existing_repo_evidence.manual_evidence_exists) {
-      row.proof_status = "BROWSER_PROOF_REQUIRED";
       row.exact_model_tier1_proven = false;
+      if (row.proof_status === "EXACT_MODEL_TIER1_PROVEN") {
+        row.proof_status = hyperagent.present ? "UNKNOWN_NOT_PROVEN" : "BROWSER_PROOF_REQUIRED";
+      }
     }
   }
 
@@ -370,7 +485,10 @@ export function buildGswfPartialOwnerBrowserProofPacketV1(args: {
       .length,
     browser_proof_required: slug_rows.filter((r) => r.proof_status === "BROWSER_PROOF_REQUIRED")
       .length,
-    unknown: slug_rows.filter((r) => r.proof_status === "UNKNOWN").length,
+    unknown_not_proven: slug_rows.filter((r) => r.proof_status === "UNKNOWN_NOT_PROVEN").length,
+    unknown: slug_rows.filter(
+      (r) => r.proof_status === "UNKNOWN" || r.proof_status === "UNKNOWN_NOT_PROVEN",
+    ).length,
   };
 
   const exact_repo_paths_read = [
@@ -380,7 +498,24 @@ export function buildGswfPartialOwnerBrowserProofPacketV1(args: {
     GSWF_CURSOR_VALIDATION_JSON_REL_V1,
     COMPATIBILITY_MAPPINGS_CSV_REL_V1,
     FRIDGE_MODELS_CSV_REL_V1,
+    ...(hyperagent.present ? [GSWF_PARTIAL_OWNER_BROWSER_PROOF_RESULT_JSON_REL_V1] : []),
   ].sort();
+
+  const proven_facts = [
+    "PROVEN: Family reconciliation lists exactly 3 browser_proof_required_rows matching the target slug set.",
+    "PROVEN: Wrong-part apply plan excludes these 3 PARTIAL slugs from planned_rows.",
+    "PROVEN: Guarded dry-run excluded_slugs_untouched includes these 3 PARTIAL slugs.",
+    `PROVEN: summary exact_model_tier1_proven=${String(summary_counts.exact_model_tier1_proven)}; browser_proof_required=${String(summary_counts.browser_proof_required)}; unknown_not_proven=${String(summary_counts.unknown_not_proven)}.`,
+    "PROVEN: No data/manual-evidence/refrigerator/<slug>.json exists for these three PARTIAL slugs.",
+    "PROVEN: mutation_authorized=false; buy_cta_authorized=false; include_in_gswf_wrong_part_apply_plan=false; hypothesis_promotion_authorized=false.",
+  ];
+  if (hyperagent.present) {
+    proven_facts.push(
+      "PROVEN: HyperAgent/browser result recorded at gswf-partial-owner-browser-proof-result-v1.json with batch_verdict=UNKNOWN_NOT_PROVEN.",
+      "PROVEN: GE first-party product/spec backend did not resolve GFE28HMKWW, GSC25FRSHSS, or GSE26GSHESS; RPWFE/MWF not confirmed.",
+      "PROVEN: Valid sibling controls resolved; fabricated model returned the same unavailable/error pattern.",
+    );
+  }
 
   return {
     contract: GSWF_PARTIAL_OWNER_BROWSER_PROOF_PACKET_CONTRACT_V1,
@@ -402,34 +537,44 @@ export function buildGswfPartialOwnerBrowserProofPacketV1(args: {
       wrong_part_apply_plan_rel_path: GSWF_WRONG_PART_REPAIR_APPLY_PLAN_OWNER_REVIEW_JSON_REL_V1,
       guarded_apply_dry_run_rel_path: GSWF_WRONG_PART_GUARDED_APPLY_DRY_RUN_JSON_REL_V1,
       cursor_validation_rel_path: GSWF_CURSOR_VALIDATION_JSON_REL_V1,
+      owner_browser_proof_result_rel_path: hyperagent.present
+        ? GSWF_PARTIAL_OWNER_BROWSER_PROOF_RESULT_JSON_REL_V1
+        : null,
     },
     summary_counts,
     slug_rows,
-    owner_checklist: [
-      "These 3 PARTIAL slugs are excluded from the 13-row GSWF wrong-part apply plan and guarded dry-run apply set.",
-      "Do not mutate compatibility_mappings.csv for these slugs until exact-model Tier-1 owner-browser proof exists.",
-      "Hypothesized remap targets (rpwfe/mwf) from HyperAgent are INFERRED only — not apply-ready.",
-      "No GSWF buy CTA authorization from this packet.",
-      "Capture exact-model OEM filter_specification evidence, then re-open a separate repair-plan lane if proven.",
-    ],
-    recommended_next_action:
-      "Owner-browser Tier-1 capture for ge-gfe28hmkww, ge-gsc25frshss, and ge-gse26gshess on exact model pages — keep them out of any GSWF apply plan until proof_status=EXACT_MODEL_TIER1_PROVEN.",
+    owner_checklist: hyperagent.present
+      ? [
+          "These 3 PARTIAL slugs remain excluded from the 13-row GSWF wrong-part apply plan and Supabase sync.",
+          "HyperAgent/browser session recorded UNKNOWN_NOT_PROVEN for all three — do not promote RPWFE/MWF hypotheses.",
+          "Next required proof: physical rating-plate photo or corrected exact model verification.",
+          "Do not mutate compatibility_mappings.csv or Supabase for these slugs from this packet.",
+          "No GSWF buy CTA authorization from this packet.",
+        ]
+      : [
+          "These 3 PARTIAL slugs are excluded from the 13-row GSWF wrong-part apply plan and guarded dry-run apply set.",
+          "Do not mutate compatibility_mappings.csv for these slugs until exact-model Tier-1 owner-browser proof exists.",
+          "Hypothesized remap targets (rpwfe/mwf) from HyperAgent are INFERRED only — not apply-ready.",
+          "No GSWF buy CTA authorization from this packet.",
+          "Capture exact-model OEM filter_specification evidence, then re-open a separate repair-plan lane if proven.",
+        ],
+    recommended_next_action: hyperagent.present
+      ? "Hold all three PARTIAL slugs as UNKNOWN_NOT_PROVEN — require physical rating-plate / corrected model verification before any remap hypothesis promotion or apply-plan inclusion."
+      : "Owner-browser Tier-1 capture for ge-gfe28hmkww, ge-gsc25frshss, and ge-gse26gshess on exact model pages — keep them out of any GSWF apply plan until proof_status=EXACT_MODEL_TIER1_PROVEN.",
     exact_repo_paths_read,
-    proven_facts: [
-      "PROVEN: Family reconciliation lists exactly 3 browser_proof_required_rows matching the target slug set.",
-      "PROVEN: Wrong-part apply plan excludes these 3 PARTIAL slugs from planned_rows.",
-      "PROVEN: Guarded dry-run excluded_slugs_untouched includes these 3 PARTIAL slugs.",
-      `PROVEN: summary browser_proof_required=${String(summary_counts.browser_proof_required)}; exact_model_tier1_proven=${String(summary_counts.exact_model_tier1_proven)}.`,
-      "PROVEN: No data/manual-evidence/refrigerator/<slug>.json exists for these three PARTIAL slugs.",
-      "PROVEN: mutation_authorized=false; buy_cta_authorized=false; include_in_gswf_wrong_part_apply_plan=false.",
-    ],
-    inferred_facts: [
-      "INFERRED: HyperAgent hypothesized remaps (RPWFE for ge-gfe28hmkww; MWF for ge-gsc25frshss and ge-gse26gshess) remain platform/OEM-adjacent discovery only.",
-    ],
+    proven_facts,
+    inferred_facts: hyperagent.present
+      ? [
+          "INFERRED: Historical platform/OEM-adjacent remap hypotheses (RPWFE/MWF) are explicitly not promoted after UNKNOWN_NOT_PROVEN browser session.",
+        ]
+      : [
+          "INFERRED: HyperAgent hypothesized remaps (RPWFE for ge-gfe28hmkww; MWF for ge-gsc25frshss and ge-gse26gshess) remain platform/OEM-adjacent discovery only.",
+        ],
     unknown_facts: [
-      "UNKNOWN: Exact OEM filter part number for ge-gfe28hmkww until owner-browser Tier-1 on GFE28HMKWW.",
-      "UNKNOWN: Exact OEM filter part number for ge-gsc25frshss until owner-browser Tier-1 on GSC25FRSHSS.",
-      "UNKNOWN: Exact OEM filter part number for ge-gse26gshess until owner-browser Tier-1 on GSE26GSHESS.",
+      "UNKNOWN: Physical rating-plate / corrected model identity for ge-gfe28hmkww until verified.",
+      "UNKNOWN: Physical rating-plate / corrected model identity for ge-gsc25frshss until verified.",
+      "UNKNOWN: Physical rating-plate / corrected model identity for ge-gse26gshess until verified.",
+      "UNKNOWN: Exact OEM filter part numbers for these three PARTIAL slugs (RPWFE/MWF not confirmed).",
     ],
   };
 }
@@ -458,7 +603,8 @@ export function buildGswfPartialOwnerBrowserProofPacketMarkdownV1(
     `| total PARTIAL slugs | ${String(packet.summary_counts.total_partial_slugs)} |`,
     `| EXACT_MODEL_TIER1_PROVEN | ${String(packet.summary_counts.exact_model_tier1_proven)} |`,
     `| BROWSER_PROOF_REQUIRED | ${String(packet.summary_counts.browser_proof_required)} |`,
-    `| UNKNOWN | ${String(packet.summary_counts.unknown)} |`,
+    `| UNKNOWN_NOT_PROVEN | ${String(packet.summary_counts.unknown_not_proven)} |`,
+    `| UNKNOWN (incl. UNKNOWN_NOT_PROVEN) | ${String(packet.summary_counts.unknown)} |`,
     "",
     "## Owner checklist",
     "",
@@ -473,12 +619,14 @@ export function buildGswfPartialOwnerBrowserProofPacketMarkdownV1(
     lines.push(`- model_number: \`${row.model_number ?? "UNKNOWN"}\``);
     lines.push(`- proof_status: **${row.proof_status}**`);
     lines.push(`- exact_model_tier1_proven: **false**`);
+    lines.push(`- next_required_proof: \`${row.next_required_proof ?? "none"}\``);
     lines.push(`- repo maps: \`${row.repo_mapped_filter_slugs.join("|")}\``);
     lines.push(`- cursor_verdict: \`${row.cursor_verdict}\``);
     lines.push(`- hyperagent_actual_filter: \`${row.hyperagent_actual_filter}\``);
+    lines.push(`- hyperagent_evidence_confidence: \`${row.hyperagent_evidence_confidence}\``);
     lines.push(`- hyperagent_source_type: \`${row.hyperagent_source_type ?? "UNKNOWN"}\``);
     lines.push(
-      `- hypothesized_remap: \`${row.hypothesized_remap_target_filter_slug ?? "none"}\` (${row.hypothesized_remap_confidence})`,
+      `- hypothesized_remap: \`${row.hypothesized_remap_target_filter_slug ?? "none"}\` (${row.hypothesized_remap_confidence}; promotion authorized: **false**)`,
     );
     lines.push(`- include_in_apply_plan: **false**`);
     lines.push(`- buy_cta_authorized: **false**`);
@@ -488,6 +636,11 @@ export function buildGswfPartialOwnerBrowserProofPacketMarkdownV1(
     }
     if (row.existing_repo_evidence.cursor_validation_reason) {
       lines.push(`- cursor reason: ${row.existing_repo_evidence.cursor_validation_reason}`);
+    }
+    if (row.existing_repo_evidence.owner_browser_proof_result_rel_path) {
+      lines.push(
+        `- owner_browser_proof_result: \`${row.existing_repo_evidence.owner_browser_proof_result_rel_path}\``,
+      );
     }
     lines.push(`- recommended: ${row.recommended_owner_browser_action}`, "");
   }

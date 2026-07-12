@@ -1,0 +1,117 @@
+{
+  "contract": "gswf_partial_owner_browser_proof_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "verified_link_authorized": false,
+  "buy_cta_authorized": false,
+  "apply_plan_authorized": false,
+  "include_in_gswf_wrong_part_apply_plan": false,
+  "owner_review_required": true,
+  "checked_at": "2026-07-12T19:10:00.000Z",
+  "capture_method": "hyperagent_ge_first_party_exact_model_lookup",
+  "verified_by": "hyperagent_browser",
+  "family_key": "filter::ge::gswf",
+  "source_packet_rel_path": "data/fridge/batch-production/drafts/gswf-partial-owner-browser-proof-packet-v1.json",
+  "session_conclusion": "Do not promote hypothesized remaps. GE first-party product/spec backend did not resolve these exact model strings. Valid sibling controls resolved; fabricated model returned the same unavailable/error pattern. Require physical rating-plate / corrected model verification before any repair-plan inclusion.",
+  "batch_verdict": "UNKNOWN_NOT_PROVEN",
+  "next_required_proof": "RATING_PLATE_OR_CORRECTED_MODEL_VERIFICATION",
+  "hypothesis_promotion_authorized": false,
+  "slug_results": [
+    {
+      "fridge_slug": "ge-gfe28hmkww",
+      "model_number": "GFE28HMKWW",
+      "tier1_ge_exact_model_proof": "UNKNOWN",
+      "hypothesized_filter": "RPWFE",
+      "hypothesized_filter_confirmed": false,
+      "proof_status": "UNKNOWN_NOT_PROVEN",
+      "exact_model_tier1_proven": false,
+      "ge_first_party_product_spec_resolved": false,
+      "include_in_apply_plan": false,
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "buy_cta_authorized": false,
+      "proven_observations": [
+        "PROVEN: GE first-party product/spec backend did not resolve exact model string GFE28HMKWW in this HyperAgent/browser session.",
+        "PROVEN: Valid sibling controls resolved in the same session (control check).",
+        "PROVEN: Fabricated model returned the same unavailable/error pattern as these exact-model lookups."
+      ],
+      "inferred_observations": [],
+      "unknown_observations": [
+        "UNKNOWN: Exact OEM replacement filter for GFE28HMKWW — RPWFE not confirmed.",
+        "UNKNOWN: Whether the catalog model string matches a physical rating-plate / corrected model identity."
+      ],
+      "recommended_next_action": "Require physical rating-plate photo or corrected exact model verification for GFE28HMKWW before any remap hypothesis promotion or apply-plan inclusion."
+    },
+    {
+      "fridge_slug": "ge-gsc25frshss",
+      "model_number": "GSC25FRSHSS",
+      "tier1_ge_exact_model_proof": "UNKNOWN",
+      "hypothesized_filter": "MWF",
+      "hypothesized_filter_confirmed": false,
+      "proof_status": "UNKNOWN_NOT_PROVEN",
+      "exact_model_tier1_proven": false,
+      "ge_first_party_product_spec_resolved": false,
+      "include_in_apply_plan": false,
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "buy_cta_authorized": false,
+      "proven_observations": [
+        "PROVEN: GE first-party product/spec backend did not resolve exact model string GSC25FRSHSS in this HyperAgent/browser session.",
+        "PROVEN: Valid sibling controls resolved in the same session (control check).",
+        "PROVEN: Fabricated model returned the same unavailable/error pattern as these exact-model lookups."
+      ],
+      "inferred_observations": [],
+      "unknown_observations": [
+        "UNKNOWN: Exact OEM replacement filter for GSC25FRSHSS — MWF not confirmed.",
+        "UNKNOWN: Whether the catalog model string matches a physical rating-plate / corrected model identity."
+      ],
+      "recommended_next_action": "Require physical rating-plate photo or corrected exact model verification for GSC25FRSHSS before any remap hypothesis promotion or apply-plan inclusion."
+    },
+    {
+      "fridge_slug": "ge-gse26gshess",
+      "model_number": "GSE26GSHESS",
+      "tier1_ge_exact_model_proof": "UNKNOWN",
+      "hypothesized_filter": "MWF",
+      "hypothesized_filter_confirmed": false,
+      "proof_status": "UNKNOWN_NOT_PROVEN",
+      "exact_model_tier1_proven": false,
+      "ge_first_party_product_spec_resolved": false,
+      "include_in_apply_plan": false,
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "buy_cta_authorized": false,
+      "proven_observations": [
+        "PROVEN: GE first-party product/spec backend did not resolve exact model string GSE26GSHESS in this HyperAgent/browser session.",
+        "PROVEN: Valid sibling controls resolved in the same session (control check).",
+        "PROVEN: Fabricated model returned the same unavailable/error pattern as these exact-model lookups."
+      ],
+      "inferred_observations": [],
+      "unknown_observations": [
+        "UNKNOWN: Exact OEM replacement filter for GSE26GSHESS — MWF not confirmed.",
+        "UNKNOWN: Whether the catalog model string matches a physical rating-plate / corrected model identity."
+      ],
+      "recommended_next_action": "Require physical rating-plate photo or corrected exact model verification for GSE26GSHESS before any remap hypothesis promotion or apply-plan inclusion."
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: HyperAgent/browser Tier-1 GE exact-model proof is UNKNOWN for GFE28HMKWW, GSC25FRSHSS, and GSE26GSHESS.",
+    "PROVEN: RPWFE not confirmed for GFE28HMKWW; MWF not confirmed for GSC25FRSHSS or GSE26GSHESS.",
+    "PROVEN: GE first-party product/spec backend did not resolve these exact model strings.",
+    "PROVEN: Valid sibling controls resolved; fabricated model returned the same unavailable/error pattern.",
+    "PROVEN: mutation_authorized=false; csv_apply_authorized=false; supabase_mutation_authorized=false; buy_cta_authorized=false; include_in_gswf_wrong_part_apply_plan=false."
+  ],
+  "inferred_facts": [],
+  "unknown_facts": [
+    "UNKNOWN: Physical rating-plate / corrected model identity for ge-gfe28hmkww, ge-gsc25frshss, and ge-gse26gshess.",
+    "UNKNOWN: Exact OEM filter part numbers for these three PARTIAL slugs until rating-plate or corrected-model verification exists."
+  ],
+  "risk_notes": [
+    "Do not promote RPWFE/MWF hypotheses from this session.",
+    "Do not include these slugs in any GSWF wrong-part apply plan or Supabase sync.",
+    "Do not authorize buy CTA from this result.",
+    "Do not mutate compatibility_mappings.csv or Supabase from this result."
+  ]
+}

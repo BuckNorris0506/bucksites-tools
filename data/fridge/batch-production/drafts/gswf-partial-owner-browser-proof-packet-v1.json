@@ -9,7 +9,7 @@
   "apply_plan_authorized": false,
   "include_in_gswf_wrong_part_apply_plan": false,
   "owner_review_required": true,
-  "generated_at": "2026-07-12T18:45:37.093Z",
+  "generated_at": "2026-07-12T19:19:19.556Z",
   "source_command": "npm run buckparts:gswf-partial-owner-browser-proof-packet",
   "family_key": "filter::ge::gswf",
   "target_slugs": [
@@ -21,13 +21,15 @@
     "family_reconciliation_owner_review_rel_path": "data/fridge/batch-production/drafts/gswf-family-reconciliation-owner-review-v1.json",
     "wrong_part_apply_plan_rel_path": "data/fridge/batch-production/drafts/gswf-wrong-part-repair-apply-plan-owner-review-v1.json",
     "guarded_apply_dry_run_rel_path": "data/fridge/batch-production/drafts/gswf-wrong-part-repair-guarded-apply-dry-run-v1.json",
-    "cursor_validation_rel_path": "data/fridge/batch-production/drafts/gswf-bounded-evidence-slice-5a735d4a-cursor-validation-v1.json"
+    "cursor_validation_rel_path": "data/fridge/batch-production/drafts/gswf-bounded-evidence-slice-5a735d4a-cursor-validation-v1.json",
+    "owner_browser_proof_result_rel_path": "data/fridge/batch-production/drafts/gswf-partial-owner-browser-proof-result-v1.json"
   },
   "summary_counts": {
     "total_partial_slugs": 3,
     "exact_model_tier1_proven": 0,
-    "browser_proof_required": 3,
-    "unknown": 0
+    "browser_proof_required": 0,
+    "unknown_not_proven": 3,
+    "unknown": 3
   },
   "slug_rows": [
     {
@@ -39,29 +41,32 @@
       ],
       "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
       "hyperagent_actual_filter": "RPWFE",
-      "hyperagent_evidence_confidence": "PROVEN",
+      "hyperagent_evidence_confidence": "UNKNOWN_NOT_PROVEN",
       "hyperagent_source_type": "OEM_ADJACENT",
-      "hypothesized_remap_target_filter_slug": "rpwfe",
-      "hypothesized_remap_confidence": "INFERRED",
-      "proof_status": "BROWSER_PROOF_REQUIRED",
+      "hypothesized_remap_target_filter_slug": null,
+      "hypothesized_remap_confidence": "UNKNOWN",
+      "hypothesis_promotion_authorized": false,
+      "proof_status": "UNKNOWN_NOT_PROVEN",
       "exact_model_tier1_proven": false,
+      "next_required_proof": "RATING_PLATE_OR_CORRECTED_MODEL_VERIFICATION",
       "missing_proof": [
-        "Exact-model owner-browser Tier-1 capture on GFE28HMKWW (not sibling/platform inference).",
-        "Official manufacturer filter_specification / parts page naming the replacement filter for this exact model.",
-        "Repo manual-evidence JSON under data/manual-evidence/refrigerator/ for this exact fridge_slug.",
-        "Current discovery source_type=OEM_ADJACENT is insufficient for apply-plan inclusion."
+        "Physical rating-plate photo or corrected exact model verification for GFE28HMKWW.",
+        "GE first-party product/spec backend did not resolve this exact model string in HyperAgent/browser session.",
+        "Do not promote hypothesized remap targets until rating-plate / corrected-model proof exists.",
+        "Repo manual-evidence JSON under data/manual-evidence/refrigerator/ for this exact fridge_slug."
       ],
       "existing_repo_evidence": {
         "manual_evidence_rel_path": null,
         "manual_evidence_exists": false,
-        "owner_browser_proof_result_exists": false,
+        "owner_browser_proof_result_exists": true,
+        "owner_browser_proof_result_rel_path": "data/fridge/batch-production/drafts/gswf-partial-owner-browser-proof-result-v1.json",
         "cursor_validation_reason": "RPWFE inferred from same-platform HMK variant retailer/OEM-adjacent specs — owner browser on exact GFE28HMKWW required before repair."
       },
       "include_in_apply_plan": false,
       "mutation_authorized": false,
       "csv_apply_authorized": false,
       "buy_cta_authorized": false,
-      "recommended_owner_browser_action": "Owner-browser Tier-1 on exact model GFE28HMKWW: open GE OEM product/parts/support page for this exact SKU, capture filter part number screenshot/URL, write manual-evidence JSON — do not edit compatibility_mappings.csv yet. Confirm or refute hypothesized remap target `rpwfe` only after exact-model proof."
+      "recommended_owner_browser_action": "Require physical rating-plate photo or corrected exact model verification for GFE28HMKWW before any remap hypothesis promotion or apply-plan inclusion."
     },
     {
       "fridge_slug": "ge-gsc25frshss",
@@ -72,29 +77,32 @@
       ],
       "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
       "hyperagent_actual_filter": "MWF",
-      "hyperagent_evidence_confidence": "INFERRED",
+      "hyperagent_evidence_confidence": "UNKNOWN_NOT_PROVEN",
       "hyperagent_source_type": "OEM_PLATFORM_INFERENCE",
-      "hypothesized_remap_target_filter_slug": "mwf",
-      "hypothesized_remap_confidence": "INFERRED",
-      "proof_status": "BROWSER_PROOF_REQUIRED",
+      "hypothesized_remap_target_filter_slug": null,
+      "hypothesized_remap_confidence": "UNKNOWN",
+      "hypothesis_promotion_authorized": false,
+      "proof_status": "UNKNOWN_NOT_PROVEN",
       "exact_model_tier1_proven": false,
+      "next_required_proof": "RATING_PLATE_OR_CORRECTED_MODEL_VERIFICATION",
       "missing_proof": [
-        "Exact-model owner-browser Tier-1 capture on GSC25FRSHSS (not sibling/platform inference).",
-        "Official manufacturer filter_specification / parts page naming the replacement filter for this exact model.",
-        "Repo manual-evidence JSON under data/manual-evidence/refrigerator/ for this exact fridge_slug.",
-        "Current discovery source_type=OEM_PLATFORM_INFERENCE is insufficient for apply-plan inclusion."
+        "Physical rating-plate photo or corrected exact model verification for GSC25FRSHSS.",
+        "GE first-party product/spec backend did not resolve this exact model string in HyperAgent/browser session.",
+        "Do not promote hypothesized remap targets until rating-plate / corrected-model proof exists.",
+        "Repo manual-evidence JSON under data/manual-evidence/refrigerator/ for this exact fridge_slug."
       ],
       "existing_repo_evidence": {
         "manual_evidence_rel_path": null,
         "manual_evidence_exists": false,
-        "owner_browser_proof_result_exists": false,
+        "owner_browser_proof_result_exists": true,
+        "owner_browser_proof_result_rel_path": "data/fridge/batch-production/drafts/gswf-partial-owner-browser-proof-result-v1.json",
         "cursor_validation_reason": "MWF inferred from GSS25 side-by-side platform — discontinued model lacks direct OEM page; browser proof required."
       },
       "include_in_apply_plan": false,
       "mutation_authorized": false,
       "csv_apply_authorized": false,
       "buy_cta_authorized": false,
-      "recommended_owner_browser_action": "Owner-browser Tier-1 on exact model GSC25FRSHSS: open GE OEM product/parts/support page for this exact SKU, capture filter part number screenshot/URL, write manual-evidence JSON — do not edit compatibility_mappings.csv yet. Confirm or refute hypothesized remap target `mwf` only after exact-model proof."
+      "recommended_owner_browser_action": "Require physical rating-plate photo or corrected exact model verification for GSC25FRSHSS before any remap hypothesis promotion or apply-plan inclusion."
     },
     {
       "fridge_slug": "ge-gse26gshess",
@@ -105,43 +113,47 @@
       ],
       "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
       "hyperagent_actual_filter": "MWF",
-      "hyperagent_evidence_confidence": "INFERRED",
+      "hyperagent_evidence_confidence": "UNKNOWN_NOT_PROVEN",
       "hyperagent_source_type": "OEM_PLATFORM_INFERENCE",
-      "hypothesized_remap_target_filter_slug": "mwf",
-      "hypothesized_remap_confidence": "INFERRED",
-      "proof_status": "BROWSER_PROOF_REQUIRED",
+      "hypothesized_remap_target_filter_slug": null,
+      "hypothesized_remap_confidence": "UNKNOWN",
+      "hypothesis_promotion_authorized": false,
+      "proof_status": "UNKNOWN_NOT_PROVEN",
       "exact_model_tier1_proven": false,
+      "next_required_proof": "RATING_PLATE_OR_CORRECTED_MODEL_VERIFICATION",
       "missing_proof": [
-        "Exact-model owner-browser Tier-1 capture on GSE26GSHESS (not sibling/platform inference).",
-        "Official manufacturer filter_specification / parts page naming the replacement filter for this exact model.",
-        "Repo manual-evidence JSON under data/manual-evidence/refrigerator/ for this exact fridge_slug.",
-        "Current discovery source_type=OEM_PLATFORM_INFERENCE is insufficient for apply-plan inclusion."
+        "Physical rating-plate photo or corrected exact model verification for GSE26GSHESS.",
+        "GE first-party product/spec backend did not resolve this exact model string in HyperAgent/browser session.",
+        "Do not promote hypothesized remap targets until rating-plate / corrected-model proof exists.",
+        "Repo manual-evidence JSON under data/manual-evidence/refrigerator/ for this exact fridge_slug."
       ],
       "existing_repo_evidence": {
         "manual_evidence_rel_path": null,
         "manual_evidence_exists": false,
-        "owner_browser_proof_result_exists": false,
+        "owner_browser_proof_result_exists": true,
+        "owner_browser_proof_result_rel_path": "data/fridge/batch-production/drafts/gswf-partial-owner-browser-proof-result-v1.json",
         "cursor_validation_reason": "MWF inferred from GSE25 successor platform — owner browser on exact GSE26GSHESS required."
       },
       "include_in_apply_plan": false,
       "mutation_authorized": false,
       "csv_apply_authorized": false,
       "buy_cta_authorized": false,
-      "recommended_owner_browser_action": "Owner-browser Tier-1 on exact model GSE26GSHESS: open GE OEM product/parts/support page for this exact SKU, capture filter part number screenshot/URL, write manual-evidence JSON — do not edit compatibility_mappings.csv yet. Confirm or refute hypothesized remap target `mwf` only after exact-model proof."
+      "recommended_owner_browser_action": "Require physical rating-plate photo or corrected exact model verification for GSE26GSHESS before any remap hypothesis promotion or apply-plan inclusion."
     }
   ],
   "owner_checklist": [
-    "These 3 PARTIAL slugs are excluded from the 13-row GSWF wrong-part apply plan and guarded dry-run apply set.",
-    "Do not mutate compatibility_mappings.csv for these slugs until exact-model Tier-1 owner-browser proof exists.",
-    "Hypothesized remap targets (rpwfe/mwf) from HyperAgent are INFERRED only — not apply-ready.",
-    "No GSWF buy CTA authorization from this packet.",
-    "Capture exact-model OEM filter_specification evidence, then re-open a separate repair-plan lane if proven."
+    "These 3 PARTIAL slugs remain excluded from the 13-row GSWF wrong-part apply plan and Supabase sync.",
+    "HyperAgent/browser session recorded UNKNOWN_NOT_PROVEN for all three — do not promote RPWFE/MWF hypotheses.",
+    "Next required proof: physical rating-plate photo or corrected exact model verification.",
+    "Do not mutate compatibility_mappings.csv or Supabase for these slugs from this packet.",
+    "No GSWF buy CTA authorization from this packet."
   ],
-  "recommended_next_action": "Owner-browser Tier-1 capture for ge-gfe28hmkww, ge-gsc25frshss, and ge-gse26gshess on exact model pages — keep them out of any GSWF apply plan until proof_status=EXACT_MODEL_TIER1_PROVEN.",
+  "recommended_next_action": "Hold all three PARTIAL slugs as UNKNOWN_NOT_PROVEN — require physical rating-plate / corrected model verification before any remap hypothesis promotion or apply-plan inclusion.",
   "exact_repo_paths_read": [
     "data/compatibility_mappings.csv",
     "data/fridge/batch-production/drafts/gswf-bounded-evidence-slice-5a735d4a-cursor-validation-v1.json",
     "data/fridge/batch-production/drafts/gswf-family-reconciliation-owner-review-v1.json",
+    "data/fridge/batch-production/drafts/gswf-partial-owner-browser-proof-result-v1.json",
     "data/fridge/batch-production/drafts/gswf-wrong-part-repair-apply-plan-owner-review-v1.json",
     "data/fridge/batch-production/drafts/gswf-wrong-part-repair-guarded-apply-dry-run-v1.json",
     "data/fridge_models.csv"
@@ -150,16 +162,20 @@
     "PROVEN: Family reconciliation lists exactly 3 browser_proof_required_rows matching the target slug set.",
     "PROVEN: Wrong-part apply plan excludes these 3 PARTIAL slugs from planned_rows.",
     "PROVEN: Guarded dry-run excluded_slugs_untouched includes these 3 PARTIAL slugs.",
-    "PROVEN: summary browser_proof_required=3; exact_model_tier1_proven=0.",
+    "PROVEN: summary exact_model_tier1_proven=0; browser_proof_required=0; unknown_not_proven=3.",
     "PROVEN: No data/manual-evidence/refrigerator/<slug>.json exists for these three PARTIAL slugs.",
-    "PROVEN: mutation_authorized=false; buy_cta_authorized=false; include_in_gswf_wrong_part_apply_plan=false."
+    "PROVEN: mutation_authorized=false; buy_cta_authorized=false; include_in_gswf_wrong_part_apply_plan=false; hypothesis_promotion_authorized=false.",
+    "PROVEN: HyperAgent/browser result recorded at gswf-partial-owner-browser-proof-result-v1.json with batch_verdict=UNKNOWN_NOT_PROVEN.",
+    "PROVEN: GE first-party product/spec backend did not resolve GFE28HMKWW, GSC25FRSHSS, or GSE26GSHESS; RPWFE/MWF not confirmed.",
+    "PROVEN: Valid sibling controls resolved; fabricated model returned the same unavailable/error pattern."
   ],
   "inferred_facts": [
-    "INFERRED: HyperAgent hypothesized remaps (RPWFE for ge-gfe28hmkww; MWF for ge-gsc25frshss and ge-gse26gshess) remain platform/OEM-adjacent discovery only."
+    "INFERRED: Historical platform/OEM-adjacent remap hypotheses (RPWFE/MWF) are explicitly not promoted after UNKNOWN_NOT_PROVEN browser session."
   ],
   "unknown_facts": [
-    "UNKNOWN: Exact OEM filter part number for ge-gfe28hmkww until owner-browser Tier-1 on GFE28HMKWW.",
-    "UNKNOWN: Exact OEM filter part number for ge-gsc25frshss until owner-browser Tier-1 on GSC25FRSHSS.",
-    "UNKNOWN: Exact OEM filter part number for ge-gse26gshess until owner-browser Tier-1 on GSE26GSHESS."
+    "UNKNOWN: Physical rating-plate / corrected model identity for ge-gfe28hmkww until verified.",
+    "UNKNOWN: Physical rating-plate / corrected model identity for ge-gsc25frshss until verified.",
+    "UNKNOWN: Physical rating-plate / corrected model identity for ge-gse26gshess until verified.",
+    "UNKNOWN: Exact OEM filter part numbers for these three PARTIAL slugs (RPWFE/MWF not confirmed)."
   ]
 }
