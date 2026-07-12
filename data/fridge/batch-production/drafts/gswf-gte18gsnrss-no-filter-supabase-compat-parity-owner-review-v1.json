@@ -11,22 +11,16 @@
   "product_json_ld_mutation_authorized": false,
   "owner_approval_required_for_future_supabase_apply": true,
   "apply_authorized": false,
-  "generated_at": "2026-07-12T22:42:28.917Z",
+  "generated_at": "2026-07-12T23:30:06.086Z",
   "source_command": "npm run buckparts:gswf-gte18gsnrss-no-filter-supabase-compat-parity-owner-review",
   "target_fridge_slug": "ge-gte18gsnrss",
   "target_csv_rel_path": "data/compatibility_mappings.csv",
   "csv_intent_mappings": [],
   "csv_current_mappings": [],
   "supabase_status": "CHECKED",
-  "supabase_mappings": [
-    "gswf",
-    "gswf2"
-  ],
-  "classification": "SUPABASE_STILL_HAS_GSWF_FAMILY",
-  "gswf_family_still_in_supabase": [
-    "gswf",
-    "gswf2"
-  ],
+  "supabase_mappings": [],
+  "classification": "IN_SYNC",
+  "gswf_family_still_in_supabase": [],
   "unexpected_in_supabase": [],
   "read_error": null,
   "proven_facts": [
@@ -34,15 +28,14 @@
     "PROVEN: buy_cta_authorized=false; retailer_links_mutation_authorized=false.",
     "PROVEN: target_fridge_slug=ge-gte18gsnrss; csv_intent_mappings=(none).",
     "PROVEN: csv_current_mappings=(none).",
-    "PROVEN: classification=SUPABASE_STILL_HAS_GSWF_FAMILY; supabase_status=CHECKED.",
-    "PROVEN: supabase_mappings=gswf|gswf2."
+    "PROVEN: classification=IN_SYNC; supabase_status=CHECKED.",
+    "PROVEN: supabase_mappings=(none)."
   ],
   "unknown_facts": [
     "UNKNOWN: Whether founder will authorize a future guarded Supabase suppression apply for this slug.",
     "UNKNOWN: Whether live public pages currently resolve filters from CSV, Supabase, or both after deploy."
   ],
   "risk_notes": [
-    "Live Supabase still maps gswf/gswf2 for ge-gte18gsnrss: gswf|gswf2.",
     "This packet does not mutate Supabase or CSV.",
     "Do not mutate retailer_links, buy CTA, sitemap, robots, or Product JSON-LD from this packet.",
     "Future Supabase apply requires a separate founder approval artifact + guarded executor."

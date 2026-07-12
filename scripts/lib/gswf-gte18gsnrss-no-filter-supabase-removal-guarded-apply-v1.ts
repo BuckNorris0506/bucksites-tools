@@ -14,6 +14,10 @@ import {
   validateFounderDecisionRegistryRowV1,
   type FounderDecisionRegistryRowV1,
 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
+import {
+  tryLoadSupabaseCompatForModelV1,
+  type SupabaseCompatLoadResultV1,
+} from "./buckparts-page-factory-preflight-v1";
 import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
 import {
   GSWF_GTE18GSNRSS_NO_FILTER_TARGET_SLUG_V1,
@@ -483,7 +487,82 @@ export type RunGte18NoFilterSupabaseRemovalGuardedApplyDepsV1 = {
   env?: NodeJS.ProcessEnv;
   mutationEnabled?: boolean;
   applySupabaseRemovalDeltas?: ApplyGte18SupabaseRemovalDeltasFnV1;
+  /** Injectable live Supabase loader — used to detect post-apply already-empty state. */
+  loadSupabaseCompat?: (
+    fridgeSlug: string,
+  ) => Promise<SupabaseCompatLoadResultV1> | SupabaseCompatLoadResultV1;
 };
+
+async function defaultLoadSupabaseCompat(fridgeSlug: string): Promise<SupabaseCompatLoadResultV1> {
+  return tryLoadSupabaseCompatForModelV1(fridgeSlug, []);
+}
+
+function buildAlreadyAppliedReport(args: {
+  mode: "dry_run" | "apply";
+  mutation_flag_enabled: boolean;
+  applyPlanRelPath: string;
+  applyPlanSha256: string | null;
+  ownerApprovalRelPath: string;
+  approvalPresent: boolean;
+  approvalValid: boolean;
+  approvalDecisionId: string | null;
+  generatedAt: string;
+  liveSource: "plan_artifact" | "live_supabase";
+  liveMappings: string[];
+}): GswfGte18gsnrssNoFilterSupabaseRemovalGuardedApplyReportV1 {
+  const liveNote =
+    args.liveSource === "live_supabase"
+      ? `PROVEN: live Supabase mappings for ${GSWF_GTE18GSNRSS_NO_FILTER_TARGET_SLUG_V1} are empty (checked independently of stale plan artifact).`
+      : "PROVEN: plan_sync_state=already_applied from apply-plan artifact.";
+  return {
+    contract: GSWF_GTE18GSNRSS_NO_FILTER_SUPABASE_REMOVAL_GUARDED_APPLY_CONTRACT_V1,
+    mode: args.mode,
+    read_only: true,
+    data_mutation: false,
+    supabase_mutation_authorized: false,
+    csv_mutation_authorized: false,
+    buy_cta_authorized: false,
+    retailer_links_mutation_authorized: false,
+    mutation_flag_enabled: args.mutation_flag_enabled,
+    plan_sync_state: "already_applied",
+    apply_status: "ALREADY_APPLIED",
+    blocked_reasons: [],
+    apply_plan_rel_path: args.applyPlanRelPath,
+    apply_plan_sha256: args.applyPlanSha256,
+    owner_approval_rel_path: args.ownerApprovalRelPath,
+    owner_approval_present: args.approvalPresent,
+    owner_approval_valid: args.approvalValid,
+    owner_approval_decision_id: args.approvalDecisionId,
+    owner_approval_required_for_apply: true,
+    target_fridge_slug: GSWF_GTE18GSNRSS_NO_FILTER_TARGET_SLUG_V1,
+    planned_slug_count: 1,
+    planned_removals: 0,
+    planned_additions: 0,
+    planned_removal_row_keys: [],
+    planned_addition_row_keys: [],
+    planned_supabase_row_deltas: [],
+    excluded_partial_slugs: [...GSWF_WRONG_PART_EXCLUDED_PARTIAL_SLUGS_V1],
+    excluded_gswf_repaired_slugs: [...GSWF_WRONG_PART_PLANNED_FRIDGE_SLUGS_V1],
+    applied_supabase_row_keys: [],
+    generated_at: args.generatedAt,
+    source_command: GSWF_GTE18GSNRSS_NO_FILTER_SUPABASE_REMOVAL_GUARDED_SOURCE_COMMAND_V1,
+    proven_facts: [
+      `PROVEN: mode=${args.mode}; apply_status=ALREADY_APPLIED; data_mutation=false; supabase_mutation_authorized=false; mutation_flag_enabled=${String(args.mutation_flag_enabled)}.`,
+      `PROVEN: plan_sync_state=already_applied; planned_removals=0; planned_additions=0.`,
+      liveNote,
+      `PROVEN: live_supabase_mappings=${args.liveMappings.join("|") || "(none)"}.`,
+      "PROVEN: no Supabase writes attempted — mappings already empty / in sync.",
+      "PROVEN: PARTIAL 3 and GSWF 13 repaired slugs are out of scope for this executor.",
+    ],
+    unknown_facts: [
+      "UNKNOWN: Whether future drift will reintroduce gswf/gswf2 for ge-gte18gsnrss in Supabase.",
+    ],
+    risk_notes: [
+      "Live Supabase (or already_applied plan) shows empty mappings — executor will not re-remove historical gswf/gswf2 rows.",
+      "Do not mutate CSV, retailer_links, buy CTA, sitemap, robots, or Product JSON-LD from this executor.",
+    ],
+  };
+}
 
 export async function runGswfGte18gsnrssNoFilterSupabaseRemovalGuardedApplyV1(
   deps: RunGte18NoFilterSupabaseRemovalGuardedApplyDepsV1,
@@ -496,6 +575,7 @@ export async function runGswfGte18gsnrssNoFilterSupabaseRemovalGuardedApplyV1(
     typeof deps.mutationEnabled === "boolean"
       ? deps.mutationEnabled
       : isGte18NoFilterSupabaseRemovalMutationEnabledV1(env);
+  const loadSupabase = deps.loadSupabaseCompat ?? defaultLoadSupabaseCompat;
 
   const applyPlanRelPath =
     deps.applyPlanRelPath ?? GSWF_GTE18GSNRSS_NO_FILTER_SUPABASE_REMOVAL_APPLY_PLAN_JSON_REL_V1;
@@ -525,54 +605,45 @@ export async function runGswfGte18gsnrssNoFilterSupabaseRemovalGuardedApplyV1(
     readText,
   });
 
-  // Post-apply / already suppressed: never re-delete; report ALREADY_APPLIED.
+  // Plan artifact already marks applied.
   if (plan_sync_state === "already_applied" && blocked_reasons.length === 0) {
-    return {
-      contract: GSWF_GTE18GSNRSS_NO_FILTER_SUPABASE_REMOVAL_GUARDED_APPLY_CONTRACT_V1,
+    return buildAlreadyAppliedReport({
       mode: deps.mode,
-      read_only: true,
-      data_mutation: false,
-      supabase_mutation_authorized: false,
-      csv_mutation_authorized: false,
-      buy_cta_authorized: false,
-      retailer_links_mutation_authorized: false,
       mutation_flag_enabled,
-      plan_sync_state,
-      apply_status: "ALREADY_APPLIED",
-      blocked_reasons: [],
-      apply_plan_rel_path: applyPlanRelPath,
-      apply_plan_sha256: loaded.sha256,
-      owner_approval_rel_path: ownerApprovalRelPath,
-      owner_approval_present: approval.present,
-      owner_approval_valid: approval.row != null,
-      owner_approval_decision_id: approval.row?.decision_id ?? null,
-      owner_approval_required_for_apply: true,
-      target_fridge_slug: GSWF_GTE18GSNRSS_NO_FILTER_TARGET_SLUG_V1,
-      planned_slug_count: 1,
-      planned_removals: 0,
-      planned_additions: 0,
-      planned_removal_row_keys: [],
-      planned_addition_row_keys: [],
-      planned_supabase_row_deltas: [],
-      excluded_partial_slugs: [...GSWF_WRONG_PART_EXCLUDED_PARTIAL_SLUGS_V1],
-      excluded_gswf_repaired_slugs: [...GSWF_WRONG_PART_PLANNED_FRIDGE_SLUGS_V1],
-      applied_supabase_row_keys: [],
-      generated_at: generatedAt,
-      source_command: GSWF_GTE18GSNRSS_NO_FILTER_SUPABASE_REMOVAL_GUARDED_SOURCE_COMMAND_V1,
-      proven_facts: [
-        `PROVEN: mode=${deps.mode}; apply_status=ALREADY_APPLIED; data_mutation=false; supabase_mutation_authorized=false; mutation_flag_enabled=${String(mutation_flag_enabled)}.`,
-        `PROVEN: plan_sync_state=already_applied; planned_removals=0; planned_additions=0.`,
-        "PROVEN: no Supabase writes attempted — mappings already empty / in sync.",
-        "PROVEN: PARTIAL 3 and GSWF 13 repaired slugs are out of scope for this executor.",
-      ],
-      unknown_facts: [
-        "UNKNOWN: Whether future drift will reintroduce gswf/gswf2 for ge-gte18gsnrss in Supabase.",
-      ],
-      risk_notes: [
-        "Plan is already applied — executor will not re-remove historical gswf/gswf2 rows.",
-        "Do not mutate CSV, retailer_links, buy CTA, sitemap, robots, or Product JSON-LD from this executor.",
-      ],
-    };
+      applyPlanRelPath,
+      applyPlanSha256: loaded.sha256,
+      ownerApprovalRelPath,
+      approvalPresent: approval.present,
+      approvalValid: approval.row != null,
+      approvalDecisionId: approval.row?.decision_id ?? null,
+      generatedAt,
+      liveSource: "plan_artifact",
+      liveMappings: [],
+    });
+  }
+
+  // Post-apply: stale pending plan must still yield ALREADY_APPLIED when live Supabase is empty.
+  // Do not rewrite Supabase; do not trust plan.supabase_mappings alone.
+  if (plan_sync_state === "pending_removal" && blocked_reasons.length === 0) {
+    const live = await loadSupabase(GSWF_GTE18GSNRSS_NO_FILTER_TARGET_SLUG_V1);
+    if (live.status === "CHECKED") {
+      const liveMappings = sortedUnique(live.supabase_filter_slugs);
+      if (liveMappings.length === 0) {
+        return buildAlreadyAppliedReport({
+          mode: deps.mode,
+          mutation_flag_enabled,
+          applyPlanRelPath,
+          applyPlanSha256: loaded.sha256,
+          ownerApprovalRelPath,
+          approvalPresent: approval.present,
+          approvalValid: approval.row != null,
+          approvalDecisionId: approval.row?.decision_id ?? null,
+          generatedAt,
+          liveSource: "live_supabase",
+          liveMappings,
+        });
+      }
+    }
   }
 
   if (deps.mode === "apply") {
@@ -678,7 +749,7 @@ export async function runGswfGte18gsnrssNoFilterSupabaseRemovalGuardedApplyV1(
     risk_notes: [
       "Dry-run never mutates Supabase or CSV.",
       "Apply requires matching founder approval + BUCKPARTS_GSWF_GTE18GSNRSS_NO_FILTER_SUPABASE_REMOVAL_MUTATION_ENABLED=1 + exact 2 removals / 0 additions.",
-      "Already-applied plans return ALREADY_APPLIED and do not re-remove rows.",
+      "Already-applied plans and live-empty Supabase return ALREADY_APPLIED and do not re-remove rows.",
       "Do not mutate CSV, retailer_links, buy CTA, sitemap, robots, or Product JSON-LD from this executor.",
       "Do not include PARTIAL or GSWF-13 repaired slugs.",
     ],

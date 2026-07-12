@@ -43,6 +43,11 @@ const APPLY_SCRIPT_SOURCE = readFileSync(
 const FIXED_NOW = () => new Date("2026-07-12T23:45:00.000Z");
 const PLAN_REL = GSWF_GTE18GSNRSS_NO_FILTER_SUPABASE_REMOVAL_APPLY_PLAN_JSON_REL_V1;
 
+const LIVE_DIRTY = async () =>
+  ({ status: "CHECKED" as const, supabase_filter_slugs: ["gswf", "gswf2"] });
+const LIVE_EMPTY = async () =>
+  ({ status: "CHECKED" as const, supabase_filter_slugs: [] as string[] });
+
 function basePendingPlan(): GswfGte18gsnrssNoFilterSupabaseRemovalApplyPlanOwnerReviewV1 {
   return {
     contract: "gswf_gte18gsnrss_no_filter_supabase_removal_apply_plan_owner_review_v1",
@@ -167,6 +172,7 @@ test("dry-run is read-only and DRY_RUN_READY for exact 2 removals", async () => 
       rootDir: tmp,
       mode: "dry_run",
       now: FIXED_NOW,
+      loadSupabaseCompat: LIVE_DIRTY,
       applySupabaseRemovalDeltas: async () => {
         writerCalled = true;
         return { ok: true, errors: [], applied_removal_count: 0, applied_row_keys: [] };
@@ -194,6 +200,69 @@ test("dry-run is read-only and DRY_RUN_READY for exact 2 removals", async () => 
   }
 });
 
+test("pending plan with live-empty Supabase reports ALREADY_APPLIED and never writes", async () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), "gte18-sb-live-empty-"));
+  try {
+    seedFixtureRoot({ root: tmp, includeApproval: true });
+    let writerCalled = false;
+    let liveCalls = 0;
+    const report = await runGswfGte18gsnrssNoFilterSupabaseRemovalGuardedApplyV1({
+      rootDir: tmp,
+      mode: "dry_run",
+      now: FIXED_NOW,
+      mutationEnabled: true,
+      loadSupabaseCompat: async () => {
+        liveCalls += 1;
+        return LIVE_EMPTY();
+      },
+      applySupabaseRemovalDeltas: async () => {
+        writerCalled = true;
+        return { ok: true, errors: [], applied_removal_count: 2, applied_row_keys: [] };
+      },
+    });
+    assert.equal(report.apply_status, "ALREADY_APPLIED");
+    assert.equal(report.plan_sync_state, "already_applied");
+    assert.equal(report.data_mutation, false);
+    assert.equal(report.supabase_mutation_authorized, false);
+    assert.equal(report.planned_removals, 0);
+    assert.deepEqual(report.planned_removal_row_keys, []);
+    assert.deepEqual(report.applied_supabase_row_keys, []);
+    assert.equal(writerCalled, false);
+    assert.ok(liveCalls >= 1);
+    assert.ok(
+      report.proven_facts.some(
+        (fact) => fact.includes("live Supabase mappings") && fact.includes("empty"),
+      ),
+    );
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("apply mode against pending plan + live-empty Supabase is ALREADY_APPLIED", async () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), "gte18-sb-apply-live-empty-"));
+  try {
+    seedFixtureRoot({ root: tmp, includeApproval: true });
+    let writerCalled = false;
+    const report = await runGswfGte18gsnrssNoFilterSupabaseRemovalGuardedApplyV1({
+      rootDir: tmp,
+      mode: "apply",
+      now: FIXED_NOW,
+      mutationEnabled: true,
+      loadSupabaseCompat: LIVE_EMPTY,
+      applySupabaseRemovalDeltas: async () => {
+        writerCalled = true;
+        return { ok: true, errors: [], applied_removal_count: 2, applied_row_keys: [] };
+      },
+    });
+    assert.equal(report.apply_status, "ALREADY_APPLIED");
+    assert.equal(report.data_mutation, false);
+    assert.equal(writerCalled, false);
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
 test("apply is blocked without matching founder approval", async () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "gte18-sb-no-approval-"));
   try {
@@ -204,6 +273,7 @@ test("apply is blocked without matching founder approval", async () => {
       mode: "apply",
       now: FIXED_NOW,
       mutationEnabled: true,
+      loadSupabaseCompat: LIVE_DIRTY,
       applySupabaseRemovalDeltas: async () => {
         writerCalled = true;
         return { ok: true, errors: [], applied_removal_count: 2, applied_row_keys: [] };
@@ -233,6 +303,7 @@ test("apply is blocked without explicit mutation env flag", async () => {
       mode: "apply",
       now: FIXED_NOW,
       mutationEnabled: false,
+      loadSupabaseCompat: LIVE_DIRTY,
       applySupabaseRemovalDeltas: async () => {
         writerCalled = true;
         return { ok: true, errors: [], applied_removal_count: 2, applied_row_keys: [] };
@@ -276,6 +347,7 @@ test("apply is blocked if planned removals differ from exactly those 2 rows", as
       mode: "apply",
       now: FIXED_NOW,
       mutationEnabled: true,
+      loadSupabaseCompat: LIVE_DIRTY,
       applySupabaseRemovalDeltas: async () => ({
         ok: true,
         errors: [],
@@ -304,7 +376,6 @@ test("apply is blocked if additions are nonzero", async () => {
       root: tmp,
       includeApproval: true,
       planMutator: (plan) => {
-        // force additions through typed escape for gate coverage
         (plan as { planned_supabase_additions: unknown[] }).planned_supabase_additions = [
           { fridge_slug: "ge-gte18gsnrss", filter_slug: "mwf" },
         ];
@@ -316,6 +387,7 @@ test("apply is blocked if additions are nonzero", async () => {
       mode: "apply",
       now: FIXED_NOW,
       mutationEnabled: true,
+      loadSupabaseCompat: LIVE_DIRTY,
       applySupabaseRemovalDeltas: async () => ({
         ok: true,
         errors: [],
@@ -351,6 +423,7 @@ test("already_applied plan reports ALREADY_APPLIED and never writes", async () =
       mode: "apply",
       now: FIXED_NOW,
       mutationEnabled: true,
+      loadSupabaseCompat: LIVE_EMPTY,
       applySupabaseRemovalDeltas: async (): Promise<Gte18SupabaseRemovalWriteResultV1> => {
         writerCalled = true;
         return { ok: true, errors: [], applied_removal_count: 2, applied_row_keys: [] };
@@ -375,6 +448,7 @@ test("PARTIAL / GSWF-13 excluded; source forbids CSV/retailer_links/HQ writes", 
       rootDir: tmp,
       mode: "dry_run",
       now: FIXED_NOW,
+      loadSupabaseCompat: LIVE_DIRTY,
     });
     assert.deepEqual(report.excluded_partial_slugs, [...GSWF_WRONG_PART_EXCLUDED_PARTIAL_SLUGS_V1]);
     assert.deepEqual(report.excluded_gswf_repaired_slugs, [...GSWF_WRONG_PART_PLANNED_FRIDGE_SLUGS_V1]);
@@ -387,6 +461,7 @@ test("PARTIAL / GSWF-13 excluded; source forbids CSV/retailer_links/HQ writes", 
     assert.ok(!LIB_SOURCE.includes("docs/BuckParts-HQ-HANDOFF"));
     assert.ok(!APPLY_SCRIPT_SOURCE.includes("docs/BuckParts-HQ-HANDOFF"));
     assert.ok(LIB_SOURCE.includes("ALREADY_APPLIED"));
+    assert.ok(LIB_SOURCE.includes("live_supabase"));
     assert.ok(LIB_SOURCE.includes(GSWF_GTE18GSNRSS_NO_FILTER_SUPABASE_REMOVAL_MUTATION_ENV_FLAG_V1));
     assert.ok(APPLY_SCRIPT_SOURCE.includes('process.argv.includes("--apply") ? "apply" : "dry_run"'));
   } finally {
@@ -402,6 +477,7 @@ test("write dry-run artifacts only to allowlisted draft paths", async () => {
       rootDir: tmp,
       mode: "dry_run",
       now: FIXED_NOW,
+      loadSupabaseCompat: LIVE_DIRTY,
     });
     const written = writeGswfGte18gsnrssNoFilterSupabaseRemovalGuardedDryRunArtifactsV1({
       rootDir: tmp,
@@ -437,6 +513,7 @@ test("approved apply with mutation flag invokes writer exactly once for 2 remova
       mode: "apply",
       now: FIXED_NOW,
       mutationEnabled: true,
+      loadSupabaseCompat: LIVE_DIRTY,
       applySupabaseRemovalDeltas: async (deltas) => {
         writerCalls += 1;
         assert.equal(deltas.length, 2);
@@ -461,9 +538,8 @@ test("approved apply with mutation flag invokes writer exactly once for 2 remova
   }
 });
 
-test("repo dry-run against committed/generated plan stays non-mutating when plan exists", async () => {
+test("repo dry-run against committed plan uses live Supabase and stays non-mutating", async () => {
   if (!existsSync(path.join(ROOT, PLAN_REL))) {
-    // Plan may not exist yet in this working tree; skip without failing the suite.
     return;
   }
   const report = await runGswfGte18gsnrssNoFilterSupabaseRemovalGuardedApplyV1({
@@ -479,6 +555,10 @@ test("repo dry-run against committed/generated plan stays non-mutating when plan
       report.apply_status === "ALREADY_APPLIED" ||
       report.apply_status === "BLOCKED",
   );
+  if (report.apply_status === "ALREADY_APPLIED") {
+    assert.equal(report.plan_sync_state, "already_applied");
+    assert.equal(report.planned_removals, 0);
+  }
   assert.equal(report.data_mutation, false);
   assert.equal(report.supabase_mutation_authorized, false);
   assert.equal(report.csv_mutation_authorized, false);

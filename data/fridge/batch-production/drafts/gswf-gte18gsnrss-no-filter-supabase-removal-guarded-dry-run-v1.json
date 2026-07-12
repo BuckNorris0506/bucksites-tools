@@ -8,8 +8,8 @@
   "buy_cta_authorized": false,
   "retailer_links_mutation_authorized": false,
   "mutation_flag_enabled": false,
-  "plan_sync_state": "pending_removal",
-  "apply_status": "DRY_RUN_READY",
+  "plan_sync_state": "already_applied",
+  "apply_status": "ALREADY_APPLIED",
   "blocked_reasons": [],
   "apply_plan_rel_path": "data/fridge/batch-production/drafts/gswf-gte18gsnrss-no-filter-supabase-removal-apply-plan-owner-review-v1.json",
   "apply_plan_sha256": "f5982b1f7238b8544cb460b11793f4fcc76b3395462bb7025ce67edff36af50b",
@@ -20,27 +20,11 @@
   "owner_approval_required_for_apply": true,
   "target_fridge_slug": "ge-gte18gsnrss",
   "planned_slug_count": 1,
-  "planned_removals": 2,
+  "planned_removals": 0,
   "planned_additions": 0,
-  "planned_removal_row_keys": [
-    "ge-gte18gsnrss,gswf",
-    "ge-gte18gsnrss,gswf2"
-  ],
+  "planned_removal_row_keys": [],
   "planned_addition_row_keys": [],
-  "planned_supabase_row_deltas": [
-    {
-      "operation": "remove",
-      "fridge_slug": "ge-gte18gsnrss",
-      "filter_slug": "gswf",
-      "row_key": "ge-gte18gsnrss,gswf"
-    },
-    {
-      "operation": "remove",
-      "fridge_slug": "ge-gte18gsnrss",
-      "filter_slug": "gswf2",
-      "row_key": "ge-gte18gsnrss,gswf2"
-    }
-  ],
+  "planned_supabase_row_deltas": [],
   "excluded_partial_slugs": [
     "ge-gfe28hmkww",
     "ge-gsc25frshss",
@@ -62,25 +46,21 @@
     "ge-pvd28bymfs"
   ],
   "applied_supabase_row_keys": [],
-  "generated_at": "2026-07-12T23:18:56.330Z",
+  "generated_at": "2026-07-12T23:30:05.260Z",
   "source_command": "npm run buckparts:gswf-gte18gsnrss-no-filter-supabase-removal-guarded-apply",
   "proven_facts": [
-    "PROVEN: mode=dry_run; apply_status=DRY_RUN_READY; data_mutation=false; supabase_mutation_authorized=false; mutation_flag_enabled=false.",
-    "PROVEN: target_fridge_slug=ge-gte18gsnrss; planned_removals=2; planned_additions=0; plan_sync_state=pending_removal.",
-    "PROVEN: owner_approval_present=true; owner_approval_valid=true.",
-    "PROVEN: csv_mutation_authorized=false; buy_cta_authorized=false; retailer_links_mutation_authorized=false.",
-    "PROVEN: PARTIAL 3 and GSWF 13 repaired slugs are out of scope for this executor.",
-    "PROVEN: dry-run verified exact Supabase removals ge-gte18gsnrss,gswf + ge-gte18gsnrss,gswf2 with zero additions."
+    "PROVEN: mode=dry_run; apply_status=ALREADY_APPLIED; data_mutation=false; supabase_mutation_authorized=false; mutation_flag_enabled=false.",
+    "PROVEN: plan_sync_state=already_applied; planned_removals=0; planned_additions=0.",
+    "PROVEN: live Supabase mappings for ge-gte18gsnrss are empty (checked independently of stale plan artifact).",
+    "PROVEN: live_supabase_mappings=(none).",
+    "PROVEN: no Supabase writes attempted — mappings already empty / in sync.",
+    "PROVEN: PARTIAL 3 and GSWF 13 repaired slugs are out of scope for this executor."
   ],
   "unknown_facts": [
-    "UNKNOWN: Whether founder will create gswf-gte18gsnrss-no-filter-supabase-removal-owner-approval-v1.json.",
-    "UNKNOWN: Whether live public pages currently resolve filters from CSV, Supabase, or both after deploy."
+    "UNKNOWN: Whether future drift will reintroduce gswf/gswf2 for ge-gte18gsnrss in Supabase."
   ],
   "risk_notes": [
-    "Dry-run never mutates Supabase or CSV.",
-    "Apply requires matching founder approval + BUCKPARTS_GSWF_GTE18GSNRSS_NO_FILTER_SUPABASE_REMOVAL_MUTATION_ENABLED=1 + exact 2 removals / 0 additions.",
-    "Already-applied plans return ALREADY_APPLIED and do not re-remove rows.",
-    "Do not mutate CSV, retailer_links, buy CTA, sitemap, robots, or Product JSON-LD from this executor.",
-    "Do not include PARTIAL or GSWF-13 repaired slugs."
+    "Live Supabase (or already_applied plan) shows empty mappings — executor will not re-remove historical gswf/gswf2 rows.",
+    "Do not mutate CSV, retailer_links, buy CTA, sitemap, robots, or Product JSON-LD from this executor."
   ]
 }
