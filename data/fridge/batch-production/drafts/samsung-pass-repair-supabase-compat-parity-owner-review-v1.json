@@ -1,0 +1,190 @@
+{
+  "contract": "samsung_pass_repair_supabase_compat_parity_owner_review_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "sitemap_robots_mutation_authorized": false,
+  "product_json_ld_mutation_authorized": false,
+  "owner_approval_required_for_future_supabase_apply": true,
+  "apply_authorized": false,
+  "generated_at": "2026-07-12T23:45:36.790Z",
+  "source_command": "npm run buckparts:samsung-pass-repair-supabase-compat-parity-owner-review",
+  "apply_plan_rel_path": "data/fridge/batch-production/drafts/samsung-pass-repair-apply-plan-v1.json",
+  "csv_apply_commit": "89bed80",
+  "target_csv_rel_path": "data/compatibility_mappings.csv",
+  "target_filter_slug": "da97-17376b",
+  "planned_slug_count": 5,
+  "classification_counts": {
+    "IN_SYNC": 0,
+    "SUPABASE_STILL_HAS_OLD_ROWS": 5,
+    "SUPABASE_MISSING_TARGET": 0,
+    "CONFLICT": 0,
+    "UNKNOWN_READ_FAILED": 0
+  },
+  "rows": [
+    {
+      "fridge_slug": "samsung-rf27t5201sr",
+      "classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "csv_intent_mappings": [
+        "da97-17376b"
+      ],
+      "csv_current_mappings": [
+        "da97-17376b"
+      ],
+      "csv_matches_intent": true,
+      "csv_old_rows_still_present": [],
+      "removed_filter_slugs_expected_absent": [
+        "da29-10105j"
+      ],
+      "supabase_status": "CHECKED",
+      "supabase_mappings": [
+        "da29-10105j"
+      ],
+      "old_rows_still_in_supabase": [
+        "da29-10105j"
+      ],
+      "missing_from_supabase": [
+        "da97-17376b"
+      ],
+      "unexpected_in_supabase": [],
+      "read_error": null,
+      "supabase_mutation_authorized": false
+    },
+    {
+      "fridge_slug": "samsung-rf27t5501sr",
+      "classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "csv_intent_mappings": [
+        "da97-17376b"
+      ],
+      "csv_current_mappings": [
+        "da97-17376b"
+      ],
+      "csv_matches_intent": true,
+      "csv_old_rows_still_present": [],
+      "removed_filter_slugs_expected_absent": [
+        "da29-00012b",
+        "da29-00020b"
+      ],
+      "supabase_status": "CHECKED",
+      "supabase_mappings": [
+        "da29-00012b",
+        "da29-00020b"
+      ],
+      "old_rows_still_in_supabase": [
+        "da29-00012b",
+        "da29-00020b"
+      ],
+      "missing_from_supabase": [
+        "da97-17376b"
+      ],
+      "unexpected_in_supabase": [],
+      "read_error": null,
+      "supabase_mutation_authorized": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r6301sr",
+      "classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "csv_intent_mappings": [
+        "da97-17376b"
+      ],
+      "csv_current_mappings": [
+        "da97-17376b"
+      ],
+      "csv_matches_intent": true,
+      "csv_old_rows_still_present": [],
+      "removed_filter_slugs_expected_absent": [
+        "da29-00019a"
+      ],
+      "supabase_status": "CHECKED",
+      "supabase_mappings": [
+        "da29-00019a"
+      ],
+      "old_rows_still_in_supabase": [
+        "da29-00019a"
+      ],
+      "missing_from_supabase": [
+        "da97-17376b"
+      ],
+      "unexpected_in_supabase": [],
+      "read_error": null,
+      "supabase_mutation_authorized": false
+    },
+    {
+      "fridge_slug": "samsung-rf28t5101sr",
+      "classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "csv_intent_mappings": [
+        "da97-17376b"
+      ],
+      "csv_current_mappings": [
+        "da97-17376b"
+      ],
+      "csv_matches_intent": true,
+      "csv_old_rows_still_present": [],
+      "removed_filter_slugs_expected_absent": [
+        "da29-00019a"
+      ],
+      "supabase_status": "CHECKED",
+      "supabase_mappings": [
+        "da29-00019a"
+      ],
+      "old_rows_still_in_supabase": [
+        "da29-00019a"
+      ],
+      "missing_from_supabase": [
+        "da97-17376b"
+      ],
+      "unexpected_in_supabase": [],
+      "read_error": null,
+      "supabase_mutation_authorized": false
+    },
+    {
+      "fridge_slug": "samsung-rs22t5201sg",
+      "classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "csv_intent_mappings": [
+        "da97-17376b"
+      ],
+      "csv_current_mappings": [
+        "da97-17376b"
+      ],
+      "csv_matches_intent": true,
+      "csv_old_rows_still_present": [],
+      "removed_filter_slugs_expected_absent": [
+        "da29-10105j"
+      ],
+      "supabase_status": "CHECKED",
+      "supabase_mappings": [
+        "da29-10105j"
+      ],
+      "old_rows_still_in_supabase": [
+        "da29-10105j"
+      ],
+      "missing_from_supabase": [
+        "da97-17376b"
+      ],
+      "unexpected_in_supabase": [],
+      "read_error": null,
+      "supabase_mutation_authorized": false
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: read_only=true; data_mutation=false; supabase_mutation_authorized=false; csv_mutation_authorized=false.",
+    "PROVEN: buy_cta_authorized=false; retailer_links_mutation_authorized=false.",
+    "PROVEN: planned_slug_count=5; target_filter_slug=da97-17376b; csv_apply_commit=89bed80.",
+    "PROVEN: classification_counts={\"IN_SYNC\":0,\"SUPABASE_STILL_HAS_OLD_ROWS\":5,\"SUPABASE_MISSING_TARGET\":0,\"CONFLICT\":0,\"UNKNOWN_READ_FAILED\":0}.",
+    "PROVEN: CSV current mappings match intent da97-17376b-only and old da29-* removals are absent for all 5 slugs."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether founder will authorize a future guarded Supabase compat sync apply for these 5 slugs.",
+    "UNKNOWN: Whether live public pages currently resolve filters from CSV, Supabase, or both after deploy."
+  ],
+  "risk_notes": [
+    "Live Supabase still has old da29-* rows on 5 slug(s).",
+    "This packet does not mutate Supabase or CSV.",
+    "Do not mutate retailer_links, buy CTA, sitemap, robots, or Product JSON-LD from this packet.",
+    "Future Supabase apply requires a separate founder approval artifact + guarded executor."
+  ]
+}
