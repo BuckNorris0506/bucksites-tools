@@ -1,0 +1,277 @@
+{
+  "contract": "samsung_pass_repair_supabase_compat_sync_plan_owner_review_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "apply_authorized": false,
+  "apply_plan_authorized": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "sitemap_robots_mutation_authorized": false,
+  "product_json_ld_mutation_authorized": false,
+  "owner_approval_required": true,
+  "generated_at": "2026-07-13T00:22:28.484Z",
+  "source_command": "npm run buckparts:samsung-pass-repair-supabase-compat-sync-plan-owner-review",
+  "csv_apply_commit": "89bed80",
+  "csv_apply_plan_rel_path": "data/fridge/batch-production/drafts/samsung-pass-repair-apply-plan-v1.json",
+  "parity_artifact_rel_path": "data/fridge/batch-production/drafts/samsung-pass-repair-supabase-compat-parity-owner-review-v1.json",
+  "target_csv_rel_path": "data/compatibility_mappings.csv",
+  "target_filter_slug": "da97-17376b",
+  "plan_sync_state": "pending_sync",
+  "planned_slug_count": 5,
+  "planned_supabase_row_removals": 6,
+  "planned_supabase_row_additions": 5,
+  "planned_supabase_removals": [
+    {
+      "operation": "remove",
+      "fridge_slug": "samsung-rf27t5201sr",
+      "filter_slug": "da29-10105j",
+      "row_key": "samsung-rf27t5201sr,da29-10105j"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "samsung-rf27t5501sr",
+      "filter_slug": "da29-00012b",
+      "row_key": "samsung-rf27t5501sr,da29-00012b"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "samsung-rf27t5501sr",
+      "filter_slug": "da29-00020b",
+      "row_key": "samsung-rf27t5501sr,da29-00020b"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "samsung-rf28r6301sr",
+      "filter_slug": "da29-00019a",
+      "row_key": "samsung-rf28r6301sr,da29-00019a"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "samsung-rf28t5101sr",
+      "filter_slug": "da29-00019a",
+      "row_key": "samsung-rf28t5101sr,da29-00019a"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "samsung-rs22t5201sg",
+      "filter_slug": "da29-10105j",
+      "row_key": "samsung-rs22t5201sg,da29-10105j"
+    }
+  ],
+  "planned_supabase_additions": [
+    {
+      "operation": "add",
+      "fridge_slug": "samsung-rf27t5201sr",
+      "filter_slug": "da97-17376b",
+      "row_key": "samsung-rf27t5201sr,da97-17376b"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "samsung-rf27t5501sr",
+      "filter_slug": "da97-17376b",
+      "row_key": "samsung-rf27t5501sr,da97-17376b"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "samsung-rf28r6301sr",
+      "filter_slug": "da97-17376b",
+      "row_key": "samsung-rf28r6301sr,da97-17376b"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "samsung-rf28t5101sr",
+      "filter_slug": "da97-17376b",
+      "row_key": "samsung-rf28t5101sr,da97-17376b"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "samsung-rs22t5201sg",
+      "filter_slug": "da97-17376b",
+      "row_key": "samsung-rs22t5201sg,da97-17376b"
+    }
+  ],
+  "allowed_removal_row_keys": [
+    "samsung-rf27t5201sr,da29-10105j",
+    "samsung-rf27t5501sr,da29-00012b",
+    "samsung-rf27t5501sr,da29-00020b",
+    "samsung-rf28r6301sr,da29-00019a",
+    "samsung-rf28t5101sr,da29-00019a",
+    "samsung-rs22t5201sg,da29-10105j"
+  ],
+  "classification_counts": {
+    "IN_SYNC": 0,
+    "SUPABASE_STILL_HAS_OLD_ROWS": 5,
+    "SUPABASE_MISSING_TARGET": 0,
+    "CONFLICT": 0,
+    "UNKNOWN_READ_FAILED": 0
+  },
+  "rows": [
+    {
+      "fridge_slug": "samsung-rf27t5201sr",
+      "classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "csv_intent_mappings": [
+        "da97-17376b"
+      ],
+      "csv_current_mappings": [
+        "da97-17376b"
+      ],
+      "csv_matches_intent": true,
+      "csv_old_rows_still_present": [],
+      "removed_filter_slugs_expected_absent": [
+        "da29-10105j"
+      ],
+      "supabase_status": "CHECKED",
+      "supabase_mappings": [
+        "da29-10105j"
+      ],
+      "old_rows_still_in_supabase": [
+        "da29-10105j"
+      ],
+      "missing_from_supabase": [
+        "da97-17376b"
+      ],
+      "unexpected_in_supabase": [],
+      "read_error": null,
+      "supabase_mutation_authorized": false
+    },
+    {
+      "fridge_slug": "samsung-rf27t5501sr",
+      "classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "csv_intent_mappings": [
+        "da97-17376b"
+      ],
+      "csv_current_mappings": [
+        "da97-17376b"
+      ],
+      "csv_matches_intent": true,
+      "csv_old_rows_still_present": [],
+      "removed_filter_slugs_expected_absent": [
+        "da29-00012b",
+        "da29-00020b"
+      ],
+      "supabase_status": "CHECKED",
+      "supabase_mappings": [
+        "da29-00012b",
+        "da29-00020b"
+      ],
+      "old_rows_still_in_supabase": [
+        "da29-00012b",
+        "da29-00020b"
+      ],
+      "missing_from_supabase": [
+        "da97-17376b"
+      ],
+      "unexpected_in_supabase": [],
+      "read_error": null,
+      "supabase_mutation_authorized": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r6301sr",
+      "classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "csv_intent_mappings": [
+        "da97-17376b"
+      ],
+      "csv_current_mappings": [
+        "da97-17376b"
+      ],
+      "csv_matches_intent": true,
+      "csv_old_rows_still_present": [],
+      "removed_filter_slugs_expected_absent": [
+        "da29-00019a"
+      ],
+      "supabase_status": "CHECKED",
+      "supabase_mappings": [
+        "da29-00019a"
+      ],
+      "old_rows_still_in_supabase": [
+        "da29-00019a"
+      ],
+      "missing_from_supabase": [
+        "da97-17376b"
+      ],
+      "unexpected_in_supabase": [],
+      "read_error": null,
+      "supabase_mutation_authorized": false
+    },
+    {
+      "fridge_slug": "samsung-rf28t5101sr",
+      "classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "csv_intent_mappings": [
+        "da97-17376b"
+      ],
+      "csv_current_mappings": [
+        "da97-17376b"
+      ],
+      "csv_matches_intent": true,
+      "csv_old_rows_still_present": [],
+      "removed_filter_slugs_expected_absent": [
+        "da29-00019a"
+      ],
+      "supabase_status": "CHECKED",
+      "supabase_mappings": [
+        "da29-00019a"
+      ],
+      "old_rows_still_in_supabase": [
+        "da29-00019a"
+      ],
+      "missing_from_supabase": [
+        "da97-17376b"
+      ],
+      "unexpected_in_supabase": [],
+      "read_error": null,
+      "supabase_mutation_authorized": false
+    },
+    {
+      "fridge_slug": "samsung-rs22t5201sg",
+      "classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "csv_intent_mappings": [
+        "da97-17376b"
+      ],
+      "csv_current_mappings": [
+        "da97-17376b"
+      ],
+      "csv_matches_intent": true,
+      "csv_old_rows_still_present": [],
+      "removed_filter_slugs_expected_absent": [
+        "da29-10105j"
+      ],
+      "supabase_status": "CHECKED",
+      "supabase_mappings": [
+        "da29-10105j"
+      ],
+      "old_rows_still_in_supabase": [
+        "da29-10105j"
+      ],
+      "missing_from_supabase": [
+        "da97-17376b"
+      ],
+      "unexpected_in_supabase": [],
+      "read_error": null,
+      "supabase_mutation_authorized": false
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: read_only=true; data_mutation=false; supabase_mutation_authorized=false; csv_mutation_authorized=false.",
+    "PROVEN: buy_cta_authorized=false; retailer_links_mutation_authorized=false.",
+    "PROVEN: planned_slug_count=5; target_filter_slug=da97-17376b; csv_apply_commit=89bed80.",
+    "PROVEN: csv_intent_mappings=da97-17376b.",
+    "PROVEN: classification_counts={\"IN_SYNC\":0,\"SUPABASE_STILL_HAS_OLD_ROWS\":5,\"SUPABASE_MISSING_TARGET\":0,\"CONFLICT\":0,\"UNKNOWN_READ_FAILED\":0}; plan_sync_state=pending_sync.",
+    "PROVEN: planned_removals=6; planned_additions=5 (plan only — not applied).",
+    "PROVEN: allowed_removal_row_keys=samsung-rf27t5201sr,da29-10105j | samsung-rf27t5501sr,da29-00012b | samsung-rf27t5501sr,da29-00020b | samsung-rf28r6301sr,da29-00019a | samsung-rf28t5101sr,da29-00019a | samsung-rs22t5201sg,da29-10105j.",
+    "PROVEN: non-PASS / GTE18 / GSWF slugs are out of scope for this plan."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether founder will create a matching samsung-pass supabase-compat-sync owner-approval artifact.",
+    "UNKNOWN: Whether live public pages currently resolve filters from CSV, Supabase, or both after deploy."
+  ],
+  "risk_notes": [
+    "Pending exact sync: remove 6 old da29-* rows and add 5 da97-17376b rows.",
+    "This packet does not mutate Supabase or CSV.",
+    "Do not mutate retailer_links, buy CTA, sitemap, robots, or Product JSON-LD from this packet.",
+    "Future Supabase apply requires a separate founder approval artifact + guarded executor + env flag.",
+    "Removals are limited to the proven old da29-* allowlist; additions are da97-17376b only."
+  ]
+}
