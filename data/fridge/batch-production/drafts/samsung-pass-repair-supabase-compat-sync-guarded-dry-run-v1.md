@@ -1,6 +1,6 @@
 # Samsung PASS repair — Supabase compatibility sync guarded dry-run v1
 
-Generated: 2026-07-13T00:22:31.382Z
+Generated: 2026-07-13T00:35:49.934Z
 
 ## Status
 
@@ -12,10 +12,10 @@ Generated: 2026-07-13T00:22:31.382Z
 - supabase_mutation_authorized: **false**
 - mutation_flag_enabled: **false**
 - plan_sync_state: **pending_sync**
-- owner_approval_present: **false**
-- owner_approval_valid: **false**
+- owner_approval_present: **true**
+- owner_approval_valid: **true**
 - owner_approval_required_for_apply: **true**
-- owner_approval_decision_id: `none`
+- owner_approval_decision_id: `decision-2026-07-13-samsung-pass-supabase-compat-sync-approve`
 
 ## Sources
 
@@ -58,11 +58,10 @@ Generated: 2026-07-13T00:22:31.382Z
 - PROVEN: mode=dry_run; apply_status=DRY_RUN_READY; data_mutation=false; supabase_mutation_authorized=false; mutation_flag_enabled=false.
 - PROVEN: sync_plan_rel_path=data/fridge/batch-production/drafts/samsung-pass-repair-supabase-compat-sync-plan-owner-review-v1.json.
 - PROVEN: plan_sync_state=pending_sync; planned_slug_count=5; planned_removals=6; planned_additions=5.
-- PROVEN: owner_approval_present=false; owner_approval_valid=false; decision_id=none.
+- PROVEN: owner_approval_present=true; owner_approval_valid=true; decision_id=decision-2026-07-13-samsung-pass-supabase-compat-sync-approve.
 - PROVEN: csv_apply_commit=89bed80; target_filter_slug=da97-17376b.
 - PROVEN: allowed_removal_row_keys=samsung-rf27t5201sr,da29-10105j | samsung-rf27t5501sr,da29-00012b | samsung-rf27t5501sr,da29-00020b | samsung-rf28r6301sr,da29-00019a | samsung-rf28t5101sr,da29-00019a | samsung-rs22t5201sg,da29-10105j.
 - PROVEN: csv_mutation_authorized=false; buy_cta_authorized=false; retailer_links_mutation_authorized=false.
-- PROVEN: no founder approval artifact at data/owner-decisions/samsung-pass-repair-supabase-compat-sync-owner-approval-v1.json (expected for this dry-run lane).
 - PROVEN: sync plan shape verified (pending_sync; removals=6; additions=5; slug_count=5).
 
 ## Unknown facts
