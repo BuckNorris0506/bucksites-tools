@@ -1,17 +1,17 @@
 # Samsung PASS repair — Supabase compatibility sync guarded dry-run v1
 
-Generated: 2026-07-13T00:35:49.934Z
+Generated: 2026-07-13T16:01:48.756Z
 
 ## Status
 
 - contract: `samsung_pass_repair_supabase_compat_sync_guarded_apply_v1`
 - mode: **dry_run**
-- apply_status: **DRY_RUN_READY**
+- apply_status: **ALREADY_APPLIED**
 - read_only: **true**
 - data_mutation: **false**
 - supabase_mutation_authorized: **false**
 - mutation_flag_enabled: **false**
-- plan_sync_state: **pending_sync**
+- plan_sync_state: **already_in_sync**
 - owner_approval_present: **true**
 - owner_approval_valid: **true**
 - owner_approval_required_for_apply: **true**
@@ -28,52 +28,35 @@ Generated: 2026-07-13T00:35:49.934Z
 ## Planned Supabase changes
 
 - planned_slug_count: 5
-- planned_removals: 6
-- planned_additions: 5
+- planned_removals: 0
+- planned_additions: 0
 
 ## Classification counts (from sync plan)
 
-- **IN_SYNC**: 0
-- **SUPABASE_STILL_HAS_OLD_ROWS**: 5
+- **IN_SYNC**: 5
+- **SUPABASE_STILL_HAS_OLD_ROWS**: 0
 - **SUPABASE_MISSING_TARGET**: 0
 - **CONFLICT**: 0
 - **UNKNOWN_READ_FAILED**: 0
 
 ## Exact Supabase row deltas
 
-- **remove** `samsung-rf27t5201sr,da29-10105j`
-- **add** `samsung-rf27t5201sr,da97-17376b`
-- **remove** `samsung-rf27t5501sr,da29-00012b`
-- **remove** `samsung-rf27t5501sr,da29-00020b`
-- **add** `samsung-rf27t5501sr,da97-17376b`
-- **remove** `samsung-rf28r6301sr,da29-00019a`
-- **add** `samsung-rf28r6301sr,da97-17376b`
-- **remove** `samsung-rf28t5101sr,da29-00019a`
-- **add** `samsung-rf28t5101sr,da97-17376b`
-- **remove** `samsung-rs22t5201sg,da29-10105j`
-- **add** `samsung-rs22t5201sg,da97-17376b`
+- none
 
 ## Proven facts
 
-- PROVEN: mode=dry_run; apply_status=DRY_RUN_READY; data_mutation=false; supabase_mutation_authorized=false; mutation_flag_enabled=false.
-- PROVEN: sync_plan_rel_path=data/fridge/batch-production/drafts/samsung-pass-repair-supabase-compat-sync-plan-owner-review-v1.json.
-- PROVEN: plan_sync_state=pending_sync; planned_slug_count=5; planned_removals=6; planned_additions=5.
-- PROVEN: owner_approval_present=true; owner_approval_valid=true; decision_id=decision-2026-07-13-samsung-pass-supabase-compat-sync-approve.
-- PROVEN: csv_apply_commit=89bed80; target_filter_slug=da97-17376b.
-- PROVEN: allowed_removal_row_keys=samsung-rf27t5201sr,da29-10105j | samsung-rf27t5501sr,da29-00012b | samsung-rf27t5501sr,da29-00020b | samsung-rf28r6301sr,da29-00019a | samsung-rf28t5101sr,da29-00019a | samsung-rs22t5201sg,da29-10105j.
-- PROVEN: csv_mutation_authorized=false; buy_cta_authorized=false; retailer_links_mutation_authorized=false.
-- PROVEN: sync plan shape verified (pending_sync; removals=6; additions=5; slug_count=5).
+- PROVEN: mode=dry_run; apply_status=ALREADY_APPLIED; data_mutation=false; supabase_mutation_authorized=false; mutation_flag_enabled=false.
+- PROVEN: plan_sync_state=already_in_sync; planned_removals=0; planned_additions=0.
+- PROVEN: live Supabase mappings for all 5 PASS slugs are already da97-17376b-only (checked independently of stale plan artifact).
+- PROVEN: no Supabase writes attempted — mappings already in sync.
+- PROVEN: CSV / retailer_links / buy CTA / sitemap / robots / Product JSON-LD remain out of scope.
 
 ## Unknown facts
 
-- UNKNOWN: When founder will create samsung-pass-repair-supabase-compat-sync-owner-approval-v1.json.
-- UNKNOWN: Whether a future founder session will set BUCKPARTS_SAMSUNG_PASS_SUPABASE_COMPAT_SYNC_MUTATION_ENABLED=1 for an authorized apply.
+- UNKNOWN: Whether future drift will reintroduce old da29-* rows for these 5 PASS slugs in Supabase.
 
 ## Risk notes
 
-- Dry-run never mutates Supabase or CSV.
-- Apply requires matching founder approval + BUCKPARTS_SAMSUNG_PASS_SUPABASE_COMPAT_SYNC_MUTATION_ENABLED=1 + exact pending 5/6/5 sync plan.
-- Already-synced live mappings return ALREADY_APPLIED and do not re-apply deltas.
-- Do not mutate retailer_links / buy CTA / sitemap / robots / Product JSON-LD / CSV from this executor.
-- Do not include non-PASS, GTE18, or GSWF slugs in any Samsung PASS Supabase sync apply.
+- Live Supabase (or already_in_sync plan) shows da97-17376b-only — executor will not re-apply historical 6/5 deltas.
+- Do not mutate CSV, retailer_links, buy CTA, sitemap, robots, or Product JSON-LD from this executor.
 
