@@ -1,0 +1,645 @@
+{
+  "contract": "buckparts_fridge_model_pdp_live_html_proof_pack_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "sitemap_robots_mutation_authorized": false,
+  "product_json_ld_mutation_authorized": false,
+  "owner_decisions_mutation_authorized": false,
+  "deploy_authorized": false,
+  "conversion_claimed": false,
+  "live_production_fetch_enabled": true,
+  "generated_at": "2026-07-14T06:22:20.492Z",
+  "source_command": "npm run buckparts:fridge-model-pdp-live-html-proof",
+  "readiness_pack_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-live-customer-visible-proof-readiness-v1.json",
+  "target_base_url": "https://buckparts.com",
+  "target_source": "LIVE_SITE_SMOKE_TARGET_URL",
+  "scope": {
+    "slug_count": 21,
+    "slugs": [
+      "frigidaire-ffhb2740ps",
+      "frigidaire-fghb2868pf",
+      "frigidaire-fgsc2335tf",
+      "ge-cwe23sshww",
+      "ge-gfe28gmkbb",
+      "ge-gfe28gmkes",
+      "ge-gfe28gskes",
+      "ge-gfe28gskss",
+      "ge-gfe28gynfs",
+      "ge-gfe28hskss",
+      "ge-gye22gskww",
+      "ge-pfe28kmkww",
+      "ge-pfe28kynbb",
+      "samsung-rf263beaesr",
+      "samsung-rf28nhedbsr",
+      "samsung-rf28r7201sr",
+      "samsung-rf28r7351sg",
+      "whirlpool-wrf540cwhz",
+      "whirlpool-wrs325sdhz",
+      "whirlpool-wrx735sdhz",
+      "whirlpool-wrx986sihz"
+    ],
+    "excluded_fail_slugs": [
+      "ge-gfe24jgkww",
+      "ge-gfe27jmkes",
+      "ge-gne25jmkww",
+      "ge-gne27jstss",
+      "ge-gse25hskss",
+      "ge-gte18gsnrss",
+      "ge-pvd28bymfs"
+    ],
+    "excluded_quarantined_slugs": [
+      "lg-lfxc22596s",
+      "lg-lfxs26973s",
+      "lg-lfxs28968s",
+      "lg-lmxs28626s",
+      "lg-lrfvs3006s",
+      "lg-lrfxs3106s",
+      "samsung-rf27t5201sr",
+      "samsung-rf27t5501sr",
+      "samsung-rf28r6301sr",
+      "samsung-rf28t5101sr",
+      "samsung-rs22t5201sg"
+    ],
+    "excluded_partial_slugs": [
+      "ge-gfe28hmkww",
+      "ge-gsc25frshss",
+      "ge-gse26gshess"
+    ]
+  },
+  "summary": {
+    "LIVE_PROOF_PASS": 0,
+    "LIVE_PROOF_FAIL": 21,
+    "LIVE_PROOF_UNKNOWN": 0
+  },
+  "rows": [
+    {
+      "slug": "frigidaire-ffhb2740ps",
+      "production_url": "https://buckparts.com/fridge/frigidaire-ffhb2740ps",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "ultrawf"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "frigidaire-fghb2868pf",
+      "production_url": "https://buckparts.com/fridge/frigidaire-fghb2868pf",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "eptwfu01"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "frigidaire-fgsc2335tf",
+      "production_url": "https://buckparts.com/fridge/frigidaire-fgsc2335tf",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "eptwfu01"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "ge-cwe23sshww",
+      "production_url": "https://buckparts.com/fridge/ge-cwe23sshww",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "rpwfe"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gmkbb",
+      "production_url": "https://buckparts.com/fridge/ge-gfe28gmkbb",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "rpwfe"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gmkes",
+      "production_url": "https://buckparts.com/fridge/ge-gfe28gmkes",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "rpwfe"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gskes",
+      "production_url": "https://buckparts.com/fridge/ge-gfe28gskes",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "rpwfe"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gskss",
+      "production_url": "https://buckparts.com/fridge/ge-gfe28gskss",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "rpwfe"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gynfs",
+      "production_url": "https://buckparts.com/fridge/ge-gfe28gynfs",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "rpwfe"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "ge-gfe28hskss",
+      "production_url": "https://buckparts.com/fridge/ge-gfe28hskss",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "rpwfe",
+        "smartwater-mwfp"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "ge-gye22gskww",
+      "production_url": "https://buckparts.com/fridge/ge-gye22gskww",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "rpwfe"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "ge-pfe28kmkww",
+      "production_url": "https://buckparts.com/fridge/ge-pfe28kmkww",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "rpwfe",
+        "xwf"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "ge-pfe28kynbb",
+      "production_url": "https://buckparts.com/fridge/ge-pfe28kynbb",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "rpwfe"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "samsung-rf263beaesr",
+      "production_url": "https://buckparts.com/fridge/samsung-rf263beaesr",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "da29-00020b"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "samsung-rf28nhedbsr",
+      "production_url": "https://buckparts.com/fridge/samsung-rf28nhedbsr",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "da29-00020b"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "samsung-rf28r7201sr",
+      "production_url": "https://buckparts.com/fridge/samsung-rf28r7201sr",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "da97-17376b"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "samsung-rf28r7351sg",
+      "production_url": "https://buckparts.com/fridge/samsung-rf28r7351sg",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "whirlpool-wrf540cwhz",
+      "production_url": "https://buckparts.com/fridge/whirlpool-wrf540cwhz",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "edr4rxd1"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "whirlpool-wrs325sdhz",
+      "production_url": "https://buckparts.com/fridge/whirlpool-wrs325sdhz",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "edr1rxd1"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "whirlpool-wrx735sdhz",
+      "production_url": "https://buckparts.com/fridge/whirlpool-wrx735sdhz",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "edr4rxd1"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    },
+    {
+      "slug": "whirlpool-wrx986sihz",
+      "production_url": "https://buckparts.com/fridge/whirlpool-wrx986sihz",
+      "http_status": 200,
+      "model_page_rendered": true,
+      "proof_heading_present": false,
+      "last_checked_present": false,
+      "mapped_filter_numbers_present": true,
+      "verified_link_section_present": true,
+      "safe_go_link_present": true,
+      "product_json_ld_offers_reviews_ratings_absent": true,
+      "unsafe_cta_or_search_placeholder_exposed": false,
+      "expected_mapped_filters": [
+        "edr2rxd1"
+      ],
+      "missing_reasons": [
+        "proof_heading_missing",
+        "last_checked_missing"
+      ],
+      "result": "LIVE_PROOF_FAIL",
+      "notes": [
+        "Read-only GET of production HTML; no deploy; no mutation.",
+        "Do not claim conversion, revenue, or click-through from this pack.",
+        "FAIL reasons: proof_heading_missing, last_checked_missing"
+      ]
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: read_only=true; deploy_authorized=false; conversion_claimed=false; data_mutation=false.",
+    "PROVEN: exact scope=21 SAFE_BUYER_PATH_PASS slugs.",
+    "PROVEN: excluded FAIL=7; quarantine=11; PARTIAL=3.",
+    "PROVEN: summary={\"LIVE_PROOF_PASS\":0,\"LIVE_PROOF_FAIL\":21,\"LIVE_PROOF_UNKNOWN\":0}.",
+    "PROVEN: LIVE_PROOF_PASS requires proof heading, Last checked, mapped filter numbers, Verified Link section, gated /go link, no Product offer/review/rating JSON-LD, and no search-placeholder CTA."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: conversion / revenue impact (never claimed by this pack)."
+  ],
+  "risk_notes": [
+    "This pack does not authorize deploy, Supabase/CSV/retailer_links mutation, buy CTA expansion, sitemap/robots, or Product JSON-LD invents.",
+    "LIVE_PROOF_FAIL is expected when production has not yet deployed the visible proof block UI.",
+    "Do not promote search-placeholder destinations or invent offers from this lane."
+  ]
+}
