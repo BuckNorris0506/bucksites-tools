@@ -4,7 +4,9 @@ import test from "node:test";
 import {
   buildFridgeTruthSpineV1,
   FRIDGE_EVIDENCE_ONLY_MISMATCH_SLUGS_V1,
+  FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_SUPABASE_SYNC_OWNER_REVIEW_EXACT_COMMAND_V1,
   FRIDGE_TRUTH_SPINE_RECOMMENDED_NEXT_ACTION_V1,
+  projectGeMwfpXwfeRetailerLinksSupabaseSyncForSpineV1,
 } from "./fridge-truth-spine-v1";
 
 const REPO_ROOT = process.cwd();
@@ -57,10 +59,50 @@ test("fridge_truth_spine_v1 does not authorize CSV apply", async () => {
     skipLivePublicProbe: true,
   });
   const action = spine.recommended_next_action.toLowerCase();
-  assert.ok(action.includes("owner browser proof") || action.includes("founder"));
-  assert.ok(action.includes("do not claim conversion") || action.includes("do not apply"));
+  assert.ok(
+    action.includes("owner browser proof") ||
+      action.includes("founder") ||
+      action.includes("supabase-sync-owner-review"),
+  );
+  assert.ok(
+    action.includes("do not claim conversion") ||
+      action.includes("do not apply") ||
+      action.includes("do not claim 4"),
+  );
   assert.equal(action.includes("authorized apply"), false);
   assert.ok(spine.proven_facts.some((f) => f.includes("does not authorize")));
+});
+
+test("fridge_truth_spine_v1 surfaces GE DRIFTED READY exact_command for sync owner-review", async () => {
+  const projected = projectGeMwfpXwfeRetailerLinksSupabaseSyncForSpineV1({
+    contract: "buckparts_fridge_model_pdp_ge_mwfp_xwfe_retailer_links_supabase_parity_v1",
+    overall_sync_status: "DRIFTED",
+  });
+  assert.equal(projected.dispatch_status, "READY");
+  assert.equal(
+    projected.exact_command,
+    FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_SUPABASE_SYNC_OWNER_REVIEW_EXACT_COMMAND_V1,
+  );
+  assert.equal(projected.mutation_allowed, false);
+  assert.equal(projected.supabase_write_authorized, false);
+  assert.equal(projected.pages_claimed_closed, false);
+  assert.equal(projected.conversion_or_revenue, "UNKNOWN");
+  assert.deepEqual([...projected.filter_slugs], ["smartwater-mwfp", "xwfe"]);
+  assert.deepEqual([...projected.excluded_filter_slugs], ["xwf"]);
+
+  const spine = await buildFridgeTruthSpineV1({
+    rootDir: REPO_ROOT,
+    skipLivePublicProbe: true,
+  });
+  const ge = spine.ge_mwfp_xwfe_retailer_links_supabase_sync;
+  if (ge.overall_sync_status === "DRIFTED") {
+    assert.equal(ge.dispatch_status, "READY");
+    assert.equal(
+      ge.exact_command,
+      FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_SUPABASE_SYNC_OWNER_REVIEW_EXACT_COMMAND_V1,
+    );
+    assert.ok(spine.recommended_next_action.includes(ge.exact_command));
+  }
 });
 
 test("fridge_truth_spine_v1 surfaces live HTML proof milestone PASS 21 without conversion claim", async () => {

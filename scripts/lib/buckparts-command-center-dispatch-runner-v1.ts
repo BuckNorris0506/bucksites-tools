@@ -54,9 +54,62 @@ const ALLOWLIST_EXACT_COMMANDS_V1 = [
   "npx tsx scripts/report-buckparts-command-center.ts",
   "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
   "npx tsx scripts/report-ap-batch-v3-run-instantiation-v1.ts",
+  "npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review -- --write-artifacts",
   "npm run lint",
   "npm run build",
 ] as const;
+
+type DispatchPickV1 = {
+  dispatch_status: string;
+  exact_command: string;
+  command_surface: string;
+  mutation_allowed: boolean;
+  selected_subsystem: string;
+  success_transition?: string;
+  failure_transition?: string;
+};
+
+/**
+ * Prefer GE MWFP/XWFE spine READY exact_command (read-only owner-review) over batch AP dispatch.
+ * Hard-stop remains: mutation_allowed must be false; allowlist + danger needles still apply.
+ */
+export function pickCommandCenterDispatchForRunnerV1(v2: {
+  fridge_truth_spine_v1?: {
+    ge_mwfp_xwfe_retailer_links_supabase_sync?: {
+      dispatch_status?: string;
+      exact_command?: string;
+      command_surface?: string;
+      mutation_allowed?: boolean;
+      selected_subsystem?: string;
+      success_transition?: string;
+      failure_transition?: string;
+      supabase_write_authorized?: boolean;
+    };
+  };
+  batch_production_operating_dispatch_v1?: DispatchPickV1 | null;
+}): DispatchPickV1 | null {
+  const ge = v2.fridge_truth_spine_v1?.ge_mwfp_xwfe_retailer_links_supabase_sync;
+  if (
+    ge?.dispatch_status === "READY" &&
+    typeof ge.exact_command === "string" &&
+    ge.exact_command.length > 0 &&
+    ge.mutation_allowed === false &&
+    ge.supabase_write_authorized === false &&
+    (ge.command_surface === "terminal" || ge.command_surface === "none")
+  ) {
+    return {
+      dispatch_status: ge.dispatch_status,
+      exact_command: ge.exact_command,
+      command_surface: ge.command_surface,
+      mutation_allowed: false,
+      selected_subsystem:
+        ge.selected_subsystem ?? "ge_mwfp_xwfe_retailer_links_supabase_sync_owner_review",
+      success_transition: ge.success_transition,
+      failure_transition: ge.failure_transition,
+    };
+  }
+  return v2.batch_production_operating_dispatch_v1 ?? null;
+}
 
 function defaultExec(cmd: string, cwd: string): Promise<{ stdout: string; stderr: string; exitCode: number }> {
   return execAsync(cmd, { cwd, maxBuffer: 10 * 1024 * 1024 }).then(
@@ -153,9 +206,11 @@ export async function runBuckpartsCommandCenterDispatchRunnerV1(
   }
 
   const v2 = report.command_center_v2;
-  const dispatch = v2.batch_production_operating_dispatch_v1;
+  const dispatch = pickCommandCenterDispatchForRunnerV1(v2);
   if (!dispatch) {
-    blocked_reasons.push("Missing command_center_v2.batch_production_operating_dispatch_v1.");
+    blocked_reasons.push(
+      "Missing executable dispatch (fridge_truth_spine GE sync READY or batch_production_operating_dispatch_v1).",
+    );
   }
 
   const exact_command = dispatch?.exact_command ?? "";

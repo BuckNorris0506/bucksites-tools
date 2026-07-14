@@ -231,8 +231,16 @@ test("proof is read-only with mutation flags false; writes only allowlisted draf
     report.cta_go_failure_cause,
     "SUPABASE_STALE_OR_SEARCH_PLACEHOLDER_BLOCKS_RUNTIME_CTA",
   );
-  assert.ok(report.recommended_next_action.includes("Founder-gated scoped Supabase"));
+  assert.ok(
+    report.recommended_next_action.includes(
+      "buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review",
+    ),
+  );
   assert.ok(report.recommended_next_action.includes("Do not claim 4 pages closed yet"));
+  assert.equal(
+    report.exact_command,
+    "npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review -- --write-artifacts",
+  );
   assert.equal(report.pages_claimed_closed, false);
 
   const written = writeGeMwfpXwfeRetailerLinksSupabaseParityArtifactsV1({

@@ -1,0 +1,97 @@
+{
+  "contract": "buckparts_fridge_model_pdp_ge_mwfp_xwfe_retailer_links_supabase_sync_owner_review_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "apply_authorized": false,
+  "founder_approval_created": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "retailer_links_csv_mutation_authorized": false,
+  "pages_claimed_closed": false,
+  "conversion_claimed": false,
+  "generated_at": "2026-07-14T21:54:07.947Z",
+  "source_command": "npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review",
+  "exact_command": "npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review -- --write-artifacts",
+  "parity_artifact_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-parity-v1.json",
+  "closeout_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-guarded-apply-closeout-v1.json",
+  "overall_sync_status_required": "DRIFTED",
+  "overall_sync_status_observed": "DRIFTED",
+  "any_supabase_search_placeholder": true,
+  "scope": {
+    "filter_slugs": [
+      "smartwater-mwfp",
+      "xwfe"
+    ],
+    "excluded_filter_slugs": [
+      "xwf"
+    ],
+    "affected_model_slugs": [
+      "ge-gfe24jgkww",
+      "ge-gfe27jmkes",
+      "ge-gne25jmkww",
+      "ge-pvd28bymfs"
+    ],
+    "max_planned_updates": 2
+  },
+  "planned_updates": [
+    {
+      "filter_slug": "smartwater-mwfp",
+      "change_kind": "update_existing_primary_from_csv",
+      "supabase_link_id": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "before_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWFP",
+      "after_affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+      "before_retailer_name": "OEM parts catalog (keyword lookup)",
+      "after_retailer_name": "GE Appliance Parts",
+      "before_browser_truth_classification": "",
+      "after_browser_truth_classification": "direct_buyable",
+      "after_retailer_key": "oem-parts-catalog",
+      "supabase_was_search_placeholder": true
+    },
+    {
+      "filter_slug": "xwfe",
+      "change_kind": "update_existing_primary_from_csv",
+      "supabase_link_id": "e274568e-2998-4a93-8642-53862d2eb915",
+      "before_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+      "after_affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+      "before_retailer_name": "OEM parts catalog (keyword lookup)",
+      "after_retailer_name": "GE Appliance Parts",
+      "before_browser_truth_classification": "",
+      "after_browser_truth_classification": "direct_buyable",
+      "after_retailer_key": "oem-parts-catalog",
+      "supabase_was_search_placeholder": true
+    }
+  ],
+  "gate_conditions_for_future_apply": [
+    "Separate founder approval packet required for Supabase retailer_links UPDATE of existing smartwater-mwfp + xwfe primaries only.",
+    "CSV retailer_links must remain the approved GE PDP URLs (already applied).",
+    "Explicit founder-run of a future guarded Supabase apply executor with MUTATION capability — not this packet.",
+    "Do not INSERT/DELETE rows; do not mutate xwf; do not mutate compatibility; do not expand buy CTA.",
+    "Re-run CTA/go proof after apply; do not claim 4 pages closed from this owner-review alone."
+  ],
+  "hard_stop": {
+    "supabase_write_authorized": false,
+    "founder_approval_required_before_write": true,
+    "next_forbidden_actions": [
+      "supabase_retailer_links_write",
+      "csv_retailer_links_mutation",
+      "founder_approval_auto_stamp",
+      "buy_cta_expansion",
+      "claim_pages_closed"
+    ]
+  },
+  "proven_facts": [
+    "PROVEN: read_only=true; mutation_authorized=false; apply_authorized=false; founder_approval_created=false; supabase_mutation_authorized=false.",
+    "PROVEN: filter scope exactly smartwater-mwfp + xwfe; xwf excluded; max_planned_updates=2.",
+    "PROVEN: affected models exactly ge-gfe24jgkww, ge-gfe27jmkes, ge-gne25jmkww, ge-pvd28bymfs.",
+    "PROVEN: overall_sync_status=DRIFTED from committed parity artifact; owner-review plans CSV→Supabase primary updates only.",
+    "PROVEN: pages_claimed_closed=false; conversion_claimed=false.",
+    "PROVEN: this packet does not write Supabase and does not create owner-decision approval rows."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: conversion/revenue impact of a future Supabase sync.",
+    "UNKNOWN: whether CTA/go FAIL 7 flips after a future authorized sync — must re-proof."
+  ],
+  "recommended_next_action": "HARD STOP: founder must review this plan, then create a separate Supabase sync founder-approval packet. Do not run Supabase write from this stage. Do not claim 4 GE pages closed."
+}

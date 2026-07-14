@@ -192,6 +192,49 @@ test("runner executes allowlisted command when dispatch is READY (mocked)", asyn
   }
 });
 
+test("runner prefers GE MWFP/XWFE spine READY exact_command over batch dispatch", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
+  const fixedNow = new Date("2026-05-25T00:00:04.000Z");
+  const geCmd =
+    "npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review -- --write-artifacts";
+  let executed: string | null = null;
+  try {
+    const base = fakeReportWithDispatch({});
+    base.command_center_v2.fridge_truth_spine_v1 = {
+      contract: "fridge_truth_spine_v1",
+      ge_mwfp_xwfe_retailer_links_supabase_sync: {
+        dispatch_status: "READY",
+        exact_command: geCmd,
+        command_surface: "terminal",
+        mutation_allowed: false,
+        supabase_write_authorized: false,
+        selected_subsystem: "ge_mwfp_xwfe_retailer_links_supabase_sync_owner_review",
+        success_transition: "owner-review drafts written",
+        failure_transition: "remain drifted",
+      },
+    };
+    const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => fixedNow,
+      reportBuilder: async () => base,
+      exec: async (cmd) => {
+        executed = cmd;
+        return { stdout: "{\"ok\":true,\"contract\":\"ge_sync_owner_review\"}", stderr: "", exitCode: 0 };
+      },
+    });
+    assert.equal(executed, geCmd);
+    assert.equal(res.artifact.execution_status, "EXECUTED");
+    assert.equal(res.artifact.exact_command, geCmd);
+    assert.equal(
+      res.artifact.selected_subsystem,
+      "ge_mwfp_xwfe_retailer_links_supabase_sync_owner_review",
+    );
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
+});
+
 test("runner does not mutate product CSV", async () => {
   const dispatchRunsDir = tempDispatchRunsDir();
   const before = readFileSync(`${REPO_ROOT}/data/air-purifier/retailer_links.csv`, "utf8");

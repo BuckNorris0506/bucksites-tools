@@ -23,6 +23,10 @@ import {
   type FridgeRetailerLinksScopedSlugParityV1,
 } from "./fridge-retailer-links-scoped-supabase-parity-core-v1";
 
+/** Keep in sync with supabase-sync-owner-review EXACT_COMMAND (avoid circular import). */
+export const BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_SUPABASE_SYNC_OWNER_REVIEW_EXACT_COMMAND_V1 =
+  "npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review -- --write-artifacts" as const;
+
 export const BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_RETAILER_LINKS_SUPABASE_PARITY_CONTRACT_V1 =
   "buckparts_fridge_model_pdp_ge_mwfp_xwfe_retailer_links_supabase_parity_v1" as const;
 
@@ -137,6 +141,8 @@ export type GeMwfpXwfeRetailerLinksSupabaseParityProofV1 = {
   proven_facts: string[];
   unknown_facts: string[];
   recommended_next_action: string;
+  /** When DRIFTED: executable next read-only stage for Command Center / dispatch. */
+  exact_command: typeof BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_SUPABASE_SYNC_OWNER_REVIEW_EXACT_COMMAND_V1 | null;
   core_parity: FridgeRetailerLinksScopedParityReportV1<GeMwfpXwfeRetailerLinksSupabaseParityFilterSlugV1>;
 };
 
@@ -412,7 +418,7 @@ export async function buildGeMwfpXwfeRetailerLinksSupabaseParityProofV1(args: {
       "Configure Supabase service-role env and re-run this read-only parity proof before any sync discussion.";
   } else if (overall_sync_status === "DRIFTED") {
     recommended_next_action =
-      "Founder-gated scoped Supabase retailer_links sync for exactly smartwater-mwfp + xwfe (update existing primaries to CSV truth) is the next lane — not created in this read-only proof. Then re-run CTA/go proof. Do not claim 4 pages closed yet.";
+      `Run ${BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_SUPABASE_SYNC_OWNER_REVIEW_EXACT_COMMAND_V1} (read-only owner-review drafts). Hard-stop before Supabase write / founder approval. Then re-run CTA/go proof. Do not claim 4 pages closed yet.`;
   } else if (cta_go_failure_cause === "CSV_SUPABASE_IN_SYNC_BUT_CTA_GO_STILL_FAILS_OTHER_GATE") {
     recommended_next_action =
       "CSV and Supabase are IN_SYNC — investigate non-parity CTA/go gates (mapping/quarantine/trust freshness) and re-run CTA/go proof; do not claim pages closed.";
@@ -452,6 +458,10 @@ export async function buildGeMwfpXwfeRetailerLinksSupabaseParityProofV1(args: {
     proven_facts,
     unknown_facts,
     recommended_next_action,
+    exact_command:
+      overall_sync_status === "DRIFTED"
+        ? BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_SUPABASE_SYNC_OWNER_REVIEW_EXACT_COMMAND_V1
+        : null,
     core_parity,
   };
 }
@@ -469,6 +479,7 @@ export function renderGeMwfpXwfeRetailerLinksSupabaseParityMarkdownV1(
     `- pages_claimed_closed: \`${String(report.pages_claimed_closed)}\``,
     `- conversion_claimed: \`${String(report.conversion_claimed)}\``,
     `- apply_lane_authorized: \`${String(report.apply_lane_authorized)}\``,
+    `- exact_command: \`${report.exact_command ?? "null"}\``,
     "",
     "## Filter scope",
     "",

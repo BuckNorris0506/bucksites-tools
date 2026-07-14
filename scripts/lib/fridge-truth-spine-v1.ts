@@ -21,6 +21,16 @@ export const FRIDGE_TRUTH_SPINE_LIVE_HTML_PROOF_CONTRACT_V1 =
 export const FRIDGE_TRUTH_SPINE_LIVE_HTML_PROOF_JSON_REL_V1 =
   "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-live-html-proof-pack-v1.json" as const;
 
+/** GE MWFP/XWFE scoped parity artifact (string literals — avoid importing parity lib into Next typecheck). */
+export const FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_PARITY_CONTRACT_V1 =
+  "buckparts_fridge_model_pdp_ge_mwfp_xwfe_retailer_links_supabase_parity_v1" as const;
+export const FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_PARITY_JSON_REL_V1 =
+  "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-parity-v1.json" as const;
+export const FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_SUPABASE_SYNC_OWNER_REVIEW_EXACT_COMMAND_V1 =
+  "npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review -- --write-artifacts" as const;
+export const FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_SUPABASE_SYNC_JQ_PATH_V1 =
+  ".command_center_v2.fridge_truth_spine_v1.ge_mwfp_xwfe_retailer_links_supabase_sync" as const;
+
 /** Minimal artifact shape for Command Center projection (no fetch-pack import). */
 export type FridgeLiveHtmlProofPackArtifactV1 = {
   contract: string;
@@ -113,10 +123,44 @@ export type FridgeTruthSpineV1 = {
   };
   /** Production live HTML proof for 21 SAFE_BUYER_PATH_PASS fridge model PDPs (artifact-backed). */
   model_pdp_live_html_proof: FridgeTruthSpineModelPdpLiveHtmlProofV1;
+  /**
+   * When GE MWFP/XWFE parity is DRIFTED, surfaces READY exact_command for read-only
+   * Supabase sync owner-review (Command Center / dispatch runner). Hard-stop before write.
+   */
+  ge_mwfp_xwfe_retailer_links_supabase_sync: FridgeTruthSpineGeMwfpXwfeSupabaseSyncV1;
   recommended_next_action: string;
   truth_first_notes: string[];
   proven_facts: string[];
   inferred_facts: string[];
+  unknown_facts: string[];
+};
+
+export type FridgeTruthSpineGeMwfpXwfeSupabaseSyncV1 = {
+  contract: typeof FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_PARITY_CONTRACT_V1 | "UNKNOWN";
+  source_artifact_rel: typeof FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_PARITY_JSON_REL_V1;
+  recommended_jq_path: typeof FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_SUPABASE_SYNC_JQ_PATH_V1;
+  overall_sync_status: "DRIFTED" | "IN_SYNC" | "UNKNOWN" | null;
+  dispatch_status: "READY" | "BLOCKED" | "NOT_NEEDED" | "UNKNOWN";
+  selected_subsystem: "ge_mwfp_xwfe_retailer_links_supabase_sync_owner_review" | "none";
+  exact_command: typeof FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_SUPABASE_SYNC_OWNER_REVIEW_EXACT_COMMAND_V1 | "";
+  command_surface: "terminal" | "none";
+  mutation_allowed: false;
+  owner_approval_required: false;
+  supabase_write_authorized: false;
+  pages_claimed_closed: false;
+  conversion_or_revenue: "UNKNOWN";
+  filter_slugs: readonly ["smartwater-mwfp", "xwfe"];
+  excluded_filter_slugs: readonly ["xwf"];
+  affected_model_slugs: readonly [
+    "ge-gfe24jgkww",
+    "ge-gfe27jmkes",
+    "ge-gne25jmkww",
+    "ge-pvd28bymfs",
+  ];
+  success_transition: string;
+  failure_transition: string;
+  why_this_is_next: string;
+  proven_facts: string[];
   unknown_facts: string[];
 };
 
@@ -127,6 +171,11 @@ export type BuildFridgeTruthSpineV1Args = {
   skipLivePublicProbe?: boolean;
   /** Test override: inject live HTML proof pack instead of reading draft JSON. */
   loadLiveHtmlProofPack?: () => FridgeLiveHtmlProofPackArtifactV1 | null;
+  /** Test override: inject GE MWFP/XWFE parity artifact instead of reading draft JSON. */
+  loadGeMwfpXwfeParityPack?: () => {
+    contract?: string;
+    overall_sync_status?: string;
+  } | null;
 };
 
 function emptyModelPdpLiveHtmlProofV1(
@@ -228,6 +277,124 @@ export function loadFridgeModelPdpLiveHtmlProofPackForSpineV1(
   }
 }
 
+function emptyGeMwfpXwfeSupabaseSyncV1(reason: string): FridgeTruthSpineGeMwfpXwfeSupabaseSyncV1 {
+  return {
+    contract: "UNKNOWN",
+    source_artifact_rel: FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_PARITY_JSON_REL_V1,
+    recommended_jq_path: FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_SUPABASE_SYNC_JQ_PATH_V1,
+    overall_sync_status: null,
+    dispatch_status: "UNKNOWN",
+    selected_subsystem: "none",
+    exact_command: "",
+    command_surface: "none",
+    mutation_allowed: false,
+    owner_approval_required: false,
+    supabase_write_authorized: false,
+    pages_claimed_closed: false,
+    conversion_or_revenue: "UNKNOWN",
+    filter_slugs: ["smartwater-mwfp", "xwfe"],
+    excluded_filter_slugs: ["xwf"],
+    affected_model_slugs: [
+      "ge-gfe24jgkww",
+      "ge-gfe27jmkes",
+      "ge-gne25jmkww",
+      "ge-pvd28bymfs",
+    ],
+    success_transition:
+      "Owner-review drafts written — founder reviews plan; separate approval required before any Supabase write.",
+    failure_transition: "Remain blocked — do not invent Supabase sync or claim pages closed.",
+    why_this_is_next: `GE MWFP/XWFE parity projection unavailable (${reason}).`,
+    proven_facts: [],
+    unknown_facts: [`UNKNOWN: GE MWFP/XWFE parity artifact unavailable (${reason}).`],
+  };
+}
+
+export function projectGeMwfpXwfeRetailerLinksSupabaseSyncForSpineV1(pack: {
+  contract?: string;
+  overall_sync_status?: string;
+}): FridgeTruthSpineGeMwfpXwfeSupabaseSyncV1 {
+  if (pack.contract !== FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_PARITY_CONTRACT_V1) {
+    return emptyGeMwfpXwfeSupabaseSyncV1("contract_mismatch");
+  }
+  const overall = String(pack.overall_sync_status ?? "UNKNOWN");
+  if (overall === "DRIFTED") {
+    return {
+      contract: FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_PARITY_CONTRACT_V1,
+      source_artifact_rel: FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_PARITY_JSON_REL_V1,
+      recommended_jq_path: FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_SUPABASE_SYNC_JQ_PATH_V1,
+      overall_sync_status: "DRIFTED",
+      dispatch_status: "READY",
+      selected_subsystem: "ge_mwfp_xwfe_retailer_links_supabase_sync_owner_review",
+      exact_command: FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_SUPABASE_SYNC_OWNER_REVIEW_EXACT_COMMAND_V1,
+      command_surface: "terminal",
+      mutation_allowed: false,
+      owner_approval_required: false,
+      supabase_write_authorized: false,
+      pages_claimed_closed: false,
+      conversion_or_revenue: "UNKNOWN",
+      filter_slugs: ["smartwater-mwfp", "xwfe"],
+      excluded_filter_slugs: ["xwf"],
+      affected_model_slugs: [
+        "ge-gfe24jgkww",
+        "ge-gfe27jmkes",
+        "ge-gne25jmkww",
+        "ge-pvd28bymfs",
+      ],
+      success_transition:
+        "Owner-review JSON/MD drafts written under data/fridge/batch-production/drafts/; hard-stop before Supabase write / founder approval.",
+      failure_transition:
+        "Remain DRIFTED — re-run parity proof; do not broaden scope or claim 4 GE pages closed.",
+      why_this_is_next:
+        "CSV GE MWFP/XWFE retailer_links are applied but Supabase/runtime remain DRIFTED (search-placeholder). Next safe stage is read-only Supabase sync owner-review for exactly smartwater-mwfp + xwfe.",
+      proven_facts: [
+        "PROVEN: overall_sync_status=DRIFTED from committed GE MWFP/XWFE parity artifact.",
+        "PROVEN: dispatch_status=READY; exact_command writes owner-review drafts only; mutation_allowed=false; supabase_write_authorized=false.",
+        "PROVEN: scope smartwater-mwfp + xwfe; xwf excluded; 4 affected GE model slugs; pages_claimed_closed=false; conversion_or_revenue=UNKNOWN.",
+      ],
+      unknown_facts: [
+        "UNKNOWN: conversion/revenue impact of a future authorized Supabase sync.",
+        "UNKNOWN: whether CTA/go FAIL 7 clears after a future sync — must re-proof.",
+      ],
+    };
+  }
+  if (overall === "IN_SYNC") {
+    return {
+      ...emptyGeMwfpXwfeSupabaseSyncV1("in_sync"),
+      contract: FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_PARITY_CONTRACT_V1,
+      overall_sync_status: "IN_SYNC",
+      dispatch_status: "NOT_NEEDED",
+      why_this_is_next:
+        "GE MWFP/XWFE Supabase parity is IN_SYNC — sync owner-review stage not required from this projector.",
+      proven_facts: ["PROVEN: overall_sync_status=IN_SYNC from GE MWFP/XWFE parity artifact."],
+      unknown_facts: ["UNKNOWN: conversion/revenue; do not claim 4 GE pages closed from IN_SYNC alone."],
+    };
+  }
+  return {
+    ...emptyGeMwfpXwfeSupabaseSyncV1(`overall_sync_status=${overall}`),
+    contract: FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_PARITY_CONTRACT_V1,
+    overall_sync_status: overall === "UNKNOWN" ? "UNKNOWN" : null,
+    dispatch_status: "BLOCKED",
+    why_this_is_next:
+      "GE MWFP/XWFE parity is not DRIFTED — resolve UNKNOWN/unavailable DB or re-run parity before sync owner-review.",
+  };
+}
+
+export function loadGeMwfpXwfeParityPackForSpineV1(rootDir: string): {
+  contract?: string;
+  overall_sync_status?: string;
+} | null {
+  const abs = path.join(rootDir, FRIDGE_TRUTH_SPINE_GE_MWFP_XWFE_PARITY_JSON_REL_V1);
+  if (!existsSync(abs)) return null;
+  try {
+    return JSON.parse(readFileSync(abs, "utf8")) as {
+      contract?: string;
+      overall_sync_status?: string;
+    };
+  } catch {
+    return null;
+  }
+}
+
 export function buildFridgeTruthSpineUnknownV1(args: {
   generated_at: string;
   reason: string;
@@ -261,6 +428,7 @@ export function buildFridgeTruthSpineUnknownV1(args: {
       should_redo_fridge_products_now: "UNKNOWN",
     },
     model_pdp_live_html_proof: emptyModelPdpLiveHtmlProofV1(args.reason),
+    ge_mwfp_xwfe_retailer_links_supabase_sync: emptyGeMwfpXwfeSupabaseSyncV1(args.reason),
     recommended_next_action: FRIDGE_TRUTH_SPINE_RECOMMENDED_NEXT_ACTION_V1,
     truth_first_notes: [...FRIDGE_TRUTH_SPINE_TRUTH_FIRST_NOTES_V1],
     proven_facts: [],
@@ -300,12 +468,19 @@ export async function buildFridgeTruthSpineV1(
     ? projectFridgeModelPdpLiveHtmlProofForSpineV1(livePack)
     : emptyModelPdpLiveHtmlProofV1("missing_or_unreadable_artifact");
 
+  const geParityPack =
+    args.loadGeMwfpXwfeParityPack?.() ?? loadGeMwfpXwfeParityPackForSpineV1(args.rootDir);
+  const ge_mwfp_xwfe_retailer_links_supabase_sync = geParityPack
+    ? projectGeMwfpXwfeRetailerLinksSupabaseSyncForSpineV1(geParityPack)
+    : emptyGeMwfpXwfeSupabaseSyncV1("missing_or_unreadable_artifact");
+
   const proven_facts = [
     `PROVEN: committed CSV has ${modelAudit.linked_filters_with_safe_direct_buyable_primary}/${modelAudit.unique_linked_filter_slugs} safe direct-buyable primaries; verdict=${modelAudit.safe_buyer_path_verdict}.`,
     `PROVEN: ${reconciliation.prior_win_artifact_summary.linked_filter_slugs_with_evidence_win.length} linked slug(s) with evidence-win artifacts; CSV direct_buyable anywhere=${reconciliation.csv_truth_summary.filters_with_direct_buyable_anywhere_count}.`,
     `PROVEN: Supabase-vs-CSV diff ${diff.supabase_has_win_csv_missing_count}/${diff.checked_slug_count} SUPABASE_HAS_WIN_CSV_MISSING; evidence-only=${diff.evidence_only_not_in_supabase_count}.`,
     `PROVEN: Public truth simulation ${publicAudit.public_truth_status}; should_redo_fridge_products_now=${publicAudit.should_redo_fridge_products_now}.`,
     ...model_pdp_live_html_proof.proven_facts,
+    ...ge_mwfp_xwfe_retailer_links_supabase_sync.proven_facts,
     "PROVEN: This lane does not authorize CSV export, apply, or Supabase mutation.",
   ];
 
@@ -313,7 +488,10 @@ export async function buildFridgeTruthSpineV1(
     "INFERRED: Live public pages use Supabase retailer_links through filterRealBuyRetailerLinks (not committed CSV).",
   ];
 
-  const unknown_facts: string[] = [...model_pdp_live_html_proof.unknown_facts];
+  const unknown_facts: string[] = [
+    ...model_pdp_live_html_proof.unknown_facts,
+    ...ge_mwfp_xwfe_retailer_links_supabase_sync.unknown_facts,
+  ];
   if (publicAudit.live_page_check_status === "UNKNOWN_NOT_CHECKED") {
     unknown_facts.push(
       "UNKNOWN: Live HTTP checks for all evidence-win /filter/{slug} pages were skipped in Command Center spine build; run report-fridge-command-center-and-public-truth-audit-v1 for full live proof.",
@@ -324,6 +502,11 @@ export async function buildFridgeTruthSpineV1(
       `UNKNOWN: Supabase retailer_links diff unavailable (${diff.supabase_unavailable_reason ?? "no reason"}).`,
     );
   }
+
+  const recommended_next_action =
+    ge_mwfp_xwfe_retailer_links_supabase_sync.dispatch_status === "READY"
+      ? `Run ${ge_mwfp_xwfe_retailer_links_supabase_sync.exact_command}; hard-stop before Supabase write / founder approval; do not claim conversion/revenue; do not apply links without founder approval; do not claim 4 GE pages closed.`
+      : FRIDGE_TRUTH_SPINE_RECOMMENDED_NEXT_ACTION_V1;
 
   return {
     contract: FRIDGE_TRUTH_SPINE_CONTRACT_V1,
@@ -336,6 +519,7 @@ export async function buildFridgeTruthSpineV1(
       diff.contract,
       publicAudit.contract,
       ...(livePack ? [livePack.contract] : []),
+      ...(geParityPack?.contract ? [geParityPack.contract] : []),
     ],
     csv_truth: {
       safe_buyer_path_verdict: modelAudit.safe_buyer_path_verdict,
@@ -363,7 +547,8 @@ export async function buildFridgeTruthSpineV1(
       should_redo_fridge_products_now: publicAudit.should_redo_fridge_products_now,
     },
     model_pdp_live_html_proof,
-    recommended_next_action: FRIDGE_TRUTH_SPINE_RECOMMENDED_NEXT_ACTION_V1,
+    ge_mwfp_xwfe_retailer_links_supabase_sync,
+    recommended_next_action,
     truth_first_notes: [...FRIDGE_TRUTH_SPINE_TRUTH_FIRST_NOTES_V1],
     proven_facts,
     inferred_facts,
