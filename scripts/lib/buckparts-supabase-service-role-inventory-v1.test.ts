@@ -119,3 +119,38 @@ test("P0 promote-staged-refrigerator writer is write_guarded with mutation_lane"
     "promote_staged_refrigerator_v1",
   );
 });
+
+test("fridge guarded Supabase apply writers are write_guarded with mutation_lane", () => {
+  const guarded = new Map(
+    SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.filter((e) => e.access_class === "write_guarded").map(
+      (e) => [e.rel_path, e.mutation_lane],
+    ),
+  );
+  const expected: Array<[string, string]> = [
+    [
+      "scripts/lib/gswf-gte18gsnrss-no-filter-supabase-removal-guarded-apply-v1.ts",
+      "gswf_gte18gsnrss_no_filter_supabase_removal_guarded_apply_v1",
+    ],
+    [
+      "scripts/lib/gswf-wrong-part-repair-supabase-compat-sync-guarded-apply-v1.ts",
+      "gswf_wrong_part_repair_supabase_compat_sync_guarded_apply_v1",
+    ],
+    [
+      "scripts/lib/refrigerator-model-first-qa-batch-supabase-compat-sync-guarded-apply-v1.ts",
+      "refrigerator_model_first_qa_batch_supabase_compat_sync_guarded_apply_v1",
+    ],
+    [
+      "scripts/lib/samsung-pass-repair-supabase-compat-sync-guarded-apply-v1.ts",
+      "samsung_pass_repair_supabase_compat_sync_guarded_apply_v1",
+    ],
+  ];
+  for (const [rel, lane] of expected) {
+    assert.equal(guarded.get(rel), lane, rel);
+  }
+  const writers = discoverSupabaseServiceRoleWritersV1({ rootDir: process.cwd() });
+  for (const [rel] of expected) {
+    assert.ok(writers.includes(rel), `discovered writer: ${rel}`);
+  }
+  const drift = auditSupabaseServiceRoleInventoryDriftV1({ rootDir: process.cwd() });
+  assert.equal(drift.ok, true);
+});

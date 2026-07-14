@@ -65,7 +65,30 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
       rel_path: "scripts/report-fridge-safe-link-eptwfu01-retailer-links-supabase-parity-v1.ts",
       access_class: "read_only",
     },
-
+    {
+      rel_path:
+        "scripts/lib/gswf-gte18gsnrss-no-filter-supabase-removal-guarded-apply-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "gswf_gte18gsnrss_no_filter_supabase_removal_guarded_apply_v1",
+    },
+    {
+      rel_path:
+        "scripts/lib/gswf-wrong-part-repair-supabase-compat-sync-guarded-apply-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "gswf_wrong_part_repair_supabase_compat_sync_guarded_apply_v1",
+    },
+    {
+      rel_path:
+        "scripts/lib/refrigerator-model-first-qa-batch-supabase-compat-sync-guarded-apply-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "refrigerator_model_first_qa_batch_supabase_compat_sync_guarded_apply_v1",
+    },
+    {
+      rel_path:
+        "scripts/lib/samsung-pass-repair-supabase-compat-sync-guarded-apply-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "samsung_pass_repair_supabase_compat_sync_guarded_apply_v1",
+    },
 
     {
       rel_path: "scripts/apply-search-gap-status-air-purifier.ts",
