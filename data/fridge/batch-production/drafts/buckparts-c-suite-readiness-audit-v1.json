@@ -1,0 +1,1224 @@
+{
+  "contract": "buckparts_c_suite_readiness_audit_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "sitemap_robots_mutation_authorized": false,
+  "product_json_ld_mutation_authorized": false,
+  "live_fetch_enabled": false,
+  "live_fetch_status": "DISABLED_BY_DEFAULT",
+  "generated_at": "2026-07-14T03:48:07.122Z",
+  "source_command": "npm run buckparts:c-suite-readiness-audit",
+  "head_sha": "e097e09",
+  "audit_mode": "local_repo_build",
+  "scope": {
+    "cohorts": [
+      "gte18",
+      "samsung_pass_5",
+      "gswf_13",
+      "qa_20",
+      "gswf_partial_3"
+    ],
+    "slug_count": 42,
+    "cohort_count": 5,
+    "slugs": [
+      "ge-gte18gsnrss",
+      "samsung-rf27t5201sr",
+      "samsung-rf27t5501sr",
+      "samsung-rf28r6301sr",
+      "samsung-rf28t5101sr",
+      "samsung-rs22t5201sg",
+      "ge-cwe23sshww",
+      "ge-gfe24jgkww",
+      "ge-gfe27jmkes",
+      "ge-gfe28gmkbb",
+      "ge-gfe28gskes",
+      "ge-gfe28hskss",
+      "ge-gne25jmkww",
+      "ge-gne27jstss",
+      "ge-gse25hskss",
+      "ge-gye22gskww",
+      "ge-pfe28kmkww",
+      "ge-pfe28kynbb",
+      "ge-pvd28bymfs",
+      "frigidaire-ffhb2740ps",
+      "frigidaire-fghb2868pf",
+      "frigidaire-fgsc2335tf",
+      "ge-gfe28gmkes",
+      "ge-gfe28gskss",
+      "ge-gfe28gynfs",
+      "lg-lfxc22596s",
+      "lg-lfxs26973s",
+      "lg-lfxs28968s",
+      "lg-lmxs28626s",
+      "lg-lrfvs3006s",
+      "lg-lrfxs3106s",
+      "samsung-rf263beaesr",
+      "samsung-rf28nhedbsr",
+      "samsung-rf28r7201sr",
+      "samsung-rf28r7351sg",
+      "whirlpool-wrf540cwhz",
+      "whirlpool-wrs325sdhz",
+      "whirlpool-wrx735sdhz",
+      "whirlpool-wrx986sihz",
+      "ge-gfe28hmkww",
+      "ge-gsc25frshss",
+      "ge-gse26gshess"
+    ]
+  },
+  "architecture_source_map": {
+    "fridge_slug_page": {
+      "surface": "/fridge/[slug]",
+      "primary_runtime_source": "supabase.compatibility_mappings",
+      "secondary_or_ops_source": "csv ops/parity only",
+      "inspected_paths": [
+        "src/app/fridge/[slug]/page.tsx",
+        "src/lib/data/fridges.ts"
+      ],
+      "code_proof": "PROVEN: getFridgeBySlug reads Supabase fridge_models + compatibility_mappings",
+      "live_render_proof": "UNKNOWN"
+    },
+    "filter_slug_page": {
+      "surface": "/filter/[slug]",
+      "primary_runtime_source": "supabase.filters+retailer_links",
+      "secondary_or_ops_source": "csv ops/parity only",
+      "inspected_paths": [
+        "src/app/filter/[slug]/page.tsx",
+        "src/lib/data/filters.ts"
+      ],
+      "code_proof": "PROVEN: filter page data loader uses Supabase server client",
+      "live_render_proof": "UNKNOWN"
+    },
+    "search": {
+      "surface": "search",
+      "primary_runtime_source": "supabase",
+      "secondary_or_ops_source": "csv ops/parity only",
+      "inspected_paths": [
+        "src/app/search/page.tsx",
+        "src/lib/data/search.ts"
+      ],
+      "code_proof": "PROVEN: search data path references Supabase",
+      "live_render_proof": "UNKNOWN"
+    },
+    "cta": {
+      "surface": "CTA",
+      "primary_runtime_source": "supabase.retailer_links + direct_buyable gates",
+      "secondary_or_ops_source": "no invent; fail closed without gate",
+      "inspected_paths": [
+        "src/lib/retailers/launch-buy-links.ts",
+        "src/components/trust/TrustAwareBuySection.tsx"
+      ],
+      "code_proof": "PROVEN: launch-buy-links gates on direct_buyable / safe buy filters",
+      "live_render_proof": "UNKNOWN"
+    },
+    "go": {
+      "surface": "/go",
+      "primary_runtime_source": "supabase.retailer_links via getRetailerLinkById",
+      "secondary_or_ops_source": "fail closed → /go-unavailable",
+      "inspected_paths": [
+        "src/app/go/[linkId]/route.ts",
+        "src/lib/retailers/go-affiliate-route-handler.ts"
+      ],
+      "code_proof": "PROVEN: /go resolves retailer link or redirects go-unavailable",
+      "live_render_proof": "UNKNOWN"
+    },
+    "sitemap": {
+      "surface": "sitemap",
+      "primary_runtime_source": "supabase + safety collectors",
+      "secondary_or_ops_source": "homepage-only fallback on failure",
+      "inspected_paths": [
+        "src/app/sitemap.ts",
+        "src/lib/sitemap/wedge-indexable-urls.ts"
+      ],
+      "code_proof": "PROVEN: sitemap uses wedge indexable URL collector with fallback",
+      "live_render_proof": "UNKNOWN"
+    },
+    "robots": {
+      "surface": "robots",
+      "primary_runtime_source": "static/codegen robots policy",
+      "secondary_or_ops_source": "n/a",
+      "inspected_paths": [
+        "src/app/robots.ts"
+      ],
+      "code_proof": "PROVEN: robots.ts present",
+      "live_render_proof": "UNKNOWN"
+    },
+    "product_json_ld": {
+      "surface": "Product JSON-LD",
+      "primary_runtime_source": "suppressed_without_truthful_offer (code gate)",
+      "secondary_or_ops_source": "no invented offers/review/aggregateRating",
+      "inspected_paths": [
+        "src/lib/seo/structured-data.ts"
+      ],
+      "code_proof": "PROVEN: resolveRefrigeratorFilterProductJsonLdV1 returns null unless hasTruthfulOfferJsonLd",
+      "live_render_proof": "UNKNOWN"
+    },
+    "csv_role_vs_supabase_role": {
+      "csv_role": "ops_parity_intent_only_not_runtime_customer_truth",
+      "supabase_role": "runtime_customer_truth_for_pdp_search_cta_go_sitemap",
+      "proof": "PROVEN: live fridge PDP loader does not read data/compatibility_mappings.csv; runtime = Supabase"
+    }
+  },
+  "executive_lanes": {
+    "ceo_strategy": {
+      "lane": "CEO strategy",
+      "verdict": "FAIL",
+      "blockers": [
+        "QA 20 runtime-risk: Supabase still has old rows on 20/20 while CSV intent is repaired",
+        "Frontend match for IN_SYNC cohorts not proven (render/source proof absent)"
+      ],
+      "evidence": [
+        "PASS/GTE18/GSWF13 backend parity closed (artifact-backed IN_SYNC)",
+        "PARTIAL 3 remains held / not promoted"
+      ]
+    },
+    "cto_architecture": {
+      "lane": "CTO architecture",
+      "verdict": "PASS",
+      "blockers": [
+        "Live render / CDN / env parity for the 42 slugs not checked (live fetch disabled)"
+      ],
+      "evidence": [
+        "PROVEN: live fridge PDP loader does not read data/compatibility_mappings.csv; runtime = Supabase",
+        "PROVEN: getFridgeBySlug reads Supabase fridge_models + compatibility_mappings",
+        "PROVEN: resolveRefrigeratorFilterProductJsonLdV1 returns null unless hasTruthfulOfferJsonLd"
+      ]
+    },
+    "cpo_journey": {
+      "lane": "CPO journey",
+      "verdict": "FAIL",
+      "blockers": [
+        "QA 20 customers likely see old Supabase filter families on model PDP",
+        "Search → PDP → CTA → /go journey not render-proven for any slug in v1"
+      ],
+      "evidence": [
+        "Journey architecture coded as Supabase runtime",
+        "CTA/go/product JSON-LD states remain UNKNOWN at slug level without page proof"
+      ]
+    },
+    "coo_ops": {
+      "lane": "COO operating system",
+      "verdict": "PASS",
+      "blockers": [
+        "Time/cost per batch not instrumented in this audit"
+      ],
+      "evidence": [
+        "Reusable guarded lane exists: parity → plan → approval → dry-run → apply → already_applied",
+        "QA 20 is the highest-priority unfinished sync after closed PASS/GTE18/GSWF13 lanes"
+      ]
+    },
+    "cfo_deploy_revenue": {
+      "lane": "CFO deploy/revenue",
+      "verdict": "UNKNOWN",
+      "blockers": [
+        "Monetizable safe buyer paths not proven for scoped cohorts (CTA UNKNOWN)",
+        "Live Netlify credit/API not re-verified this session"
+      ],
+      "evidence": [
+        "Credit control deployment_posture=REPO_ONLY_SAFE",
+        "Ship guard posture not recomputed in this audit (UNKNOWN)"
+      ]
+    },
+    "clo_risk_claims": {
+      "lane": "CLO risk/claims",
+      "verdict": "PASS",
+      "blockers": [
+        "Live page HTML / emitted JSON-LD not fetched for scoped slugs"
+      ],
+      "evidence": [
+        "PROVEN: resolveRefrigeratorFilterProductJsonLdV1 returns null unless hasTruthfulOfferJsonLd",
+        "Per-slug product_json_ld_state=UNKNOWN until page emission inspected"
+      ]
+    },
+    "cmo_demand": {
+      "lane": "CMO demand capture",
+      "verdict": "UNKNOWN",
+      "blockers": [
+        "Fresh GSC / search-miss demand intersection not loaded in v1",
+        "Do not treat QA-drift or PARTIAL as coverage wins"
+      ],
+      "evidence": [
+        "Demand alignment left UNKNOWN rather than invented"
+      ]
+    },
+    "data_metrics": {
+      "lane": "Data Officer metrics",
+      "verdict": "FAIL",
+      "blockers": [
+        "Backend parity progress (PASS/GTE18/GSWF13 closed) must not be reported as frontend-safe coverage",
+        "QA 20 proves CSV intent ≠ runtime Supabase customer truth"
+      ],
+      "evidence": [
+        "backend_closed_in_sync_count=19",
+        "qa_20_supabase_old_rows_count=20",
+        "frontend_observed_state UNKNOWN for all 42 slugs"
+      ]
+    }
+  },
+  "cohort_rows": [
+    {
+      "cohort": "gte18",
+      "slug": "ge-gte18gsnrss",
+      "csv_mappings": [],
+      "supabase_mappings": [],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-gte18gsnrss-no-filter-supabase-compat-parity-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "samsung_pass_5",
+      "slug": "samsung-rf27t5201sr",
+      "csv_mappings": [
+        "da97-17376b"
+      ],
+      "supabase_mappings": [
+        "da97-17376b"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/samsung-pass-repair-supabase-compat-parity-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "samsung_pass_5",
+      "slug": "samsung-rf27t5501sr",
+      "csv_mappings": [
+        "da97-17376b"
+      ],
+      "supabase_mappings": [
+        "da97-17376b"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/samsung-pass-repair-supabase-compat-parity-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "samsung_pass_5",
+      "slug": "samsung-rf28r6301sr",
+      "csv_mappings": [
+        "da97-17376b"
+      ],
+      "supabase_mappings": [
+        "da97-17376b"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/samsung-pass-repair-supabase-compat-parity-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "samsung_pass_5",
+      "slug": "samsung-rf28t5101sr",
+      "csv_mappings": [
+        "da97-17376b"
+      ],
+      "supabase_mappings": [
+        "da97-17376b"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/samsung-pass-repair-supabase-compat-parity-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "samsung_pass_5",
+      "slug": "samsung-rs22t5201sg",
+      "csv_mappings": [
+        "da97-17376b"
+      ],
+      "supabase_mappings": [
+        "da97-17376b"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/samsung-pass-repair-supabase-compat-parity-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-cwe23sshww",
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "rpwfe"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gfe24jgkww",
+      "csv_mappings": [
+        "smartwater-mwfp",
+        "xwfe"
+      ],
+      "supabase_mappings": [
+        "smartwater-mwfp",
+        "xwfe"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gfe27jmkes",
+      "csv_mappings": [
+        "xwfe"
+      ],
+      "supabase_mappings": [
+        "xwfe"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gfe28gmkbb",
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "rpwfe"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gfe28gskes",
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "rpwfe"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gfe28hskss",
+      "csv_mappings": [
+        "rpwfe",
+        "smartwater-mwfp"
+      ],
+      "supabase_mappings": [
+        "rpwfe",
+        "smartwater-mwfp"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gne25jmkww",
+      "csv_mappings": [
+        "xwfe"
+      ],
+      "supabase_mappings": [
+        "xwfe"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gne27jstss",
+      "csv_mappings": [
+        "xwf",
+        "xwfe"
+      ],
+      "supabase_mappings": [
+        "xwf",
+        "xwfe"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gse25hskss",
+      "csv_mappings": [
+        "xwf",
+        "xwfe"
+      ],
+      "supabase_mappings": [
+        "xwf",
+        "xwfe"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gye22gskww",
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "rpwfe"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-pfe28kmkww",
+      "csv_mappings": [
+        "rpwfe",
+        "xwf"
+      ],
+      "supabase_mappings": [
+        "rpwfe",
+        "xwf"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-pfe28kynbb",
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "rpwfe"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-pvd28bymfs",
+      "csv_mappings": [
+        "xwfe"
+      ],
+      "supabase_mappings": [
+        "xwfe"
+      ],
+      "backend_classification": "IN_SYNC",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "frigidaire-ffhb2740ps",
+      "csv_mappings": [
+        "ultrawf"
+      ],
+      "supabase_mappings": [
+        "frig-242086201",
+        "ultrawf"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "frigidaire-fghb2868pf",
+      "csv_mappings": [
+        "eptwfu01"
+      ],
+      "supabase_mappings": [
+        "eptwfu01",
+        "frig-242017801",
+        "frig-242086201",
+        "purepour",
+        "ultrawf",
+        "wf3cb",
+        "wfcb"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "frigidaire-fgsc2335tf",
+      "csv_mappings": [
+        "eptwfu01"
+      ],
+      "supabase_mappings": [
+        "eptwfu01",
+        "frig-242294502"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "ge-gfe28gmkes",
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "mswf",
+        "rpwfe"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "ge-gfe28gskss",
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "mswf",
+        "mwf",
+        "rpwfe"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "ge-gfe28gynfs",
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "rpwfe",
+        "xwfe"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "lg-lfxc22596s",
+      "csv_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "supabase_mappings": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "lg-lfxs26973s",
+      "csv_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "supabase_mappings": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "lt700p",
+        "mdj64844601"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "lg-lfxs28968s",
+      "csv_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "supabase_mappings": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "lt700p",
+        "mdj64844601"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "lg-lmxs28626s",
+      "csv_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "supabase_mappings": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "lg-lrfvs3006s",
+      "csv_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "supabase_mappings": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "lt700p",
+        "mdj64844601"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "lg-lrfxs3106s",
+      "csv_mappings": [
+        "lt1000p"
+      ],
+      "supabase_mappings": [
+        "lt1000p",
+        "lt600p",
+        "lt800p"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "samsung-rf263beaesr",
+      "csv_mappings": [
+        "da29-00020b"
+      ],
+      "supabase_mappings": [
+        "da29-00020b",
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "samsung-rf28nhedbsr",
+      "csv_mappings": [
+        "da29-00020b"
+      ],
+      "supabase_mappings": [
+        "da29-00020b",
+        "da29-10105j",
+        "da97-19467c"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "samsung-rf28r7201sr",
+      "csv_mappings": [
+        "da97-17376b"
+      ],
+      "supabase_mappings": [
+        "da29-00012b",
+        "da29-00020b",
+        "da97-17376b"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "samsung-rf28r7351sg",
+      "csv_mappings": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "supabase_mappings": [
+        "da29-00012b",
+        "da29-00020b",
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "whirlpool-wrf540cwhz",
+      "csv_mappings": [
+        "edr4rxd1"
+      ],
+      "supabase_mappings": [
+        "4396841",
+        "4396842",
+        "edr4rxd1",
+        "w10413645a"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "whirlpool-wrs325sdhz",
+      "csv_mappings": [
+        "edr1rxd1"
+      ],
+      "supabase_mappings": [
+        "edr1rxd1",
+        "edr3rxd1"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "whirlpool-wrx735sdhz",
+      "csv_mappings": [
+        "edr4rxd1"
+      ],
+      "supabase_mappings": [
+        "4396395",
+        "4396508",
+        "4396710",
+        "46-9002",
+        "8171413",
+        "edr1rxd1",
+        "edr2rxd1",
+        "edr4rxd1"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "whirlpool-wrx986sihz",
+      "csv_mappings": [
+        "edr2rxd1"
+      ],
+      "supabase_mappings": [
+        "edr2rxd1",
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "FAIL",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
+        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+      ]
+    },
+    {
+      "cohort": "gswf_partial_3",
+      "slug": "ge-gfe28hmkww",
+      "csv_mappings": [
+        "gswf",
+        "gswf2"
+      ],
+      "supabase_mappings": null,
+      "backend_classification": "PARTIAL_HELD_UNKNOWN_NOT_PROVEN",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-partial-owner-browser-proof-packet-v1.json",
+        "HELD: never promote PARTIAL into apply/buyer-ready claims"
+      ]
+    },
+    {
+      "cohort": "gswf_partial_3",
+      "slug": "ge-gsc25frshss",
+      "csv_mappings": [
+        "gswf",
+        "gswf2"
+      ],
+      "supabase_mappings": null,
+      "backend_classification": "PARTIAL_HELD_UNKNOWN_NOT_PROVEN",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-partial-owner-browser-proof-packet-v1.json",
+        "HELD: never promote PARTIAL into apply/buyer-ready claims"
+      ]
+    },
+    {
+      "cohort": "gswf_partial_3",
+      "slug": "ge-gse26gshess",
+      "csv_mappings": [
+        "gswf",
+        "gswf2"
+      ],
+      "supabase_mappings": null,
+      "backend_classification": "PARTIAL_HELD_UNKNOWN_NOT_PROVEN",
+      "frontend_observed_state": "UNKNOWN",
+      "cta_go_link_state": "UNKNOWN",
+      "product_json_ld_state": "UNKNOWN",
+      "verdict": "UNKNOWN",
+      "notes": [
+        "parity_artifact=data/fridge/batch-production/drafts/gswf-partial-owner-browser-proof-packet-v1.json",
+        "HELD: never promote PARTIAL into apply/buyer-ready claims"
+      ]
+    }
+  ],
+  "cohort_totals": {
+    "by_cohort": {
+      "gte18": {
+        "slug_count": 1,
+        "PASS": 0,
+        "FAIL": 0,
+        "UNKNOWN": 1
+      },
+      "samsung_pass_5": {
+        "slug_count": 5,
+        "PASS": 0,
+        "FAIL": 0,
+        "UNKNOWN": 5
+      },
+      "gswf_13": {
+        "slug_count": 13,
+        "PASS": 0,
+        "FAIL": 0,
+        "UNKNOWN": 13
+      },
+      "qa_20": {
+        "slug_count": 20,
+        "PASS": 0,
+        "FAIL": 20,
+        "UNKNOWN": 0
+      },
+      "gswf_partial_3": {
+        "slug_count": 3,
+        "PASS": 0,
+        "FAIL": 0,
+        "UNKNOWN": 3
+      }
+    },
+    "by_verdict": {
+      "PASS": 0,
+      "FAIL": 20,
+      "UNKNOWN": 22
+    },
+    "backend_closed_in_sync_count": 19,
+    "qa_20_supabase_old_rows_count": 20,
+    "partial_held_count": 3
+  },
+  "explicit_callouts": [
+    "QA 20 is runtime-risk because Supabase still has old rows on 20/20.",
+    "PASS 5, GTE18, and GSWF 13 are backend parity closed (artifact-backed IN_SYNC) when their parity packets are present.",
+    "Frontend match is not claimed unless render/source proof exists — IN_SYNC does not auto-mark frontend-safe.",
+    "GSWF PARTIAL 3 remains held/unknown and must never be promoted from this audit.",
+    "Product JSON-LD / CTA / go-link per-slug claims remain UNKNOWN without inspected page/data proof."
+  ],
+  "next_10_moves": [
+    "Build Refrigerator QA 20 Supabase sync plan/owner-review (20/20 still have old runtime rows). (auditor count: 20 FAIL / old-row slugs).",
+    "Produce frontend mismatch proof pack (PDP filter extract) for worst QA drift slugs.",
+    "Run IN_SYNC cohort smoke for PASS 5 + GTE18 + sample GSWF 13 (confirm PDP equals intent). (backend-closed IN_SYNC count this audit: 19).",
+    "PARTIAL 3 promotion kill-check: assert no CTA/index 'ready' and keep held. (held count: 3).",
+    "Safe CTA gap report for IN_SYNC cohorts (repaired truth ≠ monetizable buyer path).",
+    "Split Command Center metrics: backend_parity_closed vs frontend_safe_coverage.",
+    "JSON-LD / claims lint on sample filter pages in the 42-slug scope.",
+    "Credit/deploy gate board: what truth work proceeds without spend vs needs deploy.",
+    "Demand ∩ QA-drift: prioritize sync for QA slugs appearing in GSC/search-miss.",
+    "COO reusable checklist template: parity → sync plan → approval → guarded apply → already_applied."
+  ],
+  "credit_control_summary": {
+    "status": "READ",
+    "deployment_posture": "REPO_ONLY_SAFE",
+    "evidence_rel_path": "data/ops/credit-control/credit-control-center-v1.json",
+    "notes": [
+      "Read-only credit-control summarize only; credit_spend_authorized not claimed from this audit."
+    ]
+  },
+  "ship_guard_summary": {
+    "status": "UNKNOWN",
+    "notes": [
+      "Ship guard not re-executed inside c-suite audit v1; report UNKNOWN rather than invent."
+    ]
+  },
+  "proven_facts": [
+    "PROVEN: read_only=true; data_mutation=false; all mutation/buy/sitemap/JSON-LD mutation flags false.",
+    "PROVEN: exact scope=42 slugs across 5 cohorts.",
+    "PROVEN: live_fetch_enabled=false by default; v1 does not fetch production URLs.",
+    "PROVEN: live fridge PDP loader does not read data/compatibility_mappings.csv; runtime = Supabase",
+    "PROVEN: QA old-row count from parity artifact compose=20."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Observed PDP filter lists for all 42 slugs (no render/source proof in v1).",
+    "UNKNOWN: CTA visibility and /go outcomes for all 42 slugs.",
+    "UNKNOWN: Live production HTML parity vs local/repo Supabase.",
+    "UNKNOWN: Fresh demand/GSC intersection for prioritization.",
+    "UNKNOWN: Ship-guard consolidated recompute this session."
+  ],
+  "risk_notes": [
+    "Customer pages read Supabase; CSV-only repairs do not fix live wrong-part exposure.",
+    "Do not invent Product offers/review/aggregateRating or buy eligibility from this packet.",
+    "Do not create approval/apply from this audit."
+  ]
+}
