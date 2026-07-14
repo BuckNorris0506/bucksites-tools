@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (`959e79b` — Mark GSWF Supabase sync already in sync):** **GSWF Supabase compatibility sync closed for the 13 approved GE slugs** — see **§ Current stopping point — GSWF Supabase sync closed / already in sync (`959e79b`)** below. Actual repo HEAD / `origin/main`: **`959e79b`**. Key sequence: **`68b02e7`** (enable guarded apply gate) → **`46dbe1f`** (founder approval for exact **13/26/13**) → live guarded apply (**39** `compatibility_mappings` row deltas) → **`959e79b`** (post-apply **`ALREADY_IN_SYNC`**). Prior operational stopping points: **`b7900e2`** / **`67c5c70`** — Netlify credit evidence (available **1000**; Credit Control **`REPO_ONLY_SAFE`**); **`94f6842`** — Update HQ handoff after Credit Control guard integration; **`234e7d4`** — Surface Credit Control in deploy guards; **`d609139`** — Update HQ handoff after Credit Control Center; **`08ca292`** — Add BuckParts Credit Control Center; **`959cdf8`** — Update HQ handoff after GSWF Supabase guarded dry run; **`d5c0c95`** — Add GSWF Supabase compatibility guarded dry run; **`853ee79`** — Update HQ handoff after GSWF Supabase sync plan; **`4337055`** — Add GSWF Supabase compatibility sync plan; **`77eeeb8`** — Update HQ handoff after Product JSON-LD suppression; **`7d099c2`** — Suppress fridge Product JSON-LD without truthful offer; **`3ad4eea`** — Update HQ handoff after agent loop contract; **`84ae957`** — Add BuckParts agent loop contract; **`fb8b7d7`** — Update HQ handoff after GSWF compatibility repair apply; **`8361fba`** — Apply GSWF wrong-part compatibility repair (owner approval **`4cbe40c`**; PARTIAL proof **`3b067ee`**; guarded dry-run **`31f9bf8`**; handoff docs **`4dc0c0f`** / **`b69a642`** / **`ecddcca`** / **`08a40e3`**). GSWF wrong-part repair apply-plan owner packet (`83f15ef` / **`3fdc809`** handoff), AP hub handoff commit-reference fix (**`297ba4f`**), GSWF family reconciliation owner packet (`2c90b2d` / **`2451e83`** handoff), AP Production Truth go-gate fix (`97f9fbe` / **`e4c623b`** handoff), Daily Operator read-only **`next_coverage_opportunities`** (`39c9e6f` / **`3a30c3e`** handoff), **`efc2fec`** demand-loop steering (**§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**), search/hub canonicals (`2c15bca`), model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete. **Root `AGENTS.md` remains the agent operating contract** (`84ae957` / handoff **`3ad4eea`**). **GSWF 13-row CSV repair remains applied** at **`8361fba`**. **GSWF Supabase sync is closed / in-sync** (not pending) at **`959e79b`**. Credit Control available-credit truth remains documented at **`67c5c70`** / handoff **`b7900e2`**. Credit Control guard integration remains documented at **`234e7d4`** / handoff **`94f6842`**. Credit Control Center v1 remains documented at **`08ca292`** / handoff **`d609139`**. Product JSON-LD suppression remains documented at **`7d099c2`** / handoff **`77eeeb8`**. **Deployment posture:** **`REPO_ONLY_SAFE`** (**`deploy_held=false`**; **`production_deploy_recommended=false`**; **`credit_spend_authorized=false`**). **Important:** credits available does **not** authorize production deploys by itself. **No** live Netlify production verification claimed; **no** retailer_links / buy CTA / CSV / sitemap / robots / Product JSON-LD change claimed from the Supabase sync lane.
+> **Current operational stopping point (`657988e` — Mark fridge live HTML proof passing):** **21 SAFE_BUYER_PATH_PASS fridge model PDPs have live production HTML proof** — see **§ Current stopping point — fridge model PDP live HTML proof PASS 21 (`657988e`)** below. Actual repo HEAD / `origin/main`: **`657988e`**. Key sequence: visible proof block UI (`0ac2051`) → live HTML proof lane (`f868809`) → production deploy of proof block → live re-proof **PASS 21 / FAIL 0 / UNKNOWN 0** (`657988e`). Prior operational stopping points: **`959e79b`** — GSWF Supabase sync closed / already in sync; Credit Control / Product JSON-LD / AGENTS.md / GSWF CSV repair remain **§ Prior completed lanes** below. **Root `AGENTS.md` remains the agent operating contract**. **Open buyer-path FAIL rows remain 7** (**6** need owner browser proof; **`ge-gte18gsnrss`** remain-no-buy). **Conversion / revenue / ranking / SEO impact remain `UNKNOWN`** — not claimed. Credits available ≠ deploy authorization.
 
 ## Execution Stack
 
@@ -53,9 +53,53 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — GSWF Supabase sync closed / already in sync (`959e79b`)
+## Current stopping point — fridge model PDP live HTML proof PASS 21 (`657988e`)
 
-**Read this section first** for LIVE GSWF Supabase compatibility sync posture: the **13** approved GE slugs are **closed / in-sync** (not pending). Guarded re-runs report **`ALREADY_IN_SYNC`** and do **not** re-apply historical deltas.
+**Read this section first** for LIVE fridge model PDP customer-visible proof posture on production.
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD / `origin/main` | **`657988e`** — Mark fridge live HTML proof passing |
+| Live proof pack | `data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-live-html-proof-pack-v1.json` |
+| Target | `https://buckparts.com` |
+| Scope | Exactly **21** `SAFE_BUYER_PATH_PASS` fridge model PDP slugs (excludes FAIL **7**, quarantine **11**, PARTIAL **3**) |
+| Result | **`LIVE_PROOF_PASS=21` / `LIVE_PROOF_FAIL=0` / `LIVE_PROOF_UNKNOWN=0`** |
+| Proof block ("What we checked for this model") | **21/21** visible |
+| "Last checked" | **21/21** visible |
+| Mapped filter numbers | **21/21** visible |
+| BuckParts Verified Link + `/go` | **21/21** present |
+| Product JSON-LD offers/reviews/ratings | **Absent** (21/21) |
+| Search-placeholder CTA exposure | **Absent** (21/21) |
+| Command Center field | `.command_center_v2.fridge_truth_spine_v1.model_pdp_live_html_proof` |
+| Re-run | `npm run buckparts:fridge-model-pdp-live-html-proof -- --write-artifacts` |
+
+### Open buyer-path work (PROVEN remaining — not closed by this milestone)
+
+| Item | Detail |
+|------|--------|
+| Open `SAFE_BUYER_PATH_FAIL` | **7** |
+| Remain no-buy | **`ge-gte18gsnrss`** |
+| Need owner browser proof | **6** GE models (`ge-gfe24jgkww`, `ge-gfe27jmkes`, `ge-gne25jmkww`, `ge-gne27jstss`, `ge-gse25hskss`, `ge-pvd28bymfs`) |
+
+### Not claimed
+
+Conversion, revenue, user clicks, ranking, SEO impact — **`UNKNOWN`**. No retailer_links / buy CTA / CSV / sitemap / robots / Product JSON-LD invent from this docs/Command Center truth update.
+
+### Current recommendation (founder-gated)
+
+1. Treat the **21** live HTML proof pages as production-proven for customer-visible trust metadata + gated Verified Link presence.
+2. Next leverage: owner browser proof for the **6** remaining FAIL GE models; keep **`ge-gte18gsnrss`** remain-no-buy.
+3. Do **not** claim conversion/revenue from PASS **21**.
+4. Before production deploy spend: Credit Control + ship-guard.
+
+---
+
+## Prior completed lane — GSWF Supabase sync closed / already in sync (`959e79b`)
+
+**Historical reference** for LIVE GSWF Supabase compatibility sync posture: the **13** approved GE slugs are **closed / in-sync** (not pending). Guarded re-runs report **`ALREADY_IN_SYNC`** and do **not** re-apply historical deltas.
 
 ### Milestone summary (PROVEN)
 

@@ -3,7 +3,7 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "generated_at": "2026-07-14T15:44:53.942Z",
+  "generated_at": "2026-07-14T16:18:21.979Z",
   "source_command": "npm run buckparts:execution-ledger",
   "entry_count": 11,
   "entries": [
@@ -635,10 +635,10 @@
     "UNKNOWN: live git remote parity for entries without committed push attestations."
   ],
   "freshness": {
-    "last_generated_at": "2026-07-14T15:44:53.942Z",
+    "last_generated_at": "2026-07-14T16:18:21.979Z",
     "source_artifact_count": 16,
-    "stale_after": "2026-07-15T15:44:53.942Z",
+    "stale_after": "2026-07-15T16:18:21.979Z",
     "freshness_status": "FRESH",
-    "last_refresh_trigger_source": "npm run buckparts:repo-runtime-convergence:check"
+    "last_refresh_trigger_source": "npm run buckparts:command-center"
   }
 }
