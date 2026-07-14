@@ -1,0 +1,742 @@
+{
+  "contract": "buckparts_control_plane_capability_audit_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "runner_implementation_authorized": false,
+  "generated_at": "2026-07-14T20:50:00.000Z",
+  "git_head_short": "0fa284f",
+  "origin_main_short": "0fa284f",
+  "audit_method": "capability-first inventory from package.json buckparts:* scripts + scripts/lib + data/command-center + data/ops + GE lane artifacts/tests; no web; no new runner",
+  "scale_counts_proven": {
+    "buckparts_npm_scripts": 234,
+    "owner_review_named_scripts": 19,
+    "guarded_apply_named_scripts": 17,
+    "owner_approval_named_scripts": 5,
+    "parity_named_scripts": 10,
+    "proof_named_scripts": 20,
+    "runner_named_scripts": 5,
+    "director_named_scripts": 6,
+    "factory_named_scripts": 17,
+    "orchestrator_named_scripts": 4,
+    "ledger_named_scripts": 2
+  },
+  "epistemic_legend": {
+    "PROVEN": "Supported by code, package script, and/or tests inspected this audit",
+    "INFERRED": "Strong structural pattern match; individual instance not fully line-audited",
+    "UNKNOWN": "Area too large / not opened; named gap listed"
+  },
+  "executive_verdict": {
+    "maturity_score": 3,
+    "maturity_label": "system_can_classify_lane_state_in_islands",
+    "maturity_notes": "PROVEN: Command Center + NBA + execution ledger + issue registry + manufacturer-rescue stage boards classify state and recommend next text/commands. PROVEN: Runner/dispatch can auto-execute allowlisted read-only/validation steps and hard-stop at FOUNDER_APPROVAL_REQUIRED. PROVEN: fridge-model-pdp GE MWFP/XWFE remains a human-invoked discrete script chain with no CC lifecycle wiring and no stage autopilot. NOT PROVEN at score 4 for product lanes: nothing automatically advances GE from parity DRIFTED to Supabase sync owner-review generation.",
+    "why_manual_prompting_persists": [
+      "PROVEN: each GE stage is a separate npm script with no post-success auto-invoke of the next script",
+      "PROVEN: root next_best_action policy (buckparts-command-center-next-best-action-v1) prioritizes Amazon/affiliate/Waterdrop queues — not GE fridge filter PDP retailer_links drift",
+      "PROVEN: manufacturer-safe-link-rescue runner boards are a parallel control plane that still show browser-proof stages and are not advanced by the fridge-model-pdp GE CSV apply",
+      "PROVEN: HQ handoff has no automated updater (freshness test only)",
+      "PROVEN: GE Supabase sync owner-review lane does not exist yet as an npm script (parity recommended_next_action says not created)",
+      "INFERRED: dispatch runner requires a READY dispatch with allowlisted exact_command — GE parity next action is not registered as such"
+    ],
+    "first_ge_lane_automation_break": {
+      "after_stage": "owner_browser_proof_result",
+      "required_manual_prompt": "npm run buckparts:fridge-model-pdp-ge-closable-mwfp-xwfe-apply-plan-owner-review",
+      "current_head_forward_break": {
+        "after_stage": "supabase_parity_proof_DRIFTED",
+        "required_manual_prompt": "create+run founder-gated Supabase retailer_links sync owner-review for smartwater-mwfp+xwfe (script missing)",
+        "hard_stop": "owner-review artifact only — no Supabase write"
+      }
+    }
+  },
+  "A_inventory": [
+    {
+      "path": "scripts/report-buckparts-command-center.ts + scripts/lib/buckparts-command-center-v2*.ts",
+      "package_script": "buckparts:command-center",
+      "capability_category": "state_detection + next_stage_recommendation + command_center_composition",
+      "behavior": "read_only_live_compose",
+      "inputs": "dozens of lane builders, registries, artifacts, git/deploy posture",
+      "outputs_artifacts": "stdout JSON command_center_v2; optional data/command-center/customer-authority-history",
+      "gate_behavior": "no product mutation; recommendations only",
+      "tests": "scripts/report-buckparts-command-center.test.ts",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/buckparts-command-center-next-best-action-v1.ts",
+      "package_script": "(via buckparts:command-center)",
+      "capability_category": "next_stage_decision",
+      "behavior": "read_only_policy_text",
+      "inputs": "amazon/non-amazon queues, stale approvals, waterdrop monitor flags",
+      "outputs_artifacts": "root next_best_action / why_this_action fields",
+      "gate_behavior": "never executes; narration/recommendation",
+      "tests": "scripts/lib/buckparts-command-center-next-best-action-v1.test.ts",
+      "maturity_usefulness": "strong_reuse_but_ge_lane_blind",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "src/lib/owner-dashboard/load-command-center-report.ts",
+      "package_script": "(ownerdashboard UI)",
+      "capability_category": "command_center_visibility",
+      "behavior": "read_only_loader",
+      "inputs": "buildBuckpartsCommandCenterReport",
+      "outputs_artifacts": "UI model + neurons",
+      "gate_behavior": "does not rebuild truth independently",
+      "tests": "src/lib/owner-dashboard/load-command-center-report.test.ts",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/buckparts-mcp-control-plane-v1.ts",
+      "package_script": "mcp:buckparts-truth",
+      "capability_category": "state_projection",
+      "behavior": "read_only",
+      "inputs": "committed CC snapshot or live build",
+      "outputs_artifacts": "MCP projections",
+      "gate_behavior": "read projection only",
+      "tests": "scripts/lib/buckparts-mcp-control-plane-v1.test.ts",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/buckparts-runner-v1.ts + scripts/report-buckparts-runner-v1.ts",
+      "package_script": "buckparts:runner",
+      "capability_category": "orchestrated_read_only_execution + founder_hard_stop",
+      "behavior": "writes_runner_artifacts_under_data/command-center; executes allowlisted lint/build/report steps; HALTED_APPROVAL_REQUIRED",
+      "inputs": "mission definition, owner decision queue, checkpoints",
+      "outputs_artifacts": "data/command-center/runner-runs, runner-checkpoints",
+      "gate_behavior": "PROVEN hard stop FOUNDER_APPROVAL_REQUIRED; data_mutation false for missions",
+      "tests": "scripts/lib/buckparts-runner-v1.test.ts",
+      "maturity_usefulness": "strong_reuse_for_missions_not_ge_pdp_lanes",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/buckparts-runner-step.ts",
+      "package_script": "buckparts:runner-step",
+      "capability_category": "single_step_validation_execution",
+      "behavior": "allowlisted_npm_only",
+      "inputs": "Founder Execution Packet",
+      "outputs_artifacts": "step validation result",
+      "gate_behavior": "allowlist only",
+      "tests": "UNKNOWN exact test path (runner suite covers overlap)",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN_script_INFERRED_tests"
+    },
+    {
+      "path": "scripts/run-buckparts-command-center-dispatch-v1.ts + scripts/lib/buckparts-command-center-dispatch-runner-v1.ts",
+      "package_script": "buckparts:command-center:run-dispatch",
+      "capability_category": "single_allowlisted_command_execution",
+      "behavior": "executes one READY dispatch exact_command; writes dispatch-runs",
+      "inputs": "CC dispatch READY row",
+      "outputs_artifacts": "data/command-center/dispatch-runs/*",
+      "gate_behavior": "refuses --apply / CSV mutate / git push patterns",
+      "tests": "scripts/lib/buckparts-command-center-dispatch-runner-v1.test.ts",
+      "maturity_usefulness": "strong_reuse_smallest_auto_exec_bridge",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/buckparts-batch-production-operating-dispatch-v1.ts",
+      "package_script": "(via command-center)",
+      "capability_category": "next_stage_decision + exact_command",
+      "behavior": "read_only",
+      "inputs": "batch checklist / AP batch stages",
+      "outputs_artifacts": "exact_command + why_this_is_next",
+      "gate_behavior": "command text only until dispatch runner",
+      "tests": "scripts/lib/buckparts-batch-production-operating-dispatch-v1.test.ts",
+      "maturity_usefulness": "strong_reuse_for_batch_not_ge_filter_pdp",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/buckparts-execution-ledger-v1.ts",
+      "package_script": "buckparts:execution-ledger",
+      "capability_category": "execution_ledger_index",
+      "behavior": "writes_index_json_only",
+      "inputs": "dispatch runs, closeouts, rescue artifacts",
+      "outputs_artifacts": "data/command-center/execution-ledger-v1.json",
+      "gate_behavior": "no product mutation",
+      "tests": "scripts/lib/buckparts-execution-ledger-v1.test.ts",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/command-center-issue-registry-v1.ts + data/command-center/issues/",
+      "package_script": "(via command-center)",
+      "capability_category": "issue_registry_lifecycle",
+      "behavior": "read_only_loader; issues are file-edited elsewhere",
+      "inputs": "data/command-center/issues/*.json",
+      "outputs_artifacts": "CC lane overlays",
+      "gate_behavior": "lifecycle statuses DISCOVERED…CLOSED_PROVEN",
+      "tests": "scripts/lib/command-center-issue-registry-v1.test.ts",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/fridge-truth-spine-v1.ts",
+      "package_script": "(via command-center)",
+      "capability_category": "state_detection + fridge_lane_rollup",
+      "behavior": "read_only",
+      "inputs": "CTA/go, live HTML, parity diffs, public truth",
+      "outputs_artifacts": "CC fridge_truth_spine fields",
+      "gate_behavior": "recommend next; no mutate",
+      "tests": "scripts/lib/fridge-truth-spine-v1.test.ts",
+      "maturity_usefulness": "strong_reuse_candidate_to_surface_ge_drift",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/buckparts-ship-guard-v1.ts + scripts/buckparts-ship-guard.ts",
+      "package_script": "buckparts:ship-guard",
+      "capability_category": "protected_mutation_guard + commit_push_readiness",
+      "behavior": "read_only; never git commit/push",
+      "inputs": "git dirty/ahead, credit control, GE closeout allowance",
+      "outputs_artifacts": "stdout report; SAFE/BLOCKED",
+      "gate_behavior": "blocks protected retailer_links unless exact closeout allowance",
+      "tests": "scripts/lib/buckparts-ship-guard-v1.test.ts + ge mwfp allowance tests",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/buckparts-credit-control-center-v1.ts",
+      "package_script": "buckparts:credit-control",
+      "capability_category": "deploy_credit_guard",
+      "behavior": "read_only (+ ops artifacts)",
+      "inputs": "data/ops/credit-control/netlify-credit-state-v1.json, git dirty class",
+      "outputs_artifacts": "data/ops/credit-control/credit-control-center-v1.{json,md}",
+      "gate_behavior": "deploy_held / production_deploy_recommended=false; push may still be allowed",
+      "tests": "scripts/lib/buckparts-credit-control-center-v1.test.ts",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/report-buckparts-deploy-classifier-v1.ts",
+      "package_script": "buckparts:deploy-classifier",
+      "capability_category": "deploy_preflight_classification",
+      "behavior": "read_only",
+      "inputs": "changed paths",
+      "outputs_artifacts": "deploy classification report",
+      "gate_behavior": "recommend batching; no deploy",
+      "tests": "scripts/lib/buckparts-deploy-classifier-v1.test.ts (INFERRED path)",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN_script_INFERRED_test_path"
+    },
+    {
+      "path": "package.json buckparts:deploy:preflight",
+      "package_script": "buckparts:deploy:preflight",
+      "capability_category": "deploy_preflight_enforce",
+      "behavior": "read_only_enforce_exit_codes",
+      "inputs": "mcp supabase exposure audit + repo-runtime-convergence --enforce",
+      "outputs_artifacts": "audit stdout / enforce fail",
+      "gate_behavior": "fail closed; no product CSV mutate",
+      "tests": "UNKNOWN as a single bundled test",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN_script_UNKNOWN_bundle_test"
+    },
+    {
+      "path": "scripts/lib/buckparts-security-gate-v1.ts",
+      "package_script": "buckparts:security-gate",
+      "capability_category": "validation_gate",
+      "behavior": "writes_audit_under_data/command-center/audits",
+      "inputs": "repo security readiness signals",
+      "outputs_artifacts": "data/command-center/audits/*",
+      "gate_behavior": "blockers; no product mutate",
+      "tests": "UNKNOWN exact path this pass",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN_script_UNKNOWN_test"
+    },
+    {
+      "path": "scripts/lib/wedge-completion-director-v1.ts + evaluator",
+      "package_script": "buckparts:wedge-completion-director / buckparts:wedge-completion-evaluator",
+      "capability_category": "lane_selection + next_stage_decision",
+      "behavior": "read_only",
+      "inputs": "wedge completion dimensions",
+      "outputs_artifacts": "ranked actions report",
+      "gate_behavior": "recommendation only",
+      "tests": "scripts/lib/wedge-completion-director-v1.test.ts",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/hyperagent-orchestrator-v0.ts + work-queue + dispatch-registry",
+      "package_script": "buckparts:hyperagent-orchestrator-v0",
+      "capability_category": "orchestrator_single_iteration",
+      "behavior": "writes_outbox_dispatch_events; loop_iteration=1 then halt",
+      "inputs": "hyperagent work queue",
+      "outputs_artifacts": "outbox/events/registry",
+      "gate_behavior": "no product CSV/Supabase mutate",
+      "tests": "scripts/lib/hyperagent-orchestrator-v0.test.ts",
+      "maturity_usefulness": "strong_reuse_external_agent",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/mission-factory-orchestrator (registry/queue/orchestrator trio)",
+      "package_script": "buckparts:mission-factory-* (INFERRED naming cluster)",
+      "capability_category": "mission_registry_dispatch",
+      "behavior": "registry/outbox on confirm; external agent",
+      "inputs": "production missions registry",
+      "outputs_artifacts": "data/command-center/production-missions/*",
+      "gate_behavior": "no product mutation",
+      "tests": "mission-factory tests exist (INFERRED)",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "INFERRED_cluster"
+    },
+    {
+      "path": "scripts/lib/manufacturer-safe-link-rescue-{orchestrator,director,runner}-v1.ts",
+      "package_script": "buckparts:manufacturer-safe-link-rescue-{orchestrator,director,runner}",
+      "capability_category": "lane_state_machine + next_executable_action",
+      "behavior": "draft_stage_board; does not apply CSV/Supabase",
+      "inputs": "manufacturer rescue queue/evidence",
+      "outputs_artifacts": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-*",
+      "gate_behavior": "READY_FOR_APPLY text only; apply via separate bridge",
+      "tests": "manufacturer-safe-link-rescue-*-v1.test.ts",
+      "maturity_usefulness": "strong_reuse_parallel_control_plane",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/manufacturer-rescue-guarded-apply-bridge-v1.ts",
+      "package_script": "buckparts:manufacturer-rescue-guarded-apply-bridge",
+      "capability_category": "guarded_apply_bridge",
+      "behavior": "orchestrates readiness → lifecycle CSV executor",
+      "inputs": "READY_FOR_APPLY + approvals",
+      "outputs_artifacts": "bridge closeouts",
+      "gate_behavior": "mutate only via executor flags+auth",
+      "tests": "scripts/lib/manufacturer-rescue-guarded-apply-bridge-v1.test.ts",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/universal-batch-lifecycle-* + guarded csv executor",
+      "package_script": "buckparts:universal-batch-lifecycle-* + guarded-csv-apply-executor",
+      "capability_category": "guarded_apply_lifecycle",
+      "behavior": "default dry-run; --write-csv mutates retailer_links when authorized",
+      "inputs": "auth review + readiness",
+      "outputs_artifacts": "lifecycle reports/closeouts",
+      "gate_behavior": "founder/auth gates + explicit write flag",
+      "tests": "universal-batch-lifecycle-*.test.ts",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/fridge-retailer-links-scoped-supabase-parity-core-v1.ts",
+      "package_script": "(via lane wrappers e.g. eptwfu01, edr4, GE parity)",
+      "capability_category": "parity + guarded_supabase_sync_pattern",
+      "behavior": "dry_run default; write requires MUTATION + founder slug approvals",
+      "inputs": "data/retailer_links.csv + Supabase retailer_links",
+      "outputs_artifacts": "parity reports; optional sync closeouts",
+      "gate_behavior": "assertSupabaseMutationAuthorizedV1 + founder approvals",
+      "tests": "lane wrapper tests + core usage",
+      "maturity_usefulness": "strong_reuse_for_ge_supabase_sync",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.ts",
+      "package_script": "buckparts:fridge-model-pdp-cta-go-link-proof-pack",
+      "capability_category": "post_apply_proof + live_data_path_proof",
+      "behavior": "read_only (+ draft artifacts)",
+      "inputs": "getFridgeBySlug (Supabase) + rendered truth pack",
+      "outputs_artifacts": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.{json,md}",
+      "gate_behavior": "no mutate; PASS/FAIL counts",
+      "tests": "scripts/lib/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.test.ts",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/lib/buckparts-fridge-model-pdp-live-html-proof-pack-v1.ts",
+      "package_script": "buckparts:fridge-model-pdp-live-html-proof",
+      "capability_category": "live_proof",
+      "behavior": "read_only_fetch_html (+ drafts)",
+      "inputs": "production HTML for model PDPs",
+      "outputs_artifacts": "live html proof drafts",
+      "gate_behavior": "no buy-path invent",
+      "tests": "scripts/lib/buckparts-fridge-model-pdp-live-html-proof-pack-v1.test.ts",
+      "maturity_usefulness": "strong_reuse",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "GE MWFP/XWFE discrete lane scripts (collection→result→plan→approval→guarded apply→parity)",
+      "package_script": "buckparts:fridge-model-pdp-owner-browser-proof-*; ge-closable-mwfp-xwfe-apply-plan-owner-review; ge-mwfp-xwfe-retailer-links-{owner-approval,guarded-apply,supabase-parity}",
+      "capability_category": "full_manual_stage_kit_for_one_lane",
+      "behavior": "each stage human-invoked; only apply+closeout auto-hop under --write",
+      "inputs": "prior drafts + owner decisions + CSV/Supabase",
+      "outputs_artifacts": "drafts + owner-decisions + closeout; CSV on --write",
+      "gate_behavior": "approval hash gates; --write required; ship-guard closeout allowance",
+      "tests": "matching *-v1.test.ts per stage",
+      "maturity_usefulness": "strong_lane_kit_weak_automation_wiring",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "scripts/buckparts-next-execution-packet.ts + founder-digest",
+      "package_script": "buckparts:next-execution-packet / buckparts:founder-digest",
+      "capability_category": "human_prompt_generation",
+      "behavior": "read_only_print",
+      "inputs": "CC + queues",
+      "outputs_artifacts": "stdout prompt/digest",
+      "gate_behavior": "copy-paste for humans/agents",
+      "tests": "packet/digest related tests (INFERRED)",
+      "maturity_usefulness": "strong_reuse_for_manual_loop",
+      "epistemic": "PROVEN_scripts"
+    },
+    {
+      "path": "docs/BuckParts-HQ-HANDOFF.md",
+      "package_script": "none",
+      "capability_category": "hq_handoff",
+      "behavior": "manual_markdown",
+      "inputs": "human session notes",
+      "outputs_artifacts": "docs/BuckParts-HQ-HANDOFF.md",
+      "gate_behavior": "freshness test only: scripts/buckparts-hq-handoff-freshness.test.ts",
+      "tests": "scripts/buckparts-hq-handoff-freshness.test.ts",
+      "maturity_usefulness": "narrate_only_no_auto_writer",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "data/control-plane/command-center-control-loop-v1.audit.json",
+      "package_script": "none",
+      "capability_category": "prior_narrative_audit",
+      "behavior": "static_audit_artifact",
+      "inputs": "prior audit session 2026-06-23",
+      "outputs_artifacts": "this file",
+      "gate_behavior": "n/a",
+      "tests": "none for auto-refresh",
+      "maturity_usefulness": "narrate_only_stale_vs_0fa284f",
+      "epistemic": "PROVEN"
+    },
+    {
+      "path": "AGENTS.md + docs/BuckParts-CONSTITUTION.md",
+      "package_script": "none",
+      "capability_category": "process_contract",
+      "behavior": "policy_doc",
+      "inputs": "n/a",
+      "outputs_artifacts": "n/a",
+      "gate_behavior": "mandates Discover→Plan→dry-run→founder gate→apply; no autonomous apply",
+      "tests": "none as runtime",
+      "maturity_usefulness": "binding_policy_not_executor",
+      "epistemic": "PROVEN"
+    }
+  ],
+  "B_capability_matrix": [
+    {
+      "capability": "state_detection",
+      "already_exists": true,
+      "exact_evidence_path": "scripts/report-buckparts-command-center.ts; scripts/lib/fridge-truth-spine-v1.ts; CTA/go + parity packs",
+      "works_automatically_today": false,
+      "missing_wiring": "must manually run reports; GE drift not a first-class CC lifecycle status",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "lane_selection",
+      "already_exists": true,
+      "exact_evidence_path": "scripts/lib/buckparts-command-center-next-best-action-v1.ts; wedge-completion-director; manufacturer-rescue director",
+      "works_automatically_today": "partial_recommendation_only",
+      "missing_wiring": "NBA policy does not select GE MWFP/XWFE Supabase sync",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "next_stage_decision",
+      "already_exists": true,
+      "exact_evidence_path": "batch-production-operating-dispatch exact_command; manufacturer runner next_executable_action; GE parity recommended_next_action",
+      "works_automatically_today": false,
+      "missing_wiring": "recommended text is not auto-dispatched for GE fridge-model-pdp",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "read_only_proof_execution",
+      "already_exists": true,
+      "exact_evidence_path": "buckparts:fridge-model-pdp-*-proof*; parity proofs; browser-proof-collector",
+      "works_automatically_today": "only_if_invoked",
+      "missing_wiring": "no auto-chain after prior stage success",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "owner_proof_collection",
+      "already_exists": true,
+      "exact_evidence_path": "buckparts:fridge-model-pdp-owner-browser-proof-collection-packet; browser-proof-collector",
+      "works_automatically_today": false,
+      "missing_wiring": "human screenshots + manual result packet",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "owner_review_plan_generation",
+      "already_exists": true,
+      "exact_evidence_path": "19 owner-review scripts incl. GE apply-plan-owner-review; EDR4 pattern",
+      "works_automatically_today": false,
+      "missing_wiring": "GE Supabase sync owner-review script missing",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "founder_approval_generation",
+      "already_exists": true,
+      "exact_evidence_path": "data/owner-decisions/* + lane owner-approval scripts; owner-decision-queue-v1",
+      "works_automatically_today": false,
+      "missing_wiring": "approval packets still human-triggered; never auto-approve",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "guarded_apply",
+      "already_exists": true,
+      "exact_evidence_path": "17 guarded-apply scripts; universal-batch-lifecycle; scoped parity core write",
+      "works_automatically_today": false,
+      "missing_wiring": "requires explicit --apply/--write + approvals; AGENTS forbids autonomous apply",
+      "reusable_for_runner_os": "true_with_hard_stop_before_write",
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "closeout_generation",
+      "already_exists": true,
+      "exact_evidence_path": "GE guarded-apply closeout; samsung/gswf/manufacturer closeouts; execution-ledger indexes them",
+      "works_automatically_today": "partial_on_successful_apply_write",
+      "missing_wiring": "not generated for unread applied stages; HQ not updated",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "post_apply_proof",
+      "already_exists": true,
+      "exact_evidence_path": "CTA/go pack; rendered-truth; GE supabase parity; scope parity re-run pattern",
+      "works_automatically_today": false,
+      "missing_wiring": "must manually re-run after apply",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "live_proof",
+      "already_exists": true,
+      "exact_evidence_path": "buckparts:fridge-model-pdp-live-html-proof; live-site-smoke",
+      "works_automatically_today": false,
+      "missing_wiring": "manual; deploy-gated",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "command_center_update",
+      "already_exists": true,
+      "exact_evidence_path": "buckparts:command-center live compose; UI loader; MCP snapshot optional",
+      "works_automatically_today": "on_demand_recompute_not_persistent_archive",
+      "missing_wiring": "UNKNOWN who archives data/reports/buckparts-command-center.json routinely; GE not a dedicated CC issue",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN_with_UNKNOWN_archive"
+    },
+    {
+      "capability": "hq_handoff_update",
+      "already_exists": "partial_document_only",
+      "exact_evidence_path": "docs/BuckParts-HQ-HANDOFF.md; scripts/buckparts-hq-handoff-freshness.test.ts",
+      "works_automatically_today": false,
+      "missing_wiring": "no HQ writer; AGENTS says update after commit when asked",
+      "reusable_for_runner_os": "false_until_writer",
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "validation_gates",
+      "already_exists": true,
+      "exact_evidence_path": "ship-guard; credit-control; security-gate; deploy preflight; lane tests; npm-test-v1",
+      "works_automatically_today": "when_invoked_or_in_runner_missions",
+      "missing_wiring": "not auto-run after every stage except human/runner",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "protected_mutation_guard",
+      "already_exists": true,
+      "exact_evidence_path": "AGENTS.md; ship-guard; supabase mutation gate core; founder approval registries",
+      "works_automatically_today": "true_as_fail_closed_default",
+      "missing_wiring": "none required for safety — wiring for auto-read-only advance is the gap",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "deploy_credit_guard",
+      "already_exists": true,
+      "exact_evidence_path": "buckparts:credit-control; data/ops/credit-control/*",
+      "works_automatically_today": "when_invoked",
+      "missing_wiring": "ship-guard loads credit summary but does not spend",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN"
+    },
+    {
+      "capability": "commit_push_readiness",
+      "already_exists": true,
+      "exact_evidence_path": "buckparts:ship-guard",
+      "works_automatically_today": "when_invoked",
+      "missing_wiring": "never auto push",
+      "reusable_for_runner_os": true,
+      "epistemic": "PROVEN"
+    }
+  ],
+  "C_ge_mwfp_xwfe_lane_replay": {
+    "head": "0fa284f",
+    "live_state_proven": {
+      "csv_mwfp_xwfe_updated": true,
+      "supabase_parity": "DRIFTED",
+      "supabase_search_placeholders": true,
+      "cta_go": { "PASS": 21, "FAIL": 7 },
+      "pages_claimed_closed": false,
+      "next_safe_stage": "supabase_sync_owner_review_plan_not_write"
+    },
+    "stages": [
+      {
+        "stage": "owner_browser_proof_collection",
+        "npm": "buckparts:fridge-model-pdp-owner-browser-proof-collection-packet",
+        "lib": "scripts/lib/buckparts-fridge-model-pdp-owner-browser-proof-collection-packet-v1.ts",
+        "artifacts": ["data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-owner-browser-proof-collection-packet-v1.json"],
+        "auto_next": false
+      },
+      {
+        "stage": "owner_browser_proof_result",
+        "npm": "buckparts:fridge-model-pdp-owner-browser-proof-result-packet",
+        "lib": "scripts/lib/buckparts-fridge-model-pdp-owner-browser-proof-result-packet-v1.ts",
+        "artifacts": ["data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-owner-browser-proof-result-packet-v1.json"],
+        "auto_next": false,
+        "first_break_after": true
+      },
+      {
+        "stage": "owner_review_apply_plan",
+        "npm": "buckparts:fridge-model-pdp-ge-closable-mwfp-xwfe-apply-plan-owner-review",
+        "lib": "scripts/lib/buckparts-fridge-model-pdp-ge-closable-mwfp-xwfe-apply-plan-owner-review-v1.ts",
+        "artifacts": ["data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-closable-mwfp-xwfe-apply-plan-owner-review-v1.json"],
+        "auto_next": false
+      },
+      {
+        "stage": "founder_approval",
+        "npm": "buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-owner-approval",
+        "lib": "scripts/lib/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-owner-approval-v1.ts",
+        "artifacts": ["data/owner-decisions/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-owner-approval-v1.json"],
+        "auto_next": false,
+        "notes": "apply_authorized remains false until explicit guarded apply"
+      },
+      {
+        "stage": "guarded_csv_apply_and_closeout",
+        "npm": "buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-guarded-apply -- --write --write-artifacts",
+        "lib": "scripts/lib/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-guarded-apply-v1.ts",
+        "artifacts": [
+          "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-guarded-apply-v1.json",
+          "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-guarded-apply-closeout-v1.json",
+          "data/retailer_links.csv"
+        ],
+        "auto_next": false,
+        "semi_auto_within_stage": "closeout written only on successful --write"
+      },
+      {
+        "stage": "supabase_parity_proof",
+        "npm": "buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-parity",
+        "lib": "scripts/lib/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-parity-v1.ts",
+        "artifacts": ["data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-parity-v1.json"],
+        "auto_next": false,
+        "result": "DRIFTED",
+        "forward_break": "supabase sync owner-review script missing"
+      },
+      {
+        "stage": "cta_go_proof_still_fail",
+        "npm": "buckparts:fridge-model-pdp-cta-go-link-proof-pack",
+        "lib": "scripts/lib/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.ts",
+        "artifacts": ["data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json"],
+        "result": "PASS_21_FAIL_7",
+        "auto_next": false
+      }
+    ],
+    "first_automation_break_point": {
+      "label": "after_owner_browser_proof_result",
+      "evidence": "No code invokes apply-plan-owner-review after result packet write. Human prompt required.",
+      "current_head_break": "after_supabase_parity_DRIFTED_missing_sync_owner_review_script"
+    },
+    "cc_surface_for_lane": {
+      "founder_decision_registry": "data/owner-decisions/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-owner-approval-v1.json",
+      "queue_id_string_only": "queue-buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links",
+      "dedicated_cc_issue": false,
+      "hq_handoff_current_stop_mentions_this_lane": false,
+      "ship_guard_allowance": "scripts/lib/buckparts-ship-guard-ge-mwfp-xwfe-retailer-links-allowance-v1.ts"
+    }
+  },
+  "D_maturity_score": {
+    "score": 3,
+    "scale": {
+      "0": "no automation pieces",
+      "1": "isolated scripts only",
+      "2": "Command Center/ledgers know state",
+      "3": "system can classify lane state",
+      "4": "system can execute next read-only stage automatically",
+      "5": "system can run until founder approval hard stop",
+      "6": "system can run post-approval guarded writes with closeout + proof + CC update"
+    },
+    "evidence_for_score": [
+      "PROVEN score>=2: buckparts:command-center, execution-ledger, issue registry, credit-control ops",
+      "PROVEN score>=3 islands: manufacturer-rescue runner stages; batch operating dispatch exact_command; wedge director; CC NBA",
+      "PROVEN not score 4 for GE fridge-model-pdp: discrete human npm invocations; parity does not auto-generate sync owner-review",
+      "PROVEN runner islands of score 5 within mission scope only (HALTED_APPROVAL_REQUIRED) — missions do not include GE PDP retailer_links sync stages",
+      "PROVEN not score 6: AGENTS forbids autonomous apply; every guarded write needs explicit flag; HQ not auto-updated"
+    ],
+    "ceiling_without_new_product_mutation_autopilot": 5
+  },
+  "E_smallest_operational_path": {
+    "goal": "From current DRIFTED state, auto-advance ONLY the next read-only owner-review plan generation and hard-stop before Supabase write",
+    "extend_existing": [
+      "scripts/lib/fridge-truth-spine-v1.ts (surface GE MWFP/XWFE sync status from existing parity artifact)",
+      "scripts/lib/buckparts-batch-production-operating-dispatch-v1.ts OR a thin next-stage classifier that emits exact_command",
+      "scripts/lib/fridge-retailer-links-scoped-supabase-parity-core-v1.ts (reuse for dry-run plan rows)",
+      "scripts/lib/buckparts-fridge-model-pdp-edr4-buyer-path-closable-parity-owner-review-v1.ts (pattern for owner-review binding)"
+    ],
+    "new_if_unavoidable": [
+      "scripts/lib/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review-v1.ts",
+      "scripts/report-buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review-v1.ts",
+      "matching test; drafts under data/fridge/batch-production/drafts/"
+    ],
+    "owner_facing_command": "npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review -- --write-artifacts",
+    "optional_auto_bridge": "Register READY dispatch exact_command for that owner-review script; run via npm run buckparts:command-center:run-dispatch (still no MUTATION)",
+    "behavior_for_current_ge_state": [
+      "Read parity DRIFTED + CSV primaries + closeout APPLIED",
+      "Emit founder-gated owner-review plan for exactly smartwater-mwfp + xwfe updates to official GE PDP URLs + direct_buyable",
+      "Print recommended founder approval packet command",
+      "HARD STOP: refuse --write / BUCKPARTS_IO_CAPABILITY=MUTATION / Supabase apply"
+    ],
+    "hard_stop_before_supabase_write": "owner-review + approval packet only; apply remains separate later founder session"
+  },
+  "F_do_not_build": [
+    "New greenfield Runner/OS that reimplements Command Center composition",
+    "Second next_best_action engine ignoring buckparts-command-center-next-best-action-v1",
+    "Parallel retailer_links parity core (use fridge-retailer-links-scoped-supabase-parity-core-v1)",
+    "Autonomous apply loop that softens AGENTS founder gates",
+    "Duplicate manufacturer-rescue stage board for fridge-model-pdp GE (wire or leave separate; don't clone)",
+    "Automated HQ rewrite bot before a deliberate handoff contract exists",
+    "New credit/ship-guard systems (reuse existing)"
+  ],
+  "questions_answered": {
+    "q1_components_exist": "See A_inventory + scale_counts_proven (234 buckparts scripts)",
+    "q2_what_each_does": "See A_inventory.behavior",
+    "q3_read_state": "CC, truth spines, parity/proof packs, credit, ship-guard, MCP",
+    "q4_choose_next": "NBA, wedge director, batch operating dispatch, manufacturer runner, lane recommended_next_action fields",
+    "q5_execute_automatically": "Runner allowlisted steps; CC dispatch runner one command; HyperAgent/mission outbox to external agents — NOT product CSV/Supabase without flags",
+    "q6_report_only": "founder-digest, next-execution-packet, most owner-review packets, HQ handoff, prior control-loop audit JSON",
+    "q7_write_artifacts": "draft writers with --write-artifacts; runner-runs; dispatch-runs; execution-ledger index; credit-control ops; authority-history optional",
+    "q8_mutate_protected": "guarded-apply / lifecycle --write-csv / scoped Supabase write — gated by founder approvals + IO capability + ship-guard",
+    "q9_stop_at_founder": "Runner HALTED_APPROVAL_REQUIRED; HyperAgent halt; owner-approval packets with apply_authorized=false; AGENTS contract",
+    "q10_validation_gates": "ship-guard, credit-control, security-gate, deploy-preflight, lane tests, runner lint/build",
+    "q11_update_cc_or_ledger": "CC recomputed on invoke; ledger via buckparts:execution-ledger; HQ manual",
+    "q12_disconnected_duplicates": "manufacturer-rescue vs fridge-model-pdp GE; Batch A parity vs scoped core; static control-loop audit vs this capability audit; opportunity registries file-backed islands",
+    "q13_strong_reuse": "CC+NBA, runner+dispatch, scoped parity core, ship-guard+credit, manufacturer stage pattern, GE stage kit scripts",
+    "q14_missing_for_loop": "lane stage registry for fridge-model-pdp GE; auto exact_command dispatch after stage success; GE supabase sync owner-review; CC field for DRIFTED; HQ auto/contracted update; mission covering product read-only stages",
+    "q15_why_manual": "See executive_verdict.why_manual_prompting_persists"
+  },
+  "unknown_gaps": [
+    "UNKNOWN: CI cron schedules that auto-run runner/dispatch continuously (workflows not fully scanned)",
+    "UNKNOWN: routine writer of data/reports/buckparts-command-center.json",
+    "UNKNOWN: every one of 234 buckparts scripts line-audited — inventory focuses on control-plane-critical subset",
+    "UNKNOWN: bad-mapping-correction-batch-runner mutation flag exact behavior"
+  ],
+  "proven_facts": [
+    "PROVEN: git HEAD/origin/main=0fa284f during audit generation.",
+    "PROVEN: 234 buckparts:* npm scripts exist in package.json.",
+    "PROVEN: Command Center is live-composed; UI loads builder output.",
+    "PROVEN: Runner hard-stops at FOUNDER_APPROVAL_REQUIRED / HALTED_APPROVAL_REQUIRED.",
+    "PROVEN: GE MWFP/XWFE Supabase parity is DRIFTED with search placeholders; CTA/go PASS 21 / FAIL 7.",
+    "PROVEN: No continuous product-mutation autopilot; AGENTS.md forbids autonomous apply.",
+    "PROVEN: This audit does not implement a runner and does not mutate protected data."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: conversion/revenue impact of automating the next GE stage.",
+    "UNKNOWN: whether wiring GE into root NBA is desirable vs fridge_truth_spine-only surfacing."
+  ]
+}
