@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FridgeModelFilterSection } from "@/components/fridge/FridgeModelFilterSection";
+import { FridgeModelPdpVisibleProofBlock } from "@/components/fridge/FridgeModelPdpVisibleProofBlock";
 import { FridgeTrustFunnelViewTracker } from "@/components/analytics/FridgeTrustFunnelViewTracker";
 import { Prose } from "@/components/Prose";
 import { ManualEvidenceCallout } from "@/components/trust/ManualEvidenceCallout";
@@ -128,6 +129,12 @@ export default async function FridgePage({ params }: Props) {
             }}
           />
         ) : null}
+
+        <FridgeModelPdpVisibleProofBlock
+          fridgeModelSlug={params.slug}
+          quarantined={Boolean(reviewOverride)}
+          filters={reviewOverride ? [] : fridge.filters}
+        />
 
         <p className="text-base">
           <Link

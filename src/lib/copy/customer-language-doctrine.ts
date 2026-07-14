@@ -96,6 +96,8 @@ export const PUBLIC_TRUST_PAGE_REL_PATHS_V1 = [
  */
 export const PUBLIC_CUSTOMER_COPY_SURFACE_REL_PATHS_V1 = [
   "src/components/fridge/FilterPdpRepoEvidenceSection.tsx",
+  "src/components/fridge/FridgeModelPdpVisibleProofBlock.tsx",
+  "src/lib/fridge/fridge-model-pdp-safe-buyer-path-visible-proof-v1.ts",
   "src/app/search/page.tsx",
   "src/app/not-found.tsx",
   "src/app/air-purifier/search/page.tsx",
