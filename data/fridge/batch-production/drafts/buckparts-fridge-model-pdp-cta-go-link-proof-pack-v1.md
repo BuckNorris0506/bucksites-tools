@@ -1,6 +1,6 @@
 # BuckParts fridge model PDP CTA / go-link proof pack v1
 
-Generated: 2026-07-14T04:49:32.361Z
+Generated: 2026-07-14T05:30:58.651Z
 
 ## Status
 
@@ -13,8 +13,8 @@ Generated: 2026-07-14T04:49:32.361Z
 
 ## Summary
 
-- SAFE_BUYER_PATH_PASS: 19
-- SAFE_BUYER_PATH_FAIL: 9
+- SAFE_BUYER_PATH_PASS: 21
+- SAFE_BUYER_PATH_FAIL: 7
 - SAFE_BUYER_PATH_UNKNOWN: 0
 - product_json_ld_proven_suppressed_count: 28
 
@@ -46,9 +46,9 @@ Generated: 2026-07-14T04:49:32.361Z
 | samsung-rf28nhedbsr | qa_20 | SAFE_BUYER_PATH_PASS | 2 | 2 | PROVEN_SUPPRESSED | (none) |
 | samsung-rf28r7201sr | qa_20 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 | samsung-rf28r7351sg | qa_20 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
-| whirlpool-wrf540cwhz | qa_20 | SAFE_BUYER_PATH_FAIL | 0 | 0 | PROVEN_SUPPRESSED | no_go_resolvable_safe_retailer_link; no_safe_direct_buyable_cta_after_gate; trust_buyer_path_suppress_buy_for_all_mapped_filters |
+| whirlpool-wrf540cwhz | qa_20 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 | whirlpool-wrs325sdhz | qa_20 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
-| whirlpool-wrx735sdhz | qa_20 | SAFE_BUYER_PATH_FAIL | 0 | 0 | PROVEN_SUPPRESSED | no_go_resolvable_safe_retailer_link; no_safe_direct_buyable_cta_after_gate; trust_buyer_path_suppress_buy_for_all_mapped_filters |
+| whirlpool-wrx735sdhz | qa_20 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 | whirlpool-wrx986sihz | qa_20 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 
 ## Proven facts
@@ -56,7 +56,7 @@ Generated: 2026-07-14T04:49:32.361Z
 - PROVEN: read_only=true; data_mutation=false; buy_cta_authorized=false; retailer_links_mutation_authorized=false.
 - PROVEN: exact scope=28 MATCH+promoted slugs from rendered-truth pack.
 - PROVEN: excluded QUARANTINED_SUPPRESSED=11; PARTIAL=3.
-- PROVEN: summary={"SAFE_BUYER_PATH_PASS":19,"SAFE_BUYER_PATH_FAIL":9,"SAFE_BUYER_PATH_UNKNOWN":0,"product_json_ld_proven_suppressed_count":28}.
+- PROVEN: summary={"SAFE_BUYER_PATH_PASS":21,"SAFE_BUYER_PATH_FAIL":7,"SAFE_BUYER_PATH_UNKNOWN":0,"product_json_ld_proven_suppressed_count":28}.
 - PROVEN: SAFE_BUYER_PATH_PASS requires mapped filters + gated safe CTA + go-resolvable URL + non-quarantine + JSON-LD suppressed.
 
 ## Unknown facts

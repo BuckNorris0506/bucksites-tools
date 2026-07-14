@@ -277,9 +277,52 @@ test("owner-review is exact 2-model scope, read-only, existing evidence only", (
 test("libs remain read-only by default and do not invent links or mutate CSV", () => {
   assert.match(LIB_SOURCE, /invent_link_authorized: false/);
   assert.match(LIB_SOURCE, /csv_only_approval/);
+  assert.match(LIB_SOURCE, /reportBlockers = mutation_authorized \? \[\] : uniqueBlockers/);
   assert.match(OWNER_SOURCE, /apply_authorized: false/);
   assert.match(OWNER_SOURCE, /founder_approval_created: false/);
   assert.doesNotMatch(LIB_SOURCE, /writeFileSync\([^)]*retailer_links\.csv/);
   assert.doesNotMatch(OWNER_SOURCE, /writeFileSync\([^)]*retailer_links\.csv/);
   assert.doesNotMatch(OWNER_SOURCE, /getSupabaseAdmin/);
+});
+
+test("authorized write reports clear blockers so APPLIED snapshots are not contradictory", async () => {
+  const prev = process.env.BUCKPARTS_IO_CAPABILITY;
+  process.env.BUCKPARTS_IO_CAPABILITY = "MUTATION";
+  try {
+    const report = await buildEdr4BuyerPathClosableParityReportV1({
+      rootDir: REPO_ROOT,
+      mode: "write",
+      loadSupabase: async () => ({
+        status: "CHECKED",
+        filter_id_by_slug: new Map([["edr4rxd1", "fid-edr4"]]),
+        by_slug: new Map([
+          [
+            "edr4rxd1",
+            {
+              id: "5504e020-a08e-4c14-bd9b-0f7bb2534e5b",
+              filter_id: "fid-edr4",
+              affiliate_url: "https://example.com/stale",
+              retailer_name: "OEM parts catalog (keyword lookup)",
+              browser_truth_classification: "",
+              browser_truth_notes: "",
+              browser_truth_checked_at: "",
+              is_primary: true,
+              retailer_key: "oem-parts-catalog",
+            },
+          ],
+        ]),
+      }),
+    });
+    // With live founder approval + MUTATION + planned gap, write may authorize.
+    if (report.mutation_authorized) {
+      assert.deepEqual(report.blockers, []);
+      assert.equal(report.csv_only_approval_blocked, true);
+    } else {
+      // Fail-closed path still keeps blockers; must not authorize with empty blockers.
+      assert.ok(report.blockers.length > 0);
+    }
+  } finally {
+    if (prev === undefined) delete process.env.BUCKPARTS_IO_CAPABILITY;
+    else process.env.BUCKPARTS_IO_CAPABILITY = prev;
+  }
 });

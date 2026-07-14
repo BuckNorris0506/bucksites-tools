@@ -12,12 +12,12 @@
   "auto_promote_authorized": false,
   "invent_link_authorized": false,
   "live_production_fetch_enabled": false,
-  "generated_at": "2026-07-14T05:00:25.669Z",
+  "generated_at": "2026-07-14T05:31:09.670Z",
   "source_command": "npm run buckparts:fridge-model-pdp-buyer-path-gap-plan",
   "cta_go_proof_pack_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
   "retailer_links_csv_rel_path": "data/retailer_links.csv",
   "scope": {
-    "slug_count": 9,
+    "slug_count": 7,
     "slugs": [
       "ge-gfe24jgkww",
       "ge-gfe27jmkes",
@@ -25,13 +25,11 @@
       "ge-gne27jstss",
       "ge-gse25hskss",
       "ge-gte18gsnrss",
-      "ge-pvd28bymfs",
-      "whirlpool-wrf540cwhz",
-      "whirlpool-wrx735sdhz"
+      "ge-pvd28bymfs"
     ]
   },
   "summary": {
-    "CLOSABLE_WITH_EXISTING_EVIDENCE": 2,
+    "CLOSABLE_WITH_EXISTING_EVIDENCE": 0,
     "NEEDS_EXTERNAL_RESEARCH": 6,
     "REMAIN_NO_BUY": 1
   },
@@ -353,115 +351,25 @@
         "Mapped filters present, but no CSV retailer_links row passes direct_buyable CTA + /go gates.",
         "xwfe: classification=(blank); gate=search_placeholder; rows=1"
       ]
-    },
-    {
-      "slug": "whirlpool-wrf540cwhz",
-      "cohort": "qa_20",
-      "mapped_filter_slugs": [
-        "edr4rxd1"
-      ],
-      "mapped_filter_count": 1,
-      "cta_go_missing_reasons": [
-        "no_go_resolvable_safe_retailer_link",
-        "no_safe_direct_buyable_cta_after_gate",
-        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
-      ],
-      "cta_safe_cta_count": 0,
-      "cta_go_resolvable_count": 0,
-      "failure_class": "csv_has_safe_row_live_cta_still_fail",
-      "recommended_action": "CLOSABLE_WITH_EXISTING_EVIDENCE",
-      "existing_approved_retailer_links_could_safely_close": true,
-      "external_research_required": false,
-      "owner_approval_required_to_close_live_path": true,
-      "remain_no_buy": false,
-      "auto_promote_authorized": false,
-      "invent_link_authorized": false,
-      "filter_evidence": [
-        {
-          "filter_slug": "edr4rxd1",
-          "csv_row_count": 1,
-          "csv_primary_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
-          "csv_browser_truth_classification": "direct_buyable",
-          "csv_gate_failure_kind": null,
-          "csv_direct_buyable_safe": true,
-          "csv_go_resolvable": true,
-          "evidence_artifacts_on_disk": [
-            "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json",
-            "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr4rxd1-v1.json"
-          ]
-        }
-      ],
-      "recommended_next_step": "Founder-gated scoped retailer_links CSV↔Supabase parity/sync for existing direct_buyable evidence (no new URL invent). Then re-run CTA/go proof.",
-      "notes": [
-        "Source: SAFE_BUYER_PATH_FAIL row from CTA/go proof pack (local data-path).",
-        "Recommendation only — auto_promote_authorized=false; invent_link_authorized=false.",
-        "CSV already has gate-passable direct_buyable+go-safe row(s) for: edr4rxd1.",
-        "Live CTA/go FAIL means customer path (Supabase-gated) still lacks that safe row — not an invent-new-URL lane.",
-        "Supporting owner-browser / apply-plan evidence artifacts exist on disk."
-      ]
-    },
-    {
-      "slug": "whirlpool-wrx735sdhz",
-      "cohort": "qa_20",
-      "mapped_filter_slugs": [
-        "edr4rxd1"
-      ],
-      "mapped_filter_count": 1,
-      "cta_go_missing_reasons": [
-        "no_go_resolvable_safe_retailer_link",
-        "no_safe_direct_buyable_cta_after_gate",
-        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
-      ],
-      "cta_safe_cta_count": 0,
-      "cta_go_resolvable_count": 0,
-      "failure_class": "csv_has_safe_row_live_cta_still_fail",
-      "recommended_action": "CLOSABLE_WITH_EXISTING_EVIDENCE",
-      "existing_approved_retailer_links_could_safely_close": true,
-      "external_research_required": false,
-      "owner_approval_required_to_close_live_path": true,
-      "remain_no_buy": false,
-      "auto_promote_authorized": false,
-      "invent_link_authorized": false,
-      "filter_evidence": [
-        {
-          "filter_slug": "edr4rxd1",
-          "csv_row_count": 1,
-          "csv_primary_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
-          "csv_browser_truth_classification": "direct_buyable",
-          "csv_gate_failure_kind": null,
-          "csv_direct_buyable_safe": true,
-          "csv_go_resolvable": true,
-          "evidence_artifacts_on_disk": [
-            "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json",
-            "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr4rxd1-v1.json"
-          ]
-        }
-      ],
-      "recommended_next_step": "Founder-gated scoped retailer_links CSV↔Supabase parity/sync for existing direct_buyable evidence (no new URL invent). Then re-run CTA/go proof.",
-      "notes": [
-        "Source: SAFE_BUYER_PATH_FAIL row from CTA/go proof pack (local data-path).",
-        "Recommendation only — auto_promote_authorized=false; invent_link_authorized=false.",
-        "CSV already has gate-passable direct_buyable+go-safe row(s) for: edr4rxd1.",
-        "Live CTA/go FAIL means customer path (Supabase-gated) still lacks that safe row — not an invent-new-URL lane.",
-        "Supporting owner-browser / apply-plan evidence artifacts exist on disk."
-      ]
     }
   ],
   "proven_facts": [
     "PROVEN: read_only=true; data_mutation=false; auto_promote_authorized=false; invent_link_authorized=false.",
-    "PROVEN: exact scope=9 SAFE_BUYER_PATH_FAIL slugs from CTA/go proof.",
-    "PROVEN: summary={\"CLOSABLE_WITH_EXISTING_EVIDENCE\":2,\"NEEDS_EXTERNAL_RESEARCH\":6,\"REMAIN_NO_BUY\":1}.",
+    "PROVEN: exact open FAIL scope=7 SAFE_BUYER_PATH_FAIL slugs from CTA/go proof (post-EDR4 parity).",
+    "PROVEN: closed_by_edr4_parity=whirlpool-wrf540cwhz,whirlpool-wrx735sdhz (no longer in open FAIL scope).",
+    "PROVEN: summary={\"CLOSABLE_WITH_EXISTING_EVIDENCE\":0,\"NEEDS_EXTERNAL_RESEARCH\":6,\"REMAIN_NO_BUY\":1}.",
     "PROVEN: CLOSABLE_WITH_EXISTING_EVIDENCE requires CSV direct_buyable CTA + /go gate pass (no invented destinations).",
     "PROVEN: NEEDS_EXTERNAL_RESEARCH only when mapped filters lack a gate-passable approved CSV retailer_links row.",
     "PROVEN: REMAIN_NO_BUY for expected no-filter suppression (ge-gte18gsnrss)."
   ],
   "unknown_facts": [
-    "UNKNOWN: Live production HTML CTA for these 9 PDPs (no production fetch in this plan).",
-    "UNKNOWN: Exact Supabase retailer_links primary row parity field-diff unless a separate parity lane is run."
+    "UNKNOWN: Live production HTML CTA for these open FAIL PDPs (no production fetch in this plan).",
+    "UNKNOWN: Exact Supabase retailer_links primary row parity field-diff for research-needed filters unless a separate parity lane is run."
   ],
   "risk_notes": [
     "This plan does not authorize retailer_links mutation, buy CTA promotion, or Product JSON-LD invents.",
-    "Do not treat CLOSABLE_WITH_EXISTING_EVIDENCE as apply permission — founder approval + guarded sync still required.",
-    "Do not invent manufacturer PDPs for XWFE/XWF/MWFP search placeholders."
+    "Do not treat any recommendation as apply permission — founder approval + guarded sync still required.",
+    "Do not invent manufacturer PDPs for XWFE/XWF/MWFP search placeholders.",
+    "Do not re-open whirlpool-wrf540cwhz / whirlpool-wrx735sdhz as CLOSABLE — they are SAFE_BUYER_PATH_PASS after EDR4 parity apply."
   ]
 }

@@ -1,6 +1,6 @@
 # BuckParts fridge model PDP buyer-path gap plan v1
 
-Generated: 2026-07-14T05:00:25.669Z
+Generated: 2026-07-14T05:31:09.670Z
 
 ## Status
 
@@ -9,12 +9,12 @@ Generated: 2026-07-14T05:00:25.669Z
 - data_mutation: **false**
 - auto_promote_authorized: **false**
 - invent_link_authorized: **false**
-- slug_count: **9**
+- slug_count: **7**
 - cta_go_proof: `data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json`
 
 ## Summary
 
-- CLOSABLE_WITH_EXISTING_EVIDENCE: 2
+- CLOSABLE_WITH_EXISTING_EVIDENCE: 0
 - NEEDS_EXTERNAL_RESEARCH: 6
 - REMAIN_NO_BUY: 1
 
@@ -29,25 +29,25 @@ Generated: 2026-07-14T05:00:25.669Z
 | ge-gse25hskss | xwf, xwfe | NEEDS_EXTERNAL_RESEARCH | missing_approved_safe_retailer_link | false | true | false | Owner/browser manufacturer-rescue: capture official PDP (not search placeholder), then founder-gated retailer_links review. Do not invent PDPs or auto-promote. |
 | ge-gte18gsnrss | (none) | REMAIN_NO_BUY | expected_no_filter_suppression | false | false | true | Keep no-buy / no filter CTA. Do not re-map GSWF or invent retailer links for this slug. |
 | ge-pvd28bymfs | xwfe | NEEDS_EXTERNAL_RESEARCH | missing_approved_safe_retailer_link | false | true | false | Owner/browser manufacturer-rescue: capture official PDP (not search placeholder), then founder-gated retailer_links review. Do not invent PDPs or auto-promote. |
-| whirlpool-wrf540cwhz | edr4rxd1 | CLOSABLE_WITH_EXISTING_EVIDENCE | csv_has_safe_row_live_cta_still_fail | true | false | false | Founder-gated scoped retailer_links CSV↔Supabase parity/sync for existing direct_buyable evidence (no new URL invent). Then re-run CTA/go proof. |
-| whirlpool-wrx735sdhz | edr4rxd1 | CLOSABLE_WITH_EXISTING_EVIDENCE | csv_has_safe_row_live_cta_still_fail | true | false | false | Founder-gated scoped retailer_links CSV↔Supabase parity/sync for existing direct_buyable evidence (no new URL invent). Then re-run CTA/go proof. |
 
 ## Proven facts
 
 - PROVEN: read_only=true; data_mutation=false; auto_promote_authorized=false; invent_link_authorized=false.
-- PROVEN: exact scope=9 SAFE_BUYER_PATH_FAIL slugs from CTA/go proof.
-- PROVEN: summary={"CLOSABLE_WITH_EXISTING_EVIDENCE":2,"NEEDS_EXTERNAL_RESEARCH":6,"REMAIN_NO_BUY":1}.
+- PROVEN: exact open FAIL scope=7 SAFE_BUYER_PATH_FAIL slugs from CTA/go proof (post-EDR4 parity).
+- PROVEN: closed_by_edr4_parity=whirlpool-wrf540cwhz,whirlpool-wrx735sdhz (no longer in open FAIL scope).
+- PROVEN: summary={"CLOSABLE_WITH_EXISTING_EVIDENCE":0,"NEEDS_EXTERNAL_RESEARCH":6,"REMAIN_NO_BUY":1}.
 - PROVEN: CLOSABLE_WITH_EXISTING_EVIDENCE requires CSV direct_buyable CTA + /go gate pass (no invented destinations).
 - PROVEN: NEEDS_EXTERNAL_RESEARCH only when mapped filters lack a gate-passable approved CSV retailer_links row.
 - PROVEN: REMAIN_NO_BUY for expected no-filter suppression (ge-gte18gsnrss).
 
 ## Unknown facts
 
-- UNKNOWN: Live production HTML CTA for these 9 PDPs (no production fetch in this plan).
-- UNKNOWN: Exact Supabase retailer_links primary row parity field-diff unless a separate parity lane is run.
+- UNKNOWN: Live production HTML CTA for these open FAIL PDPs (no production fetch in this plan).
+- UNKNOWN: Exact Supabase retailer_links primary row parity field-diff for research-needed filters unless a separate parity lane is run.
 
 ## Risk notes
 
 - This plan does not authorize retailer_links mutation, buy CTA promotion, or Product JSON-LD invents.
-- Do not treat CLOSABLE_WITH_EXISTING_EVIDENCE as apply permission — founder approval + guarded sync still required.
+- Do not treat any recommendation as apply permission — founder approval + guarded sync still required.
 - Do not invent manufacturer PDPs for XWFE/XWF/MWFP search placeholders.
+- Do not re-open whirlpool-wrf540cwhz / whirlpool-wrx735sdhz as CLOSABLE — they are SAFE_BUYER_PATH_PASS after EDR4 parity apply.

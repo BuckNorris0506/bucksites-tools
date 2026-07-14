@@ -37,9 +37,12 @@ export const BUCKPARTS_FRIDGE_MODEL_PDP_BUYER_PATH_GAP_PLAN_ALLOWED_WRITE_REL_PA
   BUCKPARTS_FRIDGE_MODEL_PDP_BUYER_PATH_GAP_PLAN_MD_REL_V1,
 ] as const;
 
-export const BUCKPARTS_FRIDGE_MODEL_PDP_BUYER_PATH_GAP_PLAN_EXPECTED_SLUG_COUNT_V1 = 9 as const;
+export const BUCKPARTS_FRIDGE_MODEL_PDP_BUYER_PATH_GAP_PLAN_EXPECTED_SLUG_COUNT_V1 = 7 as const;
 
-/** Exact FAIL cohort from CTA/go proof pack — pin for tests and scope gating. */
+/**
+ * Exact open FAIL cohort from CTA/go proof pack after EDR4 buyer-path closable parity apply.
+ * Closed (no longer in open FAIL scope): whirlpool-wrf540cwhz, whirlpool-wrx735sdhz.
+ */
 export const BUCKPARTS_FRIDGE_MODEL_PDP_BUYER_PATH_GAP_PLAN_FAIL_SLUGS_V1 = [
   "ge-gfe24jgkww",
   "ge-gfe27jmkes",
@@ -48,6 +51,10 @@ export const BUCKPARTS_FRIDGE_MODEL_PDP_BUYER_PATH_GAP_PLAN_FAIL_SLUGS_V1 = [
   "ge-gse25hskss",
   "ge-gte18gsnrss",
   "ge-pvd28bymfs",
+] as const;
+
+/** Previously CLOSABLE duo closed by edr4rxd1 Supabase retailer_links parity apply. */
+export const BUCKPARTS_FRIDGE_MODEL_PDP_BUYER_PATH_GAP_PLAN_CLOSED_BY_EDR4_PARITY_SLUGS_V1 = [
   "whirlpool-wrf540cwhz",
   "whirlpool-wrx735sdhz",
 ] as const;
@@ -481,20 +488,22 @@ export function buildBuckpartsFridgeModelPdpBuyerPathGapPlanV1(
     rows,
     proven_facts: [
       "PROVEN: read_only=true; data_mutation=false; auto_promote_authorized=false; invent_link_authorized=false.",
-      `PROVEN: exact scope=${String(BUCKPARTS_FRIDGE_MODEL_PDP_BUYER_PATH_GAP_PLAN_EXPECTED_SLUG_COUNT_V1)} SAFE_BUYER_PATH_FAIL slugs from CTA/go proof.`,
+      `PROVEN: exact open FAIL scope=${String(BUCKPARTS_FRIDGE_MODEL_PDP_BUYER_PATH_GAP_PLAN_EXPECTED_SLUG_COUNT_V1)} SAFE_BUYER_PATH_FAIL slugs from CTA/go proof (post-EDR4 parity).`,
+      `PROVEN: closed_by_edr4_parity=${BUCKPARTS_FRIDGE_MODEL_PDP_BUYER_PATH_GAP_PLAN_CLOSED_BY_EDR4_PARITY_SLUGS_V1.join(",")} (no longer in open FAIL scope).`,
       `PROVEN: summary=${JSON.stringify(summary)}.`,
       "PROVEN: CLOSABLE_WITH_EXISTING_EVIDENCE requires CSV direct_buyable CTA + /go gate pass (no invented destinations).",
       "PROVEN: NEEDS_EXTERNAL_RESEARCH only when mapped filters lack a gate-passable approved CSV retailer_links row.",
       "PROVEN: REMAIN_NO_BUY for expected no-filter suppression (ge-gte18gsnrss).",
     ],
     unknown_facts: [
-      "UNKNOWN: Live production HTML CTA for these 9 PDPs (no production fetch in this plan).",
-      "UNKNOWN: Exact Supabase retailer_links primary row parity field-diff unless a separate parity lane is run.",
+      "UNKNOWN: Live production HTML CTA for these open FAIL PDPs (no production fetch in this plan).",
+      "UNKNOWN: Exact Supabase retailer_links primary row parity field-diff for research-needed filters unless a separate parity lane is run.",
     ],
     risk_notes: [
       "This plan does not authorize retailer_links mutation, buy CTA promotion, or Product JSON-LD invents.",
-      "Do not treat CLOSABLE_WITH_EXISTING_EVIDENCE as apply permission — founder approval + guarded sync still required.",
+      "Do not treat any recommendation as apply permission — founder approval + guarded sync still required.",
       "Do not invent manufacturer PDPs for XWFE/XWF/MWFP search placeholders.",
+      "Do not re-open whirlpool-wrf540cwhz / whirlpool-wrx735sdhz as CLOSABLE — they are SAFE_BUYER_PATH_PASS after EDR4 parity apply.",
     ],
   };
 }

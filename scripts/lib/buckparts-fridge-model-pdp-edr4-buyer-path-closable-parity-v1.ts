@@ -270,10 +270,14 @@ export async function buildEdr4BuyerPathClosableParityReportV1(args: {
       (r) => r.status === "SUPABASE_FILTER_MISSING" || r.status === "CSV_PRIMARY_MISSING",
     );
 
+  // When write is authorized, do not keep policy/soft blocker strings that contradict authorization.
+  // CSV-only non-authority remains proven via csv_only_approval_blocked + proven_facts.
+  const reportBlockers = mutation_authorized ? [] : uniqueBlockers;
+
   return {
     ...base,
     mutation_authorized,
-    blockers: uniqueBlockers,
+    blockers: reportBlockers,
     context_model_slugs: BUCKPARTS_FRIDGE_MODEL_PDP_EDR4_BUYER_PATH_CLOSABLE_PARITY_CONTEXT_MODEL_SLUGS_V1,
     invent_link_authorized: false,
     csv_only_approval_blocked: founder.csv_only_approval_seen,
@@ -283,6 +287,11 @@ export async function buildEdr4BuyerPathClosableParityReportV1(args: {
       "PROVEN: invent_link_authorized=false; existing CSV evidence only.",
       "PROVEN: context models exactly whirlpool-wrf540cwhz + whirlpool-wrx735sdhz.",
       "PROVEN: CSV-only manufacturer-rescue approval does not authorize this Supabase parity write.",
+      ...(mutation_authorized
+        ? [
+            "PROVEN: write-mode mutation_authorized=true; blockers cleared (policy notes retained outside blockers).",
+          ]
+        : []),
     ],
     recommended_next_action:
       mode === "dry_run"

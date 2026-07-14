@@ -119,7 +119,7 @@ function csvRow(partial: Partial<RetailerLinksCsvRowV1> & { filter_slug: string 
   };
 }
 
-test("loadFailRows scopes exact 9 FAIL slugs from CTA/go pack", () => {
+test("loadFailRows scopes exact 7 open FAIL slugs from CTA/go pack", () => {
   const packPath = path.join(ROOT, BUCKPARTS_FRIDGE_MODEL_PDP_CTA_GO_LINK_PROOF_JSON_REL_V1);
   if (!existsSync(packPath)) return;
   const pack = JSON.parse(readFileSync(packPath, "utf8")) as BuckpartsFridgeModelPdpCtaGoLinkProofPackV1;
@@ -129,6 +129,9 @@ test("loadFailRows scopes exact 9 FAIL slugs from CTA/go pack", () => {
     failRows.map((r) => r.slug).sort(),
     [...BUCKPARTS_FRIDGE_MODEL_PDP_BUYER_PATH_GAP_PLAN_FAIL_SLUGS_V1].sort(),
   );
+  for (const closed of ["whirlpool-wrf540cwhz", "whirlpool-wrx735sdhz"]) {
+    assert.ok(!failRows.some((r) => r.slug === closed));
+  }
 });
 
 test("classify: remain-no-buy for no-filter; closable only with gate-passable CSV evidence; research otherwise", () => {
@@ -152,7 +155,7 @@ test("classify: remain-no-buy for no-filter; closable only with gate-passable CS
   assert.equal(remain.auto_promote_authorized, false);
 
   const closable = classifyFridgeModelPdpBuyerPathGapSlugV1({
-    fail_row: failRow("whirlpool-wrf540cwhz", { rendered_filter_slugs: ["edr4rxd1"] }),
+    fail_row: failRow("fixture-filter-model", { rendered_filter_slugs: ["edr4rxd1"] }),
     csvRows: [
       csvRow({
         filter_slug: "edr4rxd1",
@@ -189,7 +192,7 @@ test("classify: remain-no-buy for no-filter; closable only with gate-passable CS
   assert.equal(research.invent_link_authorized, false);
 });
 
-test("build plan: exact 9 scope, read-only, no invent/auto-promote, allowlisted writes only", () => {
+test("build plan: exact 7 open FAIL scope, post-EDR4 counts, read-only, no invent/auto-promote", () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "buyer-path-gap-"));
   try {
     const failRows = BUCKPARTS_FRIDGE_MODEL_PDP_BUYER_PATH_GAP_PLAN_FAIL_SLUGS_V1.map((slug) => {
@@ -204,9 +207,6 @@ test("build plan: exact 9 scope, read-only, no invent/auto-promote, allowlisted 
             "trust_buyer_path_unavailable",
           ],
         });
-      }
-      if (slug.startsWith("whirlpool-")) {
-        return failRow(slug, { rendered_filter_slugs: ["edr4rxd1"] });
       }
       if (slug === "ge-gfe24jgkww") {
         return failRow(slug, { rendered_filter_slugs: ["smartwater-mwfp", "xwfe"] });
@@ -223,14 +223,6 @@ test("build plan: exact 9 scope, read-only, no invent/auto-promote, allowlisted 
       loadCtaGoProofPack: () => makeFailPack(failRows),
       loadRetailerLinksCsv: () => [
         csvRow({
-          filter_slug: "edr4rxd1",
-          affiliate_url:
-            "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
-          browser_truth_classification: "direct_buyable",
-          browser_truth_buyable_subtype: "single_unit_direct_buyable",
-          browser_truth_checked_at: "2026-06-26T12:00:00.000Z",
-        }),
-        csvRow({
           filter_slug: "xwfe",
           affiliate_url: "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
         }),
@@ -243,7 +235,7 @@ test("build plan: exact 9 scope, read-only, no invent/auto-promote, allowlisted 
           affiliate_url: "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWFP",
         }),
       ],
-      evidenceExists: (rel) => rel.includes("edr4rxd1") || rel.includes("gte18"),
+      evidenceExists: (rel) => rel.includes("gte18"),
     });
 
     assert.equal(report.contract, BUCKPARTS_FRIDGE_MODEL_PDP_BUYER_PATH_GAP_PLAN_CONTRACT_V1);
@@ -253,16 +245,15 @@ test("build plan: exact 9 scope, read-only, no invent/auto-promote, allowlisted 
     assert.equal(report.invent_link_authorized, false);
     assert.equal(report.buy_cta_authorized, false);
     assert.equal(report.retailer_links_mutation_authorized, false);
-    assert.equal(report.scope.slug_count, 9);
-    assert.equal(report.summary.CLOSABLE_WITH_EXISTING_EVIDENCE, 2);
+    assert.equal(report.scope.slug_count, 7);
+    assert.equal(report.summary.CLOSABLE_WITH_EXISTING_EVIDENCE, 0);
     assert.equal(report.summary.REMAIN_NO_BUY, 1);
     assert.equal(report.summary.NEEDS_EXTERNAL_RESEARCH, 6);
     assert.ok(report.rows.every((r) => r.auto_promote_authorized === false));
     assert.ok(report.rows.every((r) => r.invent_link_authorized === false));
     assert.ok(
-      report.rows
-        .filter((r) => r.recommended_action === "CLOSABLE_WITH_EXISTING_EVIDENCE")
-        .every((r) => r.existing_approved_retailer_links_could_safely_close === true),
+      !report.scope.slugs.includes("whirlpool-wrf540cwhz") &&
+        !report.scope.slugs.includes("whirlpool-wrx735sdhz"),
     );
     assert.ok(
       report.rows

@@ -60,11 +60,37 @@ async function main(): Promise<void> {
       rootDir: REPO_ROOT,
       report,
     });
+    // Rewrite draft artifact from post-apply dry-run so committed report is not a stale pre-apply write snapshot.
+    const postApplyReport = await buildEdr4BuyerPathClosableParityReportV1({
+      rootDir: REPO_ROOT,
+      mode: "dry_run",
+    });
+    const postArtifactRel = writeEdr4BuyerPathClosableParityReportArtifactV1({
+      rootDir: REPO_ROOT,
+      report: postApplyReport,
+    });
     process.stderr.write(
       `APPLIED: inserted=${String(applied.inserted)} updated=${String(applied.updated)} closeout=${applied.closeout_rel}\n`,
     );
+    process.stderr.write(
+      `Post-apply dry-run wrote ${postArtifactRel}: all_in_parity=${String(postApplyReport.all_in_parity)} planned=${String(postApplyReport.row_count_planned)} blockers=${String(postApplyReport.blockers.length)}\n`,
+    );
     process.stdout.write(
-      `${JSON.stringify({ report: { ...report, data_mutation: true }, ops, applied }, null, 2)}\n`,
+      `${JSON.stringify(
+        {
+          applied,
+          pre_apply_report: {
+            ...report,
+            data_mutation: true,
+            // Authorized write snapshots must not carry soft policy strings as blockers.
+            blockers: [],
+          },
+          ops,
+          post_apply_report: postApplyReport,
+        },
+        null,
+        2,
+      )}\n`,
     );
     return;
   }
