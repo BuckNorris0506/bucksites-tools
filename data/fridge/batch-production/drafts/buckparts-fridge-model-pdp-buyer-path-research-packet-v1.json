@@ -1,0 +1,551 @@
+{
+  "contract": "buckparts_fridge_model_pdp_buyer_path_research_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "invent_link_authorized": false,
+  "auto_promote_authorized": false,
+  "sitemap_robots_mutation_authorized": false,
+  "product_json_ld_mutation_authorized": false,
+  "live_production_fetch_enabled": false,
+  "generated_at": "2026-07-14T05:40:50.514Z",
+  "source_command": "npm run buckparts:fridge-model-pdp-buyer-path-research-packet",
+  "gap_plan_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-buyer-path-gap-plan-v1.json",
+  "scope": {
+    "slug_count": 6,
+    "slugs": [
+      "ge-gfe24jgkww",
+      "ge-gfe27jmkes",
+      "ge-gne25jmkww",
+      "ge-gne27jstss",
+      "ge-gse25hskss",
+      "ge-pvd28bymfs"
+    ],
+    "filters": [
+      "smartwater-mwfp",
+      "xwf",
+      "xwfe"
+    ],
+    "excluded_remain_no_buy_slug": "ge-gte18gsnrss"
+  },
+  "summary": {
+    "NEEDS_OWNER_BROWSER_PROOF": 6,
+    "NEEDS_EXTERNAL_RESEARCH": 0,
+    "REMAIN_NO_BUY": 0,
+    "search_placeholder_filter_instances": 9,
+    "approved_safe_direct_buy_evidence_count": 0
+  },
+  "rows": [
+    {
+      "slug": "ge-gfe24jgkww",
+      "cohort": "gswf_13",
+      "mapped_filter_slugs": [
+        "smartwater-mwfp",
+        "xwfe"
+      ],
+      "gap_plan_recommended_action": "NEEDS_EXTERNAL_RESEARCH",
+      "buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "cta_safe_cta_count": 0,
+      "cta_go_resolvable_count": 0,
+      "filters": [
+        {
+          "filter_slug": "smartwater-mwfp",
+          "csv_row_count": 1,
+          "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWFP",
+          "csv_browser_truth_classification": null,
+          "csv_gate_failure_kind": "search_placeholder",
+          "search_placeholder_only": true,
+          "approved_safe_direct_buy_evidence_present": false,
+          "csv_direct_buyable_safe": false,
+          "csv_go_resolvable": false,
+          "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-smartwater-mwfp-v1.json",
+          "manufacturer_proof_packet_present": true,
+          "manufacturer_normalization_status": "CAPTURE_REQUIRED_UNKNOWN",
+          "manufacturer_prepared_verdict": "NEEDS_OWNER_BROWSER_REVIEW",
+          "evidence_gaps": [
+            "csv_primary_is_search_placeholder_not_official_pdp",
+            "missing_browser_truth_classification_direct_buyable",
+            "buy_link_gate_failure:search_placeholder",
+            "manufacturer_browser_capture_or_owner_pass_required"
+          ],
+          "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+          "exact_evidence_needed": [
+            "Official manufacturer PDP URL for exact OEM token (not geapplianceparts search.jsp / searchKeyword).",
+            "Owner browser proof PASS with exact token + official_pdp path type (no wrong-family).",
+            "browser_truth_classification=direct_buyable with fresh browser_truth_checked_at.",
+            "Founder-gated retailer_links review/apply for that filter only — not auto-promoted by this packet."
+          ]
+        },
+        {
+          "filter_slug": "xwfe",
+          "csv_row_count": 1,
+          "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+          "csv_browser_truth_classification": null,
+          "csv_gate_failure_kind": "search_placeholder",
+          "search_placeholder_only": true,
+          "approved_safe_direct_buy_evidence_present": false,
+          "csv_direct_buyable_safe": false,
+          "csv_go_resolvable": false,
+          "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwfe-v1.json",
+          "manufacturer_proof_packet_present": true,
+          "manufacturer_normalization_status": "CAPTURE_REQUIRED_UNKNOWN",
+          "manufacturer_prepared_verdict": "NEEDS_OWNER_BROWSER_REVIEW",
+          "evidence_gaps": [
+            "csv_primary_is_search_placeholder_not_official_pdp",
+            "missing_browser_truth_classification_direct_buyable",
+            "buy_link_gate_failure:search_placeholder",
+            "manufacturer_browser_capture_or_owner_pass_required"
+          ],
+          "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+          "exact_evidence_needed": [
+            "Official manufacturer PDP URL for exact OEM token (not geapplianceparts search.jsp / searchKeyword).",
+            "Owner browser proof PASS with exact token + official_pdp path type (no wrong-family).",
+            "browser_truth_classification=direct_buyable with fresh browser_truth_checked_at.",
+            "Founder-gated retailer_links review/apply for that filter only — not auto-promoted by this packet."
+          ]
+        }
+      ],
+      "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "notes": [
+        "Source: NEEDS_EXTERNAL_RESEARCH rows from buyer-path gap plan only.",
+        "No retailer links invented or auto-promoted.",
+        "ge-gte18gsnrss remain-no-buy is excluded from this packet."
+      ]
+    },
+    {
+      "slug": "ge-gfe27jmkes",
+      "cohort": "gswf_13",
+      "mapped_filter_slugs": [
+        "xwfe"
+      ],
+      "gap_plan_recommended_action": "NEEDS_EXTERNAL_RESEARCH",
+      "buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "cta_safe_cta_count": 0,
+      "cta_go_resolvable_count": 0,
+      "filters": [
+        {
+          "filter_slug": "xwfe",
+          "csv_row_count": 1,
+          "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+          "csv_browser_truth_classification": null,
+          "csv_gate_failure_kind": "search_placeholder",
+          "search_placeholder_only": true,
+          "approved_safe_direct_buy_evidence_present": false,
+          "csv_direct_buyable_safe": false,
+          "csv_go_resolvable": false,
+          "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwfe-v1.json",
+          "manufacturer_proof_packet_present": true,
+          "manufacturer_normalization_status": "CAPTURE_REQUIRED_UNKNOWN",
+          "manufacturer_prepared_verdict": "NEEDS_OWNER_BROWSER_REVIEW",
+          "evidence_gaps": [
+            "csv_primary_is_search_placeholder_not_official_pdp",
+            "missing_browser_truth_classification_direct_buyable",
+            "buy_link_gate_failure:search_placeholder",
+            "manufacturer_browser_capture_or_owner_pass_required"
+          ],
+          "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+          "exact_evidence_needed": [
+            "Official manufacturer PDP URL for exact OEM token (not geapplianceparts search.jsp / searchKeyword).",
+            "Owner browser proof PASS with exact token + official_pdp path type (no wrong-family).",
+            "browser_truth_classification=direct_buyable with fresh browser_truth_checked_at.",
+            "Founder-gated retailer_links review/apply for that filter only — not auto-promoted by this packet."
+          ]
+        }
+      ],
+      "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "notes": [
+        "Source: NEEDS_EXTERNAL_RESEARCH rows from buyer-path gap plan only.",
+        "No retailer links invented or auto-promoted.",
+        "ge-gte18gsnrss remain-no-buy is excluded from this packet."
+      ]
+    },
+    {
+      "slug": "ge-gne25jmkww",
+      "cohort": "gswf_13",
+      "mapped_filter_slugs": [
+        "xwfe"
+      ],
+      "gap_plan_recommended_action": "NEEDS_EXTERNAL_RESEARCH",
+      "buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "cta_safe_cta_count": 0,
+      "cta_go_resolvable_count": 0,
+      "filters": [
+        {
+          "filter_slug": "xwfe",
+          "csv_row_count": 1,
+          "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+          "csv_browser_truth_classification": null,
+          "csv_gate_failure_kind": "search_placeholder",
+          "search_placeholder_only": true,
+          "approved_safe_direct_buy_evidence_present": false,
+          "csv_direct_buyable_safe": false,
+          "csv_go_resolvable": false,
+          "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwfe-v1.json",
+          "manufacturer_proof_packet_present": true,
+          "manufacturer_normalization_status": "CAPTURE_REQUIRED_UNKNOWN",
+          "manufacturer_prepared_verdict": "NEEDS_OWNER_BROWSER_REVIEW",
+          "evidence_gaps": [
+            "csv_primary_is_search_placeholder_not_official_pdp",
+            "missing_browser_truth_classification_direct_buyable",
+            "buy_link_gate_failure:search_placeholder",
+            "manufacturer_browser_capture_or_owner_pass_required"
+          ],
+          "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+          "exact_evidence_needed": [
+            "Official manufacturer PDP URL for exact OEM token (not geapplianceparts search.jsp / searchKeyword).",
+            "Owner browser proof PASS with exact token + official_pdp path type (no wrong-family).",
+            "browser_truth_classification=direct_buyable with fresh browser_truth_checked_at.",
+            "Founder-gated retailer_links review/apply for that filter only — not auto-promoted by this packet."
+          ]
+        }
+      ],
+      "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "notes": [
+        "Source: NEEDS_EXTERNAL_RESEARCH rows from buyer-path gap plan only.",
+        "No retailer links invented or auto-promoted.",
+        "ge-gte18gsnrss remain-no-buy is excluded from this packet."
+      ]
+    },
+    {
+      "slug": "ge-gne27jstss",
+      "cohort": "gswf_13",
+      "mapped_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "gap_plan_recommended_action": "NEEDS_EXTERNAL_RESEARCH",
+      "buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "cta_safe_cta_count": 0,
+      "cta_go_resolvable_count": 0,
+      "filters": [
+        {
+          "filter_slug": "xwf",
+          "csv_row_count": 1,
+          "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWF",
+          "csv_browser_truth_classification": null,
+          "csv_gate_failure_kind": "search_placeholder",
+          "search_placeholder_only": true,
+          "approved_safe_direct_buy_evidence_present": false,
+          "csv_direct_buyable_safe": false,
+          "csv_go_resolvable": false,
+          "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwf-v1.json",
+          "manufacturer_proof_packet_present": true,
+          "manufacturer_normalization_status": "CAPTURE_REQUIRED_UNKNOWN",
+          "manufacturer_prepared_verdict": "NEEDS_OWNER_BROWSER_REVIEW",
+          "evidence_gaps": [
+            "csv_primary_is_search_placeholder_not_official_pdp",
+            "missing_browser_truth_classification_direct_buyable",
+            "buy_link_gate_failure:search_placeholder",
+            "manufacturer_browser_capture_or_owner_pass_required"
+          ],
+          "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+          "exact_evidence_needed": [
+            "Official manufacturer PDP URL for exact OEM token (not geapplianceparts search.jsp / searchKeyword).",
+            "Owner browser proof PASS with exact token + official_pdp path type (no wrong-family).",
+            "browser_truth_classification=direct_buyable with fresh browser_truth_checked_at.",
+            "Founder-gated retailer_links review/apply for that filter only — not auto-promoted by this packet."
+          ]
+        },
+        {
+          "filter_slug": "xwfe",
+          "csv_row_count": 1,
+          "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+          "csv_browser_truth_classification": null,
+          "csv_gate_failure_kind": "search_placeholder",
+          "search_placeholder_only": true,
+          "approved_safe_direct_buy_evidence_present": false,
+          "csv_direct_buyable_safe": false,
+          "csv_go_resolvable": false,
+          "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwfe-v1.json",
+          "manufacturer_proof_packet_present": true,
+          "manufacturer_normalization_status": "CAPTURE_REQUIRED_UNKNOWN",
+          "manufacturer_prepared_verdict": "NEEDS_OWNER_BROWSER_REVIEW",
+          "evidence_gaps": [
+            "csv_primary_is_search_placeholder_not_official_pdp",
+            "missing_browser_truth_classification_direct_buyable",
+            "buy_link_gate_failure:search_placeholder",
+            "manufacturer_browser_capture_or_owner_pass_required"
+          ],
+          "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+          "exact_evidence_needed": [
+            "Official manufacturer PDP URL for exact OEM token (not geapplianceparts search.jsp / searchKeyword).",
+            "Owner browser proof PASS with exact token + official_pdp path type (no wrong-family).",
+            "browser_truth_classification=direct_buyable with fresh browser_truth_checked_at.",
+            "Founder-gated retailer_links review/apply for that filter only — not auto-promoted by this packet."
+          ]
+        }
+      ],
+      "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "notes": [
+        "Source: NEEDS_EXTERNAL_RESEARCH rows from buyer-path gap plan only.",
+        "No retailer links invented or auto-promoted.",
+        "ge-gte18gsnrss remain-no-buy is excluded from this packet."
+      ]
+    },
+    {
+      "slug": "ge-gse25hskss",
+      "cohort": "gswf_13",
+      "mapped_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "gap_plan_recommended_action": "NEEDS_EXTERNAL_RESEARCH",
+      "buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "cta_safe_cta_count": 0,
+      "cta_go_resolvable_count": 0,
+      "filters": [
+        {
+          "filter_slug": "xwf",
+          "csv_row_count": 1,
+          "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWF",
+          "csv_browser_truth_classification": null,
+          "csv_gate_failure_kind": "search_placeholder",
+          "search_placeholder_only": true,
+          "approved_safe_direct_buy_evidence_present": false,
+          "csv_direct_buyable_safe": false,
+          "csv_go_resolvable": false,
+          "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwf-v1.json",
+          "manufacturer_proof_packet_present": true,
+          "manufacturer_normalization_status": "CAPTURE_REQUIRED_UNKNOWN",
+          "manufacturer_prepared_verdict": "NEEDS_OWNER_BROWSER_REVIEW",
+          "evidence_gaps": [
+            "csv_primary_is_search_placeholder_not_official_pdp",
+            "missing_browser_truth_classification_direct_buyable",
+            "buy_link_gate_failure:search_placeholder",
+            "manufacturer_browser_capture_or_owner_pass_required"
+          ],
+          "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+          "exact_evidence_needed": [
+            "Official manufacturer PDP URL for exact OEM token (not geapplianceparts search.jsp / searchKeyword).",
+            "Owner browser proof PASS with exact token + official_pdp path type (no wrong-family).",
+            "browser_truth_classification=direct_buyable with fresh browser_truth_checked_at.",
+            "Founder-gated retailer_links review/apply for that filter only — not auto-promoted by this packet."
+          ]
+        },
+        {
+          "filter_slug": "xwfe",
+          "csv_row_count": 1,
+          "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+          "csv_browser_truth_classification": null,
+          "csv_gate_failure_kind": "search_placeholder",
+          "search_placeholder_only": true,
+          "approved_safe_direct_buy_evidence_present": false,
+          "csv_direct_buyable_safe": false,
+          "csv_go_resolvable": false,
+          "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwfe-v1.json",
+          "manufacturer_proof_packet_present": true,
+          "manufacturer_normalization_status": "CAPTURE_REQUIRED_UNKNOWN",
+          "manufacturer_prepared_verdict": "NEEDS_OWNER_BROWSER_REVIEW",
+          "evidence_gaps": [
+            "csv_primary_is_search_placeholder_not_official_pdp",
+            "missing_browser_truth_classification_direct_buyable",
+            "buy_link_gate_failure:search_placeholder",
+            "manufacturer_browser_capture_or_owner_pass_required"
+          ],
+          "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+          "exact_evidence_needed": [
+            "Official manufacturer PDP URL for exact OEM token (not geapplianceparts search.jsp / searchKeyword).",
+            "Owner browser proof PASS with exact token + official_pdp path type (no wrong-family).",
+            "browser_truth_classification=direct_buyable with fresh browser_truth_checked_at.",
+            "Founder-gated retailer_links review/apply for that filter only — not auto-promoted by this packet."
+          ]
+        }
+      ],
+      "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "notes": [
+        "Source: NEEDS_EXTERNAL_RESEARCH rows from buyer-path gap plan only.",
+        "No retailer links invented or auto-promoted.",
+        "ge-gte18gsnrss remain-no-buy is excluded from this packet."
+      ]
+    },
+    {
+      "slug": "ge-pvd28bymfs",
+      "cohort": "gswf_13",
+      "mapped_filter_slugs": [
+        "xwfe"
+      ],
+      "gap_plan_recommended_action": "NEEDS_EXTERNAL_RESEARCH",
+      "buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "cta_safe_cta_count": 0,
+      "cta_go_resolvable_count": 0,
+      "filters": [
+        {
+          "filter_slug": "xwfe",
+          "csv_row_count": 1,
+          "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+          "csv_browser_truth_classification": null,
+          "csv_gate_failure_kind": "search_placeholder",
+          "search_placeholder_only": true,
+          "approved_safe_direct_buy_evidence_present": false,
+          "csv_direct_buyable_safe": false,
+          "csv_go_resolvable": false,
+          "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwfe-v1.json",
+          "manufacturer_proof_packet_present": true,
+          "manufacturer_normalization_status": "CAPTURE_REQUIRED_UNKNOWN",
+          "manufacturer_prepared_verdict": "NEEDS_OWNER_BROWSER_REVIEW",
+          "evidence_gaps": [
+            "csv_primary_is_search_placeholder_not_official_pdp",
+            "missing_browser_truth_classification_direct_buyable",
+            "buy_link_gate_failure:search_placeholder",
+            "manufacturer_browser_capture_or_owner_pass_required"
+          ],
+          "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+          "exact_evidence_needed": [
+            "Official manufacturer PDP URL for exact OEM token (not geapplianceparts search.jsp / searchKeyword).",
+            "Owner browser proof PASS with exact token + official_pdp path type (no wrong-family).",
+            "browser_truth_classification=direct_buyable with fresh browser_truth_checked_at.",
+            "Founder-gated retailer_links review/apply for that filter only — not auto-promoted by this packet."
+          ]
+        }
+      ],
+      "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "notes": [
+        "Source: NEEDS_EXTERNAL_RESEARCH rows from buyer-path gap plan only.",
+        "No retailer links invented or auto-promoted.",
+        "ge-gte18gsnrss remain-no-buy is excluded from this packet."
+      ]
+    }
+  ],
+  "unique_filter_findings": [
+    {
+      "filter_slug": "smartwater-mwfp",
+      "csv_row_count": 1,
+      "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWFP",
+      "csv_browser_truth_classification": null,
+      "csv_gate_failure_kind": "search_placeholder",
+      "search_placeholder_only": true,
+      "approved_safe_direct_buy_evidence_present": false,
+      "csv_direct_buyable_safe": false,
+      "csv_go_resolvable": false,
+      "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-smartwater-mwfp-v1.json",
+      "manufacturer_proof_packet_present": true,
+      "manufacturer_normalization_status": "CAPTURE_REQUIRED_UNKNOWN",
+      "manufacturer_prepared_verdict": "NEEDS_OWNER_BROWSER_REVIEW",
+      "evidence_gaps": [
+        "csv_primary_is_search_placeholder_not_official_pdp",
+        "missing_browser_truth_classification_direct_buyable",
+        "buy_link_gate_failure:search_placeholder",
+        "manufacturer_browser_capture_or_owner_pass_required"
+      ],
+      "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+      "exact_evidence_needed": [
+        "Official manufacturer PDP URL for exact OEM token (not geapplianceparts search.jsp / searchKeyword).",
+        "Owner browser proof PASS with exact token + official_pdp path type (no wrong-family).",
+        "browser_truth_classification=direct_buyable with fresh browser_truth_checked_at.",
+        "Founder-gated retailer_links review/apply for that filter only — not auto-promoted by this packet."
+      ]
+    },
+    {
+      "filter_slug": "xwf",
+      "csv_row_count": 1,
+      "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWF",
+      "csv_browser_truth_classification": null,
+      "csv_gate_failure_kind": "search_placeholder",
+      "search_placeholder_only": true,
+      "approved_safe_direct_buy_evidence_present": false,
+      "csv_direct_buyable_safe": false,
+      "csv_go_resolvable": false,
+      "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwf-v1.json",
+      "manufacturer_proof_packet_present": true,
+      "manufacturer_normalization_status": "CAPTURE_REQUIRED_UNKNOWN",
+      "manufacturer_prepared_verdict": "NEEDS_OWNER_BROWSER_REVIEW",
+      "evidence_gaps": [
+        "csv_primary_is_search_placeholder_not_official_pdp",
+        "missing_browser_truth_classification_direct_buyable",
+        "buy_link_gate_failure:search_placeholder",
+        "manufacturer_browser_capture_or_owner_pass_required"
+      ],
+      "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+      "exact_evidence_needed": [
+        "Official manufacturer PDP URL for exact OEM token (not geapplianceparts search.jsp / searchKeyword).",
+        "Owner browser proof PASS with exact token + official_pdp path type (no wrong-family).",
+        "browser_truth_classification=direct_buyable with fresh browser_truth_checked_at.",
+        "Founder-gated retailer_links review/apply for that filter only — not auto-promoted by this packet."
+      ]
+    },
+    {
+      "filter_slug": "xwfe",
+      "csv_row_count": 1,
+      "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+      "csv_browser_truth_classification": null,
+      "csv_gate_failure_kind": "search_placeholder",
+      "search_placeholder_only": true,
+      "approved_safe_direct_buy_evidence_present": false,
+      "csv_direct_buyable_safe": false,
+      "csv_go_resolvable": false,
+      "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwfe-v1.json",
+      "manufacturer_proof_packet_present": true,
+      "manufacturer_normalization_status": "CAPTURE_REQUIRED_UNKNOWN",
+      "manufacturer_prepared_verdict": "NEEDS_OWNER_BROWSER_REVIEW",
+      "evidence_gaps": [
+        "csv_primary_is_search_placeholder_not_official_pdp",
+        "missing_browser_truth_classification_direct_buyable",
+        "buy_link_gate_failure:search_placeholder",
+        "manufacturer_browser_capture_or_owner_pass_required"
+      ],
+      "recommended_next_status": "NEEDS_OWNER_BROWSER_PROOF",
+      "exact_evidence_needed": [
+        "Official manufacturer PDP URL for exact OEM token (not geapplianceparts search.jsp / searchKeyword).",
+        "Owner browser proof PASS with exact token + official_pdp path type (no wrong-family).",
+        "browser_truth_classification=direct_buyable with fresh browser_truth_checked_at.",
+        "Founder-gated retailer_links review/apply for that filter only — not auto-promoted by this packet."
+      ]
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: read_only=true; invent_link_authorized=false; auto_promote_authorized=false.",
+    "PROVEN: exact research scope=6 NEEDS_EXTERNAL_RESEARCH slugs.",
+    "PROVEN: ge-gte18gsnrss excluded as REMAIN_NO_BUY.",
+    "PROVEN: summary={\"NEEDS_OWNER_BROWSER_PROOF\":6,\"NEEDS_EXTERNAL_RESEARCH\":0,\"REMAIN_NO_BUY\":0,\"search_placeholder_filter_instances\":9,\"approved_safe_direct_buy_evidence_count\":0}.",
+    "PROVEN: xwfe/xwf/smartwater-mwfp CSV primaries are search placeholders without direct_buyable."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Official GE Appliance Parts PDP URLs for XWFE/XWF/MWFP until owner browser capture PASSes.",
+    "UNKNOWN: Live HTML CTA render for these 6 PDPs (no production fetch)."
+  ],
+  "risk_notes": [
+    "This packet does not authorize retailer_links mutation, buy CTA, or Product JSON-LD invents.",
+    "Do not invent destination URLs or promote search placeholders.",
+    "Do not include ge-gte18gsnrss in research/apply lanes — remain no-buy."
+  ]
+}
