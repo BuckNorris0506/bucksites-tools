@@ -1,0 +1,95 @@
+{
+  "contract": "buckparts_fridge_model_pdp_ge_mwfp_xwfe_retailer_links_guarded_apply_v1",
+  "generated_at": "2026-07-14T19:31:02.847Z",
+  "source_command": "npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-guarded-apply",
+  "mode": "dry_run",
+  "data_mutation": false,
+  "apply_status": "DRY_RUN_READY",
+  "csv_mutation_authorized": false,
+  "supabase_mutation_authorized": false,
+  "xwf_promotion_authorized": false,
+  "inserts_authorized": false,
+  "deletes_authorized": false,
+  "pages_claimed_closed": false,
+  "buyer_path_claimed_closed": false,
+  "conversion_claimed": false,
+  "target_csv_rel": "data/retailer_links.csv",
+  "approval_rel": "data/owner-decisions/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-owner-approval-v1.json",
+  "gates": {
+    "approval_packet_present": true,
+    "approval_decision_status_approved": true,
+    "approval_scope_owner_mutation_approved": true,
+    "approval_decision_id_matches": true,
+    "plan_sha256_matches_binding": true,
+    "proof_sha256_matches_binding": true,
+    "approved_filter_scope_exact": true,
+    "approved_urls_exact": true,
+    "existing_primary_rows_present": true,
+    "xwf_mutation_forbidden_held": true,
+    "inserts_forbidden_held": true,
+    "deletes_forbidden_held": true,
+    "all_gates_pass": true,
+    "blockers": []
+  },
+  "planned_updates": [
+    {
+      "filter_slug": "smartwater-mwfp",
+      "row_index": 41,
+      "change_kind": "update_existing_primary_row",
+      "before_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWFP",
+      "after_affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+      "before_retailer_name": "OEM parts catalog (keyword lookup)",
+      "after_retailer_name": "GE Appliance Parts",
+      "before_browser_truth_classification": null,
+      "after_browser_truth_classification": "direct_buyable",
+      "after_browser_truth_checked_at": "2026-07-14T17:40:40.135Z",
+      "before_was_search_placeholder": true,
+      "changed_fields": [
+        "retailer_name",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "filter_slug": "xwfe",
+      "row_index": 38,
+      "change_kind": "update_existing_primary_row",
+      "before_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+      "after_affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+      "before_retailer_name": "OEM parts catalog (keyword lookup)",
+      "after_retailer_name": "GE Appliance Parts",
+      "before_browser_truth_classification": null,
+      "after_browser_truth_classification": "direct_buyable",
+      "after_browser_truth_checked_at": "2026-07-14T17:40:40.135Z",
+      "before_was_search_placeholder": true,
+      "changed_fields": [
+        "retailer_name",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    }
+  ],
+  "planned_update_count": 2,
+  "xwf_row_unchanged": true,
+  "non_target_rows_unchanged": null,
+  "closeout_written": false,
+  "proven_facts": [
+    "PROVEN: mode=dry_run; data_mutation=false; apply_status=DRY_RUN_READY.",
+    "PROVEN: all_gates_pass=true; planned_updates=2.",
+    "PROVEN: inserts_authorized=false; deletes_authorized=false; xwf_promotion_authorized=false; supabase_mutation_authorized=false.",
+    "PROVEN: pages_claimed_closed=false; buyer_path_claimed_closed=false; conversion_claimed=false."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: production buyer-path closure for the 4 model PDPs until CTA/go proof rerun.",
+    "UNKNOWN: Supabase retailer_links parity (not in this lane)."
+  ],
+  "risk_notes": [
+    "Dry-run default — pass --write only after reviewing gates.all_gates_pass=true.",
+    "Do not claim model pages closed from CSV apply alone.",
+    "XWF remains out of scope."
+  ]
+}
