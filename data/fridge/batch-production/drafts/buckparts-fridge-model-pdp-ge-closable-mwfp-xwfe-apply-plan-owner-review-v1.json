@@ -1,0 +1,555 @@
+{
+  "contract": "buckparts_fridge_model_pdp_ge_closable_mwfp_xwfe_apply_plan_owner_review_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "owner_approval_required": true,
+  "apply_authorized": false,
+  "apply_plan_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "invent_link_authorized": false,
+  "auto_promote_authorized": false,
+  "link_promotion_authorized": false,
+  "xwf_promotion_authorized": false,
+  "sitemap_robots_mutation_authorized": false,
+  "product_json_ld_mutation_authorized": false,
+  "owner_decision_mutation_authorized": false,
+  "deploy_config_mutation_authorized": false,
+  "pages_claimed_closed": false,
+  "buyer_path_claimed_closed": false,
+  "conversion_or_revenue": "UNKNOWN",
+  "conversion_claimed": false,
+  "generated_at": "2026-07-14T18:58:05.031Z",
+  "source_command": "npm run buckparts:fridge-model-pdp-ge-closable-mwfp-xwfe-apply-plan-owner-review",
+  "plan_status": "PROPOSED_OWNER_REVIEW_READY",
+  "source_artifacts": {
+    "owner_browser_proof_result_packet_rel": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-owner-browser-proof-result-packet-v1.json",
+    "buyer_path_research_packet_rel": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-buyer-path-research-packet-v1.json",
+    "retailer_links_csv_rel": "data/retailer_links.csv"
+  },
+  "scope": {
+    "target_slug_count": 4,
+    "target_slugs": [
+      "ge-gfe24jgkww",
+      "ge-gfe27jmkes",
+      "ge-gne25jmkww",
+      "ge-pvd28bymfs"
+    ],
+    "allowed_filters": [
+      "smartwater-mwfp",
+      "xwfe"
+    ],
+    "forbidden_filter": "xwf",
+    "excluded_xwf_supersession_slugs": [
+      "ge-gne27jstss",
+      "ge-gse25hskss"
+    ],
+    "excluded_remain_no_buy_slug": "ge-gte18gsnrss"
+  },
+  "summary": {
+    "planned_model_filter_rows": 5,
+    "unique_retailer_links_deltas": 2,
+    "update_existing_primary_rows": 2,
+    "insert_primary_rows": 0,
+    "unknown_delta_kind_rows": 0,
+    "excluded_slug_count": 3
+  },
+  "planned_changes": [
+    {
+      "model_slug": "ge-gfe24jgkww",
+      "filter_slug": "smartwater-mwfp",
+      "current_buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "current_csv_search_placeholder_state": {
+        "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWFP",
+        "csv_gate_failure_kind": "search_placeholder",
+        "search_placeholder_only": true,
+        "csv_row_present": true,
+        "browser_truth_classification": null
+      },
+      "owner_browser_proof_source": {
+        "result_packet_rel": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-owner-browser-proof-result-packet-v1.json",
+        "classification": "OWNER_BROWSER_PASS",
+        "url_shown": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+        "product_title_shown": "GE MWF Refrigerator Water Filter",
+        "part_shown": "MWFP",
+        "add_to_cart_visible": true
+      },
+      "proposed_official_manufacturer_direct_buy_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_browser_truth_classification": "direct_buyable",
+      "proposed_browser_truth_checked_at": "2026-07-14T17:40:40.135Z",
+      "proposed_browser_truth_checked_at_source": "owner_browser_proof_result_packet.generated_at (owner screenshot session recording timestamp in result packet; exact screenshot wall-clock otherwise UNKNOWN)",
+      "proposed_customer_visible_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "retailer_links_delta": {
+        "target_csv_rel": "data/retailer_links.csv",
+        "change_kind": "update_existing_primary_row",
+        "current_primary_row": {
+          "filter_slug": "smartwater-mwfp",
+          "retailer_name": "OEM parts catalog (keyword lookup)",
+          "affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWFP",
+          "is_primary": true,
+          "sort_order": "0",
+          "retailer_key": "oem-parts-catalog",
+          "browser_truth_classification": null,
+          "browser_truth_notes": null,
+          "browser_truth_checked_at": null
+        },
+        "proposed_primary_row_preview": {
+          "filter_slug": "smartwater-mwfp",
+          "retailer_name": "GE Appliance Parts",
+          "affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+          "is_primary": true,
+          "sort_order": 0,
+          "retailer_key": "oem-parts-catalog",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "Planned GE official manufacturer direct-buy for smartwater-mwfp from owner browser OWNER_BROWSER_PASS. Affected model slug ge-gfe24jgkww — page NOT claimed closed by this plan. Founder approval + guarded apply required before retailer_links write. Customer label BuckParts Verified Link (official_manufacturer_official_ge).",
+          "browser_truth_checked_at": "2026-07-14T17:40:40.135Z"
+        }
+      },
+      "supabase_delta": {
+        "status": "UNKNOWN_PENDING_FOUNDER_GATED_PARITY_LANE",
+        "notes": [
+          "Live customer retailer_links are served from Supabase — CSV apply alone does not close production buyer paths.",
+          "A separate founder-gated Supabase parity/apply lane is required after (or coordinated with) CSV apply.",
+          "This plan does not authorize Supabase mutation."
+        ]
+      },
+      "pages_claimed_closed": false,
+      "founder_approval_fields_required": [
+        "decision_id",
+        "approved_at",
+        "approved_by",
+        "exact_plan_contract",
+        "exact_target_slugs",
+        "exact_allowed_filters",
+        "exact_retailer_links_csv_deltas",
+        "explicit_apply_authorization_for_session",
+        "explicit_exclusion_ack_xwf_supersession_slugs",
+        "explicit_exclusion_ack_ge_gte18gsnrss_remain_no_buy",
+        "no_xwf_promotion_ack",
+        "pages_not_claimed_closed_ack"
+      ],
+      "invent_link_authorized": false,
+      "link_promotion_authorized": false,
+      "apply_authorized": false
+    },
+    {
+      "model_slug": "ge-gfe24jgkww",
+      "filter_slug": "xwfe",
+      "current_buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "current_csv_search_placeholder_state": {
+        "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+        "csv_gate_failure_kind": "search_placeholder",
+        "search_placeholder_only": true,
+        "csv_row_present": true,
+        "browser_truth_classification": null
+      },
+      "owner_browser_proof_source": {
+        "result_packet_rel": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-owner-browser-proof-result-packet-v1.json",
+        "classification": "OWNER_BROWSER_PASS",
+        "url_shown": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+        "product_title_shown": "GE XWFE Refrigerator Water Filter",
+        "part_shown": "XWFE",
+        "add_to_cart_visible": true
+      },
+      "proposed_official_manufacturer_direct_buy_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_browser_truth_classification": "direct_buyable",
+      "proposed_browser_truth_checked_at": "2026-07-14T17:40:40.135Z",
+      "proposed_browser_truth_checked_at_source": "owner_browser_proof_result_packet.generated_at (owner screenshot session recording timestamp in result packet; exact screenshot wall-clock otherwise UNKNOWN)",
+      "proposed_customer_visible_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "retailer_links_delta": {
+        "target_csv_rel": "data/retailer_links.csv",
+        "change_kind": "update_existing_primary_row",
+        "current_primary_row": {
+          "filter_slug": "xwfe",
+          "retailer_name": "OEM parts catalog (keyword lookup)",
+          "affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+          "is_primary": true,
+          "sort_order": "0",
+          "retailer_key": "oem-parts-catalog",
+          "browser_truth_classification": null,
+          "browser_truth_notes": null,
+          "browser_truth_checked_at": null
+        },
+        "proposed_primary_row_preview": {
+          "filter_slug": "xwfe",
+          "retailer_name": "GE Appliance Parts",
+          "affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+          "is_primary": true,
+          "sort_order": 0,
+          "retailer_key": "oem-parts-catalog",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "Planned GE official manufacturer direct-buy for xwfe from owner browser OWNER_BROWSER_PASS. Affected model slug ge-gfe24jgkww — page NOT claimed closed by this plan. Founder approval + guarded apply required before retailer_links write. Customer label BuckParts Verified Link (official_manufacturer_official_ge).",
+          "browser_truth_checked_at": "2026-07-14T17:40:40.135Z"
+        }
+      },
+      "supabase_delta": {
+        "status": "UNKNOWN_PENDING_FOUNDER_GATED_PARITY_LANE",
+        "notes": [
+          "Live customer retailer_links are served from Supabase — CSV apply alone does not close production buyer paths.",
+          "A separate founder-gated Supabase parity/apply lane is required after (or coordinated with) CSV apply.",
+          "This plan does not authorize Supabase mutation."
+        ]
+      },
+      "pages_claimed_closed": false,
+      "founder_approval_fields_required": [
+        "decision_id",
+        "approved_at",
+        "approved_by",
+        "exact_plan_contract",
+        "exact_target_slugs",
+        "exact_allowed_filters",
+        "exact_retailer_links_csv_deltas",
+        "explicit_apply_authorization_for_session",
+        "explicit_exclusion_ack_xwf_supersession_slugs",
+        "explicit_exclusion_ack_ge_gte18gsnrss_remain_no_buy",
+        "no_xwf_promotion_ack",
+        "pages_not_claimed_closed_ack"
+      ],
+      "invent_link_authorized": false,
+      "link_promotion_authorized": false,
+      "apply_authorized": false
+    },
+    {
+      "model_slug": "ge-gfe27jmkes",
+      "filter_slug": "xwfe",
+      "current_buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "current_csv_search_placeholder_state": {
+        "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+        "csv_gate_failure_kind": "search_placeholder",
+        "search_placeholder_only": true,
+        "csv_row_present": true,
+        "browser_truth_classification": null
+      },
+      "owner_browser_proof_source": {
+        "result_packet_rel": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-owner-browser-proof-result-packet-v1.json",
+        "classification": "OWNER_BROWSER_PASS",
+        "url_shown": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+        "product_title_shown": "GE XWFE Refrigerator Water Filter",
+        "part_shown": "XWFE",
+        "add_to_cart_visible": true
+      },
+      "proposed_official_manufacturer_direct_buy_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_browser_truth_classification": "direct_buyable",
+      "proposed_browser_truth_checked_at": "2026-07-14T17:40:40.135Z",
+      "proposed_browser_truth_checked_at_source": "owner_browser_proof_result_packet.generated_at (owner screenshot session recording timestamp in result packet; exact screenshot wall-clock otherwise UNKNOWN)",
+      "proposed_customer_visible_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "retailer_links_delta": {
+        "target_csv_rel": "data/retailer_links.csv",
+        "change_kind": "update_existing_primary_row",
+        "current_primary_row": {
+          "filter_slug": "xwfe",
+          "retailer_name": "OEM parts catalog (keyword lookup)",
+          "affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+          "is_primary": true,
+          "sort_order": "0",
+          "retailer_key": "oem-parts-catalog",
+          "browser_truth_classification": null,
+          "browser_truth_notes": null,
+          "browser_truth_checked_at": null
+        },
+        "proposed_primary_row_preview": {
+          "filter_slug": "xwfe",
+          "retailer_name": "GE Appliance Parts",
+          "affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+          "is_primary": true,
+          "sort_order": 0,
+          "retailer_key": "oem-parts-catalog",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "Planned GE official manufacturer direct-buy for xwfe from owner browser OWNER_BROWSER_PASS. Affected model slug ge-gfe27jmkes — page NOT claimed closed by this plan. Founder approval + guarded apply required before retailer_links write. Customer label BuckParts Verified Link (official_manufacturer_official_ge).",
+          "browser_truth_checked_at": "2026-07-14T17:40:40.135Z"
+        }
+      },
+      "supabase_delta": {
+        "status": "UNKNOWN_PENDING_FOUNDER_GATED_PARITY_LANE",
+        "notes": [
+          "Live customer retailer_links are served from Supabase — CSV apply alone does not close production buyer paths.",
+          "A separate founder-gated Supabase parity/apply lane is required after (or coordinated with) CSV apply.",
+          "This plan does not authorize Supabase mutation."
+        ]
+      },
+      "pages_claimed_closed": false,
+      "founder_approval_fields_required": [
+        "decision_id",
+        "approved_at",
+        "approved_by",
+        "exact_plan_contract",
+        "exact_target_slugs",
+        "exact_allowed_filters",
+        "exact_retailer_links_csv_deltas",
+        "explicit_apply_authorization_for_session",
+        "explicit_exclusion_ack_xwf_supersession_slugs",
+        "explicit_exclusion_ack_ge_gte18gsnrss_remain_no_buy",
+        "no_xwf_promotion_ack",
+        "pages_not_claimed_closed_ack"
+      ],
+      "invent_link_authorized": false,
+      "link_promotion_authorized": false,
+      "apply_authorized": false
+    },
+    {
+      "model_slug": "ge-gne25jmkww",
+      "filter_slug": "xwfe",
+      "current_buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "current_csv_search_placeholder_state": {
+        "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+        "csv_gate_failure_kind": "search_placeholder",
+        "search_placeholder_only": true,
+        "csv_row_present": true,
+        "browser_truth_classification": null
+      },
+      "owner_browser_proof_source": {
+        "result_packet_rel": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-owner-browser-proof-result-packet-v1.json",
+        "classification": "OWNER_BROWSER_PASS",
+        "url_shown": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+        "product_title_shown": "GE XWFE Refrigerator Water Filter",
+        "part_shown": "XWFE",
+        "add_to_cart_visible": true
+      },
+      "proposed_official_manufacturer_direct_buy_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_browser_truth_classification": "direct_buyable",
+      "proposed_browser_truth_checked_at": "2026-07-14T17:40:40.135Z",
+      "proposed_browser_truth_checked_at_source": "owner_browser_proof_result_packet.generated_at (owner screenshot session recording timestamp in result packet; exact screenshot wall-clock otherwise UNKNOWN)",
+      "proposed_customer_visible_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "retailer_links_delta": {
+        "target_csv_rel": "data/retailer_links.csv",
+        "change_kind": "update_existing_primary_row",
+        "current_primary_row": {
+          "filter_slug": "xwfe",
+          "retailer_name": "OEM parts catalog (keyword lookup)",
+          "affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+          "is_primary": true,
+          "sort_order": "0",
+          "retailer_key": "oem-parts-catalog",
+          "browser_truth_classification": null,
+          "browser_truth_notes": null,
+          "browser_truth_checked_at": null
+        },
+        "proposed_primary_row_preview": {
+          "filter_slug": "xwfe",
+          "retailer_name": "GE Appliance Parts",
+          "affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+          "is_primary": true,
+          "sort_order": 0,
+          "retailer_key": "oem-parts-catalog",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "Planned GE official manufacturer direct-buy for xwfe from owner browser OWNER_BROWSER_PASS. Affected model slug ge-gne25jmkww — page NOT claimed closed by this plan. Founder approval + guarded apply required before retailer_links write. Customer label BuckParts Verified Link (official_manufacturer_official_ge).",
+          "browser_truth_checked_at": "2026-07-14T17:40:40.135Z"
+        }
+      },
+      "supabase_delta": {
+        "status": "UNKNOWN_PENDING_FOUNDER_GATED_PARITY_LANE",
+        "notes": [
+          "Live customer retailer_links are served from Supabase — CSV apply alone does not close production buyer paths.",
+          "A separate founder-gated Supabase parity/apply lane is required after (or coordinated with) CSV apply.",
+          "This plan does not authorize Supabase mutation."
+        ]
+      },
+      "pages_claimed_closed": false,
+      "founder_approval_fields_required": [
+        "decision_id",
+        "approved_at",
+        "approved_by",
+        "exact_plan_contract",
+        "exact_target_slugs",
+        "exact_allowed_filters",
+        "exact_retailer_links_csv_deltas",
+        "explicit_apply_authorization_for_session",
+        "explicit_exclusion_ack_xwf_supersession_slugs",
+        "explicit_exclusion_ack_ge_gte18gsnrss_remain_no_buy",
+        "no_xwf_promotion_ack",
+        "pages_not_claimed_closed_ack"
+      ],
+      "invent_link_authorized": false,
+      "link_promotion_authorized": false,
+      "apply_authorized": false
+    },
+    {
+      "model_slug": "ge-pvd28bymfs",
+      "filter_slug": "xwfe",
+      "current_buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "current_csv_search_placeholder_state": {
+        "csv_primary_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+        "csv_gate_failure_kind": "search_placeholder",
+        "search_placeholder_only": true,
+        "csv_row_present": true,
+        "browser_truth_classification": null
+      },
+      "owner_browser_proof_source": {
+        "result_packet_rel": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-owner-browser-proof-result-packet-v1.json",
+        "classification": "OWNER_BROWSER_PASS",
+        "url_shown": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+        "product_title_shown": "GE XWFE Refrigerator Water Filter",
+        "part_shown": "XWFE",
+        "add_to_cart_visible": true
+      },
+      "proposed_official_manufacturer_direct_buy_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_browser_truth_classification": "direct_buyable",
+      "proposed_browser_truth_checked_at": "2026-07-14T17:40:40.135Z",
+      "proposed_browser_truth_checked_at_source": "owner_browser_proof_result_packet.generated_at (owner screenshot session recording timestamp in result packet; exact screenshot wall-clock otherwise UNKNOWN)",
+      "proposed_customer_visible_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "retailer_links_delta": {
+        "target_csv_rel": "data/retailer_links.csv",
+        "change_kind": "update_existing_primary_row",
+        "current_primary_row": {
+          "filter_slug": "xwfe",
+          "retailer_name": "OEM parts catalog (keyword lookup)",
+          "affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+          "is_primary": true,
+          "sort_order": "0",
+          "retailer_key": "oem-parts-catalog",
+          "browser_truth_classification": null,
+          "browser_truth_notes": null,
+          "browser_truth_checked_at": null
+        },
+        "proposed_primary_row_preview": {
+          "filter_slug": "xwfe",
+          "retailer_name": "GE Appliance Parts",
+          "affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+          "is_primary": true,
+          "sort_order": 0,
+          "retailer_key": "oem-parts-catalog",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "Planned GE official manufacturer direct-buy for xwfe from owner browser OWNER_BROWSER_PASS. Affected model slug ge-pvd28bymfs — page NOT claimed closed by this plan. Founder approval + guarded apply required before retailer_links write. Customer label BuckParts Verified Link (official_manufacturer_official_ge).",
+          "browser_truth_checked_at": "2026-07-14T17:40:40.135Z"
+        }
+      },
+      "supabase_delta": {
+        "status": "UNKNOWN_PENDING_FOUNDER_GATED_PARITY_LANE",
+        "notes": [
+          "Live customer retailer_links are served from Supabase — CSV apply alone does not close production buyer paths.",
+          "A separate founder-gated Supabase parity/apply lane is required after (or coordinated with) CSV apply.",
+          "This plan does not authorize Supabase mutation."
+        ]
+      },
+      "pages_claimed_closed": false,
+      "founder_approval_fields_required": [
+        "decision_id",
+        "approved_at",
+        "approved_by",
+        "exact_plan_contract",
+        "exact_target_slugs",
+        "exact_allowed_filters",
+        "exact_retailer_links_csv_deltas",
+        "explicit_apply_authorization_for_session",
+        "explicit_exclusion_ack_xwf_supersession_slugs",
+        "explicit_exclusion_ack_ge_gte18gsnrss_remain_no_buy",
+        "no_xwf_promotion_ack",
+        "pages_not_claimed_closed_ack"
+      ],
+      "invent_link_authorized": false,
+      "link_promotion_authorized": false,
+      "apply_authorized": false
+    }
+  ],
+  "unique_retailer_links_deltas": [
+    {
+      "filter_slug": "smartwater-mwfp",
+      "change_kind": "update_existing_primary_row",
+      "proposed_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+      "affected_model_slugs": [
+        "ge-gfe24jgkww"
+      ],
+      "csv_row_present": true
+    },
+    {
+      "filter_slug": "xwfe",
+      "change_kind": "update_existing_primary_row",
+      "proposed_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+      "affected_model_slugs": [
+        "ge-gfe24jgkww",
+        "ge-gfe27jmkes",
+        "ge-gne25jmkww",
+        "ge-pvd28bymfs"
+      ],
+      "csv_row_present": true
+    }
+  ],
+  "exclusions": [
+    {
+      "slug": "ge-gne27jstss",
+      "reason": "Still blocked by XWF supersession-safe policy (SUPERSEDED_TO_XWFE_PROVEN is not clean XWF buy PASS; no XWF promotion).",
+      "included_in_plan": false
+    },
+    {
+      "slug": "ge-gse25hskss",
+      "reason": "Still blocked by XWF supersession-safe policy (SUPERSEDED_TO_XWFE_PROVEN is not clean XWF buy PASS; no XWF promotion).",
+      "included_in_plan": false
+    },
+    {
+      "slug": "ge-gte18gsnrss",
+      "reason": "Remain no-buy / no filter mapping — out of buyer-path closable apply plan scope.",
+      "included_in_plan": false
+    }
+  ],
+  "founder_approval_fields_required": [
+    "decision_id",
+    "approved_at",
+    "approved_by",
+    "exact_plan_contract",
+    "exact_target_slugs",
+    "exact_allowed_filters",
+    "exact_retailer_links_csv_deltas",
+    "explicit_apply_authorization_for_session",
+    "explicit_exclusion_ack_xwf_supersession_slugs",
+    "explicit_exclusion_ack_ge_gte18gsnrss_remain_no_buy",
+    "no_xwf_promotion_ack",
+    "pages_not_claimed_closed_ack"
+  ],
+  "proven_facts": [
+    "PROVEN: read_only=true; owner_approval_required=true; apply_authorized=false; pages_claimed_closed=false; buyer_path_claimed_closed=false.",
+    "PROVEN: exact 4-slug scope; xwf promotion forbidden; 3 exclusions recorded.",
+    "PROVEN: plan depends on OWNER_BROWSER_PASS for smartwater-mwfp and xwfe only.",
+    "PROVEN: unique retailer_links deltas=[{\"filter_slug\":\"smartwater-mwfp\",\"change_kind\":\"update_existing_primary_row\",\"proposed_url\":\"https://www.geapplianceparts.com/store/parts/spec/MWFP\",\"affected_model_slugs\":[\"ge-gfe24jgkww\"],\"csv_row_present\":true},{\"filter_slug\":\"xwfe\",\"change_kind\":\"update_existing_primary_row\",\"proposed_url\":\"https://www.geapplianceparts.com/store/parts/spec/XWFE\",\"affected_model_slugs\":[\"ge-gfe24jgkww\",\"ge-gfe27jmkes\",\"ge-gne25jmkww\",\"ge-pvd28bymfs\"],\"csv_row_present\":true}].",
+    "PROVEN: summary={\"planned_model_filter_rows\":5,\"unique_retailer_links_deltas\":2,\"update_existing_primary_rows\":2,\"insert_primary_rows\":0,\"unknown_delta_kind_rows\":0,\"excluded_slug_count\":3}.",
+    "PROVEN: conversion_or_revenue=UNKNOWN; conversion_claimed=false."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: live Supabase retailer_links parity for MWFP/XWFE until a separate founder-gated parity lane runs.",
+    "UNKNOWN: whether production model PDPs close after future approved apply (not claimed here).",
+    "UNKNOWN: conversion/revenue impact."
+  ],
+  "risk_notes": [
+    "Do not treat PROPOSED_OWNER_REVIEW_READY as authorization to write retailer_links or Supabase.",
+    "Do not promote XWF or include XWF-supersession slugs.",
+    "Do not claim the 4 model PDPs are buyer-path closed.",
+    "CSV update for a shared filter (xwfe) affects all mapped models — founder must accept cross-slug blast radius."
+  ]
+}
