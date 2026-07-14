@@ -421,7 +421,7 @@ export function buildBuckpartsFridgeModelPdpBuyerPathResearchPacketV1(
       }),
     );
   }
-  const unique_filter_findings = [...filterBySlug.values()].sort((a, b) =>
+  const unique_filter_findings = Array.from(filterBySlug.values()).sort((a, b) =>
     a.filter_slug.localeCompare(b.filter_slug),
   );
 

@@ -1,6 +1,6 @@
 # GE MWFP/XWFE retailer_links guarded apply v1
 
-Generated: 2026-07-14T19:31:02.847Z
+Generated: 2026-07-14T19:35:35.295Z
 
 - mode: **dry_run**
 - apply_status: **DRY_RUN_READY**
@@ -28,6 +28,6 @@ Generated: 2026-07-14T19:31:02.847Z
 
 | filter | before URL | after URL | search_placeholder_before |
 |---|---|---|---|
-| smartwater-mwfp | `https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWFP` | `https://www.geapplianceparts.com/store/parts/spec/MWFP` | true |
-| xwfe | `https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE` | `https://www.geapplianceparts.com/store/parts/spec/XWFE` | true |
+| smartwater-mwfp | `https://www.geapplianceparts.com/store/parts/spec/MWFP` | `https://www.geapplianceparts.com/store/parts/spec/MWFP` | false |
+| xwfe | `https://www.geapplianceparts.com/store/parts/spec/XWFE` | `https://www.geapplianceparts.com/store/parts/spec/XWFE` | false |
 

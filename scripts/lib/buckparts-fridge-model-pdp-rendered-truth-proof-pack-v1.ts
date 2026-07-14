@@ -263,7 +263,9 @@ export function classifyFridgePdpRenderedTruthSlugV1(args: {
         ...notes,
         args.supabase.status === "UNKNOWN_DB_UNAVAILABLE"
           ? `supabase_read_failed: ${args.supabase.reason}`
-          : `pdp_loader_failed: ${args.pdp.reason}`,
+          : `pdp_loader_failed: ${
+              args.pdp.status === "CHECKED" ? "unexpected_checked" : args.pdp.reason
+            }`,
       ],
     };
   }

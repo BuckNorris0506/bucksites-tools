@@ -10,7 +10,7 @@
   "sitemap_robots_mutation_authorized": false,
   "product_json_ld_mutation_authorized": false,
   "live_production_fetch_enabled": false,
-  "generated_at": "2026-07-14T05:30:58.651Z",
+  "generated_at": "2026-07-14T19:35:35.542Z",
   "source_command": "npm run buckparts:fridge-model-pdp-cta-go-link-proof-pack",
   "rendered_truth_pack_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
   "scope": {

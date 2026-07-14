@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 
 import {
@@ -57,14 +60,22 @@ test("no protected-file blocker when git diff for retailer_links is empty despit
   assert.ok(!report.blockers.some((b) => b.includes(PROTECTED_RETAILER_LINKS_CSV_REL)));
 });
 
-test("protected-file blocker when git diff for retailer_links is non-empty", () => {
+test("protected-file blocker when git diff for retailer_links is non-empty without approved closeout", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "ship-guard-protected-"));
+  mkdirSync(path.join(dir, "data"), { recursive: true });
+  writeFileSync(
+    path.join(dir, PROTECTED_RETAILER_LINKS_CSV_REL),
+    "filter_slug,retailer_name,affiliate_url,is_primary,sort_order,retailer_key,browser_truth_classification,browser_truth_notes,browser_truth_checked_at\n",
+  );
+
   const git = mockGit({
     pathHasDiffWorkingTreeVsHead: (p) => (p === PROTECTED_RETAILER_LINKS_CSV_REL ? true : false),
     filesChangedWorkingTree: () => [PROTECTED_RETAILER_LINKS_CSV_REL],
   });
 
-  const report = buildBuckpartsShipGuardReportV1({ rootDir: process.cwd(), git });
+  const report = buildBuckpartsShipGuardReportV1({ rootDir: dir, git });
 
+  assert.equal(report.ge_mwfp_xwfe_retailer_links_approved_closeout_allowance.status, "BLOCKED");
   assert.ok(report.blockers.includes(`${PROTECTED_RETAILER_LINKS_CSV_REL}:git_diff_working_tree_vs_head`));
   assert.ok(report.blockers.includes(`${PROTECTED_RETAILER_LINKS_CSV_REL}:listed_in_changed_files`));
   assert.equal(report.push_assessment, "BLOCKED");
@@ -173,10 +184,19 @@ test("classifyNetlifyIgnoreDryRunBatch marks docs-only as SKIP_BUILD", () => {
   assert.equal(result.aggregate, "SKIP_BUILD");
 });
 
-test("defaultShipGuardGitProvider matches empty git diff for retailer_links on this repo", () => {
+test("defaultShipGuardGitProvider: clean retailer_links OR exact GE MWFP/XWFE closeout allowance", () => {
   const git = defaultShipGuardGitProvider(process.cwd());
   const workingDiff = git.pathHasDiffWorkingTreeVsHead(PROTECTED_RETAILER_LINKS_CSV_REL);
   const headVsOrigin = git.pathHasDiffHeadVsOriginMain(PROTECTED_RETAILER_LINKS_CSV_REL);
-  assert.equal(workingDiff, false);
-  assert.equal(headVsOrigin, false);
+  if (workingDiff === false && headVsOrigin === false) {
+    assert.ok(true);
+    return;
+  }
+  const report = buildBuckpartsShipGuardReportV1({ rootDir: process.cwd(), git });
+  assert.equal(
+    report.ge_mwfp_xwfe_retailer_links_approved_closeout_allowance.status,
+    "ALLOWED",
+    JSON.stringify(report.ge_mwfp_xwfe_retailer_links_approved_closeout_allowance.blockers),
+  );
+  assert.ok(!report.blockers.some((b) => b.startsWith(`${PROTECTED_RETAILER_LINKS_CSV_REL}:`)));
 });

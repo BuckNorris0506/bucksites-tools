@@ -259,7 +259,7 @@ function readCsvByFridgeSlug(
     existing.push(filter);
     map.set(fridge, existing);
   }
-  for (const [k, v] of map) map.set(k, sortedUnique(v));
+  for (const [k, v] of Array.from(map.entries())) map.set(k, sortedUnique(v));
   return map;
 }
 

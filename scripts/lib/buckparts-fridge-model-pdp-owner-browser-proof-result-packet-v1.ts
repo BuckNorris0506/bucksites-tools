@@ -240,12 +240,12 @@ export function classifySlugClosureFromMwfpXwfeProofV1(args: {
 } {
   const mapped = sortedUnique(args.mapped_filter_slugs);
   const has_xwf_mapping = mapped.includes("xwf");
-  const passSet = new Set(
+  const passSet = new Set<string>(
     OWNER_BROWSER_PROOF_OBSERVATIONS_V1.filter(
       (o) => o.classification === "OWNER_BROWSER_PASS",
     ).map((o) => o.filter_slug),
   );
-  const supersededSet = new Set(
+  const supersededSet = new Set<string>(
     OWNER_BROWSER_PROOF_OBSERVATIONS_V1.filter(
       (o) => o.classification === "SUPERSEDED_TO_XWFE_PROVEN",
     ).map((o) => o.filter_slug),

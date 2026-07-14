@@ -81,7 +81,7 @@ export type GoRedirectGateLinkV1 = BuyLinkGateLinkV1;
 export function isAffiliateUrlSafeForGoRedirect(
   retailerKey: string | null | undefined,
   affiliateUrl: string,
-  classification?: string,
+  classification?: string | null,
   browserTruthBuyableSubtype?: string | null,
   browserTruthCheckedAt?: string | null,
   browserTruthNotes?: string | null,

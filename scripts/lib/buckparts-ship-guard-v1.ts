@@ -13,6 +13,10 @@ import {
   loadCreditControlDeployAwarenessSummaryV1,
   type CreditControlDeployAwarenessSummaryV1,
 } from "./buckparts-credit-control-center-v1";
+import {
+  assessGeMwfpXwfeApprovedRetailerLinksCloseoutAllowanceV1,
+  type GeMwfpXwfeRetailerLinksShipGuardAllowanceV1,
+} from "./buckparts-ship-guard-ge-mwfp-xwfe-retailer-links-allowance-v1";
 
 export const BUCKPARTS_SHIP_GUARD_CONTRACT_V1 = "buckparts_ship_guard_v1" as const;
 export const BUCKPARTS_SHIP_GUARD_COMMAND_V1 = "npm run buckparts:ship-guard" as const;
@@ -84,6 +88,8 @@ export type ShipGuardReportV1 = {
   protected_file_checks: {
     retailer_links_csv: ProtectedRetailerLinksCheckV1;
   };
+  /** Exact founder-approved GE MWFP/XWFE retailer_links closeout allowance (fail-closed). */
+  ge_mwfp_xwfe_retailer_links_approved_closeout_allowance: GeMwfpXwfeRetailerLinksShipGuardAllowanceV1;
   push_assessment: "SAFE" | "BLOCKED" | "UNKNOWN";
   blockers: string[];
   recommended_validations: string[];
@@ -372,6 +378,38 @@ export function retailerLinksDriftBlockers(check: ProtectedRetailerLinksCheckV1)
   return blockers;
 }
 
+function readGitBlobTextAtHead(rootDir: string, filePath: string): string | null {
+  const r = spawnSync("git", ["show", `HEAD:${filePath}`], {
+    cwd: rootDir,
+    encoding: "utf8",
+    maxBuffer: 32 * 1024 * 1024,
+  });
+  if (r.status !== 0) return null;
+  return String(r.stdout ?? "");
+}
+
+/**
+ * When retailer_links.csv is dirty, only suppress protected drift blockers if the
+ * exact founder-approved GE MWFP/XWFE closeout allowance PASSes.
+ */
+export function applyGeMwfpXwfeRetailerLinksAllowanceToBlockersV1(args: {
+  driftBlockers: string[];
+  allowance: GeMwfpXwfeRetailerLinksShipGuardAllowanceV1;
+}): string[] {
+  if (args.allowance.status === "ALLOWED") {
+    return args.driftBlockers.filter(
+      (b) => !b.startsWith(`${PROTECTED_RETAILER_LINKS_CSV_REL}:`),
+    );
+  }
+  if (args.allowance.status === "BLOCKED") {
+    return [
+      ...args.driftBlockers,
+      ...args.allowance.blockers.map((b) => `ge_mwfp_xwfe_allowance:${b}`),
+    ];
+  }
+  return args.driftBlockers;
+}
+
 export function buildBuckpartsShipGuardReportV1(args: {
   rootDir: string;
   mode?: ShipGuardModeV1;
@@ -404,12 +442,33 @@ export function buildBuckpartsShipGuardReportV1(args: {
     headRef: head,
   });
   const protected_file_checks = { retailer_links_csv: protectedRetailer };
+  const retailerLinksDirty =
+    protectedRetailer.git_diff_working_tree_vs_head === true ||
+    protectedRetailer.git_diff_head_vs_origin_main === true ||
+    protectedRetailer.listed_in_changed_files;
+  const workingCsvAbs = path.join(rootDir, PROTECTED_RETAILER_LINKS_CSV_REL);
+  const geMwfpXwfeAllowance = assessGeMwfpXwfeApprovedRetailerLinksCloseoutAllowanceV1({
+    rootDir,
+    retailerLinksDirty,
+    headCsvText: retailerLinksDirty
+      ? readGitBlobTextAtHead(rootDir, PROTECTED_RETAILER_LINKS_CSV_REL)
+      : null,
+    workingCsvText:
+      retailerLinksDirty && existsSync(workingCsvAbs)
+        ? readFileSync(workingCsvAbs, "utf8")
+        : null,
+  });
   const netlify = classifyNetlifyIgnoreDryRunBatch({ rootDir, changedFiles: changed_files });
   const credit_control =
     args.creditControl ?? loadCreditControlDeployAwarenessSummaryV1({ rootDir });
   const recommended_validations = recommendValidationCommands(changed_files);
 
-  const blockers: string[] = [...retailerLinksDriftBlockers(protectedRetailer)];
+  const blockers: string[] = [
+    ...applyGeMwfpXwfeRetailerLinksAllowanceToBlockersV1({
+      driftBlockers: retailerLinksDriftBlockers(protectedRetailer),
+      allowance: geMwfpXwfeAllowance,
+    }),
+  ];
   for (const filePath of changed_files) {
     if (filePath.startsWith("data/evidence/")) {
       blockers.push(`data/evidence/:${filePath}`);
@@ -447,7 +506,9 @@ export function buildBuckpartsShipGuardReportV1(args: {
     "PROVEN: ship guard defaults to read-only dry_run; commit_authorized=false; push_authorized=false; deploy_authorized=false.",
     "PROVEN: script does not call Netlify API, Supabase, or mutate data/retailer_links.csv.",
     "PROVEN: protected-file drift blockers use git diff --quiet semantics, not hash-only inference.",
+    "PROVEN: GE MWFP/XWFE retailer_links closeout allowance is fail-closed and does not weaken other protected paths.",
     `PROVEN: credit_control posture=${credit_control.deployment_posture}; deploy_held=${String(credit_control.deploy_held)}; production_deploy_recommended=${String(credit_control.production_deploy_recommended)}; push_allowed=${String(credit_control.push_allowed)}.`,
+    ...geMwfpXwfeAllowance.proven_facts,
   ];
   if (credit_control.deploy_held) {
     proven_facts.push(
@@ -463,6 +524,8 @@ export function buildBuckpartsShipGuardReportV1(args: {
   const unknown_facts = [
     "UNKNOWN: live Netlify deploy state (local ignore dry-run + owner credit evidence only).",
     "UNKNOWN: GitHub Actions live PASS/FAIL (no GitHub API in ship guard).",
+    "UNKNOWN: conversion/revenue impact of MWFP/XWFE retailer_links updates.",
+    "UNKNOWN: whether the 4 GE model PDPs are buyer-path closed — CTA/go proof must still be re-evaluated separately.",
   ];
   if (credit_control.deployment_posture === "UNKNOWN_CREDIT_STATE") {
     unknown_facts.unshift(
@@ -500,6 +563,7 @@ export function buildBuckpartsShipGuardReportV1(args: {
     commits_ahead: commitsAhead,
     changed_files,
     protected_file_checks,
+    ge_mwfp_xwfe_retailer_links_approved_closeout_allowance: geMwfpXwfeAllowance,
     push_assessment,
     blockers,
     recommended_validations,
