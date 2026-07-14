@@ -1,0 +1,83 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-07-14-edr4-buyer-path-closable-parity-supabase-approve",
+      "source_queue_row_id": "queue-buckparts-fridge-model-pdp-edr4-buyer-path-closable-parity",
+      "source_decision_packet_id": "buckparts_fridge_model_pdp_edr4_buyer_path_closable_parity_owner_review_v1",
+      "decided_at": "2026-07-14T05:17:56.000Z",
+      "decision_status": "approved",
+      "owner_note": "Jared approves EDR4 buyer-path closable Supabase retailer_links parity only for filter edr4rxd1: exactly 1 UPDATE of existing primary retailer_links row id 5504e020-a08e-4c14-bd9b-0f7bb2534e5b to the committed CSV/owner-review Whirlpool OEM PDP destination (https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html) with retailer_name=Whirlpool, browser_truth_classification=direct_buyable, retailer_key=oem-parts-catalog, browser_truth_notes and browser_truth_checked_at exactly as in the bound owner-review plan. This closes buyer-path gaps for whirlpool-wrf540cwhz and whirlpool-wrx735sdhz only via existing compat mappings. Bound to data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-edr4-buyer-path-closable-parity-owner-review-v1.json (sha256 1fff118bc6cd5cb0ebc6b4eede5beaf575c97a763607b544626b83dd572c1b90). This row unlocks an explicit founder-run of BUCKPARTS_IO_CAPABILITY=MUTATION npm run buckparts:fridge-model-pdp-edr4-buyer-path-closable-parity -- --write only — not autonomous apply, not CSV mutation, not inserts/deletes, not compatibility_mappings, not unrelated retailer_links, not buy CTA, not sitemap/robots/Product JSON-LD. Existing CSV-only manufacturer-rescue decision decision-2026-06-10-edr4rxd1-approve_csv_manufacturer_rescue_apply remains non-authorizing for this Supabase write.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "expires_at": "2027-07-14T05:17:56.000Z",
+      "prohibited_actions_still_apply": [
+        "Do not INSERT any retailer_links rows from this approval — UPDATE of the existing edr4rxd1 primary only.",
+        "Do not DELETE any retailer_links rows from this approval.",
+        "Do not mutate data/retailer_links.csv from this approval.",
+        "Do not mutate data/compatibility_mappings.csv or Supabase compatibility_mappings from this approval.",
+        "Do not mutate any retailer_links filter_slug other than edr4rxd1.",
+        "Do not invent destination URLs — desired values must match the bound owner-review / CSV primary Whirlpool OEM PDP exactly.",
+        "Do not authorize buy CTA promotion beyond existing gated retailer_links truth for edr4rxd1.",
+        "Do not change public routes, sitemap, robots, or Product JSON-LD from this approval.",
+        "Do not expand to XWFE/XWF/MWFP/ge-gte18gsnrss or any other SAFE_BUYER_PATH_FAIL slug from this approval.",
+        "Do not run autonomous or scheduled apply — only an explicit founder-run --write with BUCKPARTS_IO_CAPABILITY=MUTATION for this exact lane.",
+        "Approval alone does not mutate Supabase; MUTATION env flag and explicit --write are still required.",
+        "Do not treat decision-2026-06-10-edr4rxd1-approve_csv_manufacturer_rescue_apply as authorization for this Supabase parity write."
+      ],
+      "buckparts_fridge_model_pdp_edr4_buyer_path_closable_parity_owner_approval_context_v1": {
+        "founder_option_id": "approve_edr4_buyer_path_closable_parity_supabase_update",
+        "option_id": "approve_edr4_buyer_path_closable_parity_supabase_update",
+        "owner_review_plan_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-edr4-buyer-path-closable-parity-owner-review-v1.json",
+        "parity_executor_contract": "buckparts_fridge_model_pdp_edr4_buyer_path_closable_parity_v1",
+        "parity_dry_run_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-edr4-buyer-path-closable-parity-v1.json",
+        "target_filter_slug": "edr4rxd1",
+        "context_model_slugs": [
+          "whirlpool-wrf540cwhz",
+          "whirlpool-wrx735sdhz"
+        ],
+        "approved_action": "update",
+        "approved_inserts": 0,
+        "approved_deletes": 0,
+        "approved_updates": 1,
+        "approved_existing_retailer_link_id": "5504e020-a08e-4c14-bd9b-0f7bb2534e5b",
+        "approved_filter_id": "99b6f917-4ec1-4b6e-a315-6db147798666",
+        "approved_desired": {
+          "affiliate_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
+          "destination_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
+          "retailer_name": "Whirlpool",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json; BuckParts Verified Link (official_manufacturer_official_whirlpool).",
+          "browser_truth_checked_at": "2026-06-26T12:00:00.000Z",
+          "is_primary": true,
+          "retailer_key": "oem-parts-catalog"
+        },
+        "csv_mutation_authorized": false,
+        "compatibility_mappings_mutation_authorized": false,
+        "buy_cta_authorized": false,
+        "sitemap_robots_mutation_authorized": false,
+        "product_json_ld_mutation_authorized": false,
+        "invent_link_authorized": false,
+        "unrelated_retailer_links_mutation_authorized": false,
+        "mutation_authorized": false,
+        "apply_not_executed": true,
+        "autonomous_apply_authorized": false,
+        "separate_guarded_apply_executor_required": true,
+        "mutation_env_flag_required": "BUCKPARTS_IO_CAPABILITY=MUTATION",
+        "write_command": "BUCKPARTS_IO_CAPABILITY=MUTATION npm run buckparts:fridge-model-pdp-edr4-buyer-path-closable-parity -- --write",
+        "csv_only_approval_decision_id_blocked": "decision-2026-06-10-edr4rxd1-approve_csv_manufacturer_rescue_apply",
+        "owner_approved_by": "Jared",
+        "approved_at": "2026-07-14T05:17:56.000Z"
+      },
+      "bound_artifacts_v1": [
+        {
+          "artifact_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-edr4-buyer-path-closable-parity-owner-review-v1.json",
+          "sha256_at_binding": "1fff118bc6cd5cb0ebc6b4eede5beaf575c97a763607b544626b83dd572c1b90",
+          "entry_type": "apply_plan"
+        }
+      ]
+    }
+  ]
+}

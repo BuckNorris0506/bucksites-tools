@@ -134,7 +134,7 @@ test("plan write ops at most one edr4rxd1 op; never invents unrelated filters", 
   assert.equal(ops[0]?.desired.affiliate_url, EDR4_URL);
 });
 
-test("write without MUTATION is blocked; CSV-only approval never authorizes Supabase parity write", async () => {
+test("write without MUTATION is blocked even when supabase-parity approval exists; CSV-only approval never authorizes write", async () => {
   const prev = process.env.BUCKPARTS_IO_CAPABILITY;
   delete process.env.BUCKPARTS_IO_CAPABILITY;
   try {
@@ -169,11 +169,6 @@ test("write without MUTATION is blocked; CSV-only approval never authorizes Supa
     );
     assert.ok(
       report.blockers.some((b) =>
-        b.includes("founder_supabase_parity_approval_missing_for_lane"),
-      ),
-    );
-    assert.ok(
-      report.blockers.some((b) =>
         b.includes(BUCKPARTS_FRIDGE_MODEL_PDP_EDR4_BUYER_PATH_CLOSABLE_PARITY_CSV_ONLY_APPROVAL_DECISION_ID_V1),
       ),
     );
@@ -184,12 +179,32 @@ test("write without MUTATION is blocked; CSV-only approval never authorizes Supa
   }
 });
 
-test("write with MUTATION but without new supabase-parity founder approval remains blocked", async () => {
+test("write with MUTATION but without supabase-parity founder approval remains blocked", async () => {
   const prev = process.env.BUCKPARTS_IO_CAPABILITY;
   process.env.BUCKPARTS_IO_CAPABILITY = "MUTATION";
+  const tmp = mkdtempSync(path.join(tmpdir(), "edr4-no-supabase-approval-"));
   try {
+    mkdirSync(path.join(tmp, "data"), { recursive: true });
+    writeFileSync(
+      path.join(tmp, "data/retailer_links.csv"),
+      [
+        "filter_slug,retailer_name,affiliate_url,is_primary,sort_order,retailer_key,browser_truth_classification,browser_truth_notes,browser_truth_checked_at",
+        `edr4rxd1,Whirlpool,${EDR4_URL},true,0,oem-parts-catalog,direct_buyable,notes,2026-06-26T12:00:00.000Z`,
+      ].join("\n"),
+      "utf8",
+    );
+    for (const rel of [
+      "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json",
+      "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr4rxd1-v1.json",
+      "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-buyer-path-gap-plan-v1.json",
+    ]) {
+      const abs = path.join(tmp, rel);
+      mkdirSync(path.dirname(abs), { recursive: true });
+      writeFileSync(abs, "{}\n", "utf8");
+    }
+
     const report = await buildEdr4BuyerPathClosableParityReportV1({
-      rootDir: REPO_ROOT,
+      rootDir: tmp,
       mode: "write",
       loadSupabase: async () => ({
         status: "CHECKED",

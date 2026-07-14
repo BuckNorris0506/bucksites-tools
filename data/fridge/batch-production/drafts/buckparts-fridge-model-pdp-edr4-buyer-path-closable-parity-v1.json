@@ -4,7 +4,7 @@
   "data_mutation": false,
   "mutation_authorized": false,
   "mode": "dry_run",
-  "generated_at": "2026-07-14T05:10:46.292Z",
+  "generated_at": "2026-07-14T05:18:48.183Z",
   "allowed_slugs": [
     "edr4rxd1"
   ],
@@ -114,5 +114,5 @@
   ],
   "invent_link_authorized": false,
   "csv_only_approval_blocked": true,
-  "supabase_parity_founder_approval_present": false
+  "supabase_parity_founder_approval_present": true
 }
