@@ -1,0 +1,1343 @@
+{
+  "contract": "buckparts_fridge_model_pdp_rendered_truth_proof_pack_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "sitemap_robots_mutation_authorized": false,
+  "product_json_ld_mutation_authorized": false,
+  "live_production_fetch_enabled": false,
+  "generated_at": "2026-07-14T04:36:44.937Z",
+  "source_command": "npm run buckparts:fridge-model-pdp-rendered-truth-proof-pack",
+  "scope": {
+    "cohorts": [
+      "gte18",
+      "samsung_pass_5",
+      "gswf_13",
+      "qa_20"
+    ],
+    "slug_count": 39,
+    "slugs": [
+      "ge-gte18gsnrss",
+      "samsung-rf27t5201sr",
+      "samsung-rf27t5501sr",
+      "samsung-rf28r6301sr",
+      "samsung-rf28t5101sr",
+      "samsung-rs22t5201sg",
+      "ge-cwe23sshww",
+      "ge-gfe24jgkww",
+      "ge-gfe27jmkes",
+      "ge-gfe28gmkbb",
+      "ge-gfe28gskes",
+      "ge-gfe28hskss",
+      "ge-gne25jmkww",
+      "ge-gne27jstss",
+      "ge-gse25hskss",
+      "ge-gye22gskww",
+      "ge-pfe28kmkww",
+      "ge-pfe28kynbb",
+      "ge-pvd28bymfs",
+      "frigidaire-ffhb2740ps",
+      "frigidaire-fghb2868pf",
+      "frigidaire-fgsc2335tf",
+      "ge-gfe28gmkes",
+      "ge-gfe28gskss",
+      "ge-gfe28gynfs",
+      "lg-lfxc22596s",
+      "lg-lfxs26973s",
+      "lg-lfxs28968s",
+      "lg-lmxs28626s",
+      "lg-lrfvs3006s",
+      "lg-lrfxs3106s",
+      "samsung-rf263beaesr",
+      "samsung-rf28nhedbsr",
+      "samsung-rf28r7201sr",
+      "samsung-rf28r7351sg",
+      "whirlpool-wrf540cwhz",
+      "whirlpool-wrs325sdhz",
+      "whirlpool-wrx735sdhz",
+      "whirlpool-wrx986sihz"
+    ],
+    "excluded_partial_slugs": [
+      "ge-gfe28hmkww",
+      "ge-gsc25frshss",
+      "ge-gse26gshess"
+    ]
+  },
+  "summary": {
+    "MATCH": 28,
+    "MISMATCH": 0,
+    "UNKNOWN_RENDER": 0,
+    "QUARANTINED_SUPPRESSED": 11,
+    "frontend_safe_promoted_count": 28,
+    "backend_closed_slug_count": 39
+  },
+  "rows": [
+    {
+      "cohort": "gte18",
+      "slug": "ge-gte18gsnrss",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [],
+      "supabase_mappings": [],
+      "pdp_loader_mappings": [],
+      "rendered_filter_slugs": [],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "samsung_pass_5",
+      "slug": "samsung-rf27t5201sr",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "da97-17376b"
+      ],
+      "supabase_mappings": [
+        "da97-17376b"
+      ],
+      "pdp_loader_mappings": [
+        "da97-17376b"
+      ],
+      "rendered_filter_slugs": [],
+      "quarantine": true,
+      "quarantine_reason": "LEARNED_FAILURE_GUARD_BLOCK",
+      "classification": "QUARANTINED_SUPPRESSED",
+      "frontend_safe_promoted": false,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "Quarantine suppresses customer-visible filters; mapping MATCH not promoted to frontend_safe"
+      ]
+    },
+    {
+      "cohort": "samsung_pass_5",
+      "slug": "samsung-rf27t5501sr",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "da97-17376b"
+      ],
+      "supabase_mappings": [
+        "da97-17376b"
+      ],
+      "pdp_loader_mappings": [
+        "da97-17376b"
+      ],
+      "rendered_filter_slugs": [],
+      "quarantine": true,
+      "quarantine_reason": "LEARNED_FAILURE_GUARD_BLOCK",
+      "classification": "QUARANTINED_SUPPRESSED",
+      "frontend_safe_promoted": false,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "Quarantine suppresses customer-visible filters; mapping MATCH not promoted to frontend_safe"
+      ]
+    },
+    {
+      "cohort": "samsung_pass_5",
+      "slug": "samsung-rf28r6301sr",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "da97-17376b"
+      ],
+      "supabase_mappings": [
+        "da97-17376b"
+      ],
+      "pdp_loader_mappings": [
+        "da97-17376b"
+      ],
+      "rendered_filter_slugs": [],
+      "quarantine": true,
+      "quarantine_reason": "LEARNED_FAILURE_GUARD_BLOCK",
+      "classification": "QUARANTINED_SUPPRESSED",
+      "frontend_safe_promoted": false,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "Quarantine suppresses customer-visible filters; mapping MATCH not promoted to frontend_safe"
+      ]
+    },
+    {
+      "cohort": "samsung_pass_5",
+      "slug": "samsung-rf28t5101sr",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "da97-17376b"
+      ],
+      "supabase_mappings": [
+        "da97-17376b"
+      ],
+      "pdp_loader_mappings": [
+        "da97-17376b"
+      ],
+      "rendered_filter_slugs": [],
+      "quarantine": true,
+      "quarantine_reason": "LEARNED_FAILURE_GUARD_BLOCK",
+      "classification": "QUARANTINED_SUPPRESSED",
+      "frontend_safe_promoted": false,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "Quarantine suppresses customer-visible filters; mapping MATCH not promoted to frontend_safe"
+      ]
+    },
+    {
+      "cohort": "samsung_pass_5",
+      "slug": "samsung-rs22t5201sg",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "da97-17376b"
+      ],
+      "supabase_mappings": [
+        "da97-17376b"
+      ],
+      "pdp_loader_mappings": [
+        "da97-17376b"
+      ],
+      "rendered_filter_slugs": [],
+      "quarantine": true,
+      "quarantine_reason": "LEARNED_FAILURE_GUARD_BLOCK",
+      "classification": "QUARANTINED_SUPPRESSED",
+      "frontend_safe_promoted": false,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "Quarantine suppresses customer-visible filters; mapping MATCH not promoted to frontend_safe"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-cwe23sshww",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "rpwfe"
+      ],
+      "pdp_loader_mappings": [
+        "rpwfe"
+      ],
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gfe24jgkww",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "smartwater-mwfp",
+        "xwfe"
+      ],
+      "supabase_mappings": [
+        "smartwater-mwfp",
+        "xwfe"
+      ],
+      "pdp_loader_mappings": [
+        "smartwater-mwfp",
+        "xwfe"
+      ],
+      "rendered_filter_slugs": [
+        "smartwater-mwfp",
+        "xwfe"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gfe27jmkes",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "xwfe"
+      ],
+      "supabase_mappings": [
+        "xwfe"
+      ],
+      "pdp_loader_mappings": [
+        "xwfe"
+      ],
+      "rendered_filter_slugs": [
+        "xwfe"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gfe28gmkbb",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "rpwfe"
+      ],
+      "pdp_loader_mappings": [
+        "rpwfe"
+      ],
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gfe28gskes",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "rpwfe"
+      ],
+      "pdp_loader_mappings": [
+        "rpwfe"
+      ],
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gfe28hskss",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "rpwfe",
+        "smartwater-mwfp"
+      ],
+      "supabase_mappings": [
+        "rpwfe",
+        "smartwater-mwfp"
+      ],
+      "pdp_loader_mappings": [
+        "rpwfe",
+        "smartwater-mwfp"
+      ],
+      "rendered_filter_slugs": [
+        "rpwfe",
+        "smartwater-mwfp"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gne25jmkww",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "xwfe"
+      ],
+      "supabase_mappings": [
+        "xwfe"
+      ],
+      "pdp_loader_mappings": [
+        "xwfe"
+      ],
+      "rendered_filter_slugs": [
+        "xwfe"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gne27jstss",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "xwf",
+        "xwfe"
+      ],
+      "supabase_mappings": [
+        "xwf",
+        "xwfe"
+      ],
+      "pdp_loader_mappings": [
+        "xwf",
+        "xwfe"
+      ],
+      "rendered_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gse25hskss",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "xwf",
+        "xwfe"
+      ],
+      "supabase_mappings": [
+        "xwf",
+        "xwfe"
+      ],
+      "pdp_loader_mappings": [
+        "xwf",
+        "xwfe"
+      ],
+      "rendered_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-gye22gskww",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "rpwfe"
+      ],
+      "pdp_loader_mappings": [
+        "rpwfe"
+      ],
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-pfe28kmkww",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "rpwfe",
+        "xwf"
+      ],
+      "supabase_mappings": [
+        "rpwfe",
+        "xwf"
+      ],
+      "pdp_loader_mappings": [
+        "rpwfe",
+        "xwf"
+      ],
+      "rendered_filter_slugs": [
+        "rpwfe",
+        "xwf"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-pfe28kynbb",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "rpwfe"
+      ],
+      "pdp_loader_mappings": [
+        "rpwfe"
+      ],
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "gswf_13",
+      "slug": "ge-pvd28bymfs",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "xwfe"
+      ],
+      "supabase_mappings": [
+        "xwfe"
+      ],
+      "pdp_loader_mappings": [
+        "xwfe"
+      ],
+      "rendered_filter_slugs": [
+        "xwfe"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "frigidaire-ffhb2740ps",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "ultrawf"
+      ],
+      "supabase_mappings": [
+        "ultrawf"
+      ],
+      "pdp_loader_mappings": [
+        "ultrawf"
+      ],
+      "rendered_filter_slugs": [
+        "ultrawf"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "frigidaire-fghb2868pf",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "eptwfu01"
+      ],
+      "supabase_mappings": [
+        "eptwfu01"
+      ],
+      "pdp_loader_mappings": [
+        "eptwfu01"
+      ],
+      "rendered_filter_slugs": [
+        "eptwfu01"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "frigidaire-fgsc2335tf",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "eptwfu01"
+      ],
+      "supabase_mappings": [
+        "eptwfu01"
+      ],
+      "pdp_loader_mappings": [
+        "eptwfu01"
+      ],
+      "rendered_filter_slugs": [
+        "eptwfu01"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "ge-gfe28gmkes",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "rpwfe"
+      ],
+      "pdp_loader_mappings": [
+        "rpwfe"
+      ],
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "ge-gfe28gskss",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "rpwfe"
+      ],
+      "pdp_loader_mappings": [
+        "rpwfe"
+      ],
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "ge-gfe28gynfs",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "rpwfe"
+      ],
+      "supabase_mappings": [
+        "rpwfe"
+      ],
+      "pdp_loader_mappings": [
+        "rpwfe"
+      ],
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "lg-lfxc22596s",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "supabase_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "pdp_loader_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "rendered_filter_slugs": [],
+      "quarantine": true,
+      "quarantine_reason": "LEARNED_FAILURE_GUARD_BLOCK",
+      "classification": "QUARANTINED_SUPPRESSED",
+      "frontend_safe_promoted": false,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "Quarantine suppresses customer-visible filters; mapping MATCH not promoted to frontend_safe"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "lg-lfxs26973s",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "supabase_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "pdp_loader_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "rendered_filter_slugs": [],
+      "quarantine": true,
+      "quarantine_reason": "LEARNED_FAILURE_GUARD_BLOCK",
+      "classification": "QUARANTINED_SUPPRESSED",
+      "frontend_safe_promoted": false,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "Quarantine suppresses customer-visible filters; mapping MATCH not promoted to frontend_safe"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "lg-lfxs28968s",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "supabase_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "pdp_loader_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "rendered_filter_slugs": [],
+      "quarantine": true,
+      "quarantine_reason": "LEARNED_FAILURE_GUARD_BLOCK",
+      "classification": "QUARANTINED_SUPPRESSED",
+      "frontend_safe_promoted": false,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "Quarantine suppresses customer-visible filters; mapping MATCH not promoted to frontend_safe"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "lg-lmxs28626s",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "supabase_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "pdp_loader_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "rendered_filter_slugs": [],
+      "quarantine": true,
+      "quarantine_reason": "LEARNED_FAILURE_GUARD_BLOCK",
+      "classification": "QUARANTINED_SUPPRESSED",
+      "frontend_safe_promoted": false,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "Quarantine suppresses customer-visible filters; mapping MATCH not promoted to frontend_safe"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "lg-lrfvs3006s",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "supabase_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "pdp_loader_mappings": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "rendered_filter_slugs": [],
+      "quarantine": true,
+      "quarantine_reason": "LEARNED_FAILURE_GUARD_BLOCK",
+      "classification": "QUARANTINED_SUPPRESSED",
+      "frontend_safe_promoted": false,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "Quarantine suppresses customer-visible filters; mapping MATCH not promoted to frontend_safe"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "lg-lrfxs3106s",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "lt1000p"
+      ],
+      "supabase_mappings": [
+        "lt1000p"
+      ],
+      "pdp_loader_mappings": [
+        "lt1000p"
+      ],
+      "rendered_filter_slugs": [],
+      "quarantine": true,
+      "quarantine_reason": "OWNER_REVIEW_OVERRIDE",
+      "classification": "QUARANTINED_SUPPRESSED",
+      "frontend_safe_promoted": false,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "Quarantine suppresses customer-visible filters; mapping MATCH not promoted to frontend_safe"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "samsung-rf263beaesr",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "da29-00020b"
+      ],
+      "supabase_mappings": [
+        "da29-00020b"
+      ],
+      "pdp_loader_mappings": [
+        "da29-00020b"
+      ],
+      "rendered_filter_slugs": [
+        "da29-00020b"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "samsung-rf28nhedbsr",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "da29-00020b"
+      ],
+      "supabase_mappings": [
+        "da29-00020b"
+      ],
+      "pdp_loader_mappings": [
+        "da29-00020b"
+      ],
+      "rendered_filter_slugs": [
+        "da29-00020b"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "samsung-rf28r7201sr",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "da97-17376b"
+      ],
+      "supabase_mappings": [
+        "da97-17376b"
+      ],
+      "pdp_loader_mappings": [
+        "da97-17376b"
+      ],
+      "rendered_filter_slugs": [
+        "da97-17376b"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "samsung-rf28r7351sg",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "supabase_mappings": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "pdp_loader_mappings": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "rendered_filter_slugs": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "whirlpool-wrf540cwhz",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "edr4rxd1"
+      ],
+      "supabase_mappings": [
+        "edr4rxd1"
+      ],
+      "pdp_loader_mappings": [
+        "edr4rxd1"
+      ],
+      "rendered_filter_slugs": [
+        "edr4rxd1"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "whirlpool-wrs325sdhz",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "edr1rxd1"
+      ],
+      "supabase_mappings": [
+        "edr1rxd1"
+      ],
+      "pdp_loader_mappings": [
+        "edr1rxd1"
+      ],
+      "rendered_filter_slugs": [
+        "edr1rxd1"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "whirlpool-wrx735sdhz",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "edr4rxd1"
+      ],
+      "supabase_mappings": [
+        "edr4rxd1"
+      ],
+      "pdp_loader_mappings": [
+        "edr4rxd1"
+      ],
+      "rendered_filter_slugs": [
+        "edr4rxd1"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    },
+    {
+      "cohort": "qa_20",
+      "slug": "whirlpool-wrx986sihz",
+      "backend_closed_cohort": true,
+      "partial_excluded": true,
+      "csv_mappings": [
+        "edr2rxd1"
+      ],
+      "supabase_mappings": [
+        "edr2rxd1"
+      ],
+      "pdp_loader_mappings": [
+        "edr2rxd1"
+      ],
+      "rendered_filter_slugs": [
+        "edr2rxd1"
+      ],
+      "quarantine": false,
+      "quarantine_reason": null,
+      "classification": "MATCH",
+      "frontend_safe_promoted": true,
+      "only_in_supabase_vs_csv": [],
+      "only_in_csv_vs_supabase": [],
+      "only_in_supabase_vs_pdp": [],
+      "only_in_pdp_vs_supabase": [],
+      "notes": [
+        "backend_closed_cohort=true; PARTIAL excluded from this pack",
+        "frontend_safe_promoted requires local PDP-data-path MATCH (not live HTML/CTA/go proof)",
+        "PROMOTED mapping-layer frontend_safe: CSV=Supabase=PDP loader=rendered (local data-path only)",
+        "Not claimed: live Netlify HTML, CTA visibility, or /go outcomes"
+      ]
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: read_only=true; data_mutation=false; all mutation/buy/sitemap/JSON-LD flags false.",
+    "PROVEN: exact backend-closed scope=39 (GTE18+PASS5+GSWF13+QA20); PARTIAL 3 excluded.",
+    "PROVEN: live_production_fetch_enabled=false; local getFridgeBySlug + Supabase compat + quarantine safety only.",
+    "PROVEN: summary={\"MATCH\":28,\"MISMATCH\":0,\"UNKNOWN_RENDER\":0,\"QUARANTINED_SUPPRESSED\":11,\"frontend_safe_promoted_count\":28,\"backend_closed_slug_count\":39}.",
+    "PROVEN: frontend_safe_promoted_count=28 (mapping-layer local data-path only)."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Live production HTML for these 39 PDPs (no production fetch).",
+    "UNKNOWN: CTA visibility and /go outcomes for these slugs.",
+    "UNKNOWN: CDN/env drift between local Supabase read and deployed Netlify render."
+  ],
+  "risk_notes": [
+    "frontend_safe_promoted is mapping-set proof only — not monetizable buyer-path approval.",
+    "Do not mutate CSV, Supabase, retailer_links, buy CTA, sitemap, robots, or Product JSON-LD from this packet.",
+    "PARTIAL 3 remains out of scope and must not be promoted from this pack."
+  ]
+}
