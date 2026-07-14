@@ -1,0 +1,318 @@
+{
+  "contract": "buckparts_fridge_model_pdp_owner_browser_proof_result_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "invent_link_authorized": false,
+  "auto_promote_authorized": false,
+  "owner_approval_authorized": false,
+  "link_promotion_authorized": false,
+  "sitemap_robots_mutation_authorized": false,
+  "product_json_ld_mutation_authorized": false,
+  "owner_decision_mutation_authorized": false,
+  "deploy_config_mutation_authorized": false,
+  "apply_authorized": false,
+  "xwf_direct_buy_promotion_authorized": false,
+  "generated_at": "2026-07-14T17:40:40.135Z",
+  "source_command": "npm run buckparts:fridge-model-pdp-owner-browser-proof-result-packet",
+  "source_artifacts": {
+    "owner_browser_proof_collection_packet_rel": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-owner-browser-proof-collection-packet-v1.json"
+  },
+  "scope": {
+    "slug_count": 6,
+    "filter_count": 3,
+    "slugs": [
+      "ge-gfe24jgkww",
+      "ge-gfe27jmkes",
+      "ge-gne25jmkww",
+      "ge-gne27jstss",
+      "ge-gse25hskss",
+      "ge-pvd28bymfs"
+    ],
+    "filters": [
+      "smartwater-mwfp",
+      "xwf",
+      "xwfe"
+    ],
+    "excluded_remain_no_buy_slug": "ge-gte18gsnrss"
+  },
+  "summary": {
+    "OWNER_BROWSER_PASS": 2,
+    "SUPERSEDED_TO_XWFE_PROVEN": 1,
+    "clean_direct_buy_pass_filters": 2,
+    "potentially_closable_slugs": 4,
+    "blocked_by_xwf_supersession_slugs": 2
+  },
+  "filter_rows": [
+    {
+      "filter_slug": "smartwater-mwfp",
+      "oem_part_token": "MWFP",
+      "classification": "OWNER_BROWSER_PASS",
+      "url_shown": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+      "official_ge_parts_page_visible": true,
+      "product_title_shown": "GE MWF Refrigerator Water Filter",
+      "part_shown": "MWFP",
+      "add_to_cart_visible": true,
+      "clean_direct_buy_pass": true,
+      "superseded_to_xwfe_proven": false,
+      "supersession_message_proven": null,
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "link_promotion_authorized": false,
+      "buy_cta_authorized": false,
+      "csv_apply_authorized": false,
+      "retailer_links_mutation_authorized": false,
+      "owner_approval_authorized": false,
+      "supersession_safe_apply_lane_required": false,
+      "model_slugs_mapped": [
+        "ge-gfe24jgkww"
+      ],
+      "notes": [
+        "Owner screenshot: official GE Appliance Parts spec PDP for MWFP with Add to Cart.",
+        "Title shows GE MWF Refrigerator Water Filter; part identity shown as MWFP."
+      ]
+    },
+    {
+      "filter_slug": "xwf",
+      "oem_part_token": "XWF",
+      "classification": "SUPERSEDED_TO_XWFE_PROVEN",
+      "url_shown": "https://www.geapplianceparts.com/store/parts/spec/XWF",
+      "official_ge_parts_page_visible": true,
+      "product_title_shown": "GE XWFE Refrigerator Water Filter",
+      "part_shown": "XWFE",
+      "add_to_cart_visible": true,
+      "clean_direct_buy_pass": false,
+      "superseded_to_xwfe_proven": true,
+      "supersession_message_proven": "Part XWF has been superseded to Part XWFE",
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "link_promotion_authorized": false,
+      "buy_cta_authorized": false,
+      "csv_apply_authorized": false,
+      "retailer_links_mutation_authorized": false,
+      "owner_approval_authorized": false,
+      "supersession_safe_apply_lane_required": true,
+      "model_slugs_mapped": [
+        "ge-gne27jstss",
+        "ge-gse25hskss"
+      ],
+      "notes": [
+        "Owner screenshot: /store/parts/spec/XWF page shows supersession of XWF → XWFE.",
+        "Product title and Add to Cart are for XWFE, not a clean direct XWF buy PASS.",
+        "Do not promote XWF as a direct XWF buy link.",
+        "Requires a separate supersession-safe approval/apply lane before any public buyer-path promotion involving XWF."
+      ]
+    },
+    {
+      "filter_slug": "xwfe",
+      "oem_part_token": "XWFE",
+      "classification": "OWNER_BROWSER_PASS",
+      "url_shown": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+      "official_ge_parts_page_visible": true,
+      "product_title_shown": "GE XWFE Refrigerator Water Filter",
+      "part_shown": "XWFE",
+      "add_to_cart_visible": true,
+      "clean_direct_buy_pass": true,
+      "superseded_to_xwfe_proven": false,
+      "supersession_message_proven": null,
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "link_promotion_authorized": false,
+      "buy_cta_authorized": false,
+      "csv_apply_authorized": false,
+      "retailer_links_mutation_authorized": false,
+      "owner_approval_authorized": false,
+      "supersession_safe_apply_lane_required": false,
+      "model_slugs_mapped": [
+        "ge-gfe24jgkww",
+        "ge-gfe27jmkes",
+        "ge-gne25jmkww",
+        "ge-gne27jstss",
+        "ge-gse25hskss",
+        "ge-pvd28bymfs"
+      ],
+      "notes": [
+        "Owner screenshot: official GE Appliance Parts spec PDP for XWFE with Add to Cart.",
+        "Exact XWFE identity proven on official manufacturer path."
+      ]
+    }
+  ],
+  "slug_rows": [
+    {
+      "slug": "ge-gfe24jgkww",
+      "mapped_filter_slugs": [
+        "smartwater-mwfp",
+        "xwfe"
+      ],
+      "mapped_filters_with_owner_browser_pass": [
+        "smartwater-mwfp",
+        "xwfe"
+      ],
+      "mapped_filters_superseded_to_xwfe": [],
+      "has_xwf_mapping": false,
+      "closure_status": "POTENTIALLY_CLOSABLE_VIA_MWFP_XWFE_PROOF",
+      "potentially_closable_via_mwfp_xwfe_proof": true,
+      "blocked_by_xwf_supersession_policy": false,
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "buy_cta_authorized": false,
+      "link_promotion_authorized": false,
+      "notes": [
+        "All mapped filters in scope have OWNER_BROWSER_PASS (MWFP and/or XWFE).",
+        "Potentially closable only after a separate founder-gated apply/approval lane — this result packet does not authorize apply."
+      ]
+    },
+    {
+      "slug": "ge-gfe27jmkes",
+      "mapped_filter_slugs": [
+        "xwfe"
+      ],
+      "mapped_filters_with_owner_browser_pass": [
+        "xwfe"
+      ],
+      "mapped_filters_superseded_to_xwfe": [],
+      "has_xwf_mapping": false,
+      "closure_status": "POTENTIALLY_CLOSABLE_VIA_MWFP_XWFE_PROOF",
+      "potentially_closable_via_mwfp_xwfe_proof": true,
+      "blocked_by_xwf_supersession_policy": false,
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "buy_cta_authorized": false,
+      "link_promotion_authorized": false,
+      "notes": [
+        "All mapped filters in scope have OWNER_BROWSER_PASS (MWFP and/or XWFE).",
+        "Potentially closable only after a separate founder-gated apply/approval lane — this result packet does not authorize apply."
+      ]
+    },
+    {
+      "slug": "ge-gne25jmkww",
+      "mapped_filter_slugs": [
+        "xwfe"
+      ],
+      "mapped_filters_with_owner_browser_pass": [
+        "xwfe"
+      ],
+      "mapped_filters_superseded_to_xwfe": [],
+      "has_xwf_mapping": false,
+      "closure_status": "POTENTIALLY_CLOSABLE_VIA_MWFP_XWFE_PROOF",
+      "potentially_closable_via_mwfp_xwfe_proof": true,
+      "blocked_by_xwf_supersession_policy": false,
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "buy_cta_authorized": false,
+      "link_promotion_authorized": false,
+      "notes": [
+        "All mapped filters in scope have OWNER_BROWSER_PASS (MWFP and/or XWFE).",
+        "Potentially closable only after a separate founder-gated apply/approval lane — this result packet does not authorize apply."
+      ]
+    },
+    {
+      "slug": "ge-gne27jstss",
+      "mapped_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "mapped_filters_with_owner_browser_pass": [
+        "xwfe"
+      ],
+      "mapped_filters_superseded_to_xwfe": [
+        "xwf"
+      ],
+      "has_xwf_mapping": true,
+      "closure_status": "BLOCKED_BY_XWF_SUPERSESSION_POLICY",
+      "potentially_closable_via_mwfp_xwfe_proof": false,
+      "blocked_by_xwf_supersession_policy": true,
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "buy_cta_authorized": false,
+      "link_promotion_authorized": false,
+      "notes": [
+        "Fail-closed: mapped filter xwf requires supersession-safe approval/apply lane before public buyer-path promotion.",
+        "XWFE OWNER_BROWSER_PASS alone does not clear XWF supersession policy for this slug.",
+        "Do not promote XWF as a direct XWF buy link."
+      ]
+    },
+    {
+      "slug": "ge-gse25hskss",
+      "mapped_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "mapped_filters_with_owner_browser_pass": [
+        "xwfe"
+      ],
+      "mapped_filters_superseded_to_xwfe": [
+        "xwf"
+      ],
+      "has_xwf_mapping": true,
+      "closure_status": "BLOCKED_BY_XWF_SUPERSESSION_POLICY",
+      "potentially_closable_via_mwfp_xwfe_proof": false,
+      "blocked_by_xwf_supersession_policy": true,
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "buy_cta_authorized": false,
+      "link_promotion_authorized": false,
+      "notes": [
+        "Fail-closed: mapped filter xwf requires supersession-safe approval/apply lane before public buyer-path promotion.",
+        "XWFE OWNER_BROWSER_PASS alone does not clear XWF supersession policy for this slug.",
+        "Do not promote XWF as a direct XWF buy link."
+      ]
+    },
+    {
+      "slug": "ge-pvd28bymfs",
+      "mapped_filter_slugs": [
+        "xwfe"
+      ],
+      "mapped_filters_with_owner_browser_pass": [
+        "xwfe"
+      ],
+      "mapped_filters_superseded_to_xwfe": [],
+      "has_xwf_mapping": false,
+      "closure_status": "POTENTIALLY_CLOSABLE_VIA_MWFP_XWFE_PROOF",
+      "potentially_closable_via_mwfp_xwfe_proof": true,
+      "blocked_by_xwf_supersession_policy": false,
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "buy_cta_authorized": false,
+      "link_promotion_authorized": false,
+      "notes": [
+        "All mapped filters in scope have OWNER_BROWSER_PASS (MWFP and/or XWFE).",
+        "Potentially closable only after a separate founder-gated apply/approval lane — this result packet does not authorize apply."
+      ]
+    }
+  ],
+  "potentially_closable_slugs": [
+    "ge-gfe24jgkww",
+    "ge-gfe27jmkes",
+    "ge-gne25jmkww",
+    "ge-pvd28bymfs"
+  ],
+  "blocked_by_xwf_supersession_slugs": [
+    "ge-gne27jstss",
+    "ge-gse25hskss"
+  ],
+  "proven_facts": [
+    "PROVEN: read_only=true; apply_authorized=false; invent_link_authorized=false; link_promotion_authorized=false; xwf_direct_buy_promotion_authorized=false.",
+    "PROVEN: smartwater-mwfp classification=OWNER_BROWSER_PASS (official GE /store/parts/spec/MWFP; Add to Cart visible).",
+    "PROVEN: xwfe classification=OWNER_BROWSER_PASS (official GE /store/parts/spec/XWFE; Add to Cart visible).",
+    "PROVEN: xwf classification=SUPERSEDED_TO_XWFE_PROVEN (not clean direct XWF buy PASS).",
+    "PROVEN: potentially_closable_slugs=[\"ge-gfe24jgkww\",\"ge-gfe27jmkes\",\"ge-gne25jmkww\",\"ge-pvd28bymfs\"].",
+    "PROVEN: blocked_by_xwf_supersession_slugs=[\"ge-gne27jstss\",\"ge-gse25hskss\"].",
+    "PROVEN: summary={\"OWNER_BROWSER_PASS\":2,\"SUPERSEDED_TO_XWFE_PROVEN\":1,\"clean_direct_buy_pass_filters\":2,\"potentially_closable_slugs\":4,\"blocked_by_xwf_supersession_slugs\":2}."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: future founder approval / apply outcomes for MWFP and XWFE retailer_links.",
+    "UNKNOWN: supersession-safe XWF→XWFE public promotion policy until a separate lane exists.",
+    "UNKNOWN: conversion/revenue impact (not claimed)."
+  ],
+  "risk_notes": [
+    "This packet records owner browser proof only — does not mutate Supabase, CSV, retailer_links, buy CTA, sitemap, robots, Product JSON-LD, owner decisions, or deploy config.",
+    "Do not promote XWF as a direct XWF buy link.",
+    "XWF requires a separate supersession-safe approval/apply lane before any public buyer-path promotion.",
+    "ge-gte18gsnrss remains out of scope (remain-no-buy)."
+  ]
+}
