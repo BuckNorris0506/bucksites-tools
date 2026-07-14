@@ -248,7 +248,7 @@ function findOwnerApprovalRow(args: {
 
     const ctx = row.refrigerator_model_first_qa_batch_supabase_compat_sync_owner_approval_context_v1;
     const optionId = ctx?.founder_option_id ?? ctx?.option_id;
-    if (optionId !== "approve_supabase_compat_sync_plan") continue;
+    if (optionId !== "approve_refrigerator_qa_batch_supabase_compat_sync_plan") continue;
     if (ctx?.sync_plan_rel_path !== args.syncPlanRelPath) {
       errors.push(
         `owner approval sync_plan_rel_path mismatch: expected ${args.syncPlanRelPath}, got ${ctx?.sync_plan_rel_path ?? "missing"}`,

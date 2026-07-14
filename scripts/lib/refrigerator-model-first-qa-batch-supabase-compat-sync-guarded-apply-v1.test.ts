@@ -202,8 +202,8 @@ function seedFixtureRoot(args: {
                 "Do not mutate retailer_links.csv or buy CTA from this approval alone.",
               ],
               refrigerator_model_first_qa_batch_supabase_compat_sync_owner_approval_context_v1: {
-                founder_option_id: "approve_supabase_compat_sync_plan",
-                option_id: "approve_supabase_compat_sync_plan",
+                founder_option_id: "approve_refrigerator_qa_batch_supabase_compat_sync_plan",
+                option_id: "approve_refrigerator_qa_batch_supabase_compat_sync_plan",
                 sync_plan_rel_path: PLAN_REL,
                 approved_slug_count: 20,
                 approved_removals: 53,
