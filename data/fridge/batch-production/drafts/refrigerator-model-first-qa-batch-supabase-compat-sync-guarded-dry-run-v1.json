@@ -1,0 +1,436 @@
+{
+  "contract": "refrigerator_model_first_qa_batch_supabase_compat_sync_guarded_apply_v1",
+  "mode": "dry_run",
+  "read_only": true,
+  "data_mutation": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "sitemap_robots_mutation_authorized": false,
+  "product_json_ld_mutation_authorized": false,
+  "mutation_flag_enabled": false,
+  "plan_sync_state": "pending_sync",
+  "apply_status": "DRY_RUN_READY",
+  "blocked_reasons": [],
+  "sync_plan_rel_path": "data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-sync-plan-owner-review-v1.json",
+  "sync_plan_sha256": "b017b22bd8187bb12a89fbe88043d516142a8ef2f319e6e7239e1d16149751d4",
+  "owner_approval_rel_path": "data/owner-decisions/refrigerator-model-first-qa-batch-supabase-compat-sync-owner-approval-v1.json",
+  "owner_approval_present": false,
+  "owner_approval_valid": false,
+  "owner_approval_decision_id": null,
+  "owner_approval_required_for_apply": true,
+  "csv_apply_commit": "a2b5bc7",
+  "target_mappings_basis": "csv_current_mappings_per_slug",
+  "planned_slug_count": 20,
+  "planned_removals": 53,
+  "planned_additions": 0,
+  "planned_removal_row_keys": [
+    "frigidaire-ffhb2740ps,frig-242086201",
+    "frigidaire-fghb2868pf,frig-242017801",
+    "frigidaire-fghb2868pf,frig-242086201",
+    "frigidaire-fghb2868pf,purepour",
+    "frigidaire-fghb2868pf,ultrawf",
+    "frigidaire-fghb2868pf,wf3cb",
+    "frigidaire-fghb2868pf,wfcb",
+    "frigidaire-fgsc2335tf,frig-242294502",
+    "ge-gfe28gmkes,mswf",
+    "ge-gfe28gskss,mswf",
+    "ge-gfe28gskss,mwf",
+    "ge-gfe28gynfs,xwfe",
+    "lg-lfxc22596s,adq36006101",
+    "lg-lfxc22596s,adq74793502",
+    "lg-lfxc22596s,mdj64844601",
+    "lg-lfxs26973s,adq36006101",
+    "lg-lfxs26973s,adq74793502",
+    "lg-lfxs26973s,lt700p",
+    "lg-lfxs26973s,mdj64844601",
+    "lg-lfxs28968s,adq36006101",
+    "lg-lfxs28968s,adq74793502",
+    "lg-lfxs28968s,lt700p",
+    "lg-lfxs28968s,mdj64844601",
+    "lg-lmxs28626s,adq36006101",
+    "lg-lmxs28626s,adq74793502",
+    "lg-lmxs28626s,mdj64844601",
+    "lg-lrfvs3006s,adq36006101",
+    "lg-lrfvs3006s,adq74793502",
+    "lg-lrfvs3006s,lt700p",
+    "lg-lrfvs3006s,mdj64844601",
+    "lg-lrfxs3106s,lt600p",
+    "lg-lrfxs3106s,lt800p",
+    "samsung-rf263beaesr,da97-17376a",
+    "samsung-rf263beaesr,da97-17376b",
+    "samsung-rf28nhedbsr,da29-10105j",
+    "samsung-rf28nhedbsr,da97-19467c",
+    "samsung-rf28r7201sr,da29-00012b",
+    "samsung-rf28r7201sr,da29-00020b",
+    "samsung-rf28r7351sg,da29-00012b",
+    "samsung-rf28r7351sg,da29-00020b",
+    "whirlpool-wrf540cwhz,4396841",
+    "whirlpool-wrf540cwhz,4396842",
+    "whirlpool-wrf540cwhz,w10413645a",
+    "whirlpool-wrs325sdhz,edr3rxd1",
+    "whirlpool-wrx735sdhz,4396395",
+    "whirlpool-wrx735sdhz,4396508",
+    "whirlpool-wrx735sdhz,4396710",
+    "whirlpool-wrx735sdhz,46-9002",
+    "whirlpool-wrx735sdhz,8171413",
+    "whirlpool-wrx735sdhz,edr1rxd1",
+    "whirlpool-wrx735sdhz,edr2rxd1",
+    "whirlpool-wrx986sihz,edr4rxd1",
+    "whirlpool-wrx986sihz,ukf8001"
+  ],
+  "planned_addition_row_keys": [],
+  "planned_supabase_row_deltas": [
+    {
+      "operation": "remove",
+      "fridge_slug": "frigidaire-ffhb2740ps",
+      "filter_slug": "frig-242086201",
+      "row_key": "frigidaire-ffhb2740ps,frig-242086201"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "frigidaire-fghb2868pf",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-fghb2868pf,frig-242017801"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "frigidaire-fghb2868pf",
+      "filter_slug": "frig-242086201",
+      "row_key": "frigidaire-fghb2868pf,frig-242086201"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "frigidaire-fghb2868pf",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-fghb2868pf,purepour"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "frigidaire-fghb2868pf",
+      "filter_slug": "ultrawf",
+      "row_key": "frigidaire-fghb2868pf,ultrawf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "frigidaire-fghb2868pf",
+      "filter_slug": "wf3cb",
+      "row_key": "frigidaire-fghb2868pf,wf3cb"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "frigidaire-fghb2868pf",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-fghb2868pf,wfcb"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "frigidaire-fgsc2335tf",
+      "filter_slug": "frig-242294502",
+      "row_key": "frigidaire-fgsc2335tf,frig-242294502"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gfe28gmkes",
+      "filter_slug": "mswf",
+      "row_key": "ge-gfe28gmkes,mswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gfe28gskss",
+      "filter_slug": "mswf",
+      "row_key": "ge-gfe28gskss,mswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gfe28gskss",
+      "filter_slug": "mwf",
+      "row_key": "ge-gfe28gskss,mwf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gfe28gynfs",
+      "filter_slug": "xwfe",
+      "row_key": "ge-gfe28gynfs,xwfe"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lfxc22596s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfxc22596s,adq36006101"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lfxc22596s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfxc22596s,adq74793502"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lfxc22596s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfxc22596s,mdj64844601"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lfxs26973s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfxs26973s,adq36006101"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lfxs26973s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfxs26973s,adq74793502"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lfxs26973s",
+      "filter_slug": "lt700p",
+      "row_key": "lg-lfxs26973s,lt700p"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lfxs26973s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfxs26973s,mdj64844601"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lfxs28968s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfxs28968s,adq36006101"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lfxs28968s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfxs28968s,adq74793502"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lfxs28968s",
+      "filter_slug": "lt700p",
+      "row_key": "lg-lfxs28968s,lt700p"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lfxs28968s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfxs28968s,mdj64844601"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lmxs28626s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lmxs28626s,adq36006101"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lmxs28626s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lmxs28626s,adq74793502"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lmxs28626s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lmxs28626s,mdj64844601"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lrfvs3006s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lrfvs3006s,adq36006101"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lrfvs3006s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lrfvs3006s,adq74793502"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lrfvs3006s",
+      "filter_slug": "lt700p",
+      "row_key": "lg-lrfvs3006s,lt700p"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lrfvs3006s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lrfvs3006s,mdj64844601"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lrfxs3106s",
+      "filter_slug": "lt600p",
+      "row_key": "lg-lrfxs3106s,lt600p"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "lg-lrfxs3106s",
+      "filter_slug": "lt800p",
+      "row_key": "lg-lrfxs3106s,lt800p"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "samsung-rf263beaesr",
+      "filter_slug": "da97-17376a",
+      "row_key": "samsung-rf263beaesr,da97-17376a"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "samsung-rf263beaesr",
+      "filter_slug": "da97-17376b",
+      "row_key": "samsung-rf263beaesr,da97-17376b"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "samsung-rf28nhedbsr",
+      "filter_slug": "da29-10105j",
+      "row_key": "samsung-rf28nhedbsr,da29-10105j"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "samsung-rf28nhedbsr",
+      "filter_slug": "da97-19467c",
+      "row_key": "samsung-rf28nhedbsr,da97-19467c"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "samsung-rf28r7201sr",
+      "filter_slug": "da29-00012b",
+      "row_key": "samsung-rf28r7201sr,da29-00012b"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "samsung-rf28r7201sr",
+      "filter_slug": "da29-00020b",
+      "row_key": "samsung-rf28r7201sr,da29-00020b"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "samsung-rf28r7351sg",
+      "filter_slug": "da29-00012b",
+      "row_key": "samsung-rf28r7351sg,da29-00012b"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "samsung-rf28r7351sg",
+      "filter_slug": "da29-00020b",
+      "row_key": "samsung-rf28r7351sg,da29-00020b"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "whirlpool-wrf540cwhz",
+      "filter_slug": "4396841",
+      "row_key": "whirlpool-wrf540cwhz,4396841"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "whirlpool-wrf540cwhz",
+      "filter_slug": "4396842",
+      "row_key": "whirlpool-wrf540cwhz,4396842"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "whirlpool-wrf540cwhz",
+      "filter_slug": "w10413645a",
+      "row_key": "whirlpool-wrf540cwhz,w10413645a"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "whirlpool-wrs325sdhz",
+      "filter_slug": "edr3rxd1",
+      "row_key": "whirlpool-wrs325sdhz,edr3rxd1"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "whirlpool-wrx735sdhz",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrx735sdhz,4396395"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "whirlpool-wrx735sdhz",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrx735sdhz,4396508"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "whirlpool-wrx735sdhz",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrx735sdhz,4396710"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "whirlpool-wrx735sdhz",
+      "filter_slug": "46-9002",
+      "row_key": "whirlpool-wrx735sdhz,46-9002"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "whirlpool-wrx735sdhz",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrx735sdhz,8171413"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "whirlpool-wrx735sdhz",
+      "filter_slug": "edr1rxd1",
+      "row_key": "whirlpool-wrx735sdhz,edr1rxd1"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "whirlpool-wrx735sdhz",
+      "filter_slug": "edr2rxd1",
+      "row_key": "whirlpool-wrx735sdhz,edr2rxd1"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "whirlpool-wrx986sihz",
+      "filter_slug": "edr4rxd1",
+      "row_key": "whirlpool-wrx986sihz,edr4rxd1"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "whirlpool-wrx986sihz",
+      "filter_slug": "ukf8001",
+      "row_key": "whirlpool-wrx986sihz,ukf8001"
+    }
+  ],
+  "classification_counts": {
+    "IN_SYNC": 0,
+    "SUPABASE_STILL_HAS_OLD_ROWS": 20,
+    "SUPABASE_MISSING_TARGET": 0,
+    "CONFLICT": 0,
+    "UNKNOWN_READ_FAILED": 0
+  },
+  "applied_supabase_row_keys": [],
+  "generated_at": "2026-07-14T04:06:00.079Z",
+  "source_command": "npm run buckparts:refrigerator-model-first-qa-batch-supabase-compat-sync-guarded-apply",
+  "proven_facts": [
+    "PROVEN: mode=dry_run; apply_status=DRY_RUN_READY; data_mutation=false; supabase_mutation_authorized=false; mutation_flag_enabled=false.",
+    "PROVEN: sync_plan_rel_path=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-sync-plan-owner-review-v1.json.",
+    "PROVEN: plan_sync_state=pending_sync; planned_slug_count=20; planned_removals=53; planned_additions=0.",
+    "PROVEN: owner_approval_present=false; owner_approval_valid=false; decision_id=none.",
+    "PROVEN: csv_apply_commit=a2b5bc7; target_mappings_basis=csv_current_mappings_per_slug.",
+    "PROVEN: allowed_removal_row_keys=frigidaire-ffhb2740ps,frig-242086201 | frigidaire-fghb2868pf,frig-242017801 | frigidaire-fghb2868pf,frig-242086201 | frigidaire-fghb2868pf,purepour | frigidaire-fghb2868pf,ultrawf | frigidaire-fghb2868pf,wf3cb | frigidaire-fghb2868pf,wfcb | frigidaire-fgsc2335tf,frig-242294502 | ge-gfe28gmkes,mswf | ge-gfe28gskss,mswf | ge-gfe28gskss,mwf | ge-gfe28gynfs,xwfe | lg-lfxc22596s,adq36006101 | lg-lfxc22596s,adq74793502 | lg-lfxc22596s,mdj64844601 | lg-lfxs26973s,adq36006101 | lg-lfxs26973s,adq74793502 | lg-lfxs26973s,lt700p | lg-lfxs26973s,mdj64844601 | lg-lfxs28968s,adq36006101 | lg-lfxs28968s,adq74793502 | lg-lfxs28968s,lt700p | lg-lfxs28968s,mdj64844601 | lg-lmxs28626s,adq36006101 | lg-lmxs28626s,adq74793502 | lg-lmxs28626s,mdj64844601 | lg-lrfvs3006s,adq36006101 | lg-lrfvs3006s,adq74793502 | lg-lrfvs3006s,lt700p | lg-lrfvs3006s,mdj64844601 | lg-lrfxs3106s,lt600p | lg-lrfxs3106s,lt800p | samsung-rf263beaesr,da97-17376a | samsung-rf263beaesr,da97-17376b | samsung-rf28nhedbsr,da29-10105j | samsung-rf28nhedbsr,da97-19467c | samsung-rf28r7201sr,da29-00012b | samsung-rf28r7201sr,da29-00020b | samsung-rf28r7351sg,da29-00012b | samsung-rf28r7351sg,da29-00020b | whirlpool-wrf540cwhz,4396841 | whirlpool-wrf540cwhz,4396842 | whirlpool-wrf540cwhz,w10413645a | whirlpool-wrs325sdhz,edr3rxd1 | whirlpool-wrx735sdhz,4396395 | whirlpool-wrx735sdhz,4396508 | whirlpool-wrx735sdhz,4396710 | whirlpool-wrx735sdhz,46-9002 | whirlpool-wrx735sdhz,8171413 | whirlpool-wrx735sdhz,edr1rxd1 | whirlpool-wrx735sdhz,edr2rxd1 | whirlpool-wrx986sihz,edr4rxd1 | whirlpool-wrx986sihz,ukf8001.",
+    "PROVEN: csv_mutation_authorized=false; buy_cta_authorized=false; retailer_links_mutation_authorized=false.",
+    "PROVEN: no founder approval artifact at data/owner-decisions/refrigerator-model-first-qa-batch-supabase-compat-sync-owner-approval-v1.json (expected for this dry-run lane).",
+    "PROVEN: sync plan shape verified (pending_sync; removals=53; additions=0; slug_count=20)."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: When founder will create refrigerator-model-first-qa-batch-supabase-compat-sync-owner-approval-v1.json.",
+    "UNKNOWN: Whether a future founder session will set BUCKPARTS_REFRIGERATOR_QA_BATCH_SUPABASE_COMPAT_SYNC_MUTATION_ENABLED=1 for an authorized apply."
+  ],
+  "risk_notes": [
+    "Dry-run never mutates Supabase or CSV.",
+    "Apply requires matching founder approval + BUCKPARTS_REFRIGERATOR_QA_BATCH_SUPABASE_COMPAT_SYNC_MUTATION_ENABLED=1 + exact pending 20/53/0 sync plan.",
+    "Already-synced live mappings return ALREADY_APPLIED and do not re-apply deltas.",
+    "Do not mutate retailer_links / buy CTA / sitemap / robots / Product JSON-LD / CSV from this executor.",
+    "Do not include non-QA-batch, non-QA slugs in any refrigerator QA batch Supabase sync apply."
+  ]
+}
