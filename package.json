@@ -167,6 +167,7 @@
     "buckparts:fridge-model-pdp-owner-browser-proof-collection-packet": "tsx scripts/report-buckparts-fridge-model-pdp-owner-browser-proof-collection-packet-v1.ts",
     "buckparts:fridge-model-pdp-owner-browser-proof-result-packet": "tsx scripts/report-buckparts-fridge-model-pdp-owner-browser-proof-result-packet-v1.ts",
     "buckparts:fridge-model-pdp-ge-closable-mwfp-xwfe-apply-plan-owner-review": "tsx scripts/report-buckparts-fridge-model-pdp-ge-closable-mwfp-xwfe-apply-plan-owner-review-v1.ts",
+    "buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-owner-approval": "tsx scripts/report-buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-owner-approval-v1.ts",
     "buckparts:fridge-model-pdp-live-customer-visible-proof-readiness": "tsx scripts/report-buckparts-fridge-model-pdp-live-customer-visible-proof-readiness-v1.ts",
     "buckparts:fridge-model-pdp-live-html-proof": "tsx scripts/report-buckparts-fridge-model-pdp-live-html-proof-pack-v1.ts",
     "buckparts:fridge-model-pdp-edr4-buyer-path-closable-parity-owner-review": "tsx scripts/report-buckparts-fridge-model-pdp-edr4-buyer-path-closable-parity-owner-review-v1.ts",
