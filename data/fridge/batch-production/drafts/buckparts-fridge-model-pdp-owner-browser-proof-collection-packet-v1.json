@@ -1,0 +1,463 @@
+{
+  "contract": "buckparts_fridge_model_pdp_owner_browser_proof_collection_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "invent_link_authorized": false,
+  "auto_promote_authorized": false,
+  "owner_approval_authorized": false,
+  "link_promotion_authorized": false,
+  "sitemap_robots_mutation_authorized": false,
+  "product_json_ld_mutation_authorized": false,
+  "owner_decision_mutation_authorized": false,
+  "deploy_config_mutation_authorized": false,
+  "pass_verdict_authorized": false,
+  "live_production_fetch_enabled": false,
+  "generated_at": "2026-07-14T16:35:00.252Z",
+  "source_command": "npm run buckparts:fridge-model-pdp-owner-browser-proof-collection-packet",
+  "source_artifacts": {
+    "buyer_path_research_packet_rel": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-buyer-path-research-packet-v1.json",
+    "cta_go_link_proof_pack_rel": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+    "ge_refrigerator_rescue_adapter_rel": "data/fridge/batch-production/drafts/ge-refrigerator-rescue-adapter-v1.json",
+    "manufacturer_browser_proof_factory_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-factory-v1.json"
+  },
+  "scope": {
+    "slug_count": 6,
+    "filter_count": 3,
+    "slugs": [
+      "ge-gfe24jgkww",
+      "ge-gfe27jmkes",
+      "ge-gne25jmkww",
+      "ge-gne27jstss",
+      "ge-gse25hskss",
+      "ge-pvd28bymfs"
+    ],
+    "filters": [
+      "smartwater-mwfp",
+      "xwf",
+      "xwfe"
+    ],
+    "excluded_remain_no_buy_slug": "ge-gte18gsnrss"
+  },
+  "summary": {
+    "filters_ready_for_owner_browser": 3,
+    "filters_with_repo_proven_official_pdp": 0,
+    "filters_with_candidate_needing_owner_verification": 3,
+    "filters_still_search_placeholder_only": 3,
+    "slugs_in_scope": 6
+  },
+  "filter_rows": [
+    {
+      "filter_slug": "smartwater-mwfp",
+      "oem_part_token": "MWFP",
+      "current_search_placeholder_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWFP",
+      "current_csv_gate_failure_kind": "search_placeholder",
+      "search_placeholder_only": true,
+      "approved_safe_direct_buy_evidence_present": false,
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "owner_approval_authorized": false,
+      "link_promotion_authorized": false,
+      "exact_missing_proof": [
+        "Owner browser PASS on official manufacturer PDP for exact token MWFP (not search.jsp).",
+        "browser_truth_classification=direct_buyable with fresh owner checked_at.",
+        "Committed owner browser proof / GE rescue browser evidence artifact for this filter.",
+        "Founder-gated retailer_links review/apply remains a separate lane — not authorized here.",
+        "Wrong-family tokens must not be primary identity: MWF."
+      ],
+      "proposed_official_manufacturer_pdp_candidates": [
+        {
+          "url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+          "provenance": "repo_discovered_ge_rescue_adapter",
+          "status": "NEEDS_OWNER_VERIFICATION",
+          "notes": "Present in committed ge-refrigerator-rescue-adapter-v1.json as discovered_spec_pdp_url — NOT owner-proven; do not promote."
+        }
+      ],
+      "candidate_urls_repo_proven": false,
+      "candidate_urls_need_owner_verification": true,
+      "wrong_family_forbidden_tokens": [
+        "MWF"
+      ],
+      "supersession_review_required": false,
+      "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-smartwater-mwfp-v1.json",
+      "manufacturer_proof_packet_present": true,
+      "expected_browser_evidence_rel": "data/fridge/batch-production/ge-rescue/smartwater-mwfp-official-ge-browser-evidence-v1.json",
+      "expected_browser_evidence_present": false,
+      "owner_browser_checklist": {
+        "exact_url_to_open": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+        "exact_part_number_to_confirm": "MWFP",
+        "confirm_page_is_direct_buyable": true,
+        "confirm_page_is_official_manufacturer_source": true,
+        "screenshot_evidence_fields_needed": [
+          "full_page_or_pdp_hero showing exact token MWFP",
+          "address_bar_final_url (must show /store/parts/spec/{TOKEN}, not search.jsp)",
+          "purchase_control_visible (Add to Cart or equivalent)",
+          "part_number_identity_in_title_or_h1",
+          "optional_wrong_family_absence_note",
+          "owner_checked_at_iso8601"
+        ],
+        "pass_rules": [
+          "Final URL is official GE Appliance Parts PDP at /store/parts/spec/MWFP (not catalog/search.jsp).",
+          "Exact OEM part token MWFP is visible in product title/H1 identity (not adjacent-only).",
+          "Page is official manufacturer source (geapplianceparts.com official path).",
+          "Page is direct-buyable (visible Add to Cart / equivalent purchase control for the exact token).",
+          "No wrong-family primary identity; no search-results or category landing as the proven destination.",
+          "Owner records screenshot + final URL + checked_at — still no CSV/retailer_links/buy CTA apply from this packet alone."
+        ],
+        "fail_rules": [
+          "Final URL remains search.jsp / searchKeyword / catalog search, or redirects away from the exact-token spec PDP.",
+          "Exact token MWFP is absent from primary product identity.",
+          "Wrong-family token detected as primary identity (MWF).",
+          "No direct-buy purchase control (not direct_buyable).",
+          "404 / discontinued / blocked error page for the candidate PDP."
+        ],
+        "unknown_rules": [
+          "Captcha, soft-block, region gate, or page load failure prevents classification.",
+          "Ambiguous multi-SKU / kit / multipack presentation where exact single-pack identity is unclear.",
+          "Purchase control visibility cannot be confirmed (loading/JS/partial capture).",
+          "Supersession messaging present without clear exact-token direct-buy PDP confirmation."
+        ]
+      },
+      "model_slugs_helped_if_proof_passes": [
+        "ge-gfe24jgkww"
+      ],
+      "remains_blocked_if_proof_fails": [
+        "ge-gfe24jgkww: remains SAFE_BUYER_PATH_FAIL for mapped filter smartwater-mwfp (search-placeholder / no direct_buyable /go).",
+        "No retailer_links promotion, Verified Link, or buy CTA authorization from a FAIL/UNKNOWN result.",
+        "This collection packet still does not authorize CSV/Supabase/owner-decision mutation."
+      ],
+      "collection_status": "READY_FOR_OWNER_BROWSER"
+    },
+    {
+      "filter_slug": "xwf",
+      "oem_part_token": "XWF",
+      "current_search_placeholder_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWF",
+      "current_csv_gate_failure_kind": "search_placeholder",
+      "search_placeholder_only": true,
+      "approved_safe_direct_buy_evidence_present": false,
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "owner_approval_authorized": false,
+      "link_promotion_authorized": false,
+      "exact_missing_proof": [
+        "Owner browser PASS on official manufacturer PDP for exact token XWF (not search.jsp).",
+        "browser_truth_classification=direct_buyable with fresh owner checked_at.",
+        "Committed owner browser proof / GE rescue browser evidence artifact for this filter.",
+        "Founder-gated retailer_links review/apply remains a separate lane — not authorized here.",
+        "XWF/XWFE supersession owner compatibility review still required before any future apply.",
+        "Wrong-family tokens must not be primary identity: XWFE."
+      ],
+      "proposed_official_manufacturer_pdp_candidates": [
+        {
+          "url": "https://www.geapplianceparts.com/store/parts/spec/XWF",
+          "provenance": "repo_discovered_ge_rescue_adapter",
+          "status": "NEEDS_OWNER_VERIFICATION",
+          "notes": "Present in committed ge-refrigerator-rescue-adapter-v1.json as discovered_spec_pdp_url — NOT owner-proven; do not promote."
+        }
+      ],
+      "candidate_urls_repo_proven": false,
+      "candidate_urls_need_owner_verification": true,
+      "wrong_family_forbidden_tokens": [
+        "XWFE"
+      ],
+      "supersession_review_required": true,
+      "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwf-v1.json",
+      "manufacturer_proof_packet_present": true,
+      "expected_browser_evidence_rel": "data/fridge/batch-production/ge-rescue/xwf-official-ge-browser-evidence-v1.json",
+      "expected_browser_evidence_present": false,
+      "owner_browser_checklist": {
+        "exact_url_to_open": "https://www.geapplianceparts.com/store/parts/spec/XWF",
+        "exact_part_number_to_confirm": "XWF",
+        "confirm_page_is_direct_buyable": true,
+        "confirm_page_is_official_manufacturer_source": true,
+        "screenshot_evidence_fields_needed": [
+          "full_page_or_pdp_hero showing exact token XWF",
+          "address_bar_final_url (must show /store/parts/spec/{TOKEN}, not search.jsp)",
+          "purchase_control_visible (Add to Cart or equivalent)",
+          "part_number_identity_in_title_or_h1",
+          "optional_wrong_family_absence_note",
+          "owner_checked_at_iso8601"
+        ],
+        "pass_rules": [
+          "Final URL is official GE Appliance Parts PDP at /store/parts/spec/XWF (not catalog/search.jsp).",
+          "Exact OEM part token XWF is visible in product title/H1 identity (not adjacent-only).",
+          "Page is official manufacturer source (geapplianceparts.com official path).",
+          "Page is direct-buyable (visible Add to Cart / equivalent purchase control for the exact token).",
+          "No wrong-family primary identity; no search-results or category landing as the proven destination.",
+          "Owner records screenshot + final URL + checked_at — still no CSV/retailer_links/buy CTA apply from this packet alone."
+        ],
+        "fail_rules": [
+          "Final URL remains search.jsp / searchKeyword / catalog search, or redirects away from the exact-token spec PDP.",
+          "Exact token XWF is absent from primary product identity.",
+          "Wrong-family token detected as primary identity (XWFE).",
+          "No direct-buy purchase control (not direct_buyable).",
+          "404 / discontinued / blocked error page for the candidate PDP."
+        ],
+        "unknown_rules": [
+          "Captcha, soft-block, region gate, or page load failure prevents classification.",
+          "Ambiguous multi-SKU / kit / multipack presentation where exact single-pack identity is unclear.",
+          "Purchase control visibility cannot be confirmed (loading/JS/partial capture).",
+          "Supersession messaging present without clear exact-token direct-buy PDP confirmation."
+        ]
+      },
+      "model_slugs_helped_if_proof_passes": [
+        "ge-gne27jstss",
+        "ge-gse25hskss"
+      ],
+      "remains_blocked_if_proof_fails": [
+        "ge-gne27jstss: remains SAFE_BUYER_PATH_FAIL for mapped filter xwf (search-placeholder / no direct_buyable /go).",
+        "ge-gse25hskss: remains SAFE_BUYER_PATH_FAIL for mapped filter xwf (search-placeholder / no direct_buyable /go).",
+        "No retailer_links promotion, Verified Link, or buy CTA authorization from a FAIL/UNKNOWN result.",
+        "This collection packet still does not authorize CSV/Supabase/owner-decision mutation."
+      ],
+      "collection_status": "READY_FOR_OWNER_BROWSER"
+    },
+    {
+      "filter_slug": "xwfe",
+      "oem_part_token": "XWFE",
+      "current_search_placeholder_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+      "current_csv_gate_failure_kind": "search_placeholder",
+      "search_placeholder_only": true,
+      "approved_safe_direct_buy_evidence_present": false,
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "owner_approval_authorized": false,
+      "link_promotion_authorized": false,
+      "exact_missing_proof": [
+        "Owner browser PASS on official manufacturer PDP for exact token XWFE (not search.jsp).",
+        "browser_truth_classification=direct_buyable with fresh owner checked_at.",
+        "Committed owner browser proof / GE rescue browser evidence artifact for this filter.",
+        "Founder-gated retailer_links review/apply remains a separate lane — not authorized here.",
+        "XWF/XWFE supersession owner compatibility review still required before any future apply.",
+        "Wrong-family tokens must not be primary identity: XWF."
+      ],
+      "proposed_official_manufacturer_pdp_candidates": [
+        {
+          "url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+          "provenance": "repo_discovered_ge_rescue_adapter",
+          "status": "NEEDS_OWNER_VERIFICATION",
+          "notes": "Present in committed ge-refrigerator-rescue-adapter-v1.json as discovered_spec_pdp_url — NOT owner-proven; do not promote."
+        }
+      ],
+      "candidate_urls_repo_proven": false,
+      "candidate_urls_need_owner_verification": true,
+      "wrong_family_forbidden_tokens": [
+        "XWF"
+      ],
+      "supersession_review_required": true,
+      "manufacturer_proof_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwfe-v1.json",
+      "manufacturer_proof_packet_present": true,
+      "expected_browser_evidence_rel": "data/fridge/batch-production/ge-rescue/xwfe-official-ge-browser-evidence-v1.json",
+      "expected_browser_evidence_present": false,
+      "owner_browser_checklist": {
+        "exact_url_to_open": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+        "exact_part_number_to_confirm": "XWFE",
+        "confirm_page_is_direct_buyable": true,
+        "confirm_page_is_official_manufacturer_source": true,
+        "screenshot_evidence_fields_needed": [
+          "full_page_or_pdp_hero showing exact token XWFE",
+          "address_bar_final_url (must show /store/parts/spec/{TOKEN}, not search.jsp)",
+          "purchase_control_visible (Add to Cart or equivalent)",
+          "part_number_identity_in_title_or_h1",
+          "optional_wrong_family_absence_note",
+          "owner_checked_at_iso8601"
+        ],
+        "pass_rules": [
+          "Final URL is official GE Appliance Parts PDP at /store/parts/spec/XWFE (not catalog/search.jsp).",
+          "Exact OEM part token XWFE is visible in product title/H1 identity (not adjacent-only).",
+          "Page is official manufacturer source (geapplianceparts.com official path).",
+          "Page is direct-buyable (visible Add to Cart / equivalent purchase control for the exact token).",
+          "No wrong-family primary identity; no search-results or category landing as the proven destination.",
+          "Owner records screenshot + final URL + checked_at — still no CSV/retailer_links/buy CTA apply from this packet alone."
+        ],
+        "fail_rules": [
+          "Final URL remains search.jsp / searchKeyword / catalog search, or redirects away from the exact-token spec PDP.",
+          "Exact token XWFE is absent from primary product identity.",
+          "Wrong-family token detected as primary identity (XWF).",
+          "No direct-buy purchase control (not direct_buyable).",
+          "404 / discontinued / blocked error page for the candidate PDP."
+        ],
+        "unknown_rules": [
+          "Captcha, soft-block, region gate, or page load failure prevents classification.",
+          "Ambiguous multi-SKU / kit / multipack presentation where exact single-pack identity is unclear.",
+          "Purchase control visibility cannot be confirmed (loading/JS/partial capture).",
+          "Supersession messaging present without clear exact-token direct-buy PDP confirmation."
+        ]
+      },
+      "model_slugs_helped_if_proof_passes": [
+        "ge-gfe24jgkww",
+        "ge-gfe27jmkes",
+        "ge-gne25jmkww",
+        "ge-gne27jstss",
+        "ge-gse25hskss",
+        "ge-pvd28bymfs"
+      ],
+      "remains_blocked_if_proof_fails": [
+        "ge-gfe24jgkww: remains SAFE_BUYER_PATH_FAIL for mapped filter xwfe (search-placeholder / no direct_buyable /go).",
+        "ge-gfe27jmkes: remains SAFE_BUYER_PATH_FAIL for mapped filter xwfe (search-placeholder / no direct_buyable /go).",
+        "ge-gne25jmkww: remains SAFE_BUYER_PATH_FAIL for mapped filter xwfe (search-placeholder / no direct_buyable /go).",
+        "ge-gne27jstss: remains SAFE_BUYER_PATH_FAIL for mapped filter xwfe (search-placeholder / no direct_buyable /go).",
+        "ge-gse25hskss: remains SAFE_BUYER_PATH_FAIL for mapped filter xwfe (search-placeholder / no direct_buyable /go).",
+        "ge-pvd28bymfs: remains SAFE_BUYER_PATH_FAIL for mapped filter xwfe (search-placeholder / no direct_buyable /go).",
+        "No retailer_links promotion, Verified Link, or buy CTA authorization from a FAIL/UNKNOWN result.",
+        "This collection packet still does not authorize CSV/Supabase/owner-decision mutation."
+      ],
+      "collection_status": "READY_FOR_OWNER_BROWSER"
+    }
+  ],
+  "slug_rows": [
+    {
+      "slug": "ge-gfe24jgkww",
+      "mapped_filter_slugs": [
+        "smartwater-mwfp",
+        "xwfe"
+      ],
+      "buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "filters_awaiting_owner_proof": [
+        "smartwater-mwfp",
+        "xwfe"
+      ],
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "owner_approval_authorized": false
+    },
+    {
+      "slug": "ge-gfe27jmkes",
+      "mapped_filter_slugs": [
+        "xwfe"
+      ],
+      "buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "filters_awaiting_owner_proof": [
+        "xwfe"
+      ],
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "owner_approval_authorized": false
+    },
+    {
+      "slug": "ge-gne25jmkww",
+      "mapped_filter_slugs": [
+        "xwfe"
+      ],
+      "buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "filters_awaiting_owner_proof": [
+        "xwfe"
+      ],
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "owner_approval_authorized": false
+    },
+    {
+      "slug": "ge-gne27jstss",
+      "mapped_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "filters_awaiting_owner_proof": [
+        "xwf",
+        "xwfe"
+      ],
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "owner_approval_authorized": false
+    },
+    {
+      "slug": "ge-gse25hskss",
+      "mapped_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "filters_awaiting_owner_proof": [
+        "xwf",
+        "xwfe"
+      ],
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "owner_approval_authorized": false
+    },
+    {
+      "slug": "ge-pvd28bymfs",
+      "mapped_filter_slugs": [
+        "xwfe"
+      ],
+      "buyer_path_failure_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      ],
+      "filters_awaiting_owner_proof": [
+        "xwfe"
+      ],
+      "invent_link_authorized": false,
+      "auto_promote_authorized": false,
+      "owner_approval_authorized": false
+    }
+  ],
+  "verdict_rules": {
+    "PASS": [
+      "Official GE Appliance Parts /store/parts/spec/{TOKEN} final URL.",
+      "Exact OEM token proven in primary identity.",
+      "Official manufacturer source + direct_buyable purchase control.",
+      "No wrong-family primary; owner evidence fields recorded.",
+      "PASS here means browser proof only — still no link promotion/apply."
+    ],
+    "FAIL": [
+      "Final URL remains search.jsp / searchKeyword / catalog search, or redirects away from the exact-token spec PDP.",
+      "Exact token {TOKEN} is absent from primary product identity.",
+      "Wrong-family / adjacent filter presented as the primary buy destination.",
+      "No direct-buy purchase control (not direct_buyable).",
+      "404 / discontinued / blocked error page for the candidate PDP."
+    ],
+    "UNKNOWN": [
+      "Captcha, soft-block, region gate, or page load failure prevents classification.",
+      "Ambiguous multi-SKU / kit / multipack presentation where exact single-pack identity is unclear.",
+      "Purchase control visibility cannot be confirmed (loading/JS/partial capture).",
+      "Supersession messaging present without clear exact-token direct-buy PDP confirmation."
+    ]
+  },
+  "proven_facts": [
+    "PROVEN: read_only=true; invent_link_authorized=false; auto_promote_authorized=false; owner_approval_authorized=false; link_promotion_authorized=false; pass_verdict_authorized=false.",
+    "PROVEN: exact slug scope=6 (ge-gfe24jgkww, ge-gfe27jmkes, ge-gne25jmkww, ge-gne27jstss, ge-gse25hskss, ge-pvd28bymfs).",
+    "PROVEN: exact filter scope=3 (smartwater-mwfp, xwf, xwfe).",
+    "PROVEN: ge-gte18gsnrss excluded as remain-no-buy.",
+    "PROVEN: CSV primaries for xwfe/xwf/smartwater-mwfp remain search placeholders without direct_buyable.",
+    "PROVEN: proposed /store/parts/spec/{TOKEN} candidates come from committed GE rescue/factory drafts only — status NEEDS_OWNER_VERIFICATION (not REPO_PROVEN_OWNER_PASS).",
+    "PROVEN: summary={\"filters_ready_for_owner_browser\":3,\"filters_with_repo_proven_official_pdp\":0,\"filters_with_candidate_needing_owner_verification\":3,\"filters_still_search_placeholder_only\":3,\"slugs_in_scope\":6}."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: whether discovered GE /store/parts/spec/{TOKEN} pages are live direct-buyable until owner browser PASS.",
+    "UNKNOWN: conversion/revenue impact of any future approved buyer path (not claimed)."
+  ],
+  "risk_notes": [
+    "Do not promote search placeholders or discovered candidates from this packet.",
+    "Do not mutate Supabase, CSV, retailer_links, buy CTA, sitemap, robots, Product JSON-LD, owner decisions, or deploy config.",
+    "XWF/XWFE supersession remains an owner compatibility gate before any future apply.",
+    "ge-gte18gsnrss remains no-buy and is out of scope."
+  ]
+}
