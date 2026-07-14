@@ -11,9 +11,9 @@
   "product_json_ld_mutation_authorized": false,
   "live_fetch_enabled": false,
   "live_fetch_status": "DISABLED_BY_DEFAULT",
-  "generated_at": "2026-07-14T03:48:07.122Z",
+  "generated_at": "2026-07-14T04:25:00.877Z",
   "source_command": "npm run buckparts:c-suite-readiness-audit",
-  "head_sha": "e097e09",
+  "head_sha": "c414563",
   "audit_mode": "local_repo_build",
   "scope": {
     "cohorts": [
@@ -166,14 +166,14 @@
   "executive_lanes": {
     "ceo_strategy": {
       "lane": "CEO strategy",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "blockers": [
-        "QA 20 runtime-risk: Supabase still has old rows on 20/20 while CSV intent is repaired",
-        "Frontend match for IN_SYNC cohorts not proven (render/source proof absent)"
+        "Frontend/customer-safe truth not proven for scoped cohorts (render/source proof absent)"
       ],
       "evidence": [
-        "PASS/GTE18/GSWF13 backend parity closed (artifact-backed IN_SYNC)",
-        "PARTIAL 3 remains held / not promoted"
+        "PASS 5 / GTE18 / GSWF 13 / QA 20 backend parity closed (artifact-backed IN_SYNC)",
+        "PARTIAL 3 remains held / not promoted",
+        "IN_SYNC does not auto-claim frontend-safe PASS"
       ]
     },
     "cto_architecture": {
@@ -190,14 +190,13 @@
     },
     "cpo_journey": {
       "lane": "CPO journey",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "blockers": [
-        "QA 20 customers likely see old Supabase filter families on model PDP",
         "Search → PDP → CTA → /go journey not render-proven for any slug in v1"
       ],
       "evidence": [
         "Journey architecture coded as Supabase runtime",
-        "CTA/go/product JSON-LD states remain UNKNOWN at slug level without page proof"
+        "QA 20 backend/runtime mappings IN_SYNC; frontend journey still UNKNOWN without render proof"
       ]
     },
     "coo_ops": {
@@ -208,7 +207,7 @@
       ],
       "evidence": [
         "Reusable guarded lane exists: parity → plan → approval → dry-run → apply → already_applied",
-        "QA 20 is the highest-priority unfinished sync after closed PASS/GTE18/GSWF13 lanes"
+        "QA 20 Supabase sync lane closed (parity IN_SYNC / post-apply ALREADY_APPLIED posture); next COO priority is frontend proof, not another sync plan"
       ]
     },
     "cfo_deploy_revenue": {
@@ -239,7 +238,7 @@
       "verdict": "UNKNOWN",
       "blockers": [
         "Fresh GSC / search-miss demand intersection not loaded in v1",
-        "Do not treat QA-drift or PARTIAL as coverage wins"
+        "Do not treat backend IN_SYNC (including QA 20) or PARTIAL as frontend-safe coverage wins"
       ],
       "evidence": [
         "Demand alignment left UNKNOWN rather than invented"
@@ -249,12 +248,12 @@
       "lane": "Data Officer metrics",
       "verdict": "FAIL",
       "blockers": [
-        "Backend parity progress (PASS/GTE18/GSWF13 closed) must not be reported as frontend-safe coverage",
-        "QA 20 proves CSV intent ≠ runtime Supabase customer truth"
+        "Backend parity progress (PASS/GTE18/GSWF13/QA20 closed) must not be reported as frontend-safe coverage",
+        "Frontend observed state / CTA / go-link remain UNKNOWN for all scoped slugs without render proof"
       ],
       "evidence": [
-        "backend_closed_in_sync_count=19",
-        "qa_20_supabase_old_rows_count=20",
+        "backend_closed_in_sync_count=39",
+        "qa_20_supabase_old_rows_count=0",
         "frontend_observed_state UNKNOWN for all 42 slugs"
       ]
     }
@@ -634,17 +633,16 @@
         "ultrawf"
       ],
       "supabase_mappings": [
-        "frig-242086201",
         "ultrawf"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -654,22 +652,16 @@
         "eptwfu01"
       ],
       "supabase_mappings": [
-        "eptwfu01",
-        "frig-242017801",
-        "frig-242086201",
-        "purepour",
-        "ultrawf",
-        "wf3cb",
-        "wfcb"
+        "eptwfu01"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -679,17 +671,16 @@
         "eptwfu01"
       ],
       "supabase_mappings": [
-        "eptwfu01",
-        "frig-242294502"
+        "eptwfu01"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -699,17 +690,16 @@
         "rpwfe"
       ],
       "supabase_mappings": [
-        "mswf",
         "rpwfe"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -719,18 +709,16 @@
         "rpwfe"
       ],
       "supabase_mappings": [
-        "mswf",
-        "mwf",
         "rpwfe"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -740,17 +728,16 @@
         "rpwfe"
       ],
       "supabase_mappings": [
-        "rpwfe",
-        "xwfe"
+        "rpwfe"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -761,20 +748,17 @@
         "lt1000pc"
       ],
       "supabase_mappings": [
-        "adq36006101",
-        "adq74793502",
         "lt1000p",
-        "lt1000pc",
-        "mdj64844601"
+        "lt1000pc"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -785,21 +769,17 @@
         "lt1000pc"
       ],
       "supabase_mappings": [
-        "adq36006101",
-        "adq74793502",
         "lt1000p",
-        "lt1000pc",
-        "lt700p",
-        "mdj64844601"
+        "lt1000pc"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -810,21 +790,17 @@
         "lt1000pc"
       ],
       "supabase_mappings": [
-        "adq36006101",
-        "adq74793502",
         "lt1000p",
-        "lt1000pc",
-        "lt700p",
-        "mdj64844601"
+        "lt1000pc"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -835,20 +811,17 @@
         "lt1000pc"
       ],
       "supabase_mappings": [
-        "adq36006101",
-        "adq74793502",
         "lt1000p",
-        "lt1000pc",
-        "mdj64844601"
+        "lt1000pc"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -859,21 +832,17 @@
         "lt1000pc"
       ],
       "supabase_mappings": [
-        "adq36006101",
-        "adq74793502",
         "lt1000p",
-        "lt1000pc",
-        "lt700p",
-        "mdj64844601"
+        "lt1000pc"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -883,18 +852,16 @@
         "lt1000p"
       ],
       "supabase_mappings": [
-        "lt1000p",
-        "lt600p",
-        "lt800p"
+        "lt1000p"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -904,18 +871,16 @@
         "da29-00020b"
       ],
       "supabase_mappings": [
-        "da29-00020b",
-        "da97-17376a",
-        "da97-17376b"
+        "da29-00020b"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -925,18 +890,16 @@
         "da29-00020b"
       ],
       "supabase_mappings": [
-        "da29-00020b",
-        "da29-10105j",
-        "da97-19467c"
+        "da29-00020b"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -946,18 +909,16 @@
         "da97-17376b"
       ],
       "supabase_mappings": [
-        "da29-00012b",
-        "da29-00020b",
         "da97-17376b"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -968,19 +929,17 @@
         "da97-17376b"
       ],
       "supabase_mappings": [
-        "da29-00012b",
-        "da29-00020b",
         "da97-17376a",
         "da97-17376b"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -990,19 +949,16 @@
         "edr4rxd1"
       ],
       "supabase_mappings": [
-        "4396841",
-        "4396842",
-        "edr4rxd1",
-        "w10413645a"
+        "edr4rxd1"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -1012,17 +968,16 @@
         "edr1rxd1"
       ],
       "supabase_mappings": [
-        "edr1rxd1",
-        "edr3rxd1"
+        "edr1rxd1"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -1032,23 +987,16 @@
         "edr4rxd1"
       ],
       "supabase_mappings": [
-        "4396395",
-        "4396508",
-        "4396710",
-        "46-9002",
-        "8171413",
-        "edr1rxd1",
-        "edr2rxd1",
         "edr4rxd1"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -1058,18 +1006,16 @@
         "edr2rxd1"
       ],
       "supabase_mappings": [
-        "edr2rxd1",
-        "edr4rxd1",
-        "ukf8001"
+        "edr2rxd1"
       ],
-      "backend_classification": "SUPABASE_STILL_HAS_OLD_ROWS",
+      "backend_classification": "IN_SYNC",
       "frontend_observed_state": "UNKNOWN",
       "cta_go_link_state": "UNKNOWN",
       "product_json_ld_state": "UNKNOWN",
-      "verdict": "FAIL",
+      "verdict": "UNKNOWN",
       "notes": [
         "parity_artifact=data/fridge/batch-production/drafts/refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.json",
-        "Runtime customer truth likely shows old Supabase rows on /fridge/[slug]"
+        "Backend parity closed; frontend match NOT claimed without render/source proof"
       ]
     },
     {
@@ -1150,8 +1096,8 @@
       "qa_20": {
         "slug_count": 20,
         "PASS": 0,
-        "FAIL": 20,
-        "UNKNOWN": 0
+        "FAIL": 0,
+        "UNKNOWN": 20
       },
       "gswf_partial_3": {
         "slug_count": 3,
@@ -1162,30 +1108,30 @@
     },
     "by_verdict": {
       "PASS": 0,
-      "FAIL": 20,
-      "UNKNOWN": 22
+      "FAIL": 0,
+      "UNKNOWN": 42
     },
-    "backend_closed_in_sync_count": 19,
-    "qa_20_supabase_old_rows_count": 20,
+    "backend_closed_in_sync_count": 39,
+    "qa_20_supabase_old_rows_count": 0,
     "partial_held_count": 3
   },
   "explicit_callouts": [
-    "QA 20 is runtime-risk because Supabase still has old rows on 20/20.",
-    "PASS 5, GTE18, and GSWF 13 are backend parity closed (artifact-backed IN_SYNC) when their parity packets are present.",
+    "QA 20 backend/runtime Supabase parity is closed IN_SYNC 20/20 (old leftover rows=0).",
+    "PASS 5, GTE18, GSWF 13, and QA 20 are backend parity closed (artifact-backed IN_SYNC).",
     "Frontend match is not claimed unless render/source proof exists — IN_SYNC does not auto-mark frontend-safe.",
     "GSWF PARTIAL 3 remains held/unknown and must never be promoted from this audit.",
     "Product JSON-LD / CTA / go-link per-slug claims remain UNKNOWN without inspected page/data proof."
   ],
   "next_10_moves": [
-    "Build Refrigerator QA 20 Supabase sync plan/owner-review (20/20 still have old runtime rows). (auditor count: 20 FAIL / old-row slugs).",
-    "Produce frontend mismatch proof pack (PDP filter extract) for worst QA drift slugs.",
-    "Run IN_SYNC cohort smoke for PASS 5 + GTE18 + sample GSWF 13 (confirm PDP equals intent). (backend-closed IN_SYNC count this audit: 19).",
+    "Produce frontend rendered truth proof pack (PDP filter extract) for IN_SYNC cohorts including QA 20 — do not claim frontend-safe without render proof.",
+    "Run IN_SYNC cohort smoke for PASS 5 + GTE18 + GSWF 13 + QA 20 sample (confirm PDP equals CSV/Supabase intent). (backend-closed IN_SYNC count this audit: 39).",
+    "CTA / go-link proof for correct filters only on IN_SYNC slugs (visibility + /go vs go-unavailable).",
     "PARTIAL 3 promotion kill-check: assert no CTA/index 'ready' and keep held. (held count: 3).",
     "Safe CTA gap report for IN_SYNC cohorts (repaired truth ≠ monetizable buyer path).",
     "Split Command Center metrics: backend_parity_closed vs frontend_safe_coverage.",
     "JSON-LD / claims lint on sample filter pages in the 42-slug scope.",
     "Credit/deploy gate board: what truth work proceeds without spend vs needs deploy.",
-    "Demand ∩ QA-drift: prioritize sync for QA slugs appearing in GSC/search-miss.",
+    "Demand ∩ closed backend cohorts: prioritize frontend proof for GSC/search-miss IN_SYNC slugs.",
     "COO reusable checklist template: parity → sync plan → approval → guarded apply → already_applied."
   ],
   "credit_control_summary": {
@@ -1207,7 +1153,8 @@
     "PROVEN: exact scope=42 slugs across 5 cohorts.",
     "PROVEN: live_fetch_enabled=false by default; v1 does not fetch production URLs.",
     "PROVEN: live fridge PDP loader does not read data/compatibility_mappings.csv; runtime = Supabase",
-    "PROVEN: QA old-row count from parity artifact compose=20."
+    "PROVEN: QA old-row count from parity artifact compose=0.",
+    "PROVEN: QA 20 cohort backend classifications are IN_SYNC for all 20 slugs."
   ],
   "unknown_facts": [
     "UNKNOWN: Observed PDP filter lists for all 42 slugs (no render/source proof in v1).",

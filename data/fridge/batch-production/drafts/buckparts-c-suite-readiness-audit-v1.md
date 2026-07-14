@@ -1,17 +1,15 @@
 # BuckParts C-Suite readiness audit v1
 
-Generated: 2026-07-14T03:48:07.122Z
-HEAD: `e097e09`
+Generated: 2026-07-14T04:25:00.877Z
+HEAD: `c414563`
 
 ## Executive verdicts
 
-- **CEO strategy**: FAIL
-  - blocker: QA 20 runtime-risk: Supabase still has old rows on 20/20 while CSV intent is repaired
-  - blocker: Frontend match for IN_SYNC cohorts not proven (render/source proof absent)
+- **CEO strategy**: UNKNOWN
+  - blocker: Frontend/customer-safe truth not proven for scoped cohorts (render/source proof absent)
 - **CTO architecture**: PASS
   - blocker: Live render / CDN / env parity for the 42 slugs not checked (live fetch disabled)
-- **CPO journey**: FAIL
-  - blocker: QA 20 customers likely see old Supabase filter families on model PDP
+- **CPO journey**: UNKNOWN
   - blocker: Search → PDP → CTA → /go journey not render-proven for any slug in v1
 - **COO operating system**: PASS
   - blocker: Time/cost per batch not instrumented in this audit
@@ -22,15 +20,15 @@ HEAD: `e097e09`
   - blocker: Live page HTML / emitted JSON-LD not fetched for scoped slugs
 - **CMO demand capture**: UNKNOWN
   - blocker: Fresh GSC / search-miss demand intersection not loaded in v1
-  - blocker: Do not treat QA-drift or PARTIAL as coverage wins
+  - blocker: Do not treat backend IN_SYNC (including QA 20) or PARTIAL as frontend-safe coverage wins
 - **Data Officer metrics**: FAIL
-  - blocker: Backend parity progress (PASS/GTE18/GSWF13 closed) must not be reported as frontend-safe coverage
-  - blocker: QA 20 proves CSV intent ≠ runtime Supabase customer truth
+  - blocker: Backend parity progress (PASS/GTE18/GSWF13/QA20 closed) must not be reported as frontend-safe coverage
+  - blocker: Frontend observed state / CTA / go-link remain UNKNOWN for all scoped slugs without render proof
 
 ## Explicit callouts
 
-- QA 20 is runtime-risk because Supabase still has old rows on 20/20.
-- PASS 5, GTE18, and GSWF 13 are backend parity closed (artifact-backed IN_SYNC) when their parity packets are present.
+- QA 20 backend/runtime Supabase parity is closed IN_SYNC 20/20 (old leftover rows=0).
+- PASS 5, GTE18, GSWF 13, and QA 20 are backend parity closed (artifact-backed IN_SYNC).
 - Frontend match is not claimed unless render/source proof exists — IN_SYNC does not auto-mark frontend-safe.
 - GSWF PARTIAL 3 remains held/unknown and must never be promoted from this audit.
 - Product JSON-LD / CTA / go-link per-slug claims remain UNKNOWN without inspected page/data proof.
@@ -38,10 +36,10 @@ HEAD: `e097e09`
 ## Cohort totals
 
 - PASS: 0
-- FAIL: 20
-- UNKNOWN: 22
-- backend_closed_in_sync_count: 19
-- qa_20_supabase_old_rows_count: 20
+- FAIL: 0
+- UNKNOWN: 42
+- backend_closed_in_sync_count: 39
+- qa_20_supabase_old_rows_count: 0
 - partial_held_count: 3
 
 ## Cohort table
@@ -67,26 +65,26 @@ HEAD: `e097e09`
 | gswf_13 | ge-pfe28kmkww | rpwfe|xwf | rpwfe|xwf | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
 | gswf_13 | ge-pfe28kynbb | rpwfe | rpwfe | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
 | gswf_13 | ge-pvd28bymfs | xwfe | xwfe | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
-| qa_20 | frigidaire-ffhb2740ps | ultrawf | frig-242086201|ultrawf | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | frigidaire-fghb2868pf | eptwfu01 | eptwfu01|frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | frigidaire-fgsc2335tf | eptwfu01 | eptwfu01|frig-242294502 | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | ge-gfe28gmkes | rpwfe | mswf|rpwfe | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | ge-gfe28gskss | rpwfe | mswf|mwf|rpwfe | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | ge-gfe28gynfs | rpwfe | rpwfe|xwfe | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | lg-lfxc22596s | lt1000p|lt1000pc | adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601 | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | lg-lfxs26973s | lt1000p|lt1000pc | adq36006101|adq74793502|lt1000p|lt1000pc|lt700p|mdj64844601 | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | lg-lfxs28968s | lt1000p|lt1000pc | adq36006101|adq74793502|lt1000p|lt1000pc|lt700p|mdj64844601 | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | lg-lmxs28626s | lt1000p|lt1000pc | adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601 | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | lg-lrfvs3006s | lt1000p|lt1000pc | adq36006101|adq74793502|lt1000p|lt1000pc|lt700p|mdj64844601 | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | lg-lrfxs3106s | lt1000p | lt1000p|lt600p|lt800p | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | samsung-rf263beaesr | da29-00020b | da29-00020b|da97-17376a|da97-17376b | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | samsung-rf28nhedbsr | da29-00020b | da29-00020b|da29-10105j|da97-19467c | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | samsung-rf28r7201sr | da97-17376b | da29-00012b|da29-00020b|da97-17376b | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | samsung-rf28r7351sg | da97-17376a|da97-17376b | da29-00012b|da29-00020b|da97-17376a|da97-17376b | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | whirlpool-wrf540cwhz | edr4rxd1 | 4396841|4396842|edr4rxd1|w10413645a | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | whirlpool-wrs325sdhz | edr1rxd1 | edr1rxd1|edr3rxd1 | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | whirlpool-wrx735sdhz | edr4rxd1 | 4396395|4396508|4396710|46-9002|8171413|edr1rxd1|edr2rxd1|edr4rxd1 | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
-| qa_20 | whirlpool-wrx986sihz | edr2rxd1 | edr2rxd1|edr4rxd1|ukf8001 | SUPABASE_STILL_HAS_OLD_ROWS | UNKNOWN | UNKNOWN | FAIL |
+| qa_20 | frigidaire-ffhb2740ps | ultrawf | ultrawf | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | frigidaire-fghb2868pf | eptwfu01 | eptwfu01 | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | frigidaire-fgsc2335tf | eptwfu01 | eptwfu01 | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | ge-gfe28gmkes | rpwfe | rpwfe | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | ge-gfe28gskss | rpwfe | rpwfe | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | ge-gfe28gynfs | rpwfe | rpwfe | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | lg-lfxc22596s | lt1000p|lt1000pc | lt1000p|lt1000pc | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | lg-lfxs26973s | lt1000p|lt1000pc | lt1000p|lt1000pc | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | lg-lfxs28968s | lt1000p|lt1000pc | lt1000p|lt1000pc | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | lg-lmxs28626s | lt1000p|lt1000pc | lt1000p|lt1000pc | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | lg-lrfvs3006s | lt1000p|lt1000pc | lt1000p|lt1000pc | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | lg-lrfxs3106s | lt1000p | lt1000p | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | samsung-rf263beaesr | da29-00020b | da29-00020b | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | samsung-rf28nhedbsr | da29-00020b | da29-00020b | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | samsung-rf28r7201sr | da97-17376b | da97-17376b | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | samsung-rf28r7351sg | da97-17376a|da97-17376b | da97-17376a|da97-17376b | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | whirlpool-wrf540cwhz | edr4rxd1 | edr4rxd1 | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | whirlpool-wrs325sdhz | edr1rxd1 | edr1rxd1 | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | whirlpool-wrx735sdhz | edr4rxd1 | edr4rxd1 | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
+| qa_20 | whirlpool-wrx986sihz | edr2rxd1 | edr2rxd1 | IN_SYNC | UNKNOWN | UNKNOWN | UNKNOWN |
 | gswf_partial_3 | ge-gfe28hmkww | gswf|gswf2 | UNKNOWN | PARTIAL_HELD_UNKNOWN_NOT_PROVEN | UNKNOWN | UNKNOWN | UNKNOWN |
 | gswf_partial_3 | ge-gsc25frshss | gswf|gswf2 | UNKNOWN | PARTIAL_HELD_UNKNOWN_NOT_PROVEN | UNKNOWN | UNKNOWN | UNKNOWN |
 | gswf_partial_3 | ge-gse26gshess | gswf|gswf2 | UNKNOWN | PARTIAL_HELD_UNKNOWN_NOT_PROVEN | UNKNOWN | UNKNOWN | UNKNOWN |
@@ -107,15 +105,15 @@ HEAD: `e097e09`
 
 ## Ranked next 10 moves
 
-1. Build Refrigerator QA 20 Supabase sync plan/owner-review (20/20 still have old runtime rows). (auditor count: 20 FAIL / old-row slugs).
-2. Produce frontend mismatch proof pack (PDP filter extract) for worst QA drift slugs.
-3. Run IN_SYNC cohort smoke for PASS 5 + GTE18 + sample GSWF 13 (confirm PDP equals intent). (backend-closed IN_SYNC count this audit: 19).
+1. Produce frontend rendered truth proof pack (PDP filter extract) for IN_SYNC cohorts including QA 20 — do not claim frontend-safe without render proof.
+2. Run IN_SYNC cohort smoke for PASS 5 + GTE18 + GSWF 13 + QA 20 sample (confirm PDP equals CSV/Supabase intent). (backend-closed IN_SYNC count this audit: 39).
+3. CTA / go-link proof for correct filters only on IN_SYNC slugs (visibility + /go vs go-unavailable).
 4. PARTIAL 3 promotion kill-check: assert no CTA/index 'ready' and keep held. (held count: 3).
 5. Safe CTA gap report for IN_SYNC cohorts (repaired truth ≠ monetizable buyer path).
 6. Split Command Center metrics: backend_parity_closed vs frontend_safe_coverage.
 7. JSON-LD / claims lint on sample filter pages in the 42-slug scope.
 8. Credit/deploy gate board: what truth work proceeds without spend vs needs deploy.
-9. Demand ∩ QA-drift: prioritize sync for QA slugs appearing in GSC/search-miss.
+9. Demand ∩ closed backend cohorts: prioritize frontend proof for GSC/search-miss IN_SYNC slugs.
 10. COO reusable checklist template: parity → sync plan → approval → guarded apply → already_applied.
 
 ## Flags
@@ -131,7 +129,8 @@ HEAD: `e097e09`
 - PROVEN: exact scope=42 slugs across 5 cohorts.
 - PROVEN: live_fetch_enabled=false by default; v1 does not fetch production URLs.
 - PROVEN: live fridge PDP loader does not read data/compatibility_mappings.csv; runtime = Supabase
-- PROVEN: QA old-row count from parity artifact compose=20.
+- PROVEN: QA old-row count from parity artifact compose=0.
+- PROVEN: QA 20 cohort backend classifications are IN_SYNC for all 20 slugs.
 
 ## Unknown facts
 

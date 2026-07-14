@@ -60,7 +60,11 @@ function architectureFixtures(): Record<string, string> {
   };
 }
 
-function seedFixture(root: string): void {
+function seedFixture(
+  root: string,
+  opts?: { qaClassification?: "SUPABASE_STILL_HAS_OLD_ROWS" | "IN_SYNC" },
+): void {
+  const qaClassification = opts?.qaClassification ?? "SUPABASE_STILL_HAS_OLD_ROWS";
   mkdirSync(path.join(root, "data/fridge/batch-production/drafts"), { recursive: true });
   mkdirSync(path.join(root, "data/ops/credit-control"), { recursive: true });
   for (const [rel, body] of Object.entries(architectureFixtures())) {
@@ -140,8 +144,9 @@ function seedFixture(root: string): void {
     JSON.stringify({
       rows: BUCKPARTS_C_SUITE_COHORT_SLUGS_V1.qa_20.map((slug) => ({
         fridge_slug: slug,
-        classification: "SUPABASE_STILL_HAS_OLD_ROWS",
-        supabase_mappings: ["ultrawf", "old-wrong"],
+        classification: qaClassification,
+        supabase_mappings:
+          qaClassification === "IN_SYNC" ? ["ultrawf"] : ["ultrawf", "old-wrong"],
       })),
     }),
     "utf8",
@@ -286,6 +291,49 @@ test("audit: mutation flags false, live fetch disabled, QA executive risk, PARTI
   }
 });
 
+test("post-sync QA IN_SYNC: no stale runtime-risk callout; next moves shift to frontend proof", () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), "c-suite-audit-closed-"));
+  try {
+    seedFixture(tmp, { qaClassification: "IN_SYNC" });
+    const report = buildBuckpartsCSuiteReadinessAuditV1({
+      rootDir: tmp,
+      now: FIXED_NOW,
+      headSha: "c414563",
+    });
+
+    assert.equal(report.cohort_totals.qa_20_supabase_old_rows_count, 0);
+    assert.equal(report.cohort_totals.by_verdict.FAIL, 0);
+    assert.equal(report.executive_lanes.ceo_strategy.verdict, "UNKNOWN");
+    assert.equal(report.executive_lanes.cpo_journey.verdict, "UNKNOWN");
+    assert.equal(report.executive_lanes.data_metrics.verdict, "FAIL");
+    assert.doesNotMatch(
+      report.executive_lanes.data_metrics.blockers.join("\n"),
+      /QA 20 proves CSV intent ≠ runtime/,
+    );
+    assert.match(
+      report.executive_lanes.data_metrics.blockers.join("\n"),
+      /frontend-safe coverage|Frontend observed state/i,
+    );
+    assert.match(
+      report.explicit_callouts.join("\n"),
+      /QA 20 backend\/runtime Supabase parity is closed IN_SYNC 20\/20/,
+    );
+    assert.doesNotMatch(report.explicit_callouts.join("\n"), /still has old rows/);
+    assert.match(report.next_10_moves[0] ?? "", /frontend rendered truth proof/i);
+    assert.doesNotMatch(report.next_10_moves.join("\n"), /QA 20 Supabase sync plan/);
+
+    const qa = report.cohort_rows.filter((r) => r.cohort === "qa_20");
+    assert.equal(qa.length, 20);
+    for (const row of qa) {
+      assert.equal(row.backend_classification, "IN_SYNC");
+      assert.equal(row.frontend_observed_state, "UNKNOWN");
+      assert.equal(row.verdict, "UNKNOWN");
+    }
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
 test("writes only allowlisted draft paths; live-base-url stays disabled in v1", () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "c-suite-audit-write-"));
   try {
@@ -336,13 +384,26 @@ test("repo integration: build against real artifacts when present", () => {
   if (!existsSync(qaArtifact)) {
     return;
   }
+  const parity = JSON.parse(readFileSync(qaArtifact, "utf8")) as {
+    classification_counts?: { IN_SYNC?: number; SUPABASE_STILL_HAS_OLD_ROWS?: number };
+  };
   const report = buildBuckpartsCSuiteReadinessAuditV1({
     rootDir: ROOT,
     now: FIXED_NOW,
   });
   assert.equal(report.cohort_rows.length, 42);
-  assert.equal(report.cohort_totals.qa_20_supabase_old_rows_count, 20);
-  assert.equal(report.executive_lanes.ceo_strategy.verdict, "FAIL");
+  const oldExpected = parity.classification_counts?.SUPABASE_STILL_HAS_OLD_ROWS ?? 0;
+  assert.equal(report.cohort_totals.qa_20_supabase_old_rows_count, oldExpected);
+  if (oldExpected === 0 && parity.classification_counts?.IN_SYNC === 20) {
+    assert.equal(report.executive_lanes.ceo_strategy.verdict, "UNKNOWN");
+    assert.match(
+      report.explicit_callouts.join("\n"),
+      /QA 20 backend\/runtime Supabase parity is closed IN_SYNC 20\/20/,
+    );
+    assert.match(report.next_10_moves[0] ?? "", /frontend rendered truth proof/i);
+  } else if (oldExpected === 20) {
+    assert.equal(report.executive_lanes.ceo_strategy.verdict, "FAIL");
+  }
   assert.ok(
     report.cohort_rows
       .filter((r) => r.cohort === "samsung_pass_5")

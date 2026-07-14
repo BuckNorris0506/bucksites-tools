@@ -304,13 +304,27 @@ export async function buildRefrigeratorModelFirstQaBatchSupabaseCompatParityOwne
     "PROVEN: CSV current mappings are treated as post-apply intent for each of the 20 QA-batch slugs.",
   ];
 
+  const allInSync =
+    classification_counts.IN_SYNC === expectedSlugs.length &&
+    classification_counts.SUPABASE_STILL_HAS_OLD_ROWS === 0 &&
+    classification_counts.SUPABASE_MISSING_TARGET === 0 &&
+    classification_counts.CONFLICT === 0 &&
+    classification_counts.UNKNOWN_READ_FAILED === 0;
+
   const unknown_facts = [
-    "UNKNOWN: Whether founder will authorize a future guarded Supabase compat sync apply for these 20 slugs.",
+    allInSync
+      ? "UNKNOWN: Whether future drift will reintroduce old Supabase leftover rows for these 20 QA slugs after this IN_SYNC proof."
+      : "UNKNOWN: Whether founder will authorize a future guarded Supabase compat sync apply for these 20 slugs.",
     "UNKNOWN: Whether live public pages currently resolve filters from CSV, Supabase, or both after deploy.",
   ];
   if (classification_counts.UNKNOWN_READ_FAILED > 0) {
     unknown_facts.unshift(
       `UNKNOWN: Supabase read failed for ${String(classification_counts.UNKNOWN_READ_FAILED)} slug(s) — see row read_error.`,
+    );
+  }
+  if (allInSync) {
+    proven_facts.push(
+      "PROVEN: all 20 QA-batch slugs are IN_SYNC (CSV intent equals live Supabase mappings at this proof).",
     );
   }
 

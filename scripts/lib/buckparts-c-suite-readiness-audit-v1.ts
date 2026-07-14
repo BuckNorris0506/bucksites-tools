@@ -540,8 +540,13 @@ export function buildBuckpartsCSuiteNext10MovesV1(args: {
   qaFailCount: number;
   backendClosedCount: number;
   partialHeldCount: number;
+  qaBackendClosed?: boolean;
 }): string[] {
-  return [
+  // Prefer explicit closed flag when provided; otherwise treat zero old-row failures as post-sync posture.
+  const useClosedMoves =
+    args.qaBackendClosed === true ||
+    (args.qaBackendClosed !== false && args.qaFailCount === 0);
+  const movesWhenQaDrifting = [
     "Build Refrigerator QA 20 Supabase sync plan/owner-review (20/20 still have old runtime rows).",
     "Produce frontend mismatch proof pack (PDP filter extract) for worst QA drift slugs.",
     "Run IN_SYNC cohort smoke for PASS 5 + GTE18 + sample GSWF 13 (confirm PDP equals intent).",
@@ -552,11 +557,28 @@ export function buildBuckpartsCSuiteNext10MovesV1(args: {
     "Credit/deploy gate board: what truth work proceeds without spend vs needs deploy.",
     "Demand ∩ QA-drift: prioritize sync for QA slugs appearing in GSC/search-miss.",
     "COO reusable checklist template: parity → sync plan → approval → guarded apply → already_applied.",
-  ].map((move, i) => {
-    if (i === 0 && args.qaFailCount > 0) {
+  ];
+  const movesWhenQaClosed = [
+    "Produce frontend rendered truth proof pack (PDP filter extract) for IN_SYNC cohorts including QA 20 — do not claim frontend-safe without render proof.",
+    "Run IN_SYNC cohort smoke for PASS 5 + GTE18 + GSWF 13 + QA 20 sample (confirm PDP equals CSV/Supabase intent).",
+    "CTA / go-link proof for correct filters only on IN_SYNC slugs (visibility + /go vs go-unavailable).",
+    "PARTIAL 3 promotion kill-check: assert no CTA/index 'ready' and keep held.",
+    "Safe CTA gap report for IN_SYNC cohorts (repaired truth ≠ monetizable buyer path).",
+    "Split Command Center metrics: backend_parity_closed vs frontend_safe_coverage.",
+    "JSON-LD / claims lint on sample filter pages in the 42-slug scope.",
+    "Credit/deploy gate board: what truth work proceeds without spend vs needs deploy.",
+    "Demand ∩ closed backend cohorts: prioritize frontend proof for GSC/search-miss IN_SYNC slugs.",
+    "COO reusable checklist template: parity → sync plan → approval → guarded apply → already_applied.",
+  ];
+  const base = useClosedMoves ? movesWhenQaClosed : movesWhenQaDrifting;
+  return base.map((move, i) => {
+    if (!useClosedMoves && i === 0 && args.qaFailCount > 0) {
       return `${move} (auditor count: ${String(args.qaFailCount)} FAIL / old-row slugs).`;
     }
-    if (i === 2) {
+    if (i === 1 && useClosedMoves) {
+      return `${move} (backend-closed IN_SYNC count this audit: ${String(args.backendClosedCount)}).`;
+    }
+    if (!useClosedMoves && i === 2) {
       return `${move} (backend-closed IN_SYNC count this audit: ${String(args.backendClosedCount)}).`;
     }
     if (i === 3) {
@@ -697,10 +719,22 @@ export function buildBuckpartsCSuiteReadinessAuditV1(
     }
   }
 
-  const qaRisk =
+  const qaRiskFull =
     qa_20_supabase_old_rows_count ===
     BUCKPARTS_C_SUITE_COHORT_SLUGS_V1.qa_20.length;
-  const backendClosedCohorts = ["gte18", "samsung_pass_5", "gswf_13"] as const;
+  const qaRiskPartial =
+    qa_20_supabase_old_rows_count > 0 && !qaRiskFull;
+  const qaBackendClosed =
+    qa_20_supabase_old_rows_count === 0 &&
+    cohort_rows
+      .filter((r) => r.cohort === "qa_20")
+      .every((r) => r.backend_classification === "IN_SYNC");
+  const backendClosedCohorts = [
+    "gte18",
+    "samsung_pass_5",
+    "gswf_13",
+    "qa_20",
+  ] as const;
   const backendClosedAll = backendClosedCohorts.every((id) =>
     cohort_rows
       .filter((r) => r.cohort === id)
@@ -710,18 +744,28 @@ export function buildBuckpartsCSuiteReadinessAuditV1(
   const executive_lanes = {
     ceo_strategy: lane(
       "CEO strategy",
-      qaRisk ? "FAIL" : "UNKNOWN",
-      qaRisk
+      qaRiskFull ? "FAIL" : "UNKNOWN",
+      qaRiskFull
         ? [
             "QA 20 runtime-risk: Supabase still has old rows on 20/20 while CSV intent is repaired",
             "Frontend match for IN_SYNC cohorts not proven (render/source proof absent)",
           ]
-        : ["Frontend/customer-safe truth not proven for scoped cohorts"],
+        : [
+            "Frontend/customer-safe truth not proven for scoped cohorts (render/source proof absent)",
+            ...(qaRiskPartial
+              ? [
+                  `QA 20 partial Supabase old-row drift remains on ${String(qa_20_supabase_old_rows_count)}/20`,
+                ]
+              : []),
+          ],
       [
         backendClosedAll
-          ? "PASS/GTE18/GSWF13 backend parity closed (artifact-backed IN_SYNC)"
-          : "Some closed cohorts missing IN_SYNC evidence",
+          ? "PASS 5 / GTE18 / GSWF 13 / QA 20 backend parity closed (artifact-backed IN_SYNC)"
+          : qaBackendClosed
+            ? "QA 20 backend/runtime parity closed IN_SYNC 20/20; other closed-cohort evidence may still be partial"
+            : "Some closed cohorts missing IN_SYNC evidence",
         "PARTIAL 3 remains held / not promoted",
+        "IN_SYNC does not auto-claim frontend-safe PASS",
       ],
     ),
     cto_architecture: lane(
@@ -740,16 +784,23 @@ export function buildBuckpartsCSuiteReadinessAuditV1(
     ),
     cpo_journey: lane(
       "CPO journey",
-      qaRisk ? "FAIL" : "UNKNOWN",
+      qaRiskFull ? "FAIL" : "UNKNOWN",
       [
-        ...(qaRisk
+        ...(qaRiskFull
           ? ["QA 20 customers likely see old Supabase filter families on model PDP"]
+          : []),
+        ...(qaRiskPartial
+          ? [
+              `QA 20 partial drift may still surface old filters on ${String(qa_20_supabase_old_rows_count)}/20 PDPs`,
+            ]
           : []),
         "Search → PDP → CTA → /go journey not render-proven for any slug in v1",
       ],
       [
         "Journey architecture coded as Supabase runtime",
-        "CTA/go/product JSON-LD states remain UNKNOWN at slug level without page proof",
+        qaBackendClosed
+          ? "QA 20 backend/runtime mappings IN_SYNC; frontend journey still UNKNOWN without render proof"
+          : "CTA/go/product JSON-LD states remain UNKNOWN at slug level without page proof",
       ],
     ),
     coo_ops: lane(
@@ -758,7 +809,9 @@ export function buildBuckpartsCSuiteReadinessAuditV1(
       ["Time/cost per batch not instrumented in this audit"],
       [
         "Reusable guarded lane exists: parity → plan → approval → dry-run → apply → already_applied",
-        "QA 20 is the highest-priority unfinished sync after closed PASS/GTE18/GSWF13 lanes",
+        qaBackendClosed
+          ? "QA 20 Supabase sync lane closed (parity IN_SYNC / post-apply ALREADY_APPLIED posture); next COO priority is frontend proof, not another sync plan"
+          : "QA 20 remains the highest-priority unfinished sync after closed PASS/GTE18/GSWF13 lanes",
       ],
     ),
     cfo_deploy_revenue: lane(
@@ -796,17 +849,24 @@ export function buildBuckpartsCSuiteReadinessAuditV1(
       "UNKNOWN",
       [
         "Fresh GSC / search-miss demand intersection not loaded in v1",
-        "Do not treat QA-drift or PARTIAL as coverage wins",
+        qaBackendClosed
+          ? "Do not treat backend IN_SYNC (including QA 20) or PARTIAL as frontend-safe coverage wins"
+          : "Do not treat QA-drift or PARTIAL as coverage wins",
       ],
       ["Demand alignment left UNKNOWN rather than invented"],
     ),
     data_metrics: lane(
       "Data Officer metrics",
       "FAIL",
-      [
-        "Backend parity progress (PASS/GTE18/GSWF13 closed) must not be reported as frontend-safe coverage",
-        "QA 20 proves CSV intent ≠ runtime Supabase customer truth",
-      ],
+      qaBackendClosed
+        ? [
+            "Backend parity progress (PASS/GTE18/GSWF13/QA20 closed) must not be reported as frontend-safe coverage",
+            "Frontend observed state / CTA / go-link remain UNKNOWN for all scoped slugs without render proof",
+          ]
+        : [
+            "Backend parity progress (PASS/GTE18/GSWF13 closed) must not be reported as frontend-safe coverage",
+            "QA 20 proves CSV intent ≠ runtime Supabase customer truth",
+          ],
       [
         `backend_closed_in_sync_count=${String(backend_closed_in_sync_count)}`,
         `qa_20_supabase_old_rows_count=${String(qa_20_supabase_old_rows_count)}`,
@@ -819,11 +879,18 @@ export function buildBuckpartsCSuiteReadinessAuditV1(
     qaFailCount: qa_20_supabase_old_rows_count,
     backendClosedCount: backend_closed_in_sync_count,
     partialHeldCount: partial_held_count,
+    qaBackendClosed,
   });
 
   const explicit_callouts = [
-    `QA 20 is runtime-risk because Supabase still has old rows on ${String(qa_20_supabase_old_rows_count)}/20.`,
-    "PASS 5, GTE18, and GSWF 13 are backend parity closed (artifact-backed IN_SYNC) when their parity packets are present.",
+    qaRiskFull
+      ? "QA 20 is runtime-risk because Supabase still has old rows on 20/20."
+      : qaRiskPartial
+        ? `QA 20 still has Supabase old leftover rows on ${String(qa_20_supabase_old_rows_count)}/20 (partial drift).`
+        : "QA 20 backend/runtime Supabase parity is closed IN_SYNC 20/20 (old leftover rows=0).",
+    backendClosedAll
+      ? "PASS 5, GTE18, GSWF 13, and QA 20 are backend parity closed (artifact-backed IN_SYNC)."
+      : "PASS 5, GTE18, and GSWF 13 are backend parity closed (artifact-backed IN_SYNC) when their parity packets are present.",
     "Frontend match is not claimed unless render/source proof exists — IN_SYNC does not auto-mark frontend-safe.",
     "GSWF PARTIAL 3 remains held/unknown and must never be promoted from this audit.",
     "Product JSON-LD / CTA / go-link per-slug claims remain UNKNOWN without inspected page/data proof.",
@@ -835,6 +902,9 @@ export function buildBuckpartsCSuiteReadinessAuditV1(
     "PROVEN: live_fetch_enabled=false by default; v1 does not fetch production URLs.",
     architecture_source_map.csv_role_vs_supabase_role.proof,
     `PROVEN: QA old-row count from parity artifact compose=${String(qa_20_supabase_old_rows_count)}.`,
+    ...(qaBackendClosed
+      ? ["PROVEN: QA 20 cohort backend classifications are IN_SYNC for all 20 slugs."]
+      : []),
   ];
 
   const unknown_facts = [
