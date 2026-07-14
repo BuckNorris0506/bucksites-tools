@@ -163,6 +163,8 @@
     "buckparts:fridge-model-pdp-rendered-truth-proof-pack": "tsx scripts/report-buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.ts",
     "buckparts:fridge-model-pdp-cta-go-link-proof-pack": "tsx scripts/report-buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.ts",
     "buckparts:fridge-model-pdp-buyer-path-gap-plan": "tsx scripts/report-buckparts-fridge-model-pdp-buyer-path-gap-plan-v1.ts",
+    "buckparts:fridge-model-pdp-edr4-buyer-path-closable-parity-owner-review": "tsx scripts/report-buckparts-fridge-model-pdp-edr4-buyer-path-closable-parity-owner-review-v1.ts",
+    "buckparts:fridge-model-pdp-edr4-buyer-path-closable-parity": "tsx scripts/report-buckparts-fridge-model-pdp-edr4-buyer-path-closable-parity-v1.ts",
     "buckparts:refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review": "tsx scripts/report-refrigerator-model-first-qa-batch-supabase-compat-parity-owner-review-v1.ts",
     "buckparts:refrigerator-model-first-qa-batch-supabase-compat-sync-plan-owner-review": "tsx scripts/report-refrigerator-model-first-qa-batch-supabase-compat-sync-plan-owner-review-v1.ts",
     "buckparts:refrigerator-model-first-qa-batch-supabase-compat-sync-guarded-apply": "tsx scripts/apply-refrigerator-model-first-qa-batch-supabase-compat-sync-guarded-v1.ts",

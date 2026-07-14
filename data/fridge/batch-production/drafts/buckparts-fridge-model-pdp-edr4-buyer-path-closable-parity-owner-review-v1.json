@@ -1,0 +1,109 @@
+{
+  "contract": "buckparts_fridge_model_pdp_edr4_buyer_path_closable_parity_owner_review_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "apply_authorized": false,
+  "founder_approval_created": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "invent_link_authorized": false,
+  "auto_promote_authorized": false,
+  "generated_at": "2026-07-14T05:10:14.396Z",
+  "source_command": "npm run buckparts:fridge-model-pdp-edr4-buyer-path-closable-parity-owner-review",
+  "gap_plan_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-buyer-path-gap-plan-v1.json",
+  "parity_executor_contract": "buckparts_fridge_model_pdp_edr4_buyer_path_closable_parity_v1",
+  "scope": {
+    "context_model_slugs": [
+      "whirlpool-wrf540cwhz",
+      "whirlpool-wrx735sdhz"
+    ],
+    "allowed_filter_slugs": [
+      "edr4rxd1"
+    ],
+    "max_planned_retailer_links_rows": 1
+  },
+  "evidence": {
+    "required_rels": [
+      "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json",
+      "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr4rxd1-v1.json",
+      "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-buyer-path-gap-plan-v1.json"
+    ],
+    "present_rels": [
+      "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json",
+      "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr4rxd1-v1.json",
+      "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-buyer-path-gap-plan-v1.json"
+    ],
+    "missing_rels": [],
+    "csv_primary": {
+      "filter_slug": "edr4rxd1",
+      "affiliate_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
+      "retailer_name": "Whirlpool",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_notes": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json; BuckParts Verified Link (official_manufacturer_official_whirlpool).",
+      "browser_truth_checked_at": "2026-06-26T12:00:00.000Z",
+      "is_primary": true,
+      "retailer_key": "oem-parts-catalog"
+    },
+    "csv_direct_buyable_safe": true,
+    "csv_go_resolvable": true,
+    "csv_gate_failure_kind": null
+  },
+  "planned_delta": {
+    "surface": "public.retailer_links",
+    "action": "insert_or_update_primary_from_csv",
+    "filter_slug": "edr4rxd1",
+    "fields": [
+      "affiliate_url",
+      "retailer_name",
+      "browser_truth_classification",
+      "browser_truth_notes",
+      "browser_truth_checked_at",
+      "is_primary",
+      "retailer_key",
+      "destination_url"
+    ],
+    "closes_model_slugs": [
+      "whirlpool-wrf540cwhz",
+      "whirlpool-wrx735sdhz"
+    ],
+    "notes": [
+      "One filter primary retailer_links row closes both model PDPs via existing compat mappings.",
+      "Desired row must equal existing CSV primary — no invented destination URL.",
+      "CSV itself is not mutated by this lane."
+    ]
+  },
+  "gate_conditions_for_future_apply": [
+    "Dry-run parity report CHECKed with planned_action insert|update for edr4rxd1 only.",
+    "BUCKPARTS_IO_CAPABILITY=MUTATION set for write session.",
+    "New founder approval specifically authorizing THIS Supabase parity contract (not CSV manufacturer-rescue).",
+    "Existing decision decision-2026-06-10-edr4rxd1-approve_csv_manufacturer_rescue_apply must NOT authorize --write.",
+    "Explicit founder session authorize of apply for this exact lane after approval.",
+    "Re-run CTA/go proof for whirlpool-wrf540cwhz + whirlpool-wrx735sdhz after apply."
+  ],
+  "blocked_reuse": {
+    "csv_only_approval_decision_id": "decision-2026-06-10-edr4rxd1-approve_csv_manufacturer_rescue_apply",
+    "does_not_authorize_this_supabase_parity_lane": true
+  },
+  "dry_run_command": "npm run buckparts:fridge-model-pdp-edr4-buyer-path-closable-parity -- --write-artifacts",
+  "write_command_when_later_authorized": "BUCKPARTS_IO_CAPABILITY=MUTATION npm run buckparts:fridge-model-pdp-edr4-buyer-path-closable-parity -- --write",
+  "proven_facts": [
+    "PROVEN: read_only owner-review; apply_authorized=false; founder_approval_created=false.",
+    "PROVEN: context models exactly whirlpool-wrf540cwhz + whirlpool-wrx735sdhz.",
+    "PROVEN: mutation surface allowlist exactly filter slug edr4rxd1 (max 1 retailer_links primary).",
+    "PROVEN: CSV primary is existing direct_buyable + go-resolvable Whirlpool OEM PDP evidence.",
+    "PROVEN: retailer CSV path=data/retailer_links.csv.",
+    "PROVEN: no invent_link / auto_promote authorization in this packet."
+  ],
+  "unknown_facts": [
+    "UNKNOWN until dry-run: whether Supabase primary for edr4rxd1 needs insert vs update vs already-in-parity.",
+    "UNKNOWN: live HTML CTA render until post-apply CTA/go proof re-run."
+  ],
+  "risk_notes": [
+    "This packet does not authorize --write or create founder approval.",
+    "Do not expand scope to XWFE/XWF/MWFP or ge-gte18gsnrss remain-no-buy.",
+    "Do not invent new retailer destinations; sync CSV evidence only."
+  ]
+}

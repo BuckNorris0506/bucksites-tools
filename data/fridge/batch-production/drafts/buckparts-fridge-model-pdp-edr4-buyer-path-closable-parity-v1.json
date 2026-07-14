@@ -1,0 +1,118 @@
+{
+  "contract": "buckparts_fridge_model_pdp_edr4_buyer_path_closable_parity_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "mode": "dry_run",
+  "generated_at": "2026-07-14T05:10:46.292Z",
+  "allowed_slugs": [
+    "edr4rxd1"
+  ],
+  "allowed_supabase_table": "public.retailer_links",
+  "supabase_truth_status": "CHECKED",
+  "supabase_unavailable_reason": null,
+  "row_count_planned": 1,
+  "rows": [
+    {
+      "filter_slug": "edr4rxd1",
+      "status": "CSV_HAS_WIN_SUPABASE_MISSING_OR_STALE",
+      "filter_id": "99b6f917-4ec1-4b6e-a315-6db147798666",
+      "csv_primary": {
+        "filter_slug": "edr4rxd1",
+        "affiliate_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
+        "retailer_name": "Whirlpool",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json; BuckParts Verified Link (official_manufacturer_official_whirlpool).",
+        "browser_truth_checked_at": "2026-06-26T12:00:00.000Z",
+        "is_primary": true,
+        "retailer_key": "oem-parts-catalog"
+      },
+      "supabase_primary": {
+        "id": "5504e020-a08e-4c14-bd9b-0f7bb2534e5b",
+        "filter_id": "99b6f917-4ec1-4b6e-a315-6db147798666",
+        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=EDR4RXD1",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": "",
+        "is_primary": true,
+        "retailer_key": "oem-parts-catalog"
+      },
+      "field_parity": [
+        {
+          "field": "affiliate_url",
+          "csv_value": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
+          "supabase_value": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=EDR4RXD1",
+          "match": false
+        },
+        {
+          "field": "retailer_name",
+          "csv_value": "Whirlpool",
+          "supabase_value": "OEM parts catalog (keyword lookup)",
+          "match": false
+        },
+        {
+          "field": "browser_truth_classification",
+          "csv_value": "direct_buyable",
+          "supabase_value": "",
+          "match": false
+        },
+        {
+          "field": "browser_truth_notes",
+          "csv_value": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json; BuckParts Verified Link (official_manufacturer_official_whirlpool).",
+          "supabase_value": "",
+          "match": false
+        },
+        {
+          "field": "browser_truth_checked_at",
+          "csv_value": "2026-06-26T12:00:00.000Z",
+          "supabase_value": "",
+          "match": false
+        },
+        {
+          "field": "is_primary",
+          "csv_value": "true",
+          "supabase_value": "true",
+          "match": true
+        },
+        {
+          "field": "retailer_key",
+          "csv_value": "oem-parts-catalog",
+          "supabase_value": "oem-parts-catalog",
+          "match": true
+        }
+      ],
+      "mismatched_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "planned_action": "update"
+    }
+  ],
+  "all_in_parity": false,
+  "blockers": [],
+  "proven_facts": [
+    "PROVEN: lane allowlist is exactly edr4rxd1 (closes whirlpool-wrf540cwhz + whirlpool-wrx735sdhz).",
+    "PROVEN: live /filter/[slug] reads Supabase public.retailer_links via getFilterBySlug.",
+    "PROVEN: allowed Supabase table scope is exactly public.retailer_links.",
+    "PROVEN: csv_sha256=3fc7e8aa1926960e509906b661ea7e8df89ebe9c3f7fdf28f6cf8eea6067da62",
+    "PROVEN: row_count_planned=1 (max 1).",
+    "PROVEN: invent_link_authorized=false; existing CSV evidence only.",
+    "PROVEN: context models exactly whirlpool-wrf540cwhz + whirlpool-wrx735sdhz.",
+    "PROVEN: CSV-only manufacturer-rescue approval does not authorize this Supabase parity write."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: live PDP verified links until scoped Supabase write succeeds."
+  ],
+  "recommended_next_action": "Review field mismatches, then run scoped write with BUCKPARTS_IO_CAPABILITY=MUTATION and --write.",
+  "context_model_slugs": [
+    "whirlpool-wrf540cwhz",
+    "whirlpool-wrx735sdhz"
+  ],
+  "invent_link_authorized": false,
+  "csv_only_approval_blocked": true,
+  "supabase_parity_founder_approval_present": false
+}
