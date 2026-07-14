@@ -1,0 +1,789 @@
+{
+  "contract": "buckparts_fridge_model_pdp_live_customer_visible_proof_readiness_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "sitemap_robots_mutation_authorized": false,
+  "product_json_ld_mutation_authorized": false,
+  "owner_decisions_mutation_authorized": false,
+  "deploy_authorized": false,
+  "live_production_fetch_enabled": false,
+  "live_html_claimed": false,
+  "generated_at": "2026-07-14T05:59:47.072Z",
+  "source_command": "npm run buckparts:fridge-model-pdp-live-customer-visible-proof-readiness",
+  "cta_go_proof_pack_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+  "rendered_truth_pack_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+  "scope": {
+    "slug_count": 21,
+    "slugs": [
+      "frigidaire-ffhb2740ps",
+      "frigidaire-fghb2868pf",
+      "frigidaire-fgsc2335tf",
+      "ge-cwe23sshww",
+      "ge-gfe28gmkbb",
+      "ge-gfe28gmkes",
+      "ge-gfe28gskes",
+      "ge-gfe28gskss",
+      "ge-gfe28gynfs",
+      "ge-gfe28hskss",
+      "ge-gye22gskww",
+      "ge-pfe28kmkww",
+      "ge-pfe28kynbb",
+      "samsung-rf263beaesr",
+      "samsung-rf28nhedbsr",
+      "samsung-rf28r7201sr",
+      "samsung-rf28r7351sg",
+      "whirlpool-wrf540cwhz",
+      "whirlpool-wrs325sdhz",
+      "whirlpool-wrx735sdhz",
+      "whirlpool-wrx986sihz"
+    ],
+    "excluded_fail_slugs": [
+      "ge-gfe24jgkww",
+      "ge-gfe27jmkes",
+      "ge-gne25jmkww",
+      "ge-gne27jstss",
+      "ge-gse25hskss",
+      "ge-gte18gsnrss",
+      "ge-pvd28bymfs"
+    ],
+    "excluded_quarantined_slugs": [
+      "lg-lfxc22596s",
+      "lg-lfxs26973s",
+      "lg-lfxs28968s",
+      "lg-lmxs28626s",
+      "lg-lrfvs3006s",
+      "lg-lrfxs3106s",
+      "samsung-rf27t5201sr",
+      "samsung-rf27t5501sr",
+      "samsung-rf28r6301sr",
+      "samsung-rf28t5101sr",
+      "samsung-rs22t5201sg"
+    ],
+    "excluded_partial_slugs": [
+      "ge-gfe28hmkww",
+      "ge-gsc25frshss",
+      "ge-gse26gshess"
+    ]
+  },
+  "summary": {
+    "SAFE_BUYER_PATH_PASS_scoped": 21,
+    "page_exposes_proof_metadata_visibly_count": 0,
+    "live_html_proven_count": 0,
+    "live_html_unknown_count": 21,
+    "ready_for_future_live_proof_pass_count": 21,
+    "visible_metadata_gap_count": 21
+  },
+  "rows": [
+    {
+      "slug": "frigidaire-ffhb2740ps",
+      "mapped_filters": [
+        "ultrawf"
+      ],
+      "safe_go_link_ids": [
+        "b23eac97-d064-46e1-b086-617e4a79f002"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "frigidaire-fghb2868pf",
+      "mapped_filters": [
+        "eptwfu01"
+      ],
+      "safe_go_link_ids": [
+        "96dd791c-4a8f-42f4-9b4d-cb424ea5e879"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "frigidaire-fgsc2335tf",
+      "mapped_filters": [
+        "eptwfu01"
+      ],
+      "safe_go_link_ids": [
+        "96dd791c-4a8f-42f4-9b4d-cb424ea5e879"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-cwe23sshww",
+      "mapped_filters": [
+        "rpwfe"
+      ],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gmkbb",
+      "mapped_filters": [
+        "rpwfe"
+      ],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gmkes",
+      "mapped_filters": [
+        "rpwfe"
+      ],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gskes",
+      "mapped_filters": [
+        "rpwfe"
+      ],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gskss",
+      "mapped_filters": [
+        "rpwfe"
+      ],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gynfs",
+      "mapped_filters": [
+        "rpwfe"
+      ],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gfe28hskss",
+      "mapped_filters": [
+        "rpwfe",
+        "smartwater-mwfp"
+      ],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gye22gskww",
+      "mapped_filters": [
+        "rpwfe"
+      ],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-pfe28kmkww",
+      "mapped_filters": [
+        "rpwfe",
+        "xwf"
+      ],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-pfe28kynbb",
+      "mapped_filters": [
+        "rpwfe"
+      ],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "samsung-rf263beaesr",
+      "mapped_filters": [
+        "da29-00020b"
+      ],
+      "safe_go_link_ids": [
+        "055f383a-4d14-4997-a19f-894afe56721e",
+        "d4cbad0c-4bab-4854-89bf-59e6d6492c6b"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "samsung-rf28nhedbsr",
+      "mapped_filters": [
+        "da29-00020b"
+      ],
+      "safe_go_link_ids": [
+        "055f383a-4d14-4997-a19f-894afe56721e",
+        "d4cbad0c-4bab-4854-89bf-59e6d6492c6b"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "samsung-rf28r7201sr",
+      "mapped_filters": [
+        "da97-17376b"
+      ],
+      "safe_go_link_ids": [
+        "2edeb286-7906-4183-abb9-5ddfc0b00148"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "samsung-rf28r7351sg",
+      "mapped_filters": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "safe_go_link_ids": [
+        "2edeb286-7906-4183-abb9-5ddfc0b00148"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "whirlpool-wrf540cwhz",
+      "mapped_filters": [
+        "edr4rxd1"
+      ],
+      "safe_go_link_ids": [
+        "5504e020-a08e-4c14-bd9b-0f7bb2534e5b"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "whirlpool-wrs325sdhz",
+      "mapped_filters": [
+        "edr1rxd1"
+      ],
+      "safe_go_link_ids": [
+        "32288a9b-4ff3-4424-86fa-99f716308ef5"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "whirlpool-wrx735sdhz",
+      "mapped_filters": [
+        "edr4rxd1"
+      ],
+      "safe_go_link_ids": [
+        "5504e020-a08e-4c14-bd9b-0f7bb2534e5b"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "whirlpool-wrx986sihz",
+      "mapped_filters": [
+        "edr2rxd1"
+      ],
+      "safe_go_link_ids": [
+        "6f81b4ce-a3b0-4c09-b0d9-965aca5bfc17"
+      ],
+      "buyer_path_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "rendered_mapping_proof_source_artifact": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+      "buyer_path_proof_generated_at": "2026-07-14T05:30:58.651Z",
+      "rendered_mapping_proof_generated_at": "2026-07-14T04:36:44.937Z",
+      "freshness_check_timestamp_available_from_proof": "2026-07-14T05:30:58.651Z",
+      "page_exposes_proof_metadata_visibly_to_homeowner": false,
+      "visible_proof_metadata_status": "PARTIAL_VERIFIED_LINK_FOOTNOTE_ONLY",
+      "visible_metadata_gaps": [
+        "Fridge model PDP lacks a dedicated homeowner-facing proof metadata block (FilterPdpRepoEvidenceSection exists on filter PDPs only).",
+        "Proposed trust fields not yet rendered on /fridge/[slug]: proof status line, explicit Last checked stamp block, compare-before-buy proof framing.",
+        "Verified Link buy footnote may show a check date when browser_truth_checked_at is present, but that is not a full visible proof metadata surface."
+      ],
+      "live_html_proof_status": "UNKNOWN",
+      "ready_for_future_production_live_proof_pass": true,
+      "notes": [
+        "Backend SAFE_BUYER_PATH_PASS from CTA/go proof pack (local data-path).",
+        "Live production HTML not fetched in this lane; live_html_proof_status remains UNKNOWN unless an external live proof artifact is supplied.",
+        "Do not claim live HTML CTA or conversion from this readiness report.",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    }
+  ],
+  "proposed_visible_trust_metadata_contract": {
+    "contract_id": "fridge_model_pdp_visible_trust_metadata_v1_proposal",
+    "applied_to_production": false,
+    "fields_to_show_homeowners": [
+      {
+        "field": "mapped_filter_numbers",
+        "homeowner_label": "Filter number(s) to compare",
+        "notes": "Show the part number(s) listed for this model; ask homeowner to compare to the cartridge they remove."
+      },
+      {
+        "field": "proof_status",
+        "homeowner_label": "Link check status",
+        "notes": "Customer-facing status only; never raw enums like direct_buyable."
+      },
+      {
+        "field": "freshness_stamp",
+        "homeowner_label": "Last checked",
+        "notes": "YYYY-MM-DD (UTC) from browser_truth_checked_at when present; omit if unknown."
+      },
+      {
+        "field": "verified_link_gate_note",
+        "homeowner_label": "When a store link appears",
+        "notes": "Only when a gated safe Verified Link is eligible; never invent or promote unsafe CTAs."
+      }
+    ],
+    "proof_status_format": {
+      "when_direct_product_page_checked": "We checked a direct store product page against this filter number.",
+      "when_search_placeholder_only": "We only found a store search page, not a direct product page, so we are not linking it yet.",
+      "when_unconfirmed": "We have not confirmed a safe store link yet.",
+      "forbidden_raw_enums": [
+        "direct_buyable",
+        "search_placeholder",
+        "SAFE_BUYER_PATH_PASS",
+        "browser_truth_classification"
+      ]
+    },
+    "freshness_stamp_format": {
+      "display": "Last checked YYYY-MM-DD",
+      "source": "browser_truth_checked_at ISO → UTC calendar date",
+      "omit_when_missing": true,
+      "do_not_claim": [
+        "current price",
+        "current stock",
+        "same-day availability"
+      ]
+    },
+    "exact_safe_language": {
+      "preferred_identity_labels": [
+        "Original part",
+        "Compatible replacement",
+        "Part identity",
+        "Original or compatible part"
+      ],
+      "avoid_unless_proven": [
+        "OEM",
+        "genuine OEM",
+        "factory original guaranteed"
+      ],
+      "compare_before_buy": "Compare this number to the text on your existing cartridge before you buy.",
+      "verified_link_when_shown": "Shown as a BuckParts Verified Link after we checked the product page against this filter number (YYYY-MM-DD)."
+    },
+    "product_json_ld": {
+      "invent_offers_authorized": false,
+      "invent_review_authorized": false,
+      "invent_aggregate_rating_authorized": false,
+      "preferred_when_incomplete": "suppress Product JSON-LD rather than fabricate commerce fields"
+    },
+    "buy_cta": {
+      "unsafe_cta_promotion_authorized": false,
+      "require_gated_safe_verified_link": true,
+      "search_placeholder_promotion_authorized": false
+    }
+  },
+  "proven_facts": [
+    "PROVEN: read_only=true; deploy_authorized=false; live_production_fetch_enabled=false; live_html_claimed=false.",
+    "PROVEN: exact scope=21 SAFE_BUYER_PATH_PASS slugs from CTA/go proof pack.",
+    "PROVEN: excluded FAIL=7; quarantined=11; PARTIAL=3.",
+    "PROVEN: summary={\"SAFE_BUYER_PATH_PASS_scoped\":21,\"page_exposes_proof_metadata_visibly_count\":0,\"live_html_proven_count\":0,\"live_html_unknown_count\":21,\"ready_for_future_live_proof_pass_count\":21,\"visible_metadata_gap_count\":21}.",
+    "PROVEN: fridge model PDP has no dedicated customer-visible proof metadata block equivalent to filter PDP FilterPdpRepoEvidenceSection (code surface).",
+    "PROVEN: proposed visible trust metadata contract forbids Product JSON-LD offer invent and unsafe CTA promotion."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Live production HTML for the 21 SAFE_BUYER_PATH_PASS fridge PDPs (no fetch in this lane).",
+    "UNKNOWN: Homeowner-visible rendering of the proposed trust metadata block until a future UI + live HTML proof pass."
+  ],
+  "risk_notes": [
+    "This readiness lane does not authorize deploy, Supabase/CSV/retailer_links mutation, buy CTA changes, sitemap/robots, Product JSON-LD, or owner-decision edits.",
+    "Do not claim live HTML proof from backend SAFE_BUYER_PATH_PASS alone.",
+    "Do not use 'OEM' in customer-visible trust copy unless identity is proven; prefer Original part / Compatible replacement labels.",
+    "Do not invent Product offers, review, or aggregateRating."
+  ],
+  "recommended_next_move": "Owner-approved UI prototype of the proposed visible trust metadata block on fridge model PDPs (read-only language; no CTA expansion), then a guarded live HTML proof pass for the same 21 slugs that asserts visible metadata + gated Verified Link presence without claiming conversion."
+}
