@@ -13,7 +13,7 @@
   "deploy_authorized": false,
   "conversion_claimed": false,
   "live_production_fetch_enabled": true,
-  "generated_at": "2026-07-14T06:22:20.492Z",
+  "generated_at": "2026-07-14T15:54:27.874Z",
   "source_command": "npm run buckparts:fridge-model-pdp-live-html-proof",
   "readiness_pack_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-live-customer-visible-proof-readiness-v1.json",
   "target_base_url": "https://buckparts.com",
@@ -72,8 +72,8 @@
     ]
   },
   "summary": {
-    "LIVE_PROOF_PASS": 0,
-    "LIVE_PROOF_FAIL": 21,
+    "LIVE_PROOF_PASS": 21,
+    "LIVE_PROOF_FAIL": 0,
     "LIVE_PROOF_UNKNOWN": 0
   },
   "rows": [
@@ -82,8 +82,8 @@
       "production_url": "https://buckparts.com/fridge/frigidaire-ffhb2740ps",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -92,15 +92,11 @@
       "expected_mapped_filters": [
         "ultrawf"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -108,8 +104,8 @@
       "production_url": "https://buckparts.com/fridge/frigidaire-fghb2868pf",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -118,15 +114,11 @@
       "expected_mapped_filters": [
         "eptwfu01"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -134,8 +126,8 @@
       "production_url": "https://buckparts.com/fridge/frigidaire-fgsc2335tf",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -144,15 +136,11 @@
       "expected_mapped_filters": [
         "eptwfu01"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -160,8 +148,8 @@
       "production_url": "https://buckparts.com/fridge/ge-cwe23sshww",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -170,15 +158,11 @@
       "expected_mapped_filters": [
         "rpwfe"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -186,8 +170,8 @@
       "production_url": "https://buckparts.com/fridge/ge-gfe28gmkbb",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -196,15 +180,11 @@
       "expected_mapped_filters": [
         "rpwfe"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -212,8 +192,8 @@
       "production_url": "https://buckparts.com/fridge/ge-gfe28gmkes",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -222,15 +202,11 @@
       "expected_mapped_filters": [
         "rpwfe"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -238,8 +214,8 @@
       "production_url": "https://buckparts.com/fridge/ge-gfe28gskes",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -248,15 +224,11 @@
       "expected_mapped_filters": [
         "rpwfe"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -264,8 +236,8 @@
       "production_url": "https://buckparts.com/fridge/ge-gfe28gskss",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -274,15 +246,11 @@
       "expected_mapped_filters": [
         "rpwfe"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -290,8 +258,8 @@
       "production_url": "https://buckparts.com/fridge/ge-gfe28gynfs",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -300,15 +268,11 @@
       "expected_mapped_filters": [
         "rpwfe"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -316,8 +280,8 @@
       "production_url": "https://buckparts.com/fridge/ge-gfe28hskss",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -327,15 +291,11 @@
         "rpwfe",
         "smartwater-mwfp"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -343,8 +303,8 @@
       "production_url": "https://buckparts.com/fridge/ge-gye22gskww",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -353,15 +313,11 @@
       "expected_mapped_filters": [
         "rpwfe"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -369,8 +325,8 @@
       "production_url": "https://buckparts.com/fridge/ge-pfe28kmkww",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -380,15 +336,11 @@
         "rpwfe",
         "xwf"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -396,8 +348,8 @@
       "production_url": "https://buckparts.com/fridge/ge-pfe28kynbb",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -406,15 +358,11 @@
       "expected_mapped_filters": [
         "rpwfe"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -422,8 +370,8 @@
       "production_url": "https://buckparts.com/fridge/samsung-rf263beaesr",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -432,15 +380,11 @@
       "expected_mapped_filters": [
         "da29-00020b"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -448,8 +392,8 @@
       "production_url": "https://buckparts.com/fridge/samsung-rf28nhedbsr",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -458,15 +402,11 @@
       "expected_mapped_filters": [
         "da29-00020b"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -474,8 +414,8 @@
       "production_url": "https://buckparts.com/fridge/samsung-rf28r7201sr",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -484,15 +424,11 @@
       "expected_mapped_filters": [
         "da97-17376b"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -500,8 +436,8 @@
       "production_url": "https://buckparts.com/fridge/samsung-rf28r7351sg",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -511,15 +447,11 @@
         "da97-17376a",
         "da97-17376b"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -527,8 +459,8 @@
       "production_url": "https://buckparts.com/fridge/whirlpool-wrf540cwhz",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -537,15 +469,11 @@
       "expected_mapped_filters": [
         "edr4rxd1"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -553,8 +481,8 @@
       "production_url": "https://buckparts.com/fridge/whirlpool-wrs325sdhz",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -563,15 +491,11 @@
       "expected_mapped_filters": [
         "edr1rxd1"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -579,8 +503,8 @@
       "production_url": "https://buckparts.com/fridge/whirlpool-wrx735sdhz",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -589,15 +513,11 @@
       "expected_mapped_filters": [
         "edr4rxd1"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     },
     {
@@ -605,8 +525,8 @@
       "production_url": "https://buckparts.com/fridge/whirlpool-wrx986sihz",
       "http_status": 200,
       "model_page_rendered": true,
-      "proof_heading_present": false,
-      "last_checked_present": false,
+      "proof_heading_present": true,
+      "last_checked_present": true,
       "mapped_filter_numbers_present": true,
       "verified_link_section_present": true,
       "safe_go_link_present": true,
@@ -615,15 +535,11 @@
       "expected_mapped_filters": [
         "edr2rxd1"
       ],
-      "missing_reasons": [
-        "proof_heading_missing",
-        "last_checked_missing"
-      ],
-      "result": "LIVE_PROOF_FAIL",
+      "missing_reasons": [],
+      "result": "LIVE_PROOF_PASS",
       "notes": [
         "Read-only GET of production HTML; no deploy; no mutation.",
-        "Do not claim conversion, revenue, or click-through from this pack.",
-        "FAIL reasons: proof_heading_missing, last_checked_missing"
+        "Do not claim conversion, revenue, or click-through from this pack."
       ]
     }
   ],
@@ -631,7 +547,7 @@
     "PROVEN: read_only=true; deploy_authorized=false; conversion_claimed=false; data_mutation=false.",
     "PROVEN: exact scope=21 SAFE_BUYER_PATH_PASS slugs.",
     "PROVEN: excluded FAIL=7; quarantine=11; PARTIAL=3.",
-    "PROVEN: summary={\"LIVE_PROOF_PASS\":0,\"LIVE_PROOF_FAIL\":21,\"LIVE_PROOF_UNKNOWN\":0}.",
+    "PROVEN: summary={\"LIVE_PROOF_PASS\":21,\"LIVE_PROOF_FAIL\":0,\"LIVE_PROOF_UNKNOWN\":0}.",
     "PROVEN: LIVE_PROOF_PASS requires proof heading, Last checked, mapped filter numbers, Verified Link section, gated /go link, no Product offer/review/rating JSON-LD, and no search-placeholder CTA."
   ],
   "unknown_facts": [
