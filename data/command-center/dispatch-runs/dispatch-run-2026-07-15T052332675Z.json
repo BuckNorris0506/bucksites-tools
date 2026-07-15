@@ -1,0 +1,102 @@
+{
+  "report_name": "buckparts_command_center_dispatch_run_v1",
+  "generated_at": "2026-07-15T05:23:32.675Z",
+  "source_commit": "fff061b49fbd948d4e846c2403f38cd500364e88",
+  "dispatch_status_before": "READY",
+  "selected_subsystem": "air_purifier_demand_selected_batch_closeout_readiness_proof",
+  "exact_command": "npx tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts",
+  "execution_allowed": true,
+  "execution_status": "EXECUTED",
+  "stdout_excerpt": "{\n  \"contract\": \"ap_demand_selected_batch_closeout_readiness_proof_v1\",\n  \"read_only\": true,\n  \"data_mutation\": false,\n  \"mutation_authorized\": false,\n  \"csv_apply_authorized\": false,\n  \"supabase_mutation_authorized\": false,\n  \"evidence_write_authorized\": false,\n  \"buy_cta_authorized\": false,\n  \"public_ui_mutation_authorized\": false,\n  \"pages_claimed_closed\": false,\n  \"conversion_claimed\": false,\n  \"conversion_or_revenue\": \"UNKNOWN\",\n  \"generated_at\": \"2026-07-15T05:23:33.218Z\",\n  \"source_command\": \"npx tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts\",\n  \"run_id\": \"ap-demand-selected-batch-run-v1-2026-06-23\",\n  \"run_registry_rel_path\": \"data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json\",\n  \"registry_stage\": \"read_only_evidence_collection_complete\",\n  \"evidence_completeness\": {\n    \"status\": \"COMPLETE\",\n    \"run_id\": \"ap-demand-selected-batch-run-v1-2026-06-23\",\n    \"registry_stage\": \"read_only_evidence_collection_complete\",\n    \"expected_evidence_artifact_rel_path\": \"data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json\",\n    \"evidence_artifact_present\": true,\n    \"discovery_status\": \"DISCOVERY_COMPLETE\",\n    \"expected_slugs\": [\n      \"alen-b75-mp\",\n      \"alen-bf35\",\n      \"alen-fl40\",\n      \"coway-airmega100-rf\",\n      \"hb-trueair-04948\",\n      \"holmes-hapf30\",\n      \"renpho-rp-ap003\",\n      \"renpho-rp-ap068\",\n      \"renpho-rp-ap088\",\n      \"vornado-md1-0023\"\n    ],\n    \"present_slugs\": [\n      \"alen-b75-mp\",\n      \"alen-bf35\",\n      \"alen-fl40\",\n      \"coway-airmega100-rf\",\n      \"hb-trueair-04948\",\n      \"holmes-hapf30\",\n      \"renpho-rp-ap003\",\n      \"renpho-rp-ap068\",\n      \"renpho-rp-ap088\",\n\n…(truncated)",
+  "stderr_excerpt": "",
+  "parsed_json_summary": {
+    "contract": "ap_demand_selected_batch_closeout_readiness_proof_v1",
+    "read_only": true,
+    "data_mutation": false,
+    "mutation_authorized": false,
+    "csv_apply_authorized": false,
+    "supabase_mutation_authorized": false,
+    "evidence_write_authorized": false,
+    "buy_cta_authorized": false,
+    "public_ui_mutation_authorized": false,
+    "pages_claimed_closed": false,
+    "conversion_claimed": false,
+    "conversion_or_revenue": "UNKNOWN",
+    "generated_at": "2026-07-15T05:23:33.218Z",
+    "source_command": "npx tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts",
+    "run_id": "ap-demand-selected-batch-run-v1-2026-06-23",
+    "run_registry_rel_path": "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
+    "registry_stage": "read_only_evidence_collection_complete",
+    "evidence_completeness": {
+      "status": "COMPLETE",
+      "run_id": "ap-demand-selected-batch-run-v1-2026-06-23",
+      "registry_stage": "read_only_evidence_collection_complete",
+      "expected_evidence_artifact_rel_path": "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
+      "evidence_artifact_present": true,
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "expected_slugs": [
+        "alen-b75-mp",
+        "alen-bf35",
+        "alen-fl40",
+        "coway-airmega100-rf",
+        "hb-trueair-04948",
+        "holmes-hapf30",
+        "renpho-rp-ap003",
+        "renpho-rp-ap068",
+        "renpho-rp-ap088",
+        "vornado-md1-0023"
+      ],
+      "present_slugs": [
+        "alen-b75-mp",
+        "alen-bf35",
+        "alen-fl40",
+        "coway-airmega100-rf",
+        "hb-trueair-04948",
+        "holmes-hapf30",
+        "renpho-rp-ap003",
+        "renpho-rp-ap068",
+        "renpho-rp-ap088",
+        "vornado-md1-0023"
+      ],
+      "missing_slugs": [],
+      "missing_artifact_paths": [],
+      "proven_facts": [
+        "PROVEN: HyperAgent chat discovery artifact present at data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json.",
+        "PROVEN: discovery_status=DISCOVERY_COMPLETE; registry_stage=read_only_evidence_collection_complete.",
+        "PROVEN: evidence covers all 10 proposed demand-selected slugs.",
+        "PROVEN: do not re-run HyperAgent chat discovery for this run unless the evidence artifact is removed or slugs go missing."
+      ],
+      "unknown_facts": [
+        "UNKNOWN: conversion/revenue impact of this read-only discovery packet.",
+        "UNKNOWN: whether a future founder-authorized apply plan will exist (apply_readiness remains NOT_PROVEN)."
+      ]
+    },
+    "open_batch_proof_v1": {
+      "open_batch_existence": "PROVEN",
+      "batch_closeout": "NOT_PROVEN",
+      "apply_readiness": "NOT_PROVEN"
+    },
+    "batch_closeout": "NOT_PROVEN",
+    "apply_readiness": "NOT_PROVEN",
+    "hard_stop": true,
+    "next_safe_action": "Hard-stop: read-only evidence is complete for this demand-selected run, but batch_closeout and apply_readiness remain NOT_PROVEN. Do not mutate CSV/Supabase/retailer_links/public guidance; conversion/revenue UNKNOWN.",
+    "proven_facts": [
+      "PROVEN: closeout/readiness proof is read_only=true and data_mutation=false.",
+      "PROVEN: batch_closeout=NOT_PROVEN; apply_readiness=NOT_PROVEN; mutation unauthorized.",
+      "PROVEN: pages_claimed_closed=false; conversion_claimed=false; conversion_or_revenue=UNKNOWN.",
+      "PROVEN: HyperAgent chat discovery artifact present at data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json.",
+      "PROVEN: discovery_status=DISCOVERY_COMPLETE; registry_stage=read_only_evidence_collection_complete.",
+      "PROVEN: evidence covers all 10 proposed demand-selected slugs.",
+      "PROVEN: do not re-run HyperAgent chat discovery for this run unless the evidence artifact is removed or slugs go missing."
+    ],
+    "unknown_facts": [
+      "UNKNOWN: conversion/revenue impact of this read-only discovery packet.",
+      "UNKNOWN: whether a future founder-authorized apply plan will exist (apply_readiness remains NOT_PROVEN).",
+      "UNKNOWN: conversion/revenue; do not claim buyer-path closure from this proof."
+    ]
+  },
+  "blocked_reasons": [],
+  "next_expected_state": "Closeout/readiness proof printed — batch_closeout and apply_readiness remain NOT_PROVEN; mutation unauthorized; conversion/revenue UNKNOWN.",
+  "read_only": true,
+  "data_mutation": false
+}
