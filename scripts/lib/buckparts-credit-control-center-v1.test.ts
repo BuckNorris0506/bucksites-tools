@@ -234,13 +234,17 @@ test("repo evidence file + artifacts write allowlist", () => {
   const evidence = JSON.parse(
     readFileSync(path.join(ROOT, BUCKPARTS_NETLIFY_CREDIT_STATE_JSON_REL_V1), "utf8"),
   ) as BuckpartsNetlifyCreditStateV1;
-  assert.equal(evidence.status, "exhausted");
-  assert.equal(evidence.source, "owner_screenshot");
+  // Current owner-reported credit evidence (67c5c70 / handoff b7900e2): available ≠ deploy auth.
+  assert.equal(evidence.status, "available");
+  assert.equal(evidence.source, "owner_reported_netlify_credits");
+  assert.equal(evidence.available_credits, 1000);
   assert.equal(evidence.reset_at, "2026-07-24T00:00:00.000Z");
   assert.equal(evidence.latest_skipped_production_deploy?.at_or_after_commit, "853ee79");
+  assert.equal(evidence.netlify_api_call_authorized, false);
 
   const tmp = mkdtempSync(path.join(tmpdir(), "credit-control-artifacts-"));
   try {
+    // Exhausted fixture still proves write-allowlist + DEPLOY_HOLD path without mutating repo evidence.
     writeEvidence(tmp, exhaustedEvidence());
     const report = buildBuckpartsCreditControlCenterV1({
       rootDir: tmp,
@@ -253,6 +257,7 @@ test("repo evidence file + artifacts write allowlist", () => {
       },
     });
     assert.equal(report.contract, BUCKPARTS_CREDIT_CONTROL_CENTER_CONTRACT_V1);
+    assert.equal(report.deployment_posture, "DEPLOY_HOLD_CREDITS_EXHAUSTED");
     const written = writeBuckpartsCreditControlCenterArtifactsV1({
       rootDir: tmp,
       report,

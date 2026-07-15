@@ -417,6 +417,38 @@ export function buildBuckpartsShipGuardReportV1(args: {
   runValidations?: boolean;
   creditControl?: CreditControlDeployAwarenessSummaryV1;
 }): ShipGuardReportV1 {
+  return buildBuckpartsShipGuardReportInternalV1(args);
+}
+
+/**
+ * Test-only builder: inject exact CSV head/working texts for GE MWFP/XWFE allowance fixtures.
+ * Not called by CLI or production runtime paths.
+ */
+export function buildBuckpartsShipGuardReportForTestsV1(args: {
+  rootDir: string;
+  mode?: ShipGuardModeV1;
+  git?: ShipGuardGitProviderV1;
+  runValidations?: boolean;
+  creditControl?: CreditControlDeployAwarenessSummaryV1;
+  retailerLinksCsvTexts: {
+    headCsvText: string;
+    workingCsvText: string;
+  };
+}): ShipGuardReportV1 {
+  return buildBuckpartsShipGuardReportInternalV1(args);
+}
+
+function buildBuckpartsShipGuardReportInternalV1(args: {
+  rootDir: string;
+  mode?: ShipGuardModeV1;
+  git?: ShipGuardGitProviderV1;
+  runValidations?: boolean;
+  creditControl?: CreditControlDeployAwarenessSummaryV1;
+  retailerLinksCsvTexts?: {
+    headCsvText: string;
+    workingCsvText: string;
+  };
+}): ShipGuardReportV1 {
   const rootDir = args.rootDir;
   const mode = args.mode ?? "dry_run";
   const git = args.git ?? defaultShipGuardGitProvider(rootDir);
@@ -451,12 +483,13 @@ export function buildBuckpartsShipGuardReportV1(args: {
     rootDir,
     retailerLinksDirty,
     headCsvText: retailerLinksDirty
-      ? readGitBlobTextAtHead(rootDir, PROTECTED_RETAILER_LINKS_CSV_REL)
+      ? (args.retailerLinksCsvTexts?.headCsvText ??
+        readGitBlobTextAtHead(rootDir, PROTECTED_RETAILER_LINKS_CSV_REL))
       : null,
-    workingCsvText:
-      retailerLinksDirty && existsSync(workingCsvAbs)
-        ? readFileSync(workingCsvAbs, "utf8")
-        : null,
+    workingCsvText: retailerLinksDirty
+      ? (args.retailerLinksCsvTexts?.workingCsvText ??
+        (existsSync(workingCsvAbs) ? readFileSync(workingCsvAbs, "utf8") : null))
+      : null,
   });
   const netlify = classifyNetlifyIgnoreDryRunBatch({ rootDir, changedFiles: changed_files });
   const credit_control =

@@ -1,0 +1,157 @@
+{
+  "contract": "buckparts_phase0_legacy_provenance_index_v1",
+  "scope": "JSON_ONLY",
+  "scope_note": "Indexes JSON artifacts (and docs banners) only. Markdown companions are intentionally out of scope and are not rewritten or claimed here.",
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-07-15T15:30:00.000Z",
+  "reporting_status": "PROVENANCE_INDEX",
+  "pre_repair_baseline_commit": "d017d40",
+  "repair_commit": null,
+  "note": "Sidecar index only. Does not mutate historical JSON bodies. Distinguishes founder-approved pre-apply bound hashes from later post-apply receipts at reused paths and from current Phase 0 snapshots.",
+  "entries": [
+    {
+      "rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-parity-v1.json",
+      "artifact_role": "ge_mwfp_xwfe_supabase_parity_path_reused_post_apply_receipt",
+      "historical_or_current": "historical",
+      "source_commit_status": "LEGACY_NO_SOURCE_COMMIT",
+      "stale_at_current_head": false,
+      "founder_approval_binding_status": "NOT_BOUND_AT_CURRENT_HEAD_CONTENT",
+      "bound_hash_if_any": "98dfcccdede32e1e3e880404b05bb8cde8dc9c1ac64d3aae0a93751cdffddc98",
+      "current_head_hash_if_any": "0dc44138c845031089178c09c117a349969e28c4e41f49a74e1f8579cc31df32",
+      "notes": "Founder approval binds pre-apply content hash 98dfcc…. HEAD body at this reused path is post-apply receipt 0dc441… and is NOT founder-approval-bound. Do not rewrite."
+    },
+    {
+      "rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review-v1.json",
+      "artifact_role": "ge_mwfp_xwfe_supabase_sync_owner_review",
+      "historical_or_current": "historical",
+      "source_commit_status": "LEGACY_NO_SOURCE_COMMIT",
+      "stale_at_current_head": false,
+      "founder_approval_binding_status": "FOUNDER_APPROVAL_BOUND_AT_HEAD",
+      "bound_hash_if_any": "1e73dbe7774a043ae993cfe851a4c3e5b23db4e6d925f4f9b207c4fccc8d2aa2",
+      "current_head_hash_if_any": "1e73dbe7774a043ae993cfe851a4c3e5b23db4e6d925f4f9b207c4fccc8d2aa2",
+      "notes": "apply_plan binding; HEAD content still matches founder-bound hash."
+    },
+    {
+      "rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-owner-browser-proof-result-packet-v1.json",
+      "artifact_role": "ge_mwfp_xwfe_owner_browser_proof",
+      "historical_or_current": "historical",
+      "source_commit_status": "LEGACY_NO_SOURCE_COMMIT",
+      "stale_at_current_head": false,
+      "founder_approval_binding_status": "FOUNDER_APPROVAL_BOUND_AT_HEAD",
+      "bound_hash_if_any": "080156e71d6c585911d16191956cd0155822ccf2b0a9126c4d8b7d760145a3dd",
+      "current_head_hash_if_any": "080156e71d6c585911d16191956cd0155822ccf2b0a9126c4d8b7d760145a3dd",
+      "notes": "evidence binding; HEAD content still matches founder-bound hash."
+    },
+    {
+      "rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-apply-closeout-v1.json",
+      "artifact_role": "ge_mwfp_xwfe_supabase_sync_apply_closeout",
+      "historical_or_current": "historical",
+      "source_commit_status": "LEGACY_NO_SOURCE_COMMIT",
+      "stale_at_current_head": false,
+      "founder_approval_binding_status": "NOT_APPLICABLE",
+      "bound_hash_if_any": null,
+      "current_head_hash_if_any": "e81f6720980810f2df78104dcd0b83098f6ed95f8c2305c612e526346f646670",
+      "notes": "Immutable historical apply closeout JSON; preserve body."
+    },
+    {
+      "rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-apply-v1.json",
+      "artifact_role": "ge_mwfp_xwfe_supabase_sync_apply_receipt",
+      "historical_or_current": "historical",
+      "source_commit_status": "LEGACY_NO_SOURCE_COMMIT",
+      "stale_at_current_head": false,
+      "founder_approval_binding_status": "NOT_APPLICABLE",
+      "bound_hash_if_any": null,
+      "current_head_hash_if_any": "deb0ca961959e3c0bf13ebcbed005df65b94c4ea289db6f0da5971d03595d584",
+      "notes": "Immutable historical apply receipt JSON; preserve body."
+    },
+    {
+      "rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-guarded-apply-closeout-v1.json",
+      "artifact_role": "ge_mwfp_xwfe_guarded_apply_closeout",
+      "historical_or_current": "historical",
+      "source_commit_status": "LEGACY_NO_SOURCE_COMMIT",
+      "stale_at_current_head": false,
+      "founder_approval_binding_status": "NOT_APPLICABLE",
+      "bound_hash_if_any": null,
+      "current_head_hash_if_any": "e2622d8c4a77055803c5a874f7db130ff9bca8fe9aeaf7527725a09f68ebf23f",
+      "notes": "Immutable historical guarded-apply closeout JSON; preserve body."
+    },
+    {
+      "rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1.json",
+      "artifact_role": "cta_go_link_proof_pack_historical",
+      "historical_or_current": "historical",
+      "source_commit_status": "LEGACY_NO_SOURCE_COMMIT",
+      "stale_at_current_head": false,
+      "founder_approval_binding_status": "NOT_APPLICABLE",
+      "bound_hash_if_any": null,
+      "current_head_hash_if_any": "7d48a93af6976cba9bda4279fcae29117a54a5477fc57b4c72f3a18cdb06102b",
+      "notes": "Historical CTA/go pack JSON at HEAD; current snapshot is a separate file under this directory."
+    },
+    {
+      "rel_path": "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
+      "artifact_role": "ap_demand_selected_discovery_receipt",
+      "historical_or_current": "historical",
+      "source_commit_status": "LEGACY_NO_SOURCE_COMMIT",
+      "stale_at_current_head": false,
+      "founder_approval_binding_status": "NOT_APPLICABLE",
+      "bound_hash_if_any": null,
+      "current_head_hash_if_any": "124faa354f95ea7f45e570f3f26cfe76d74f1e86b45e027b244d574bd24c5326",
+      "notes": "Immutable historical AP discovery receipt JSON; preserve body."
+    },
+    {
+      "rel_path": "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
+      "artifact_role": "ap_demand_selected_run_registry",
+      "historical_or_current": "historical",
+      "source_commit_status": "LEGACY_NO_SOURCE_COMMIT",
+      "stale_at_current_head": false,
+      "founder_approval_binding_status": "NOT_APPLICABLE",
+      "bound_hash_if_any": null,
+      "current_head_hash_if_any": "4f339d0cc6310a5eb5904a3e299a123bcfd7cdef9dd779d0e6f369277250e600",
+      "notes": "Immutable historical AP run-registry JSON; preserve body."
+    },
+    {
+      "rel_path": "data/ops/control-plane-audit/buckparts-control-plane-capability-audit-v1.json",
+      "artifact_role": "control_plane_capability_audit",
+      "historical_or_current": "historical",
+      "source_commit_status": "LEGACY_NO_SOURCE_COMMIT",
+      "stale_at_current_head": true,
+      "founder_approval_binding_status": "NOT_APPLICABLE",
+      "bound_hash_if_any": null,
+      "current_head_hash_if_any": "8d38f17c494071b198d6c6f65320fda179a21b0e50ea40e6ff2c8a300c4a24fe",
+      "notes": "Body preserved at HEAD; treat as STALE_HISTORICAL via this index only (captured near 0fa284f)."
+    },
+    {
+      "rel_path": "data/control-plane/command-center-control-loop-v1.audit.json",
+      "artifact_role": "command_center_control_loop_audit",
+      "historical_or_current": "historical",
+      "source_commit_status": "LEGACY_NO_SOURCE_COMMIT",
+      "stale_at_current_head": true,
+      "founder_approval_binding_status": "NOT_APPLICABLE",
+      "bound_hash_if_any": null,
+      "current_head_hash_if_any": "c1740e761338ba28359ee4c71030e1a431e226093f35ac300d46c6cebe40b00b",
+      "notes": "Body preserved at HEAD; treat as STALE_HISTORICAL via this index only (captured near 2b7febe)."
+    },
+    {
+      "rel_path": "data/ops/phase0-reporting-integrity/ge-mwfp-xwfe-supabase-parity-current-snapshot-v1.json",
+      "artifact_role": "ge_mwfp_xwfe_supabase_parity_current_snapshot",
+      "historical_or_current": "current",
+      "source_commit_status": "DIRTY_WORKTREE_OR_UNBOUND_SNAPSHOT",
+      "stale_at_current_head": false,
+      "founder_approval_binding_status": "NOT_BOUND",
+      "bound_hash_if_any": null,
+      "current_head_hash_if_any": null,
+      "notes": "Separate current-snapshot JSON for Phase 0 reporting; does not replace or rewrite the historical parity path. Not founder-approval-bound."
+    },
+    {
+      "rel_path": "data/ops/phase0-reporting-integrity/cta-go-link-proof-current-snapshot-v1.json",
+      "artifact_role": "cta_go_link_proof_current_snapshot",
+      "historical_or_current": "current",
+      "source_commit_status": "DIRTY_WORKTREE_OR_UNBOUND_SNAPSHOT",
+      "stale_at_current_head": false,
+      "founder_approval_binding_status": "NOT_BOUND",
+      "bound_hash_if_any": null,
+      "current_head_hash_if_any": null,
+      "notes": "Separate current-snapshot JSON for Phase 0 reporting; does not rewrite the historical CTA pack path. Not founder-approval-bound."
+    }
+  ]
+}

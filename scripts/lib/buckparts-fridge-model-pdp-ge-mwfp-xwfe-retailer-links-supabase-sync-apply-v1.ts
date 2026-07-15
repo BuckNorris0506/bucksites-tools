@@ -15,6 +15,7 @@ import {
   buildSupabaseMutationGatePreflightV1,
   resolveIoCapabilityFromEnvV1,
 } from "./buckparts-supabase-mutation-gate-core-v1";
+import type { BuckpartsIoCapabilityV1 } from "./buckparts-io-capabilities-v1";
 import {
   BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_RETAILER_LINKS_OWNER_APPROVAL_URLS_V1,
 } from "./buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-owner-approval-v1";
@@ -216,7 +217,8 @@ export function parseGeMwfpXwfeSupabaseSyncApplyArgvV1(argv: readonly string[]):
   const write = argv.includes("--write");
   return {
     write,
-    writeArtifacts: argv.includes("--write-artifacts") || !write,
+    // Explicit opt-in only — dry-run/default must not mutate tracked draft artifacts.
+    writeArtifacts: argv.includes("--write-artifacts"),
   };
 }
 
@@ -477,6 +479,12 @@ export async function buildGeMwfpXwfeSupabaseSyncApplyReportV1(args: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getSupabaseAdmin?: () => any;
   loadEnv?: () => void;
+  /**
+   * Explicit IO capability for fail-closed mutation gating.
+   * When omitted, resolves from BUCKPARTS_IO_CAPABILITY env (production CLI).
+   * Tests must pass this explicitly to avoid shared process.env races.
+   */
+  ioCapability?: BuckpartsIoCapabilityV1;
 }): Promise<GeMwfpXwfeSupabaseSyncApplyReportV1> {
   const now = args.now ?? (() => new Date());
   const mode = args.mode ?? "dry_run";
@@ -692,7 +700,7 @@ export async function buildGeMwfpXwfeSupabaseSyncApplyReportV1(args: {
   // Fail closed: never plan inserts/deletes.
   blockers.push(...(plannedUpdates > 2 ? ["planned_updates_exceed_2"] : []));
 
-  const io = resolveIoCapabilityFromEnvV1();
+  const io = args.ioCapability ?? resolveIoCapabilityFromEnvV1();
   const mutationGate = buildSupabaseMutationGatePreflightV1({
     mode: mode === "write" ? "write" : "dry_run",
     io_capability: io,

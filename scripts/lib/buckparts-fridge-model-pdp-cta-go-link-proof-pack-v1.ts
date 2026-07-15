@@ -16,6 +16,7 @@ import {
 } from "@/lib/seo/structured-data";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
 
+import { resolveArtifactProvenanceV1 } from "./buckparts-artifact-provenance-v1";
 import { GSWF_WRONG_PART_EXCLUDED_PARTIAL_SLUGS_V1 } from "./gswf-wrong-part-repair-apply-plan-owner-review-v1";
 import {
   BUCKPARTS_FRIDGE_MODEL_PDP_RENDERED_TRUTH_PROOF_JSON_REL_V1,
@@ -83,6 +84,10 @@ export type BuckpartsFridgeModelPdpCtaGoLinkProofPackV1 = {
   product_json_ld_mutation_authorized: false;
   live_production_fetch_enabled: false;
   generated_at: string;
+  base_commit: string | "UNKNOWN";
+  source_commit: string | null;
+  provenance_status: "BOUND_TO_SOURCE_COMMIT" | "DIRTY_WORKTREE" | "UNKNOWN";
+  worktree_clean: boolean | null;
   source_command: typeof BUCKPARTS_FRIDGE_MODEL_PDP_CTA_GO_LINK_PROOF_SOURCE_COMMAND_V1;
   rendered_truth_pack_rel_path: typeof BUCKPARTS_FRIDGE_MODEL_PDP_RENDERED_TRUTH_PROOF_JSON_REL_V1;
   scope: {
@@ -110,6 +115,9 @@ export type FridgeCtaGoProofFridgeLoadV1 =
 export type BuildBuckpartsFridgeModelPdpCtaGoLinkProofDepsV1 = {
   rootDir: string;
   now?: () => Date;
+  /** Test override for provenance resolution. */
+  worktreeClean?: boolean | null;
+  baseCommit?: string | "UNKNOWN";
   loadRenderedTruthPack?: () => BuckpartsFridgePdpRenderedTruthProofPackV1;
   loadFridge?: (slug: string) => Promise<FridgeCtaGoProofFridgeLoadV1> | FridgeCtaGoProofFridgeLoadV1;
   resolveQuarantine?: (slug: string) => { quarantine: boolean; reason: string | null };
@@ -345,6 +353,12 @@ export async function buildBuckpartsFridgeModelPdpCtaGoLinkProofPackV1(
   deps: BuildBuckpartsFridgeModelPdpCtaGoLinkProofDepsV1,
 ): Promise<BuckpartsFridgeModelPdpCtaGoLinkProofPackV1> {
   const generated_at = (deps.now ?? (() => new Date()))().toISOString();
+  const provenance = resolveArtifactProvenanceV1({
+    rootDir: deps.rootDir,
+    worktreeClean: deps.worktreeClean,
+    baseCommit: deps.baseCommit,
+  });
+  const { source_commit, provenance_status, base_commit, worktree_clean } = provenance;
   const pack =
     deps.loadRenderedTruthPack?.() ?? defaultLoadRenderedTruthPack(deps.rootDir);
   const { match_rows, quarantined_slugs } = loadMatchSlugsFromRenderedTruthPackV1(pack);
@@ -421,6 +435,10 @@ export async function buildBuckpartsFridgeModelPdpCtaGoLinkProofPackV1(
     product_json_ld_mutation_authorized: false,
     live_production_fetch_enabled: false,
     generated_at,
+    base_commit,
+    source_commit,
+    provenance_status,
+    worktree_clean,
     source_command: BUCKPARTS_FRIDGE_MODEL_PDP_CTA_GO_LINK_PROOF_SOURCE_COMMAND_V1,
     rendered_truth_pack_rel_path: BUCKPARTS_FRIDGE_MODEL_PDP_RENDERED_TRUTH_PROOF_JSON_REL_V1,
     scope: {
@@ -433,6 +451,7 @@ export async function buildBuckpartsFridgeModelPdpCtaGoLinkProofPackV1(
     rows,
     proven_facts: [
       "PROVEN: read_only=true; data_mutation=false; buy_cta_authorized=false; retailer_links_mutation_authorized=false.",
+      `PROVEN: provenance_status=${provenance_status}; base_commit=${base_commit}; source_commit=${source_commit === null ? "null" : source_commit}.`,
       `PROVEN: exact scope=${String(BUCKPARTS_FRIDGE_MODEL_PDP_CTA_GO_LINK_PROOF_EXPECTED_SLUG_COUNT_V1)} MATCH+promoted slugs from rendered-truth pack.`,
       `PROVEN: excluded QUARANTINED_SUPPRESSED=${String(quarantined_slugs.length)}; PARTIAL=3.`,
       `PROVEN: summary=${JSON.stringify(summary)}.`,

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -11,6 +11,7 @@ import {
 } from "./buckparts-ship-guard-ge-mwfp-xwfe-retailer-links-allowance-v1";
 import {
   applyGeMwfpXwfeRetailerLinksAllowanceToBlockersV1,
+  buildBuckpartsShipGuardReportForTestsV1,
   buildBuckpartsShipGuardReportV1,
   PROTECTED_RETAILER_LINKS_CSV_REL,
   type ShipGuardGitProviderV1,
@@ -85,18 +86,24 @@ test("allowance BLOCKED when CSV changes a third filter", () => {
 });
 
 test("repo closeout + exact MWFP/XWFE CSV diff yields ALLOWED", () => {
-  const head = spawnSync("git", ["show", "HEAD:data/retailer_links.csv"], {
+  // HEAD is already post-apply; reconstruct the exact founder-approved CSV delta from pre-apply.
+  const preApply = spawnSync("git", ["show", "e660630:data/retailer_links.csv"], {
     cwd: REPO_ROOT,
     encoding: "utf8",
     maxBuffer: 32 * 1024 * 1024,
   });
-  assert.equal(head.status, 0);
-  const working = readFileSync(path.join(REPO_ROOT, PROTECTED_RETAILER_LINKS_CSV_REL), "utf8");
+  assert.equal(preApply.status, 0);
+  const postApply = spawnSync("git", ["show", "1635282:data/retailer_links.csv"], {
+    cwd: REPO_ROOT,
+    encoding: "utf8",
+    maxBuffer: 32 * 1024 * 1024,
+  });
+  assert.equal(postApply.status, 0);
   const a = assessGeMwfpXwfeApprovedRetailerLinksCloseoutAllowanceV1({
     rootDir: REPO_ROOT,
     retailerLinksDirty: true,
-    headCsvText: head.stdout,
-    workingCsvText: working,
+    headCsvText: preApply.stdout,
+    workingCsvText: postApply.stdout,
   });
   assert.equal(a.status, "ALLOWED", JSON.stringify(a.blockers));
   assert.equal(a.pages_claimed_closed, false);
@@ -179,7 +186,20 @@ test("ship guard keeps retailer_links blockers when dirty without closeout evide
 });
 
 test("ship guard allows exact founder-approved GE MWFP/XWFE retailer_links closeout on this repo", () => {
-  const report = buildBuckpartsShipGuardReportV1({
+  const preApply = spawnSync("git", ["show", "e660630:data/retailer_links.csv"], {
+    cwd: REPO_ROOT,
+    encoding: "utf8",
+    maxBuffer: 32 * 1024 * 1024,
+  });
+  assert.equal(preApply.status, 0);
+  const postApply = spawnSync("git", ["show", "1635282:data/retailer_links.csv"], {
+    cwd: REPO_ROOT,
+    encoding: "utf8",
+    maxBuffer: 32 * 1024 * 1024,
+  });
+  assert.equal(postApply.status, 0);
+
+  const report = buildBuckpartsShipGuardReportForTestsV1({
     rootDir: REPO_ROOT,
     git: mockGit({
       pathHasDiffWorkingTreeVsHead: (p) => p === PROTECTED_RETAILER_LINKS_CSV_REL,
@@ -187,6 +207,10 @@ test("ship guard allows exact founder-approved GE MWFP/XWFE retailer_links close
       revParseHead: () => "e660630",
       revParseOriginMain: () => "e660630",
     }),
+    retailerLinksCsvTexts: {
+      headCsvText: preApply.stdout,
+      workingCsvText: postApply.stdout,
+    },
     creditControl: {
       source_command: "npm run buckparts:credit-control",
       deployment_posture: "DEPLOY_HOLD_CREDITS_EXHAUSTED",

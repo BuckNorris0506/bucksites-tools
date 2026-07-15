@@ -1,7 +1,8 @@
 /**
  * CLI for repo_runtime_convergence_gate_v1.
- * Default audit mode: JSON stdout, exit 0.
+ * Default audit mode: JSON stdout, exit 0 — no durable artifact writes.
  * --enforce: exit 1 when BLOCKED; exit 0 for CONVERGED or EXPLICITLY_DIVERGED.
+ * --refresh-ledger: optional intentional write of data/command-center/execution-ledger-v1.json
  */
 
 import path from "node:path";
@@ -19,18 +20,28 @@ function parseEnforceFlag(argv: string[]): boolean {
   return argv.includes("--enforce");
 }
 
+function parseRefreshLedgerFlag(argv: string[]): boolean {
+  return argv.includes("--refresh-ledger");
+}
+
 async function main(): Promise<void> {
-  const enforce = parseEnforceFlag(process.argv.slice(2));
+  const argv = process.argv.slice(2);
+  const enforce = parseEnforceFlag(argv);
+  const refreshLedger = parseRefreshLedgerFlag(argv);
   const report = await buildRepoRuntimeConvergenceGateReportV1({
     rootDir,
     enforce,
   });
 
-  const ledger = refreshBuckpartsExecutionLedgerV1({
-    rootDir,
-    trigger_source: EXECUTION_LEDGER_TRIGGER_REPO_RUNTIME_CONVERGENCE_V1,
-  });
-  process.stderr.write(`Refreshed ${ledger.jsonRelPath} (execution ledger; read-only index).\n`);
+  if (refreshLedger) {
+    const ledger = refreshBuckpartsExecutionLedgerV1({
+      rootDir,
+      trigger_source: EXECUTION_LEDGER_TRIGGER_REPO_RUNTIME_CONVERGENCE_V1,
+    });
+    process.stderr.write(
+      `Refreshed ${ledger.jsonRelPath} (intentional --refresh-ledger; durable write).\n`,
+    );
+  }
 
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
   process.exit(report.exit_code);

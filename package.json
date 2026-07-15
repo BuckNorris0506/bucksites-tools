@@ -85,6 +85,7 @@
     "buckparts:credit-control": "tsx scripts/report-buckparts-credit-control-center-v1.ts",
     "buckparts:security-gate": "tsx scripts/report-buckparts-security-gate-v1.ts",
     "buckparts:mcp-supabase-exposure:audit": "tsx scripts/audit-buckparts-mcp-supabase-exposure-v1.ts --enforce",
+    "buckparts:phase0-reporting-integrity": "bash scripts/validate-buckparts-phase0-reporting-integrity-v1.sh",
     "buckparts:deploy:preflight": "npm run buckparts:mcp-supabase-exposure:audit && npm run buckparts:repo-runtime-convergence:check -- --enforce",
     "buckparts:learning-outcomes-approved-insert:dry-run": "tsx scripts/execute-learning-outcomes-approved-insert-v1.ts",
     "buckparts:learning-outcomes-approved-insert:mutate": "tsx scripts/execute-learning-outcomes-approved-insert-v1.ts --mutate-approved-learning-outcome",

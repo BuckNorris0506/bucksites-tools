@@ -1,0 +1,809 @@
+{
+  "contract": "buckparts_fridge_model_pdp_cta_go_link_proof_pack_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "sitemap_robots_mutation_authorized": false,
+  "product_json_ld_mutation_authorized": false,
+  "live_production_fetch_enabled": false,
+  "generated_at": "2026-07-15T08:23:02.827Z",
+  "base_commit": "d017d40",
+  "source_commit": null,
+  "provenance_status": "DIRTY_WORKTREE",
+  "worktree_clean": false,
+  "source_command": "npm run buckparts:fridge-model-pdp-cta-go-link-proof-pack",
+  "rendered_truth_pack_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
+  "scope": {
+    "slug_count": 28,
+    "slugs": [
+      "frigidaire-ffhb2740ps",
+      "frigidaire-fghb2868pf",
+      "frigidaire-fgsc2335tf",
+      "ge-cwe23sshww",
+      "ge-gfe24jgkww",
+      "ge-gfe27jmkes",
+      "ge-gfe28gmkbb",
+      "ge-gfe28gmkes",
+      "ge-gfe28gskes",
+      "ge-gfe28gskss",
+      "ge-gfe28gynfs",
+      "ge-gfe28hskss",
+      "ge-gne25jmkww",
+      "ge-gne27jstss",
+      "ge-gse25hskss",
+      "ge-gte18gsnrss",
+      "ge-gye22gskww",
+      "ge-pfe28kmkww",
+      "ge-pfe28kynbb",
+      "ge-pvd28bymfs",
+      "samsung-rf263beaesr",
+      "samsung-rf28nhedbsr",
+      "samsung-rf28r7201sr",
+      "samsung-rf28r7351sg",
+      "whirlpool-wrf540cwhz",
+      "whirlpool-wrs325sdhz",
+      "whirlpool-wrx735sdhz",
+      "whirlpool-wrx986sihz"
+    ],
+    "excluded_quarantined_slugs": [
+      "lg-lfxc22596s",
+      "lg-lfxs26973s",
+      "lg-lfxs28968s",
+      "lg-lmxs28626s",
+      "lg-lrfvs3006s",
+      "lg-lrfxs3106s",
+      "samsung-rf27t5201sr",
+      "samsung-rf27t5501sr",
+      "samsung-rf28r6301sr",
+      "samsung-rf28t5101sr",
+      "samsung-rs22t5201sg"
+    ],
+    "excluded_partial_slugs": [
+      "ge-gfe28hmkww",
+      "ge-gsc25frshss",
+      "ge-gse26gshess"
+    ]
+  },
+  "summary": {
+    "SAFE_BUYER_PATH_PASS": 27,
+    "SAFE_BUYER_PATH_FAIL": 1,
+    "SAFE_BUYER_PATH_UNKNOWN": 0,
+    "product_json_ld_proven_suppressed_count": 28
+  },
+  "rows": [
+    {
+      "slug": "frigidaire-ffhb2740ps",
+      "cohort": "qa_20",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "ultrawf"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "b23eac97-d064-46e1-b086-617e4a79f002"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "frigidaire-fghb2868pf",
+      "cohort": "qa_20",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "eptwfu01"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "96dd791c-4a8f-42f4-9b4d-cb424ea5e879"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "frigidaire-fgsc2335tf",
+      "cohort": "qa_20",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "eptwfu01"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "96dd791c-4a8f-42f4-9b4d-cb424ea5e879"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-cwe23sshww",
+      "cohort": "gswf_13",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gfe24jgkww",
+      "cohort": "gswf_13",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "smartwater-mwfp",
+        "xwfe"
+      ],
+      "mapped_filter_count": 2,
+      "safe_cta_count": 2,
+      "go_resolvable_count": 2,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "e274568e-2998-4a93-8642-53862d2eb915",
+        "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gfe27jmkes",
+      "cohort": "gswf_13",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "xwfe"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "e274568e-2998-4a93-8642-53862d2eb915"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gmkbb",
+      "cohort": "gswf_13",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gmkes",
+      "cohort": "qa_20",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gskes",
+      "cohort": "gswf_13",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gskss",
+      "cohort": "qa_20",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gfe28gynfs",
+      "cohort": "qa_20",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gfe28hskss",
+      "cohort": "gswf_13",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "rpwfe",
+        "smartwater-mwfp"
+      ],
+      "mapped_filter_count": 2,
+      "safe_cta_count": 2,
+      "go_resolvable_count": 2,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703",
+        "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gne25jmkww",
+      "cohort": "gswf_13",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "xwfe"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "e274568e-2998-4a93-8642-53862d2eb915"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gne27jstss",
+      "cohort": "gswf_13",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "mapped_filter_count": 2,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "e274568e-2998-4a93-8642-53862d2eb915"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gse25hskss",
+      "cohort": "gswf_13",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "mapped_filter_count": 2,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "e274568e-2998-4a93-8642-53862d2eb915"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-gte18gsnrss",
+      "cohort": "gte18",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [],
+      "mapped_filter_count": 0,
+      "safe_cta_count": 0,
+      "go_resolvable_count": 0,
+      "cta_eligible": false,
+      "buyer_path_state": "suppress_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_FAIL",
+      "missing_reasons": [
+        "no_go_resolvable_safe_retailer_link",
+        "no_mapped_filters_on_pdp_loader",
+        "no_safe_direct_buyable_cta_after_gate",
+        "trust_buyer_path_unavailable"
+      ],
+      "safe_go_link_ids": [],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "FAIL: buyer-path PASS requires mapped filters + safe CTA + go-resolvable link + non-quarantine + JSON-LD suppressed"
+      ]
+    },
+    {
+      "slug": "ge-gye22gskww",
+      "cohort": "gswf_13",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-pfe28kmkww",
+      "cohort": "gswf_13",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "rpwfe",
+        "xwf"
+      ],
+      "mapped_filter_count": 2,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-pfe28kynbb",
+      "cohort": "gswf_13",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "rpwfe"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "ge-pvd28bymfs",
+      "cohort": "gswf_13",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "xwfe"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "e274568e-2998-4a93-8642-53862d2eb915"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "samsung-rf263beaesr",
+      "cohort": "qa_20",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "da29-00020b"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 2,
+      "go_resolvable_count": 2,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "055f383a-4d14-4997-a19f-894afe56721e",
+        "d4cbad0c-4bab-4854-89bf-59e6d6492c6b"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "samsung-rf28nhedbsr",
+      "cohort": "qa_20",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "da29-00020b"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 2,
+      "go_resolvable_count": 2,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "055f383a-4d14-4997-a19f-894afe56721e",
+        "d4cbad0c-4bab-4854-89bf-59e6d6492c6b"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "samsung-rf28r7201sr",
+      "cohort": "qa_20",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "da97-17376b"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "2edeb286-7906-4183-abb9-5ddfc0b00148"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "samsung-rf28r7351sg",
+      "cohort": "qa_20",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "mapped_filter_count": 2,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "2edeb286-7906-4183-abb9-5ddfc0b00148"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "whirlpool-wrf540cwhz",
+      "cohort": "qa_20",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "edr4rxd1"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "5504e020-a08e-4c14-bd9b-0f7bb2534e5b"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "whirlpool-wrs325sdhz",
+      "cohort": "qa_20",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "edr1rxd1"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "32288a9b-4ff3-4424-86fa-99f716308ef5"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "whirlpool-wrx735sdhz",
+      "cohort": "qa_20",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "edr4rxd1"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "5504e020-a08e-4c14-bd9b-0f7bb2534e5b"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    },
+    {
+      "slug": "whirlpool-wrx986sihz",
+      "cohort": "qa_20",
+      "rendered_truth_classification": "MATCH",
+      "rendered_filter_slugs": [
+        "edr2rxd1"
+      ],
+      "mapped_filter_count": 1,
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
+      "quarantine": false,
+      "product_json_ld_status": "PROVEN_SUPPRESSED",
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "6f81b4ce-a3b0-4c09-b0d9-965aca5bfc17"
+      ],
+      "notes": [
+        "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
+        "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
+      ]
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: read_only=true; data_mutation=false; buy_cta_authorized=false; retailer_links_mutation_authorized=false.",
+    "PROVEN: provenance_status=DIRTY_WORKTREE; base_commit=d017d40; source_commit=null.",
+    "PROVEN: exact scope=28 MATCH+promoted slugs from rendered-truth pack.",
+    "PROVEN: excluded QUARANTINED_SUPPRESSED=11; PARTIAL=3.",
+    "PROVEN: summary={\"SAFE_BUYER_PATH_PASS\":27,\"SAFE_BUYER_PATH_FAIL\":1,\"SAFE_BUYER_PATH_UNKNOWN\":0,\"product_json_ld_proven_suppressed_count\":28}.",
+    "PROVEN: SAFE_BUYER_PATH_PASS requires mapped filters + gated safe CTA + go-resolvable URL + non-quarantine + JSON-LD suppressed."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Live production HTML CTA rendering for these 28 PDPs (no production fetch).",
+    "UNKNOWN: Click analytics / real customer conversion on proven go links."
+  ],
+  "risk_notes": [
+    "This pack does not authorize buy CTA promotion, retailer_links mutation, or Product JSON-LD invents.",
+    "Mapping-layer frontend_safe \u2260 monetizable SAFE_BUYER_PATH_PASS.",
+    "Do not include quarantined or PARTIAL slugs in buyer-path PASS claims."
+  ],
+  "snapshot_contract": "buckparts_fridge_model_pdp_cta_go_link_proof_current_snapshot_v1",
+  "snapshot_note": "Current CTA/go snapshot for Phase 0. Historical CTA pack at HEAD remains immutable."
+}

@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (`e797fe2` — Apply GE Supabase retailer link sync):** Guarded Supabase retailer_links sync **applied** for exactly **`smartwater-mwfp` + `xwfe`** (UPDATE-only; no inserts/deletes; **`xwf` untouched**) — see **§ Current stopping point — GE MWFP/XWFE Supabase sync applied (`e797fe2`)** below. Actual repo HEAD / `origin/main`: **`e797fe2`**. Post-write CTA/go: **PASS 27 / FAIL 1** (remaining fail **`ge-gte18gsnrss`** remain-no-buy). Supabase parity residual: **notes-only** (`browser_truth_notes`) — **not** URL/search-placeholder drift; sync owner-review/write **NOT_NEEDED**. Do **not** overclaim the **4** GE model PDPs as revenue/conversion wins. Prior operational stopping points: **`657988e`** — fridge live HTML proof PASS 21; **`959e79b`** — GSWF Supabase sync closed / already in sync; Credit Control / Product JSON-LD / AGENTS.md / GSWF CSV repair remain **§ Prior completed lanes** below. **Root `AGENTS.md` remains the agent operating contract**. **Conversion / revenue / ranking / SEO impact remain `UNKNOWN`** — not claimed. No deploy claim unless proven by existing gates. Credits available ≠ deploy authorization.
+> **Current operational stopping point (Phase 0 reporting-repair review tree on baseline `d017d40`):** Pre-repair baseline HEAD / `origin/main` remains **`d017d40`** (Register GE Supabase writer in service-role inventory) until this reporting-repair lane is committed. After commit, update this banner to the repair commit SHA. Prior GE MWFP/XWFE guarded Supabase retailer_links sync **applied** at `e797fe2` (exactly **`smartwater-mwfp` + `xwfe`**; UPDATE-only; **`xwf` untouched**). Post-write CTA/go remains **PASS 27 / FAIL 1** (remaining fail **`ge-gte18gsnrss`** remain-no-buy). GE sync dispatch is **`NOT_NEEDED`** (notes-only residual drift). After GE sync surfacing (`ce2ee6e`), Command Center dispatch **executed** read-only **`demand_to_coverage_next_lane`**, then **AP demand-selected owner review**, then **AP closeout/readiness proof**, and **hard-stopped before mutation** (`batch_closeout` / `apply_readiness` = **NOT_PROVEN**). Repository-proven Netlify deploy-preflight defect: GE Supabase writer existed but was **missing from the service-role inventory** (`d017d40` registration). Owner-supplied Netlify logs support that inventory gap; **whether any additional secret-related failure also occurred is not independently ruled out beyond those supplied logs**. Production Netlify **Published `main@d017d40`** remains owner-reported. Do **not** overclaim GE PDPs or AP closeout as revenue/conversion wins. **Root `AGENTS.md` remains the agent operating contract**. **Conversion / revenue / ranking / SEO impact remain `UNKNOWN`**. Credits available ≠ deploy authorization.
 
 ## Execution Stack
 
@@ -54,17 +54,54 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — GE MWFP/XWFE Supabase sync applied (`e797fe2`)
+## Current stopping point — Phase 0 reporting integrity repair (baseline `d017d40`; repair commit TBD)
 
-**Read this section first** for LIVE GE MWFP/XWFE retailer_links Supabase sync + CTA/go posture.
+**Read this section first** for LIVE pre-repair baseline, GE MWFP/XWFE post-sync posture, AP demand-selected dispatch hard-stop, and Netlify preflight inventory repair.
 
 ### Milestone summary (PROVEN)
 
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
-| Repo HEAD / `origin/main` | **`e797fe2`** — Apply GE Supabase retailer link sync |
-| Key sequence | CSV apply → parity **DRIFTED** (search-placeholder) → sync owner-review + founder approval → guarded Supabase UPDATE → post-write CTA/go re-proof |
+| Pre-repair baseline HEAD / `origin/main` | **`d017d40`** — Register GE Supabase writer in service-role inventory |
+| Repair commit | **TBD after founder commit** — replace this row with the repair SHA once committed |
+| Prior GE Supabase sync apply | **`e797fe2`** — UPDATE-only `smartwater-mwfp` + `xwfe`; `rows_updated=2`; `inserts=0`; `deletes=0`; **`xwf` excluded** |
+| Post-write CTA/go | **`SAFE_BUYER_PATH_PASS=27` / `SAFE_BUYER_PATH_FAIL=1` / `UNKNOWN=0`** |
+| Remaining FAIL | **`ge-gte18gsnrss`** (remain-no-buy) |
+| GE sync Command Center field | `.command_center_v2.fridge_truth_spine_v1.ge_mwfp_xwfe_retailer_links_supabase_sync` → **`dispatch_status=NOT_NEEDED`** |
+| Demand dispatch | `data/command-center/dispatch-runs/dispatch-run-2026-07-15T035848679Z.json` — **`demand_to_coverage_next_lane` EXECUTED** (read-only) |
+| AP owner review dispatch | `…T042923157Z` / `…T045046470Z` — **`air_purifier_demand_selected_batch_owner_review` EXECUTED** |
+| AP closeout/readiness dispatch | `…T050241861Z` / `…T052332675Z` — **`air_purifier_demand_selected_batch_closeout_readiness_proof` EXECUTED**; **`hard_stop=true`**; **`batch_closeout=NOT_PROVEN`**; **`apply_readiness=NOT_PROVEN`** |
+| AP discovery coverage | HyperAgent chat discovery covers all **10** expected demand-selected slugs; **`missing_slugs=[]`** |
+| Netlify preflight (repo-proven) | Missing GE writer registration in `scripts/lib/buckparts-supabase-service-role-inventory-v1.ts` (writer file existed; inventory gap) |
+| Netlify failure causality (owner logs) | Owner-supplied Netlify logs support the inventory gap; additional secret-related causes are **not independently ruled out** beyond those logs |
+| Inventory fix on baseline | **`d017d40`** registers `fridge_model_pdp_ge_mwfp_xwfe_retailer_links_supabase_sync_apply_v1` |
+| Production publish | Owner-reported Netlify Production **Published `main@d017d40`** (consistent with baseline HEAD/origin/main; live Netlify API not re-queried here) |
+
+### Not claimed
+
+Conversion, revenue, user clicks, ranking, SEO impact, AP batch closeout, AP apply readiness, autonomous mutation — **`UNKNOWN` / not claimed**. Notes-only residual GE parity drift is **not** a re-write trigger. AP closeout chain did **not** mutate CSV / compatibility / retailer_links CSV / public CTA / sitemap / robots / Product JSON-LD. GE parity path reuse is historical only: founder decision binds pre-apply parity content sha256 `98dfcccdede32e1e3e880404b05bb8cde8dc9c1ac64d3aae0a93751cdffddc98` (not the current HEAD body). The same path at HEAD holds a later post-apply immutable receipt sha256 `0dc44138c845031089178c09c117a349969e28c4e41f49a74e1f8579cc31df32` (notes-only residual; **not** founder-approval-bound). Current parity truth lives only in Phase 0 sidecar snapshots under `data/ops/phase0-reporting-integrity/`.
+
+### Current recommendation (founder-gated)
+
+1. Treat GE MWFP/XWFE Supabase URL sync as **complete** for this scoped write; do **not** re-run sync owner-review/write dispatch.
+2. Treat AP demand-selected closeout/apply as **NOT_PROVEN**; hard-stop before mutation until a separate founder-authorized lane.
+3. Keep **`ge-gte18gsnrss`** remain-no-buy; do **not** invent buyer-path wins.
+4. Before any production deploy spend: Credit Control + ship-guard (credits available ≠ deploy authorization).
+5. Commit this Phase 0 reporting-repair lane, then update this HQ stopping point to the repair commit SHA and re-run `npm run buckparts:phase0-reporting-integrity -- --require-clean`.
+
+---
+
+## Prior completed lane — GE MWFP/XWFE Supabase sync applied (`e797fe2`)
+
+**Historical reference** for the guarded Supabase retailer_links sync apply itself (superseded for operational pickup by **§ Current stopping point — Phase 0 reporting integrity repair (baseline `d017d40`; repair commit TBD)** above).
+
+### Milestone summary (PROVEN at apply time)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Apply commit | **`e797fe2`** — Apply GE Supabase retailer link sync |
 | Guarded write scope | Exactly **`smartwater-mwfp` + `xwfe`** existing primaries; **`xwf` excluded**; **`rows_updated=2`**; **`inserts=0`**; **`deletes=0`**; CSV not mutated in this write |
 | Apply closeout | `data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-apply-closeout-v1.json` — **`apply_status=APPLIED`** |
 | Founder decision | `decision-2026-07-14-ge-mwfp-xwfe-retailer-links-supabase-sync-approve` |
@@ -72,22 +109,14 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | Post-write CTA/go | **`SAFE_BUYER_PATH_PASS=27` / `SAFE_BUYER_PATH_FAIL=1` / `UNKNOWN=0`** |
 | Remaining FAIL | **`ge-gte18gsnrss`** (remain-no-buy) |
 | Supabase parity residual | Still labeled **DRIFTED**, but **notes-only** (`mismatched_fields: browser_truth_notes` only); **`any_supabase_search_placeholder=false`** |
-| Command Center CTA field | `.command_center_v2.fridge_truth_spine_v1.model_pdp_cta_go_proof` |
-| Command Center sync field | `.command_center_v2.fridge_truth_spine_v1.ge_mwfp_xwfe_retailer_links_supabase_sync` → **`dispatch_status=NOT_NEEDED`** (empty `exact_command`) |
 | Affected model slugs (do not overclaim) | `ge-gfe24jgkww`, `ge-gfe27jmkes`, `ge-gne25jmkww`, `ge-pvd28bymfs` — **not** claimed closed as revenue/conversion wins |
 
 ### Not claimed
 
-Conversion, revenue, user clicks, ranking, SEO impact, deploy authorization — **`UNKNOWN` / not claimed**. Notes-only residual drift is **not** a re-write trigger. Live HTML proof remain **PASS 21** on the committed 21-slug allowlist (expanding that allowlist is a **separate** lane — not auto-surfaced here).
-
-### Current recommendation (founder-gated)
-
-1. Treat GE MWFP/XWFE Supabase URL sync as **complete** for this scoped write; do **not** re-run sync owner-review/write dispatch.
-2. Keep **`ge-gte18gsnrss`** remain-no-buy; do **not** invent buyer-path wins for it.
-3. Do **not** claim conversion/revenue from CTA/go **PASS 27** or the **4** GE model PDPs.
-4. Before any production deploy spend: Credit Control + ship-guard (credits available ≠ deploy authorization).
+Conversion, revenue, user clicks, ranking, SEO impact, deploy authorization — **`UNKNOWN` / not claimed**.
 
 ---
+
 
 ## Prior completed lane — fridge model PDP live HTML proof PASS 21 (`657988e`)
 

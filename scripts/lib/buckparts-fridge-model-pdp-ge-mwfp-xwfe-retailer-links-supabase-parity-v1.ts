@@ -9,6 +9,7 @@ import path from "node:path";
 
 import { isSearchPlaceholderBuyLink } from "@/lib/retailers/launch-buy-links";
 
+import { resolveArtifactProvenanceV1 } from "./buckparts-artifact-provenance-v1";
 import { BUCKPARTS_FRIDGE_MODEL_PDP_CTA_GO_LINK_PROOF_JSON_REL_V1 } from "./buckparts-fridge-model-pdp-cta-go-link-proof-pack-v1";
 import { BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_GUARDED_APPLY_CLOSEOUT_JSON_REL_V1 } from "./buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-guarded-apply-v1";
 import {
@@ -118,6 +119,10 @@ export type GeMwfpXwfeRetailerLinksSupabaseParityProofV1 = {
   pages_claimed_closed: false;
   conversion_claimed: false;
   generated_at: string;
+  base_commit: string | "UNKNOWN";
+  source_commit: string | null;
+  provenance_status: "BOUND_TO_SOURCE_COMMIT" | "DIRTY_WORKTREE" | "UNKNOWN";
+  worktree_clean: boolean | null;
   source_command: typeof BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_RETAILER_LINKS_SUPABASE_PARITY_SOURCE_COMMAND_V1;
   filter_slugs: typeof BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_RETAILER_LINKS_SUPABASE_PARITY_FILTER_SLUGS_V1;
   affected_model_slugs: typeof BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_RETAILER_LINKS_SUPABASE_PARITY_AFFECTED_MODEL_SLUGS_V1;
@@ -336,10 +341,18 @@ export function classifyOverallGeMwfpXwfeParitySyncStatusV1(
 export async function buildGeMwfpXwfeRetailerLinksSupabaseParityProofV1(args: {
   rootDir: string;
   now?: () => Date;
+  worktreeClean?: boolean | null;
+  baseCommit?: string | "UNKNOWN";
   readText?: (abs: string) => string;
   loadSupabase?: typeof loadScopedSupabasePrimariesV1<GeMwfpXwfeRetailerLinksSupabaseParityFilterSlugV1>;
 }): Promise<GeMwfpXwfeRetailerLinksSupabaseParityProofV1> {
   const now = args.now ?? (() => new Date());
+  const provenance = resolveArtifactProvenanceV1({
+    rootDir: args.rootDir,
+    worktreeClean: args.worktreeClean,
+    baseCommit: args.baseCommit,
+  });
+  const { source_commit, provenance_status, base_commit, worktree_clean } = provenance;
   const core_parity = await buildScopedFridgeRetailerLinksParityReportV1({
     lane: BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_RETAILER_LINKS_SUPABASE_PARITY_LANE_V1,
     rootDir: args.rootDir,
@@ -397,10 +410,12 @@ export async function buildGeMwfpXwfeRetailerLinksSupabaseParityProofV1(args: {
 
   const proven_facts = [
     "PROVEN: read_only=true; data_mutation=false; mutation_authorized=false; supabase_mutation_authorized=false; apply_lane_authorized=false.",
+    `PROVEN: provenance_status=${provenance_status}; base_commit=${base_commit}; source_commit=${source_commit === null ? "null" : source_commit}.`,
     "PROVEN: filter scope is exactly smartwater-mwfp + xwfe; xwf excluded.",
     "PROVEN: affected model context is exactly ge-gfe24jgkww, ge-gfe27jmkes, ge-gne25jmkww, ge-pvd28bymfs.",
     "PROVEN: live fridge/filter PDP retailer_links load from Supabase after buy-path gates — CSV alone does not update CTA/go.",
     `PROVEN: overall_sync_status=${overall_sync_status}; in_sync=${String(in_sync_filter_count)}; drifted=${String(drifted_filter_count)}; unknown=${String(unknown_filter_count)}.`,
+    `PROVEN: any_supabase_search_placeholder=${String(any_supabase_search_placeholder)}.`,
     `PROVEN: pages_claimed_closed=false; conversion_claimed=false; CTA/go pack summary PASS=${String(cta.pack_summary.PASS)} FAIL=${String(cta.pack_summary.FAIL)}.`,
     ...core_parity.proven_facts.filter((f) => !f.startsWith("PROVEN: lane allowlist")),
   ];
@@ -411,11 +426,24 @@ export async function buildGeMwfpXwfeRetailerLinksSupabaseParityProofV1(args: {
     ...core_parity.unknown_facts,
   ];
 
+  const notesOnlyResidual =
+    overall_sync_status === "DRIFTED" &&
+    any_supabase_search_placeholder === false &&
+    filter_rows.every(
+      (r) =>
+        r.sync_status === "DRIFTED" &&
+        (r.mismatched_fields ?? []).length > 0 &&
+        (r.mismatched_fields ?? []).every((f) => f === "browser_truth_notes"),
+    );
+
   let recommended_next_action =
     "Review filter_rows and cta_go_affected_slugs; do not claim pages closed from this proof.";
   if (overall_sync_status === "UNKNOWN") {
     recommended_next_action =
       "Configure Supabase service-role env and re-run this read-only parity proof before any sync discussion.";
+  } else if (notesOnlyResidual) {
+    recommended_next_action =
+      "Notes-only residual drift (browser_truth_notes); any_supabase_search_placeholder=false. Sync owner-review/write is NOT_NEEDED. Do not claim conversion/revenue or 4 GE pages closed.";
   } else if (overall_sync_status === "DRIFTED") {
     recommended_next_action =
       `Run ${BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_SUPABASE_SYNC_OWNER_REVIEW_EXACT_COMMAND_V1} (read-only owner-review drafts). Hard-stop before Supabase write / founder approval. Then re-run CTA/go proof. Do not claim 4 pages closed yet.`;
@@ -436,6 +464,10 @@ export async function buildGeMwfpXwfeRetailerLinksSupabaseParityProofV1(args: {
     pages_claimed_closed: false,
     conversion_claimed: false,
     generated_at: now().toISOString(),
+    base_commit,
+    source_commit,
+    provenance_status,
+    worktree_clean,
     source_command:
       BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_RETAILER_LINKS_SUPABASE_PARITY_SOURCE_COMMAND_V1,
     filter_slugs:
@@ -459,7 +491,7 @@ export async function buildGeMwfpXwfeRetailerLinksSupabaseParityProofV1(args: {
     unknown_facts,
     recommended_next_action,
     exact_command:
-      overall_sync_status === "DRIFTED"
+      overall_sync_status === "DRIFTED" && !notesOnlyResidual
         ? BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_SUPABASE_SYNC_OWNER_REVIEW_EXACT_COMMAND_V1
         : null,
     core_parity,

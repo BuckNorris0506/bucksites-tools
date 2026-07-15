@@ -1,3 +1,5 @@
+> **STALE_HISTORICAL pointer:** Prefer `docs/BuckParts-HQ-HANDOFF.md` and `data/ops/phase0-reporting-integrity/legacy-provenance-index-v1.json` for current Phase 0 reporting status. This Runner Status doc was last verified 2026-05-15 and is not current HEAD stopping-point truth.
+
 # BuckParts — Runner status (canonical)
 
 **Purpose:** One living document for Runner-adjacent **repo truth**: capabilities, execution surfaces, gaps, and what not to claim. Supersedes `docs/BuckParts-RUNNER-CAPABILITY-AUDIT.md` and the former product-audit doc (merged 2026-05-08).

@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 /**
  * Guarded GE MWFP/XWFE Supabase retailer_links sync apply.
- * Dry-run default. Write requires MUTATION + matching founder approval.
+ * Dry-run default (stdout only; no durable writes).
+ * Explicit --write-artifacts to emit draft report JSON/MD.
+ * Write requires MUTATION + matching founder approval.
  *
+ *   npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-apply
  *   npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-apply -- --write-artifacts
  *   BUCKPARTS_IO_CAPABILITY=MUTATION npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-apply -- --write
  */
