@@ -5356,9 +5356,15 @@ test("command_center_v2.fridge_truth_spine_v1 is read-only refrigerator truth sp
   assert.ok(spine.model_pdp_live_html_proof);
   assert.equal(spine.model_pdp_live_html_proof.conversion_claimed, false);
   assert.equal(spine.model_pdp_live_html_proof.conversion_or_revenue, "UNKNOWN");
-  assert.equal(spine.model_pdp_live_html_proof.open_buyer_path_fail_count, 7);
+  assert.equal(spine.model_pdp_live_html_proof.open_buyer_path_fail_count, 1);
   assert.equal(spine.model_pdp_live_html_proof.remain_no_buy_slug, "ge-gte18gsnrss");
-  assert.equal(spine.model_pdp_live_html_proof.needs_owner_browser_proof_count, 6);
+  assert.equal(spine.model_pdp_live_html_proof.needs_owner_browser_proof_count, 0);
+  assert.ok(spine.model_pdp_cta_go_proof);
+  assert.equal(spine.model_pdp_cta_go_proof.SAFE_BUYER_PATH_PASS, 27);
+  assert.equal(spine.model_pdp_cta_go_proof.SAFE_BUYER_PATH_FAIL, 1);
+  assert.equal(spine.model_pdp_cta_go_proof.conversion_or_revenue, "UNKNOWN");
+  assert.equal(spine.ge_mwfp_xwfe_retailer_links_supabase_sync.dispatch_status, "NOT_NEEDED");
+  assert.equal(spine.ge_mwfp_xwfe_retailer_links_supabase_sync.exact_command, "");
   assert.equal(
     spine.model_pdp_live_html_proof.recommended_jq_path,
     ".command_center_v2.fridge_truth_spine_v1.model_pdp_live_html_proof",

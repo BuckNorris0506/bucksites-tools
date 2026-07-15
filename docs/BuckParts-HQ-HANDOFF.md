@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (`657988e` — Mark fridge live HTML proof passing):** **21 SAFE_BUYER_PATH_PASS fridge model PDPs have live production HTML proof** — see **§ Current stopping point — fridge model PDP live HTML proof PASS 21 (`657988e`)** below. Actual repo HEAD / `origin/main`: **`657988e`**. Key sequence: visible proof block UI (`0ac2051`) → live HTML proof lane (`f868809`) → production deploy of proof block → live re-proof **PASS 21 / FAIL 0 / UNKNOWN 0** (`657988e`). Prior operational stopping points: **`959e79b`** — GSWF Supabase sync closed / already in sync; Credit Control / Product JSON-LD / AGENTS.md / GSWF CSV repair remain **§ Prior completed lanes** below. **Root `AGENTS.md` remains the agent operating contract**. **Open buyer-path FAIL rows remain 7** (**6** need owner browser proof; **`ge-gte18gsnrss`** remain-no-buy). **Conversion / revenue / ranking / SEO impact remain `UNKNOWN`** — not claimed. Credits available ≠ deploy authorization.
+> **Current operational stopping point (`e797fe2` — Apply GE Supabase retailer link sync):** Guarded Supabase retailer_links sync **applied** for exactly **`smartwater-mwfp` + `xwfe`** (UPDATE-only; no inserts/deletes; **`xwf` untouched**) — see **§ Current stopping point — GE MWFP/XWFE Supabase sync applied (`e797fe2`)** below. Actual repo HEAD / `origin/main`: **`e797fe2`**. Post-write CTA/go: **PASS 27 / FAIL 1** (remaining fail **`ge-gte18gsnrss`** remain-no-buy). Supabase parity residual: **notes-only** (`browser_truth_notes`) — **not** URL/search-placeholder drift; sync owner-review/write **NOT_NEEDED**. Do **not** overclaim the **4** GE model PDPs as revenue/conversion wins. Prior operational stopping points: **`657988e`** — fridge live HTML proof PASS 21; **`959e79b`** — GSWF Supabase sync closed / already in sync; Credit Control / Product JSON-LD / AGENTS.md / GSWF CSV repair remain **§ Prior completed lanes** below. **Root `AGENTS.md` remains the agent operating contract**. **Conversion / revenue / ranking / SEO impact remain `UNKNOWN`** — not claimed. No deploy claim unless proven by existing gates. Credits available ≠ deploy authorization.
 
 ## Execution Stack
 
@@ -32,6 +32,7 @@ Unless Jared is explicitly requesting strategy, analysis, brainstorming, alterna
 1. **Execution surface** — e.g. **Terminal**, **Cursor**, **HyperAgent**, **Browser**, **Supabase SQL**, **Boardy**
 2. **Exact copy/paste prompt or command** — runnable without interpretation
 
+Do not give Jared the "best next move" without giving the exact copy/paste prompt or command.
 Do not give Jared the "best next move" in prose only.
 
 **Exceptions (no trailing prompt required):**
@@ -53,9 +54,44 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — fridge model PDP live HTML proof PASS 21 (`657988e`)
+## Current stopping point — GE MWFP/XWFE Supabase sync applied (`e797fe2`)
 
-**Read this section first** for LIVE fridge model PDP customer-visible proof posture on production.
+**Read this section first** for LIVE GE MWFP/XWFE retailer_links Supabase sync + CTA/go posture.
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD / `origin/main` | **`e797fe2`** — Apply GE Supabase retailer link sync |
+| Key sequence | CSV apply → parity **DRIFTED** (search-placeholder) → sync owner-review + founder approval → guarded Supabase UPDATE → post-write CTA/go re-proof |
+| Guarded write scope | Exactly **`smartwater-mwfp` + `xwfe`** existing primaries; **`xwf` excluded**; **`rows_updated=2`**; **`inserts=0`**; **`deletes=0`**; CSV not mutated in this write |
+| Apply closeout | `data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-apply-closeout-v1.json` — **`apply_status=APPLIED`** |
+| Founder decision | `decision-2026-07-14-ge-mwfp-xwfe-retailer-links-supabase-sync-approve` |
+| URL result | Search-placeholder URLs replaced with official GE PDP URLs for both filters |
+| Post-write CTA/go | **`SAFE_BUYER_PATH_PASS=27` / `SAFE_BUYER_PATH_FAIL=1` / `UNKNOWN=0`** |
+| Remaining FAIL | **`ge-gte18gsnrss`** (remain-no-buy) |
+| Supabase parity residual | Still labeled **DRIFTED**, but **notes-only** (`mismatched_fields: browser_truth_notes` only); **`any_supabase_search_placeholder=false`** |
+| Command Center CTA field | `.command_center_v2.fridge_truth_spine_v1.model_pdp_cta_go_proof` |
+| Command Center sync field | `.command_center_v2.fridge_truth_spine_v1.ge_mwfp_xwfe_retailer_links_supabase_sync` → **`dispatch_status=NOT_NEEDED`** (empty `exact_command`) |
+| Affected model slugs (do not overclaim) | `ge-gfe24jgkww`, `ge-gfe27jmkes`, `ge-gne25jmkww`, `ge-pvd28bymfs` — **not** claimed closed as revenue/conversion wins |
+
+### Not claimed
+
+Conversion, revenue, user clicks, ranking, SEO impact, deploy authorization — **`UNKNOWN` / not claimed**. Notes-only residual drift is **not** a re-write trigger. Live HTML proof remain **PASS 21** on the committed 21-slug allowlist (expanding that allowlist is a **separate** lane — not auto-surfaced here).
+
+### Current recommendation (founder-gated)
+
+1. Treat GE MWFP/XWFE Supabase URL sync as **complete** for this scoped write; do **not** re-run sync owner-review/write dispatch.
+2. Keep **`ge-gte18gsnrss`** remain-no-buy; do **not** invent buyer-path wins for it.
+3. Do **not** claim conversion/revenue from CTA/go **PASS 27** or the **4** GE model PDPs.
+4. Before any production deploy spend: Credit Control + ship-guard (credits available ≠ deploy authorization).
+
+---
+
+## Prior completed lane — fridge model PDP live HTML proof PASS 21 (`657988e`)
+
+**Historical reference** for LIVE fridge model PDP customer-visible proof posture on production (21-slug allowlist).
 
 ### Milestone summary (PROVEN)
 
@@ -65,7 +101,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | Repo HEAD / `origin/main` | **`657988e`** — Mark fridge live HTML proof passing |
 | Live proof pack | `data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-live-html-proof-pack-v1.json` |
 | Target | `https://buckparts.com` |
-| Scope | Exactly **21** `SAFE_BUYER_PATH_PASS` fridge model PDP slugs (excludes FAIL **7**, quarantine **11**, PARTIAL **3**) |
+| Scope | Exactly **21** `SAFE_BUYER_PATH_PASS` fridge model PDP slugs (excludes FAIL / quarantine / PARTIAL outside allowlist) |
 | Result | **`LIVE_PROOF_PASS=21` / `LIVE_PROOF_FAIL=0` / `LIVE_PROOF_UNKNOWN=0`** |
 | Proof block ("What we checked for this model") | **21/21** visible |
 | "Last checked" | **21/21** visible |
@@ -76,24 +112,13 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | Command Center field | `.command_center_v2.fridge_truth_spine_v1.model_pdp_live_html_proof` |
 | Re-run | `npm run buckparts:fridge-model-pdp-live-html-proof -- --write-artifacts` |
 
-### Open buyer-path work (PROVEN remaining — not closed by this milestone)
+### Open buyer-path work (updated by later GE sync — do not use as HEAD truth)
 
-| Item | Detail |
-|------|--------|
-| Open `SAFE_BUYER_PATH_FAIL` | **7** |
-| Remain no-buy | **`ge-gte18gsnrss`** |
-| Need owner browser proof | **6** GE models (`ge-gfe24jgkww`, `ge-gfe27jmkes`, `ge-gne25jmkww`, `ge-gne27jstss`, `ge-gse25hskss`, `ge-pvd28bymfs`) |
+At **`657988e`**, open `SAFE_BUYER_PATH_FAIL` was **7** (**6** needed owner browser proof; **`ge-gte18gsnrss`** remain-no-buy). **Current CTA/go HEAD truth is PASS 27 / FAIL 1** — see **§ Current stopping point — GE MWFP/XWFE Supabase sync applied (`e797fe2`)**.
 
 ### Not claimed
 
 Conversion, revenue, user clicks, ranking, SEO impact — **`UNKNOWN`**. No retailer_links / buy CTA / CSV / sitemap / robots / Product JSON-LD invent from this docs/Command Center truth update.
-
-### Current recommendation (founder-gated)
-
-1. Treat the **21** live HTML proof pages as production-proven for customer-visible trust metadata + gated Verified Link presence.
-2. Next leverage: owner browser proof for the **6** remaining FAIL GE models; keep **`ge-gte18gsnrss`** remain-no-buy.
-3. Do **not** claim conversion/revenue from PASS **21**.
-4. Before production deploy spend: Credit Control + ship-guard.
 
 ---
 
