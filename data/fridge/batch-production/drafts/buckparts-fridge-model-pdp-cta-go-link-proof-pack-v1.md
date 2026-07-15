@@ -1,6 +1,6 @@
 # BuckParts fridge model PDP CTA / go-link proof pack v1
 
-Generated: 2026-07-14T19:56:43.171Z
+Generated: 2026-07-15T02:58:34.089Z
 
 ## Status
 
@@ -13,8 +13,8 @@ Generated: 2026-07-14T19:56:43.171Z
 
 ## Summary
 
-- SAFE_BUYER_PATH_PASS: 21
-- SAFE_BUYER_PATH_FAIL: 7
+- SAFE_BUYER_PATH_PASS: 27
+- SAFE_BUYER_PATH_FAIL: 1
 - SAFE_BUYER_PATH_UNKNOWN: 0
 - product_json_ld_proven_suppressed_count: 28
 
@@ -26,22 +26,22 @@ Generated: 2026-07-14T19:56:43.171Z
 | frigidaire-fghb2868pf | qa_20 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 | frigidaire-fgsc2335tf | qa_20 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 | ge-cwe23sshww | gswf_13 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
-| ge-gfe24jgkww | gswf_13 | SAFE_BUYER_PATH_FAIL | 0 | 0 | PROVEN_SUPPRESSED | no_go_resolvable_safe_retailer_link; no_safe_direct_buyable_cta_after_gate; trust_buyer_path_suppress_buy_for_all_mapped_filters |
-| ge-gfe27jmkes | gswf_13 | SAFE_BUYER_PATH_FAIL | 0 | 0 | PROVEN_SUPPRESSED | no_go_resolvable_safe_retailer_link; no_safe_direct_buyable_cta_after_gate; trust_buyer_path_suppress_buy_for_all_mapped_filters |
+| ge-gfe24jgkww | gswf_13 | SAFE_BUYER_PATH_PASS | 2 | 2 | PROVEN_SUPPRESSED | (none) |
+| ge-gfe27jmkes | gswf_13 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 | ge-gfe28gmkbb | gswf_13 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 | ge-gfe28gmkes | qa_20 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 | ge-gfe28gskes | gswf_13 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 | ge-gfe28gskss | qa_20 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 | ge-gfe28gynfs | qa_20 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
-| ge-gfe28hskss | gswf_13 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
-| ge-gne25jmkww | gswf_13 | SAFE_BUYER_PATH_FAIL | 0 | 0 | PROVEN_SUPPRESSED | no_go_resolvable_safe_retailer_link; no_safe_direct_buyable_cta_after_gate; trust_buyer_path_suppress_buy_for_all_mapped_filters |
-| ge-gne27jstss | gswf_13 | SAFE_BUYER_PATH_FAIL | 0 | 0 | PROVEN_SUPPRESSED | no_go_resolvable_safe_retailer_link; no_safe_direct_buyable_cta_after_gate; trust_buyer_path_suppress_buy_for_all_mapped_filters |
-| ge-gse25hskss | gswf_13 | SAFE_BUYER_PATH_FAIL | 0 | 0 | PROVEN_SUPPRESSED | no_go_resolvable_safe_retailer_link; no_safe_direct_buyable_cta_after_gate; trust_buyer_path_suppress_buy_for_all_mapped_filters |
+| ge-gfe28hskss | gswf_13 | SAFE_BUYER_PATH_PASS | 2 | 2 | PROVEN_SUPPRESSED | (none) |
+| ge-gne25jmkww | gswf_13 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
+| ge-gne27jstss | gswf_13 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
+| ge-gse25hskss | gswf_13 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 | ge-gte18gsnrss | gte18 | SAFE_BUYER_PATH_FAIL | 0 | 0 | PROVEN_SUPPRESSED | no_go_resolvable_safe_retailer_link; no_mapped_filters_on_pdp_loader; no_safe_direct_buyable_cta_after_gate; trust_buyer_path_unavailable |
 | ge-gye22gskww | gswf_13 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 | ge-pfe28kmkww | gswf_13 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 | ge-pfe28kynbb | gswf_13 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
-| ge-pvd28bymfs | gswf_13 | SAFE_BUYER_PATH_FAIL | 0 | 0 | PROVEN_SUPPRESSED | no_go_resolvable_safe_retailer_link; no_safe_direct_buyable_cta_after_gate; trust_buyer_path_suppress_buy_for_all_mapped_filters |
+| ge-pvd28bymfs | gswf_13 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
 | samsung-rf263beaesr | qa_20 | SAFE_BUYER_PATH_PASS | 2 | 2 | PROVEN_SUPPRESSED | (none) |
 | samsung-rf28nhedbsr | qa_20 | SAFE_BUYER_PATH_PASS | 2 | 2 | PROVEN_SUPPRESSED | (none) |
 | samsung-rf28r7201sr | qa_20 | SAFE_BUYER_PATH_PASS | 1 | 1 | PROVEN_SUPPRESSED | (none) |
@@ -56,7 +56,7 @@ Generated: 2026-07-14T19:56:43.171Z
 - PROVEN: read_only=true; data_mutation=false; buy_cta_authorized=false; retailer_links_mutation_authorized=false.
 - PROVEN: exact scope=28 MATCH+promoted slugs from rendered-truth pack.
 - PROVEN: excluded QUARANTINED_SUPPRESSED=11; PARTIAL=3.
-- PROVEN: summary={"SAFE_BUYER_PATH_PASS":21,"SAFE_BUYER_PATH_FAIL":7,"SAFE_BUYER_PATH_UNKNOWN":0,"product_json_ld_proven_suppressed_count":28}.
+- PROVEN: summary={"SAFE_BUYER_PATH_PASS":27,"SAFE_BUYER_PATH_FAIL":1,"SAFE_BUYER_PATH_UNKNOWN":0,"product_json_ld_proven_suppressed_count":28}.
 - PROVEN: SAFE_BUYER_PATH_PASS requires mapped filters + gated safe CTA + go-resolvable URL + non-quarantine + JSON-LD suppressed.
 
 ## Unknown facts

@@ -1,0 +1,131 @@
+{
+  "contract": "buckparts_fridge_model_pdp_ge_mwfp_xwfe_retailer_links_supabase_sync_apply_v1",
+  "read_only": false,
+  "data_mutation": false,
+  "mode": "write",
+  "mutation_authorized": true,
+  "supabase_mutation_authorized": true,
+  "csv_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "pages_claimed_closed": false,
+  "conversion_claimed": false,
+  "generated_at": "2026-07-15T02:58:23.651Z",
+  "dry_run_command": "npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-apply -- --write-artifacts",
+  "write_command": "BUCKPARTS_IO_CAPABILITY=MUTATION npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-apply -- --write",
+  "allowed_filter_slugs": [
+    "smartwater-mwfp",
+    "xwfe"
+  ],
+  "excluded_filter_slugs": [
+    "xwf"
+  ],
+  "row_count_planned": 2,
+  "planned_updates": 2,
+  "planned_inserts": 0,
+  "planned_deletes": 0,
+  "founder_approval_present": true,
+  "founder_decision_id": "decision-2026-07-14-ge-mwfp-xwfe-retailer-links-supabase-sync-approve",
+  "supabase_truth_status": "CHECKED",
+  "supabase_unavailable_reason": null,
+  "rows": [
+    {
+      "filter_slug": "smartwater-mwfp",
+      "planned_action": "update",
+      "csv_primary": {
+        "filter_slug": "smartwater-mwfp",
+        "affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+        "retailer_name": "GE Appliance Parts",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "GE MWFP/XWFE guarded CSV apply v1 for smartwater-mwfp; owner browser proof data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-owner-browser-proof-result-packet-v1.json; customer label BuckParts Verified Link (official_manufacturer_official_ge).",
+        "browser_truth_checked_at": "2026-07-14T17:40:40.135Z",
+        "is_primary": true,
+        "retailer_key": "oem-parts-catalog"
+      },
+      "supabase_primary": {
+        "id": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+        "filter_id": "5e7e114b-f283-45a4-8075-2431a73d61e7",
+        "affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWFP",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": "",
+        "is_primary": true,
+        "retailer_key": "oem-parts-catalog"
+      },
+      "primary_row_count": 1,
+      "expected_stale_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWFP",
+      "expected_supabase_link_id": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "desired": {
+        "filter_slug": "smartwater-mwfp",
+        "supabase_link_id": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+        "affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+        "retailer_name": "GE Appliance Parts",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_checked_at": "2026-07-14T17:40:40.135Z",
+        "browser_truth_notes": "GE MWFP/XWFE Supabase sync owner-approval v1 for smartwater-mwfp. Cites owner browser proof data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-owner-browser-proof-result-packet-v1.json and owner-review plan data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review-v1.json. Does not claim 4 GE model PDPs closed; conversion/revenue UNKNOWN."
+      },
+      "supabase_is_search_placeholder": true,
+      "stale_url_matches_expected": true,
+      "link_id_matches_approval": true,
+      "is_existing_primary": true,
+      "blockers": []
+    },
+    {
+      "filter_slug": "xwfe",
+      "planned_action": "update",
+      "csv_primary": {
+        "filter_slug": "xwfe",
+        "affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+        "retailer_name": "GE Appliance Parts",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "GE MWFP/XWFE guarded CSV apply v1 for xwfe; owner browser proof data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-owner-browser-proof-result-packet-v1.json; customer label BuckParts Verified Link (official_manufacturer_official_ge).",
+        "browser_truth_checked_at": "2026-07-14T17:40:40.135Z",
+        "is_primary": true,
+        "retailer_key": "oem-parts-catalog"
+      },
+      "supabase_primary": {
+        "id": "e274568e-2998-4a93-8642-53862d2eb915",
+        "filter_id": "59d11898-0d53-4db2-9faa-bf4c876986bf",
+        "affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": "",
+        "is_primary": true,
+        "retailer_key": "oem-parts-catalog"
+      },
+      "primary_row_count": 1,
+      "expected_stale_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+      "expected_supabase_link_id": "e274568e-2998-4a93-8642-53862d2eb915",
+      "desired": {
+        "filter_slug": "xwfe",
+        "supabase_link_id": "e274568e-2998-4a93-8642-53862d2eb915",
+        "affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+        "retailer_name": "GE Appliance Parts",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_checked_at": "2026-07-14T17:40:40.135Z",
+        "browser_truth_notes": "GE MWFP/XWFE Supabase sync owner-approval v1 for xwfe. Cites owner browser proof data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-owner-browser-proof-result-packet-v1.json and owner-review plan data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review-v1.json. Does not claim 4 GE model PDPs closed; conversion/revenue UNKNOWN."
+      },
+      "supabase_is_search_placeholder": true,
+      "stale_url_matches_expected": true,
+      "link_id_matches_approval": true,
+      "is_existing_primary": true,
+      "blockers": []
+    }
+  ],
+  "blockers": [],
+  "proven_facts": [
+    "PROVEN: filter scope exactly smartwater-mwfp + xwfe; xwf excluded.",
+    "PROVEN: planned_inserts=0; planned_deletes=0; UPDATE existing primary only.",
+    "PROVEN: pages_claimed_closed=false; conversion_claimed=false; csv_mutation_authorized=false.",
+    "PROVEN: founder_decision_id=decision-2026-07-14-ge-mwfp-xwfe-retailer-links-supabase-sync-approve.",
+    "PROVEN: write-mode mutation_authorized=true for exact 2 UPDATE ops."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: CTA/go outcome after write until proof re-run.",
+    "UNKNOWN: conversion/revenue impact."
+  ],
+  "recommended_next_action": "Write authorized — apply exactly 2 public.retailer_links UPDATEs."
+}

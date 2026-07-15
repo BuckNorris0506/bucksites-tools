@@ -3,10 +3,11 @@
 - contract: `buckparts_fridge_model_pdp_ge_mwfp_xwfe_retailer_links_supabase_parity_v1`
 - overall_sync_status: **DRIFTED**
 - supabase_truth_status: `CHECKED`
-- cta_go_failure_cause: `SUPABASE_STALE_OR_SEARCH_PLACEHOLDER_BLOCKS_RUNTIME_CTA`
+- cta_go_failure_cause: `null`
 - pages_claimed_closed: `false`
 - conversion_claimed: `false`
 - apply_lane_authorized: `false`
+- exact_command: `npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review -- --write-artifacts`
 
 ## Filter scope
 
@@ -26,28 +27,28 @@
 
 - core_status: `CSV_HAS_WIN_SUPABASE_MISSING_OR_STALE`
 - CSV url: `https://www.geapplianceparts.com/store/parts/spec/MWFP` (search_placeholder=false; direct_buyable=true)
-- Supabase url: `https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWFP` (search_placeholder=true; direct_buyable=false)
-- retailer_key_match=true; retailer_name_match=false; checked_at_match_normalized=false
-- mismatched_fields: `affiliate_url`, `retailer_name`, `browser_truth_classification`, `browser_truth_notes`, `browser_truth_checked_at`
+- Supabase url: `https://www.geapplianceparts.com/store/parts/spec/MWFP` (search_placeholder=false; direct_buyable=true)
+- retailer_key_match=true; retailer_name_match=true; checked_at_match_normalized=true
+- mismatched_fields: `browser_truth_notes`
 
 ### `xwfe` — **DRIFTED**
 
 - core_status: `CSV_HAS_WIN_SUPABASE_MISSING_OR_STALE`
 - CSV url: `https://www.geapplianceparts.com/store/parts/spec/XWFE` (search_placeholder=false; direct_buyable=true)
-- Supabase url: `https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE` (search_placeholder=true; direct_buyable=false)
-- retailer_key_match=true; retailer_name_match=false; checked_at_match_normalized=false
-- mismatched_fields: `affiliate_url`, `retailer_name`, `browser_truth_classification`, `browser_truth_notes`, `browser_truth_checked_at`
+- Supabase url: `https://www.geapplianceparts.com/store/parts/spec/XWFE` (search_placeholder=false; direct_buyable=true)
+- retailer_key_match=true; retailer_name_match=true; checked_at_match_normalized=true
+- mismatched_fields: `browser_truth_notes`
 
 ## CTA/go for affected models
 
-- `ge-gfe24jgkww`: verdict=`SAFE_BUYER_PATH_FAIL`; safe_cta=0; go=0; reasons=no_go_resolvable_safe_retailer_link, no_safe_direct_buyable_cta_after_gate, trust_buyer_path_suppress_buy_for_all_mapped_filters
-- `ge-gfe27jmkes`: verdict=`SAFE_BUYER_PATH_FAIL`; safe_cta=0; go=0; reasons=no_go_resolvable_safe_retailer_link, no_safe_direct_buyable_cta_after_gate, trust_buyer_path_suppress_buy_for_all_mapped_filters
-- `ge-gne25jmkww`: verdict=`SAFE_BUYER_PATH_FAIL`; safe_cta=0; go=0; reasons=no_go_resolvable_safe_retailer_link, no_safe_direct_buyable_cta_after_gate, trust_buyer_path_suppress_buy_for_all_mapped_filters
-- `ge-pvd28bymfs`: verdict=`SAFE_BUYER_PATH_FAIL`; safe_cta=0; go=0; reasons=no_go_resolvable_safe_retailer_link, no_safe_direct_buyable_cta_after_gate, trust_buyer_path_suppress_buy_for_all_mapped_filters
+- `ge-gfe24jgkww`: verdict=`SAFE_BUYER_PATH_PASS`; safe_cta=2; go=2; reasons=(none)
+- `ge-gfe27jmkes`: verdict=`SAFE_BUYER_PATH_PASS`; safe_cta=1; go=1; reasons=(none)
+- `ge-gne25jmkww`: verdict=`SAFE_BUYER_PATH_PASS`; safe_cta=1; go=1; reasons=(none)
+- `ge-pvd28bymfs`: verdict=`SAFE_BUYER_PATH_PASS`; safe_cta=1; go=1; reasons=(none)
 
 ## Recommended next action
 
-Founder-gated scoped Supabase retailer_links sync for exactly smartwater-mwfp + xwfe (update existing primaries to CSV truth) is the next lane — not created in this read-only proof. Then re-run CTA/go proof. Do not claim 4 pages closed yet.
+Run npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review -- --write-artifacts (read-only owner-review drafts). Hard-stop before Supabase write / founder approval. Then re-run CTA/go proof. Do not claim 4 pages closed yet.
 
 ## Proven
 
@@ -56,7 +57,7 @@ Founder-gated scoped Supabase retailer_links sync for exactly smartwater-mwfp + 
 - PROVEN: affected model context is exactly ge-gfe24jgkww, ge-gfe27jmkes, ge-gne25jmkww, ge-pvd28bymfs.
 - PROVEN: live fridge/filter PDP retailer_links load from Supabase after buy-path gates — CSV alone does not update CTA/go.
 - PROVEN: overall_sync_status=DRIFTED; in_sync=0; drifted=2; unknown=0.
-- PROVEN: pages_claimed_closed=false; conversion_claimed=false; CTA/go pack summary PASS=21 FAIL=7.
+- PROVEN: pages_claimed_closed=false; conversion_claimed=false; CTA/go pack summary PASS=27 FAIL=1.
 - PROVEN: filter scope is exactly smartwater-mwfp + xwfe; xwf excluded.
 - PROVEN: live /filter/[slug] reads Supabase public.retailer_links via getFilterBySlug.
 - PROVEN: allowed Supabase table scope is exactly public.retailer_links.

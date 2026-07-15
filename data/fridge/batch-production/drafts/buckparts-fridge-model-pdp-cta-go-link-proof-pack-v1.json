@@ -10,7 +10,7 @@
   "sitemap_robots_mutation_authorized": false,
   "product_json_ld_mutation_authorized": false,
   "live_production_fetch_enabled": false,
-  "generated_at": "2026-07-14T19:56:43.171Z",
+  "generated_at": "2026-07-15T02:58:34.089Z",
   "source_command": "npm run buckparts:fridge-model-pdp-cta-go-link-proof-pack",
   "rendered_truth_pack_rel_path": "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-rendered-truth-proof-pack-v1.json",
   "scope": {
@@ -65,8 +65,8 @@
     ]
   },
   "summary": {
-    "SAFE_BUYER_PATH_PASS": 21,
-    "SAFE_BUYER_PATH_FAIL": 7,
+    "SAFE_BUYER_PATH_PASS": 27,
+    "SAFE_BUYER_PATH_FAIL": 1,
     "SAFE_BUYER_PATH_UNKNOWN": 0,
     "product_json_ld_proven_suppressed_count": 28
   },
@@ -180,23 +180,22 @@
         "xwfe"
       ],
       "mapped_filter_count": 2,
-      "safe_cta_count": 0,
-      "go_resolvable_count": 0,
-      "cta_eligible": false,
-      "buyer_path_state": "suppress_buy",
+      "safe_cta_count": 2,
+      "go_resolvable_count": 2,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
       "quarantine": false,
       "product_json_ld_status": "PROVEN_SUPPRESSED",
-      "verdict": "SAFE_BUYER_PATH_FAIL",
-      "missing_reasons": [
-        "no_go_resolvable_safe_retailer_link",
-        "no_safe_direct_buyable_cta_after_gate",
-        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "e274568e-2998-4a93-8642-53862d2eb915",
+        "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
       ],
-      "safe_go_link_ids": [],
       "notes": [
         "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
         "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
-        "FAIL: buyer-path PASS requires mapped filters + safe CTA + go-resolvable link + non-quarantine + JSON-LD suppressed"
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
       ]
     },
     {
@@ -207,23 +206,21 @@
         "xwfe"
       ],
       "mapped_filter_count": 1,
-      "safe_cta_count": 0,
-      "go_resolvable_count": 0,
-      "cta_eligible": false,
-      "buyer_path_state": "suppress_buy",
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
       "quarantine": false,
       "product_json_ld_status": "PROVEN_SUPPRESSED",
-      "verdict": "SAFE_BUYER_PATH_FAIL",
-      "missing_reasons": [
-        "no_go_resolvable_safe_retailer_link",
-        "no_safe_direct_buyable_cta_after_gate",
-        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "e274568e-2998-4a93-8642-53862d2eb915"
       ],
-      "safe_go_link_ids": [],
       "notes": [
         "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
         "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
-        "FAIL: buyer-path PASS requires mapped filters + safe CTA + go-resolvable link + non-quarantine + JSON-LD suppressed"
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
       ]
     },
     {
@@ -360,8 +357,8 @@
         "smartwater-mwfp"
       ],
       "mapped_filter_count": 2,
-      "safe_cta_count": 1,
-      "go_resolvable_count": 1,
+      "safe_cta_count": 2,
+      "go_resolvable_count": 2,
       "cta_eligible": true,
       "buyer_path_state": "show_confident_buy",
       "quarantine": false,
@@ -369,7 +366,8 @@
       "verdict": "SAFE_BUYER_PATH_PASS",
       "missing_reasons": [],
       "safe_go_link_ids": [
-        "32db89d7-4d99-4073-bfb0-d07138ee0703"
+        "32db89d7-4d99-4073-bfb0-d07138ee0703",
+        "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
       ],
       "notes": [
         "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
@@ -385,23 +383,21 @@
         "xwfe"
       ],
       "mapped_filter_count": 1,
-      "safe_cta_count": 0,
-      "go_resolvable_count": 0,
-      "cta_eligible": false,
-      "buyer_path_state": "suppress_buy",
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
       "quarantine": false,
       "product_json_ld_status": "PROVEN_SUPPRESSED",
-      "verdict": "SAFE_BUYER_PATH_FAIL",
-      "missing_reasons": [
-        "no_go_resolvable_safe_retailer_link",
-        "no_safe_direct_buyable_cta_after_gate",
-        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "e274568e-2998-4a93-8642-53862d2eb915"
       ],
-      "safe_go_link_ids": [],
       "notes": [
         "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
         "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
-        "FAIL: buyer-path PASS requires mapped filters + safe CTA + go-resolvable link + non-quarantine + JSON-LD suppressed"
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
       ]
     },
     {
@@ -413,23 +409,21 @@
         "xwfe"
       ],
       "mapped_filter_count": 2,
-      "safe_cta_count": 0,
-      "go_resolvable_count": 0,
-      "cta_eligible": false,
-      "buyer_path_state": "suppress_buy",
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
       "quarantine": false,
       "product_json_ld_status": "PROVEN_SUPPRESSED",
-      "verdict": "SAFE_BUYER_PATH_FAIL",
-      "missing_reasons": [
-        "no_go_resolvable_safe_retailer_link",
-        "no_safe_direct_buyable_cta_after_gate",
-        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "e274568e-2998-4a93-8642-53862d2eb915"
       ],
-      "safe_go_link_ids": [],
       "notes": [
         "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
         "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
-        "FAIL: buyer-path PASS requires mapped filters + safe CTA + go-resolvable link + non-quarantine + JSON-LD suppressed"
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
       ]
     },
     {
@@ -441,23 +435,21 @@
         "xwfe"
       ],
       "mapped_filter_count": 2,
-      "safe_cta_count": 0,
-      "go_resolvable_count": 0,
-      "cta_eligible": false,
-      "buyer_path_state": "suppress_buy",
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
       "quarantine": false,
       "product_json_ld_status": "PROVEN_SUPPRESSED",
-      "verdict": "SAFE_BUYER_PATH_FAIL",
-      "missing_reasons": [
-        "no_go_resolvable_safe_retailer_link",
-        "no_safe_direct_buyable_cta_after_gate",
-        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "e274568e-2998-4a93-8642-53862d2eb915"
       ],
-      "safe_go_link_ids": [],
       "notes": [
         "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
         "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
-        "FAIL: buyer-path PASS requires mapped filters + safe CTA + go-resolvable link + non-quarantine + JSON-LD suppressed"
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
       ]
     },
     {
@@ -570,23 +562,21 @@
         "xwfe"
       ],
       "mapped_filter_count": 1,
-      "safe_cta_count": 0,
-      "go_resolvable_count": 0,
-      "cta_eligible": false,
-      "buyer_path_state": "suppress_buy",
+      "safe_cta_count": 1,
+      "go_resolvable_count": 1,
+      "cta_eligible": true,
+      "buyer_path_state": "show_confident_buy",
       "quarantine": false,
       "product_json_ld_status": "PROVEN_SUPPRESSED",
-      "verdict": "SAFE_BUYER_PATH_FAIL",
-      "missing_reasons": [
-        "no_go_resolvable_safe_retailer_link",
-        "no_safe_direct_buyable_cta_after_gate",
-        "trust_buyer_path_suppress_buy_for_all_mapped_filters"
+      "verdict": "SAFE_BUYER_PATH_PASS",
+      "missing_reasons": [],
+      "safe_go_link_ids": [
+        "e274568e-2998-4a93-8642-53862d2eb915"
       ],
-      "safe_go_link_ids": [],
       "notes": [
         "Scope: MATCH + frontend_safe_promoted from rendered-truth pack only",
         "PROVEN: Product JSON-LD remains suppressed without truthful Offer (fridge PDP emits none; filter PDP gate returns null)",
-        "FAIL: buyer-path PASS requires mapped filters + safe CTA + go-resolvable link + non-quarantine + JSON-LD suppressed"
+        "PASS: all CTA + go-link + JSON-LD suppression gates proven (local data-path; not live HTML)"
       ]
     },
     {
@@ -797,7 +787,7 @@
     "PROVEN: read_only=true; data_mutation=false; buy_cta_authorized=false; retailer_links_mutation_authorized=false.",
     "PROVEN: exact scope=28 MATCH+promoted slugs from rendered-truth pack.",
     "PROVEN: excluded QUARANTINED_SUPPRESSED=11; PARTIAL=3.",
-    "PROVEN: summary={\"SAFE_BUYER_PATH_PASS\":21,\"SAFE_BUYER_PATH_FAIL\":7,\"SAFE_BUYER_PATH_UNKNOWN\":0,\"product_json_ld_proven_suppressed_count\":28}.",
+    "PROVEN: summary={\"SAFE_BUYER_PATH_PASS\":27,\"SAFE_BUYER_PATH_FAIL\":1,\"SAFE_BUYER_PATH_UNKNOWN\":0,\"product_json_ld_proven_suppressed_count\":28}.",
     "PROVEN: SAFE_BUYER_PATH_PASS requires mapped filters + gated safe CTA + go-resolvable URL + non-quarantine + JSON-LD suppressed."
   ],
   "unknown_facts": [

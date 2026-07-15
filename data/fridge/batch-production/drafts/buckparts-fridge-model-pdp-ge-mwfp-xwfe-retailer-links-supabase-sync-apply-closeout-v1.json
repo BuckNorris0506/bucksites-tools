@@ -1,0 +1,54 @@
+{
+  "contract": "buckparts_fridge_model_pdp_ge_mwfp_xwfe_retailer_links_supabase_sync_apply_closeout_v1",
+  "read_only": true,
+  "data_mutation": true,
+  "mutation_authorized": true,
+  "generated_at": "2026-07-15T02:58:24.467Z",
+  "apply_status": "APPLIED",
+  "founder_decision_id": "decision-2026-07-14-ge-mwfp-xwfe-retailer-links-supabase-sync-approve",
+  "allowed_filter_slugs": [
+    "smartwater-mwfp",
+    "xwfe"
+  ],
+  "excluded_filter_slugs": [
+    "xwf"
+  ],
+  "rows_updated": 2,
+  "inserts": 0,
+  "deletes": 0,
+  "xwf_mutated": false,
+  "csv_mutated": false,
+  "pages_claimed_closed": false,
+  "conversion_claimed": false,
+  "updated_rows": [
+    {
+      "filter_slug": "smartwater-mwfp",
+      "supabase_link_id": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "before_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWFP",
+      "after_affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+      "after_retailer_name": "GE Appliance Parts",
+      "after_retailer_key": "oem-parts-catalog",
+      "after_browser_truth_classification": "direct_buyable",
+      "after_browser_truth_checked_at": "2026-07-14T17:40:40.135Z"
+    },
+    {
+      "filter_slug": "xwfe",
+      "supabase_link_id": "e274568e-2998-4a93-8642-53862d2eb915",
+      "before_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+      "after_affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+      "after_retailer_name": "GE Appliance Parts",
+      "after_retailer_key": "oem-parts-catalog",
+      "after_browser_truth_classification": "direct_buyable",
+      "after_browser_truth_checked_at": "2026-07-14T17:40:40.135Z"
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: updated exactly 2 existing public.retailer_links primaries (smartwater-mwfp + xwfe).",
+    "PROVEN: inserts=0; deletes=0; xwf_mutated=false; csv_mutated=false.",
+    "PROVEN: pages_claimed_closed=false; conversion_claimed=false."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: CTA/go after write until re-proof.",
+    "UNKNOWN: conversion/revenue."
+  ]
+}
