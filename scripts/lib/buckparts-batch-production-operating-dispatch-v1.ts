@@ -27,6 +27,9 @@ import {
   BATCH_PRODUCTION_OPERATING_CHECKLIST_CONTRACT_V1,
   BATCH_PRODUCTION_PARITY_DRY_RUN_COMMAND_V1,
 } from "./buckparts-batch-production-operating-checklist-v1";
+import { AIR_PURIFIER_DEMAND_SELECTED_BATCH_OWNER_REVIEW_EXACT_COMMAND_V1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
+import type { ApDemandSelectedOpenBatchProofStatusV1 } from "./ap-demand-selected-batch-run-registry-v1";
+import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next-lane-v1";
 
 export const BATCH_PRODUCTION_OPERATING_DISPATCH_CONTRACT_V1 =
   "batch_production_operating_dispatch_v1" as const;
@@ -60,6 +63,7 @@ export type BatchProductionSelectedSubsystemV1 =
   | "operator_closeout"
   | "expansion_loop_next_batch_selection"
   | "demand_to_coverage_next_lane"
+  | "air_purifier_demand_selected_batch_owner_review"
   | "ap_batch_v3_run_instantiation"
   | "ap_batch_v3_agent_evidence_required"
   | "ap_batch_v3_aggregation_review"
@@ -152,6 +156,8 @@ function subsystemCommandSurface(
       return "cursor_agent";
     // Read-only allowlisted terminal report (`report-buckparts-demand-to-coverage-next-lane.ts`).
     case "demand_to_coverage_next_lane":
+    // Read-only allowlisted terminal report (`report-air-purifier-demand-selected-batch-owner-review-v1.ts`).
+    case "air_purifier_demand_selected_batch_owner_review":
       return "terminal";
     case "none":
       return "none";
@@ -162,6 +168,19 @@ function subsystemCommandSurface(
 
 export type BatchProductionOperatingDispatchExpansionContextV1 = {
   ap_batch_v3_run_instantiation?: ApBatchV3RunInstantiationV1 | null;
+  /**
+   * When AP demand-selected open batch existence is PROVEN after START_NEW_DEMAND_SELECTED_BATCH,
+   * prefer the owner-review / closeout+apply-readiness posture report over re-running demand selection.
+   */
+  ap_demand_selected_batch_owner_review?: {
+    open_batch_proof_v1?: ApDemandSelectedOpenBatchProofStatusV1 | null;
+    source_recommendation_status?: DemandToCoverageNextLaneReportV1["recommendation_status"] | null;
+    recommended_wedge?: string | null;
+    read_only?: boolean;
+    data_mutation?: boolean;
+    csv_apply_authorized?: boolean;
+    supabase_mutation_authorized?: boolean;
+  } | null;
 };
 
 export function buildBatchProductionOperatingDispatchV1(
@@ -432,6 +451,50 @@ export function buildBatchProductionOperatingDispatchV1(
 
     const activeWedge = checklist.runs[0]?.wedge ?? "";
     const useDemandLane = activeWedge === "air_purifier";
+    const ownerReviewCtx = expansionContext?.ap_demand_selected_batch_owner_review ?? null;
+    const preferApDemandSelectedOwnerReview =
+      useDemandLane &&
+      ownerReviewCtx?.read_only === true &&
+      ownerReviewCtx?.data_mutation === false &&
+      ownerReviewCtx?.csv_apply_authorized === false &&
+      ownerReviewCtx?.supabase_mutation_authorized === false &&
+      ownerReviewCtx?.source_recommendation_status === "START_NEW_DEMAND_SELECTED_BATCH" &&
+      ownerReviewCtx?.recommended_wedge === "air_purifier" &&
+      ownerReviewCtx?.open_batch_proof_v1?.open_batch_existence === "PROVEN" &&
+      ownerReviewCtx.open_batch_proof_v1.batch_closeout === "NOT_PROVEN" &&
+      ownerReviewCtx.open_batch_proof_v1.apply_readiness === "NOT_PROVEN";
+
+    if (preferApDemandSelectedOwnerReview) {
+      return {
+        contract: BATCH_PRODUCTION_OPERATING_DISPATCH_CONTRACT_V1,
+        read_only: true,
+        data_mutation: false,
+        runtime_status: checklist.runtime_status,
+        dispatch_status: "READY",
+        current_stage_id: null,
+        next_stage_id: "lane_selected",
+        selected_subsystem: "air_purifier_demand_selected_batch_owner_review",
+        exact_command: AIR_PURIFIER_DEMAND_SELECTED_BATCH_OWNER_REVIEW_EXACT_COMMAND_V1,
+        command_surface: "terminal",
+        allowed_mutations: ["ap_demand_selected_owner_review_read_only"],
+        forbidden_mutations: [...FORBIDDEN_MUTATIONS_BASE_V1],
+        owner_approval_required: false,
+        mutation_allowed: false,
+        proof_required_before_execution:
+          "AP demand-selected open batch is proven; emit read-only owner-review packet proving closeout_complete=false and apply_readiness=NOT_PROVEN. Hard-stop before CSV/Supabase/evidence/public mutation.",
+        expected_artifact_paths,
+        success_transition:
+          "Owner-review packet printed — batch closeout and apply readiness remain NOT_PROVEN; mutation unauthorized; do not invent buyer-path closure or revenue.",
+        failure_transition:
+          "Remain read-only — do not mutate CSV/Supabase/retailer_links/public guidance; conversion/revenue UNKNOWN.",
+        why_this_is_next:
+          "Demand selection already chose air_purifier with an open demand-selected batch; next safe stage is the read-only AP demand-selected owner-review report (closeout + apply-readiness posture), not another demand selection pass.",
+        blocked_reasons: [],
+        expansion_blocked: false,
+        derived_from_checklist_contract: checklist.contract,
+      };
+    }
+
     const selected_subsystem: BatchProductionSelectedSubsystemV1 = useDemandLane
       ? "demand_to_coverage_next_lane"
       : "expansion_loop_next_batch_selection";

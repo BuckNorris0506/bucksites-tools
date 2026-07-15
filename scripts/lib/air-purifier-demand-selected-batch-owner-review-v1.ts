@@ -36,6 +36,10 @@ export const AIR_PURIFIER_DEMAND_SELECTED_BATCH_OWNER_REVIEW_CONTRACT_V1 =
 export const AIR_PURIFIER_DEMAND_SELECTED_BATCH_OWNER_REVIEW_CC_JQ_PATH_V1 =
   ".command_center_v2.air_purifier_demand_selected_batch_owner_review_v1" as const;
 
+/** Read-only terminal report for AP demand-selected owner-review / open-batch closeout+apply-readiness posture. */
+export const AIR_PURIFIER_DEMAND_SELECTED_BATCH_OWNER_REVIEW_EXACT_COMMAND_V1 =
+  "npx tsx scripts/report-air-purifier-demand-selected-batch-owner-review-v1.ts" as const;
+
 export const AP_OWNER_REVIEW_ACTIONABLE_BATCH_STATES_V1 = [
   "search_placeholder_rescue_needed",
   "reference_candidate",

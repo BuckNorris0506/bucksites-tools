@@ -3,10 +3,30 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "generated_at": "2026-07-15T04:12:44.545Z",
+  "generated_at": "2026-07-15T04:43:18.292Z",
   "source_command": "npm run buckparts:execution-ledger",
-  "entry_count": 12,
+  "entry_count": 13,
   "entries": [
+    {
+      "entry_id": "dispatch_dispatch-run-2026-07-15T042923157Z",
+      "commit_sha": "ac6374c205c5f0a4d575cc1cbcb7f2e41c8130d2",
+      "completion_timestamp": "2026-07-15T04:29:23.157Z",
+      "operational_lane": "command_center_dispatch:air_purifier_demand_selected_batch_owner_review",
+      "artifacts_produced": [
+        "data/command-center/dispatch-runs/dispatch-run-2026-07-15T042923157Z.json"
+      ],
+      "validation_performed": [
+        "dispatch_execution_status=EXECUTED",
+        "buckparts:ap-demand-selected-batch-owner-review report"
+      ],
+      "safe_to_commit_status": "UNKNOWN",
+      "pushed_to_origin": "UNKNOWN",
+      "business_capability_unlocked": "Owner-review packet printed — batch closeout and apply readiness remain NOT_PROVEN; mutation unauthorized; do not invent buyer-path closure or revenue.",
+      "superseded_by": null,
+      "source_contract": "buckparts_command_center_dispatch_run_v1",
+      "source_artifact_rel_path": "data/command-center/dispatch-runs/dispatch-run-2026-07-15T042923157Z.json",
+      "provenance_tier": "COMMITTED_SOURCE"
+    },
     {
       "entry_id": "dispatch_dispatch-run-2026-07-15T035848679Z",
       "commit_sha": "ce2ee6e732675ec8959d0ed967f328d8fc68100e",
@@ -272,6 +292,34 @@
     }
   ],
   "capability_timeline": [
+    {
+      "capability_key": "command_center_dispatch_air_purifier_demand_selected_batch_owner_review",
+      "operational_lane": "command_center_dispatch:air_purifier_demand_selected_batch_owner_review",
+      "entries": [
+        {
+          "entry_id": "dispatch_dispatch-run-2026-07-15T042923157Z",
+          "commit_sha": "ac6374c205c5f0a4d575cc1cbcb7f2e41c8130d2",
+          "completion_timestamp": "2026-07-15T04:29:23.157Z",
+          "operational_lane": "command_center_dispatch:air_purifier_demand_selected_batch_owner_review",
+          "artifacts_produced": [
+            "data/command-center/dispatch-runs/dispatch-run-2026-07-15T042923157Z.json"
+          ],
+          "validation_performed": [
+            "dispatch_execution_status=EXECUTED",
+            "buckparts:ap-demand-selected-batch-owner-review report"
+          ],
+          "safe_to_commit_status": "UNKNOWN",
+          "pushed_to_origin": "UNKNOWN",
+          "business_capability_unlocked": "Owner-review packet printed — batch closeout and apply readiness remain NOT_PROVEN; mutation unauthorized; do not invent buyer-path closure or revenue.",
+          "superseded_by": null,
+          "source_contract": "buckparts_command_center_dispatch_run_v1",
+          "source_artifact_rel_path": "data/command-center/dispatch-runs/dispatch-run-2026-07-15T042923157Z.json",
+          "provenance_tier": "COMMITTED_SOURCE"
+        }
+      ],
+      "latest_entry_id": "dispatch_dispatch-run-2026-07-15T042923157Z",
+      "latest_completion_timestamp": "2026-07-15T04:29:23.157Z"
+    },
     {
       "capability_key": "command_center_dispatch_demand_to_coverage_next_lane",
       "operational_lane": "command_center_dispatch:demand_to_coverage_next_lane",
@@ -625,23 +673,23 @@
     }
   ],
   "last_completed_capability": {
-    "entry_id": "dispatch_dispatch-run-2026-07-15T035848679Z",
-    "commit_sha": "ce2ee6e732675ec8959d0ed967f328d8fc68100e",
-    "completion_timestamp": "2026-07-15T03:58:48.679Z",
-    "operational_lane": "command_center_dispatch:demand_to_coverage_next_lane",
+    "entry_id": "dispatch_dispatch-run-2026-07-15T042923157Z",
+    "commit_sha": "ac6374c205c5f0a4d575cc1cbcb7f2e41c8130d2",
+    "completion_timestamp": "2026-07-15T04:29:23.157Z",
+    "operational_lane": "command_center_dispatch:air_purifier_demand_selected_batch_owner_review",
     "artifacts_produced": [
-      "data/command-center/dispatch-runs/dispatch-run-2026-07-15T035848679Z.json"
+      "data/command-center/dispatch-runs/dispatch-run-2026-07-15T042923157Z.json"
     ],
     "validation_performed": [
       "dispatch_execution_status=EXECUTED",
-      "buckparts:demand-to-coverage-next-lane report"
+      "buckparts:ap-demand-selected-batch-owner-review report"
     ],
     "safe_to_commit_status": "UNKNOWN",
     "pushed_to_origin": "UNKNOWN",
-    "business_capability_unlocked": "New run-registry + lane_selected — batch loop restarts.",
+    "business_capability_unlocked": "Owner-review packet printed — batch closeout and apply readiness remain NOT_PROVEN; mutation unauthorized; do not invent buyer-path closure or revenue.",
     "superseded_by": null,
     "source_contract": "buckparts_command_center_dispatch_run_v1",
-    "source_artifact_rel_path": "data/command-center/dispatch-runs/dispatch-run-2026-07-15T035848679Z.json",
+    "source_artifact_rel_path": "data/command-center/dispatch-runs/dispatch-run-2026-07-15T042923157Z.json",
     "provenance_tier": "COMMITTED_SOURCE"
   },
   "source_paths_read": [
@@ -655,6 +703,7 @@
     "data/command-center/dispatch-runs/dispatch-run-2026-05-26T020812754Z.json",
     "data/command-center/dispatch-runs/dispatch-run-2026-07-15T035146118Z.json",
     "data/command-center/dispatch-runs/dispatch-run-2026-07-15T035848679Z.json",
+    "data/command-center/dispatch-runs/dispatch-run-2026-07-15T042923157Z.json",
     "data/fridge/batch-production/closeout/fridge-buyer-path-batch-closeout-learning-packet-v1-0fec4a7b623a.json",
     "data/fridge/batch-production/drafts/manufacturer-browser-proof-execution-factory-v1.json",
     "data/fridge/batch-production/drafts/manufacturer-browser-proof-factory-v1.json",
@@ -672,11 +721,11 @@
       "capability_timeline": ".capability_timeline",
       "last_completed_capability": ".last_completed_capability"
     },
-    "recommended_next_action": "Review last completed capability command_center_dispatch:demand_to_coverage_next_lane at 2026-07-15T03:58:48.679Z."
+    "recommended_next_action": "Review last completed capability command_center_dispatch:air_purifier_demand_selected_batch_owner_review at 2026-07-15T04:29:23.157Z."
   },
   "proven_facts": [
     "PROVEN: Execution ledger is read-only and indexes committed dispatch runs, run-registry closeouts, and closeout learning packets only.",
-    "PROVEN: entry_count=12 from 18 source artifact path(s)."
+    "PROVEN: entry_count=13 from 19 source artifact path(s)."
   ],
   "unknown_facts": [
     "UNKNOWN: pushed_to_origin unless closeout commits_involved explicitly mention push.",
@@ -684,9 +733,9 @@
     "UNKNOWN: live git remote parity for entries without committed push attestations."
   ],
   "freshness": {
-    "last_generated_at": "2026-07-15T04:12:44.545Z",
-    "source_artifact_count": 18,
-    "stale_after": "2026-07-16T04:12:44.545Z",
+    "last_generated_at": "2026-07-15T04:43:18.292Z",
+    "source_artifact_count": 19,
+    "stale_after": "2026-07-16T04:43:18.292Z",
     "freshness_status": "FRESH",
     "last_refresh_trigger_source": "npm run buckparts:command-center"
   }

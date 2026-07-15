@@ -62,6 +62,7 @@ const ALLOWLIST_EXACT_COMMANDS_V1 = [
   "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
   "npx tsx scripts/report-buckparts-command-center.ts",
   "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+  "npx tsx scripts/report-air-purifier-demand-selected-batch-owner-review-v1.ts",
   "npx tsx scripts/report-ap-batch-v3-run-instantiation-v1.ts",
   "npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review -- --write-artifacts",
   "npm run lint",

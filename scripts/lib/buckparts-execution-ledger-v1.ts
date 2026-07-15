@@ -199,6 +199,9 @@ function validationFromDispatch(exactCommand: string, executionStatus: string): 
   if (exactCommand.includes("report-buckparts-demand-to-coverage-next-lane")) {
     validation.push("buckparts:demand-to-coverage-next-lane report");
   }
+  if (exactCommand.includes("report-air-purifier-demand-selected-batch-owner-review")) {
+    validation.push("buckparts:ap-demand-selected-batch-owner-review report");
+  }
   if (validation.length === 0) validation.push("UNKNOWN");
   return validation;
 }

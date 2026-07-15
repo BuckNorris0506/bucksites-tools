@@ -1853,7 +1853,10 @@ export async function buildBuckpartsCommandCenterReport(
 
   const batch_production_operating_dispatch_v1 = buildBatchProductionOperatingDispatchV1(
     batch_production_operating_checklist_v1,
-    { ap_batch_v3_run_instantiation: ap_batch_v3_run_instantiation_v1 },
+    {
+      ap_batch_v3_run_instantiation: ap_batch_v3_run_instantiation_v1,
+      ap_demand_selected_batch_owner_review: air_purifier_demand_selected_batch_owner_review_v1,
+    },
   );
 
   let batch_run_registry_intake_report_v1;

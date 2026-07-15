@@ -392,6 +392,46 @@ test("runner refuses mutation_allowed=true even when allowlisted terminal", asyn
   }
 });
 
+test("runner executes allowlisted AP demand-selected owner-review when command_surface=terminal", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
+  const fixedNow = new Date("2026-07-15T05:00:00.000Z");
+  const ownerReviewCmd =
+    "npx tsx scripts/report-air-purifier-demand-selected-batch-owner-review-v1.ts";
+  let executed: string | null = null;
+  try {
+    const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => fixedNow,
+      reportBuilder: async () =>
+        fakeReportWithDispatch({
+          selected_subsystem: "air_purifier_demand_selected_batch_owner_review",
+          exact_command: ownerReviewCmd,
+          command_surface: "terminal",
+          dispatch_status: "READY",
+          mutation_allowed: false,
+        }),
+      exec: async (cmd) => {
+        executed = cmd;
+        return {
+          stdout:
+            '{"contract":"air_purifier_demand_selected_batch_owner_review_v1","open_batch_proof_v1":{"open_batch_existence":"PROVEN","batch_closeout":"NOT_PROVEN","apply_readiness":"NOT_PROVEN"}}',
+          stderr: "",
+          exitCode: 0,
+        };
+      },
+    });
+    assert.equal(executed, ownerReviewCmd);
+    assert.equal(res.artifact.execution_status, "EXECUTED");
+    assert.equal(res.artifact.execution_allowed, true);
+    assert.equal(res.artifact.selected_subsystem, "air_purifier_demand_selected_batch_owner_review");
+    assert.equal(res.artifact.read_only, true);
+    assert.equal(res.artifact.data_mutation, false);
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
+});
+
 test("runner does not prefer GE sync when NOT_NEEDED; demand_to_coverage terminal executes", async () => {
   const dispatchRunsDir = tempDispatchRunsDir();
   const demandCmd = "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts";
@@ -432,6 +472,48 @@ test("runner does not prefer GE sync when NOT_NEEDED; demand_to_coverage termina
       res.artifact.selected_subsystem,
       "ge_mwfp_xwfe_retailer_links_supabase_sync_owner_review",
     );
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
+});
+
+test("runner does not prefer GE sync when NOT_NEEDED; AP owner-review terminal executes", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
+  const ownerReviewCmd =
+    "npx tsx scripts/report-air-purifier-demand-selected-batch-owner-review-v1.ts";
+  let executed: string | null = null;
+  try {
+    const base = fakeReportWithDispatch({
+      selected_subsystem: "air_purifier_demand_selected_batch_owner_review",
+      exact_command: ownerReviewCmd,
+      command_surface: "terminal",
+      dispatch_status: "READY",
+      mutation_allowed: false,
+    });
+    base.command_center_v2.fridge_truth_spine_v1 = {
+      contract: "fridge_truth_spine_v1",
+      ge_mwfp_xwfe_retailer_links_supabase_sync: {
+        dispatch_status: "NOT_NEEDED",
+        exact_command: "",
+        command_surface: "none",
+        mutation_allowed: false,
+        supabase_write_authorized: false,
+        selected_subsystem: "none",
+      },
+    };
+    const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => new Date("2026-07-15T05:00:01.000Z"),
+      reportBuilder: async () => base,
+      exec: async (cmd) => {
+        executed = cmd;
+        return { stdout: '{"ok":true}', stderr: "", exitCode: 0 };
+      },
+    });
+    assert.equal(executed, ownerReviewCmd);
+    assert.equal(res.artifact.execution_status, "EXECUTED");
+    assert.equal(res.artifact.selected_subsystem, "air_purifier_demand_selected_batch_owner_review");
   } finally {
     rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
   }
