@@ -146,11 +146,13 @@ function subsystemCommandSurface(
       return "supabase_sql";
     case "apply_plan_owner_review":
     case "expansion_loop_next_batch_selection":
-    case "demand_to_coverage_next_lane":
     case "ap_batch_v3_run_instantiation":
     case "ap_batch_v3_agent_evidence_required":
     case "ap_batch_v3_aggregation_review":
       return "cursor_agent";
+    // Read-only allowlisted terminal report (`report-buckparts-demand-to-coverage-next-lane.ts`).
+    case "demand_to_coverage_next_lane":
+      return "terminal";
     case "none":
       return "none";
     default:
@@ -436,6 +438,11 @@ export function buildBatchProductionOperatingDispatchV1(
     const exact_command = useDemandLane
       ? BATCH_PRODUCTION_DEMAND_TO_COVERAGE_NEXT_LANE_COMMAND_V1
       : BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1;
+    // Only the allowlisted demand-to-coverage report is auto-dispatchable as terminal;
+    // expansion_loop checklist inspect stays cursor_agent (pipe/jq; not runner-allowlisted).
+    const command_surface: BatchProductionCommandSurfaceV1 = useDemandLane
+      ? "terminal"
+      : "cursor_agent";
     return {
       contract: BATCH_PRODUCTION_OPERATING_DISPATCH_CONTRACT_V1,
       read_only: true,
@@ -446,7 +453,7 @@ export function buildBatchProductionOperatingDispatchV1(
       next_stage_id: "lane_selected",
       selected_subsystem,
       exact_command,
-      command_surface: "cursor_agent",
+      command_surface,
       allowed_mutations: ["batch_planning_read_only", "demand_to_coverage_read_only"],
       forbidden_mutations: [...FORBIDDEN_MUTATIONS_BASE_V1],
       owner_approval_required: false,

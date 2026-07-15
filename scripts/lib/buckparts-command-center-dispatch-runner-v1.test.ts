@@ -256,3 +256,183 @@ test("runner does not mutate product CSV", async () => {
     rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
   }
 });
+
+test("runner executes allowlisted demand_to_coverage_next_lane when command_surface=terminal", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
+  const fixedNow = new Date("2026-07-15T04:00:00.000Z");
+  const demandCmd = "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts";
+  let executed: string | null = null;
+  try {
+    const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => fixedNow,
+      reportBuilder: async () =>
+        fakeReportWithDispatch({
+          selected_subsystem: "demand_to_coverage_next_lane",
+          exact_command: demandCmd,
+          command_surface: "terminal",
+          dispatch_status: "READY",
+          mutation_allowed: false,
+        }),
+      exec: async (cmd) => {
+        executed = cmd;
+        return {
+          stdout: '{"contract":"demand_to_coverage_next_lane_v1","ok":true}',
+          stderr: "",
+          exitCode: 0,
+        };
+      },
+    });
+    assert.equal(executed, demandCmd);
+    assert.equal(res.artifact.execution_status, "EXECUTED");
+    assert.equal(res.artifact.execution_allowed, true);
+    assert.equal(res.artifact.selected_subsystem, "demand_to_coverage_next_lane");
+    assert.equal(res.artifact.exact_command, demandCmd);
+    assert.equal(res.artifact.read_only, true);
+    assert.equal(res.artifact.data_mutation, false);
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
+});
+
+test("runner refuses missing command_surface", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
+  try {
+    const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => new Date("2026-07-15T04:00:01.000Z"),
+      reportBuilder: async () =>
+        fakeReportWithDispatch({
+          selected_subsystem: "demand_to_coverage_next_lane",
+          exact_command: "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+          command_surface: undefined,
+        }),
+      exec: async () => {
+        throw new Error("exec should not run when surface missing");
+      },
+    });
+    assert.equal(res.artifact.execution_status, "REFUSED");
+    assert.ok(res.artifact.blocked_reasons.some((r) => r.includes("command_surface must be terminal|none")));
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
+});
+
+test("runner refuses non-terminal unsafe command_surface", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
+  try {
+    const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => new Date("2026-07-15T04:00:02.000Z"),
+      reportBuilder: async () =>
+        fakeReportWithDispatch({
+          selected_subsystem: "demand_to_coverage_next_lane",
+          exact_command: "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+          command_surface: "cursor_agent",
+        }),
+      exec: async () => {
+        throw new Error("exec should not run for cursor_agent");
+      },
+    });
+    assert.equal(res.artifact.execution_status, "REFUSED");
+    assert.ok(res.artifact.blocked_reasons.some((r) => r.includes("command_surface must be terminal|none")));
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
+});
+
+test("runner refuses non-allowlisted command", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
+  try {
+    const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => new Date("2026-07-15T04:00:03.000Z"),
+      reportBuilder: async () =>
+        fakeReportWithDispatch({
+          exact_command: "npx tsx scripts/not-allowlisted-dangerous.ts",
+          command_surface: "terminal",
+        }),
+      exec: async () => {
+        throw new Error("exec should not run for non-allowlisted");
+      },
+    });
+    assert.equal(res.artifact.execution_status, "REFUSED");
+    assert.ok(res.artifact.blocked_reasons.some((r) => r.includes("not allowlisted")));
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
+});
+
+test("runner refuses mutation_allowed=true even when allowlisted terminal", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
+  try {
+    const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => new Date("2026-07-15T04:00:04.000Z"),
+      reportBuilder: async () =>
+        fakeReportWithDispatch({
+          selected_subsystem: "demand_to_coverage_next_lane",
+          exact_command: "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+          command_surface: "terminal",
+          mutation_allowed: true,
+        }),
+      exec: async () => {
+        throw new Error("exec should not run when mutation_allowed");
+      },
+    });
+    assert.equal(res.artifact.execution_status, "REFUSED");
+    assert.ok(res.artifact.blocked_reasons.some((r) => r.includes("mutation_allowed must be false")));
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
+});
+
+test("runner does not prefer GE sync when NOT_NEEDED; demand_to_coverage terminal executes", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
+  const demandCmd = "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts";
+  let executed: string | null = null;
+  try {
+    const base = fakeReportWithDispatch({
+      selected_subsystem: "demand_to_coverage_next_lane",
+      exact_command: demandCmd,
+      command_surface: "terminal",
+      dispatch_status: "READY",
+      mutation_allowed: false,
+    });
+    base.command_center_v2.fridge_truth_spine_v1 = {
+      contract: "fridge_truth_spine_v1",
+      ge_mwfp_xwfe_retailer_links_supabase_sync: {
+        dispatch_status: "NOT_NEEDED",
+        exact_command: "",
+        command_surface: "none",
+        mutation_allowed: false,
+        supabase_write_authorized: false,
+        selected_subsystem: "none",
+      },
+    };
+    const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => new Date("2026-07-15T04:00:05.000Z"),
+      reportBuilder: async () => base,
+      exec: async (cmd) => {
+        executed = cmd;
+        return { stdout: '{"ok":true}', stderr: "", exitCode: 0 };
+      },
+    });
+    assert.equal(executed, demandCmd);
+    assert.equal(res.artifact.execution_status, "EXECUTED");
+    assert.equal(res.artifact.selected_subsystem, "demand_to_coverage_next_lane");
+    assert.notEqual(
+      res.artifact.selected_subsystem,
+      "ge_mwfp_xwfe_retailer_links_supabase_sync_owner_review",
+    );
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
+});

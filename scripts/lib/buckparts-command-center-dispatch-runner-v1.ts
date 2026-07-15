@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import path from "node:path";
 
 import { buildBuckpartsCommandCenterReport } from "../report-buckparts-command-center";
+import { refreshBuckpartsExecutionLedgerV1 } from "./buckparts-execution-ledger-v1";
 
 const execAsync = promisify(execCb);
 
@@ -42,6 +43,14 @@ export type DispatchRunnerDepsV1 = {
   writeText?: (absPath: string, contents: string) => void;
   mkdirp?: (absDir: string) => void;
   exists?: (absPath: string) => boolean;
+  /**
+   * After writing a dispatch-run artifact, optionally refresh the execution ledger so EXECUTED
+   * runs are intake'd. Tests should omit this (or no-op) when using a temp dispatch-runs dir.
+   */
+  refreshExecutionLedger?: (args: {
+    execution_status: CommandCenterDispatchRunnerExecutionStatusV1;
+    artifact_abs_path: string;
+  }) => void;
 };
 
 export type DispatchRunnerResultV1 = {
@@ -288,6 +297,27 @@ export async function runBuckpartsCommandCenterDispatchRunnerV1(
   };
 
   writeText(artifact_abs_path, JSON.stringify(artifact, null, 2) + "\n");
+
+  // Ledger intakes only EXECUTED dispatch-run JSONs under the default dispatch-runs path.
+  // Skip when tests write into a temp dir (override present).
+  const usingDefaultDispatchRunsDir = deps.dispatchRunsDirRel == null;
+  if (usingDefaultDispatchRunsDir) {
+    const refresh =
+      deps.refreshExecutionLedger ??
+      ((args: {
+        execution_status: CommandCenterDispatchRunnerExecutionStatusV1;
+        artifact_abs_path: string;
+      }) => {
+        if (args.execution_status !== "EXECUTED") return;
+        refreshBuckpartsExecutionLedgerV1({
+          rootDir: deps.rootDir,
+          trigger_source: "npm run buckparts:command-center:run-dispatch",
+          now,
+        });
+      });
+    refresh({ execution_status, artifact_abs_path });
+  }
+
   return { artifact_abs_path, artifact };
 }
 

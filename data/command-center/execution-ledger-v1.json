@@ -3,10 +3,30 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "generated_at": "2026-07-14T16:18:21.979Z",
+  "generated_at": "2026-07-15T04:12:44.545Z",
   "source_command": "npm run buckparts:execution-ledger",
-  "entry_count": 11,
+  "entry_count": 12,
   "entries": [
+    {
+      "entry_id": "dispatch_dispatch-run-2026-07-15T035848679Z",
+      "commit_sha": "ce2ee6e732675ec8959d0ed967f328d8fc68100e",
+      "completion_timestamp": "2026-07-15T03:58:48.679Z",
+      "operational_lane": "command_center_dispatch:demand_to_coverage_next_lane",
+      "artifacts_produced": [
+        "data/command-center/dispatch-runs/dispatch-run-2026-07-15T035848679Z.json"
+      ],
+      "validation_performed": [
+        "dispatch_execution_status=EXECUTED",
+        "buckparts:demand-to-coverage-next-lane report"
+      ],
+      "safe_to_commit_status": "UNKNOWN",
+      "pushed_to_origin": "UNKNOWN",
+      "business_capability_unlocked": "New run-registry + lane_selected — batch loop restarts.",
+      "superseded_by": null,
+      "source_contract": "buckparts_command_center_dispatch_run_v1",
+      "source_artifact_rel_path": "data/command-center/dispatch-runs/dispatch-run-2026-07-15T035848679Z.json",
+      "provenance_tier": "COMMITTED_SOURCE"
+    },
     {
       "entry_id": "manufacturer_rescue_readiness_gate_2026-07-04T15:27:41.053Z",
       "commit_sha": "UNKNOWN",
@@ -252,6 +272,34 @@
     }
   ],
   "capability_timeline": [
+    {
+      "capability_key": "command_center_dispatch_demand_to_coverage_next_lane",
+      "operational_lane": "command_center_dispatch:demand_to_coverage_next_lane",
+      "entries": [
+        {
+          "entry_id": "dispatch_dispatch-run-2026-07-15T035848679Z",
+          "commit_sha": "ce2ee6e732675ec8959d0ed967f328d8fc68100e",
+          "completion_timestamp": "2026-07-15T03:58:48.679Z",
+          "operational_lane": "command_center_dispatch:demand_to_coverage_next_lane",
+          "artifacts_produced": [
+            "data/command-center/dispatch-runs/dispatch-run-2026-07-15T035848679Z.json"
+          ],
+          "validation_performed": [
+            "dispatch_execution_status=EXECUTED",
+            "buckparts:demand-to-coverage-next-lane report"
+          ],
+          "safe_to_commit_status": "UNKNOWN",
+          "pushed_to_origin": "UNKNOWN",
+          "business_capability_unlocked": "New run-registry + lane_selected — batch loop restarts.",
+          "superseded_by": null,
+          "source_contract": "buckparts_command_center_dispatch_run_v1",
+          "source_artifact_rel_path": "data/command-center/dispatch-runs/dispatch-run-2026-07-15T035848679Z.json",
+          "provenance_tier": "COMMITTED_SOURCE"
+        }
+      ],
+      "latest_entry_id": "dispatch_dispatch-run-2026-07-15T035848679Z",
+      "latest_completion_timestamp": "2026-07-15T03:58:48.679Z"
+    },
     {
       "capability_key": "manufacturer_safe_link_rescue_readiness_gate_promotion",
       "operational_lane": "manufacturer_safe_link_rescue:readiness_gate_promotion",
@@ -577,24 +625,23 @@
     }
   ],
   "last_completed_capability": {
-    "entry_id": "manufacturer_rescue_readiness_gate_2026-07-04T15:27:41.053Z",
-    "commit_sha": "UNKNOWN",
-    "completion_timestamp": "2026-07-04T15:27:41.053Z",
-    "operational_lane": "manufacturer_safe_link_rescue:readiness_gate_promotion",
+    "entry_id": "dispatch_dispatch-run-2026-07-15T035848679Z",
+    "commit_sha": "ce2ee6e732675ec8959d0ed967f328d8fc68100e",
+    "completion_timestamp": "2026-07-15T03:58:48.679Z",
+    "operational_lane": "command_center_dispatch:demand_to_coverage_next_lane",
     "artifacts_produced": [
-      "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json"
+      "data/command-center/dispatch-runs/dispatch-run-2026-07-15T035848679Z.json"
     ],
     "validation_performed": [
-      "ready_for_apply_count=1",
-      "orchestrator_generated_at=2026-07-03T21:55:52.145Z",
-      "director_generated_at=2026-07-03T21:55:52.146Z"
+      "dispatch_execution_status=EXECUTED",
+      "buckparts:demand-to-coverage-next-lane report"
     ],
     "safe_to_commit_status": "UNKNOWN",
     "pushed_to_origin": "UNKNOWN",
-    "business_capability_unlocked": "manufacturer rescue READY_FOR_APPLY promotion proven in committed gate",
+    "business_capability_unlocked": "New run-registry + lane_selected — batch loop restarts.",
     "superseded_by": null,
-    "source_contract": "manufacturer_safe_link_rescue_readiness_gate_v1",
-    "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+    "source_contract": "buckparts_command_center_dispatch_run_v1",
+    "source_artifact_rel_path": "data/command-center/dispatch-runs/dispatch-run-2026-07-15T035848679Z.json",
     "provenance_tier": "COMMITTED_SOURCE"
   },
   "source_paths_read": [
@@ -606,6 +653,8 @@
     "data/command-center/dispatch-runs/dispatch-run-2026-05-25T000003000Z.json",
     "data/command-center/dispatch-runs/dispatch-run-2026-05-26T014559063Z.json",
     "data/command-center/dispatch-runs/dispatch-run-2026-05-26T020812754Z.json",
+    "data/command-center/dispatch-runs/dispatch-run-2026-07-15T035146118Z.json",
+    "data/command-center/dispatch-runs/dispatch-run-2026-07-15T035848679Z.json",
     "data/fridge/batch-production/closeout/fridge-buyer-path-batch-closeout-learning-packet-v1-0fec4a7b623a.json",
     "data/fridge/batch-production/drafts/manufacturer-browser-proof-execution-factory-v1.json",
     "data/fridge/batch-production/drafts/manufacturer-browser-proof-factory-v1.json",
@@ -623,11 +672,11 @@
       "capability_timeline": ".capability_timeline",
       "last_completed_capability": ".last_completed_capability"
     },
-    "recommended_next_action": "Review last completed capability manufacturer_safe_link_rescue:readiness_gate_promotion at 2026-07-04T15:27:41.053Z."
+    "recommended_next_action": "Review last completed capability command_center_dispatch:demand_to_coverage_next_lane at 2026-07-15T03:58:48.679Z."
   },
   "proven_facts": [
     "PROVEN: Execution ledger is read-only and indexes committed dispatch runs, run-registry closeouts, and closeout learning packets only.",
-    "PROVEN: entry_count=11 from 16 source artifact path(s)."
+    "PROVEN: entry_count=12 from 18 source artifact path(s)."
   ],
   "unknown_facts": [
     "UNKNOWN: pushed_to_origin unless closeout commits_involved explicitly mention push.",
@@ -635,9 +684,9 @@
     "UNKNOWN: live git remote parity for entries without committed push attestations."
   ],
   "freshness": {
-    "last_generated_at": "2026-07-14T16:18:21.979Z",
-    "source_artifact_count": 16,
-    "stale_after": "2026-07-15T16:18:21.979Z",
+    "last_generated_at": "2026-07-15T04:12:44.545Z",
+    "source_artifact_count": 18,
+    "stale_after": "2026-07-16T04:12:44.545Z",
     "freshness_status": "FRESH",
     "last_refresh_trigger_source": "npm run buckparts:command-center"
   }

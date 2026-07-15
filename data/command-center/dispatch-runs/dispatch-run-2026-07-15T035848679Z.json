@@ -1,0 +1,312 @@
+{
+  "report_name": "buckparts_command_center_dispatch_run_v1",
+  "generated_at": "2026-07-15T03:58:48.679Z",
+  "source_commit": "ce2ee6e732675ec8959d0ed967f328d8fc68100e",
+  "dispatch_status_before": "READY",
+  "selected_subsystem": "demand_to_coverage_next_lane",
+  "exact_command": "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+  "execution_allowed": true,
+  "execution_status": "EXECUTED",
+  "stdout_excerpt": "{\n  \"contract\": \"demand_to_coverage_next_lane_v1\",\n  \"report_name\": \"demand_to_coverage_next_lane_v1\",\n  \"read_only\": true,\n  \"data_mutation\": false,\n  \"generated_at\": \"2026-07-15T03:58:49.418Z\",\n  \"runtime_status\": \"PROVEN\",\n  \"source_status\": \"PROVEN\",\n  \"recommended_wedge\": \"air_purifier\",\n  \"recommendation_status\": \"START_NEW_DEMAND_SELECTED_BATCH\",\n  \"recommended_next_action\": \"Demand-selected air_purifier open batch is proven read-only (run_id=ap-demand-selected-batch-run-v1-2026-06-23); batch closeout and apply readiness are not proven.\",\n  \"next_lane\": \"air_purifier_buyer_path_coverage\",\n  \"next_wedge\": \"air_purifier\",\n  \"next_batch_candidate\": \"air_purifier_demand_selected_batch_candidate\",\n  \"blockers\": [],\n  \"proof_sources\": [\n    \"src/lib/catalog/vertical-launch-state.ts\",\n    \"src/lib/owner-dashboard/gsc-api-artifact.ts\",\n    \"data/gsc/sitemap.xml (inventory buckets)\",\n    \"data/*/filters.csv and data/*/retailer_links.csv (repo buyer-path)\",\n    \"data/gsc/sitemap.xml\",\n    \"supabase.owner_report_artifacts[gsc_search_analytics]\"\n  ],\n  \"wedge_rows\": [\n    {\n      \"wedge\": \"refrigerator_water\",\n      \"vertical_slug\": \"refrigerator_routes\",\n      \"impressions\": 21,\n      \"clicks\": 0,\n      \"top_pages\": [\n        \"https://buckparts.com/brand/frigidaire\"\n      ],\n      \"launch_state\": \"LIVE\",\n      \"sitemap_url_count\": 562,\n      \"live_filter_count\": 57,\n      \"retailer_link_count\": 55,\n      \"blocked_link_count\": 55,\n      \"safe_cta_count\": 0,\n      \"coverage_gap_summary\": \"55 blocked/search-placeholder retailer links; no direct_buyable safe CTAs in repo retailer_links\",\n      \"recommended_action\": \"Continue refrigerator_water buyer-path coverage loop only if an open refrigerator_water batch is proven; otherwise use demand score to choose the next batch candida\n…(truncated)",
+  "stderr_excerpt": "",
+  "parsed_json_summary": {
+    "contract": "demand_to_coverage_next_lane_v1",
+    "report_name": "demand_to_coverage_next_lane_v1",
+    "read_only": true,
+    "data_mutation": false,
+    "generated_at": "2026-07-15T03:58:49.418Z",
+    "runtime_status": "PROVEN",
+    "source_status": "PROVEN",
+    "recommended_wedge": "air_purifier",
+    "recommendation_status": "START_NEW_DEMAND_SELECTED_BATCH",
+    "recommended_next_action": "Demand-selected air_purifier open batch is proven read-only (run_id=ap-demand-selected-batch-run-v1-2026-06-23); batch closeout and apply readiness are not proven.",
+    "next_lane": "air_purifier_buyer_path_coverage",
+    "next_wedge": "air_purifier",
+    "next_batch_candidate": "air_purifier_demand_selected_batch_candidate",
+    "blockers": [],
+    "proof_sources": [
+      "src/lib/catalog/vertical-launch-state.ts",
+      "src/lib/owner-dashboard/gsc-api-artifact.ts",
+      "data/gsc/sitemap.xml (inventory buckets)",
+      "data/*/filters.csv and data/*/retailer_links.csv (repo buyer-path)",
+      "data/gsc/sitemap.xml",
+      "supabase.owner_report_artifacts[gsc_search_analytics]"
+    ],
+    "wedge_rows": [
+      {
+        "wedge": "refrigerator_water",
+        "vertical_slug": "refrigerator_routes",
+        "impressions": 21,
+        "clicks": 0,
+        "top_pages": [
+          "https://buckparts.com/brand/frigidaire"
+        ],
+        "launch_state": "LIVE",
+        "sitemap_url_count": 562,
+        "live_filter_count": 57,
+        "retailer_link_count": 55,
+        "blocked_link_count": 55,
+        "safe_cta_count": 0,
+        "coverage_gap_summary": "55 blocked/search-placeholder retailer links; no direct_buyable safe CTAs in repo retailer_links",
+        "recommended_action": "Continue refrigerator_water buyer-path coverage loop only if an open refrigerator_water batch is proven; otherwise use demand score to choose the next batch candidate.",
+        "priority_score": 162.85
+      },
+      {
+        "wedge": "air_purifier",
+        "vertical_slug": "air-purifier",
+        "impressions": 233,
+        "clicks": 2,
+        "top_pages": [
+          "https://buckparts.com/air-purifier",
+          "https://buckparts.com/air-purifier/model/shark-hp150",
+          "https://buckparts.com/air-purifier/model/levoit-lap-v102s-ausr",
+          "https://buckparts.com/air-purifier/model/winix-sku-1022-0233-00",
+          "https://buckparts.com/air-purifier/model/shark-hp300"
+        ],
+        "launch_state": "LIVE",
+        "sitemap_url_count": 4,
+        "live_filter_count": 59,
+        "retailer_link_count": 65,
+        "blocked_link_count": 65,
+        "safe_cta_count": 0,
+        "coverage_gap_summary": "65 blocked/search-placeholder retailer links; no direct_buyable safe CTAs in repo retailer_links; thin sitemap inventory (4 URLs)",
+        "recommended_action": "Continue air_purifier buyer-path coverage loop only if an open air_purifier batch is proven; otherwise use demand score to choose the next batch candidate.",
+        "priority_score": 274.05
+      },
+      {
+        "wedge": "whole_house_water",
+        "vertical_slug": "whole-house-water",
+        "impressions": 0,
+        "clicks": 0,
+        "top_pages": [],
+        "launch_state": "NOINDEX_UNPROVEN",
+        "sitemap_url_count": 2,
+        "live_filter_count": 62,
+        "retailer_link_count": 64,
+        "blocked_link_count": 64,
+        "safe_cta_count": 0,
+        "coverage_gap_summary": "vertical NOINDEX_UNPROVEN (not LIVE); 64 blocked/search-placeholder retailer links; no direct_buyable safe CTAs in repo retailer_links; thin sitemap inventory (2 URLs)",
+        "recommended_action": "Run wedge buyer-path coverage snapshot for whole_house_water (launch NOINDEX_UNPROVEN) and queue top blocked OEM/search rows.",
+        "priority_score": 190
+      },
+      {
+        "wedge": "vacuum",
+        "vertical_slug": "vacuum",
+        "impressions": 0,
+        "clicks": 0,
+        "top_pages": [],
+        "launch_state": "NOINDEX_UNPROVEN",
+        "sitemap_url_count": 0,
+        "live_filter_count": 0,
+        "retailer_link_count": 0,
+        "blocked_link_count": 0,
+        "safe_cta_count": 0,
+        "coverage_gap_summary": "vertical NOINDEX_UNPROVEN (not LIVE); no direct_buyable safe CTAs in repo retailer_links",
+        "recommended_action": "Run wedge buyer-path coverage snapshot for vacuum (launch NOINDEX_UNPROVEN) and queue top blocked OEM/search rows.",
+        "priority_score": 18
+      },
+      {
+        "wedge": "humidifier",
+        "vertical_slug": "humidifier",
+        "impressions": 0,
+        "clicks": 0,
+        "top_pages": [],
+        "launch_state": "NOINDEX_UNPROVEN",
+        "sitemap_url_count": 0,
+        "live_filter_count": 0,
+        "retailer_link_count": 0,
+        "blocked_link_count": 0,
+        "safe_cta_count": 0,
+        "coverage_gap_summary": "vertical NOINDEX_UNPROVEN (not LIVE); no direct_buyable safe CTAs in repo retailer_links",
+        "recommended_action": "Run wedge buyer-path coverage snapshot for humidifier (launch NOINDEX_UNPROVEN) and queue top blocked OEM/search rows.",
+        "priority_score": 18
+      },
+      {
+        "wedge": "appliance_air",
+        "vertical_slug": "appliance-air",
+        "impressions": 0,
+        "clicks": 0,
+        "top_pages": [],
+        "launch_state": "NOINDEX_UNPROVEN",
+        "sitemap_url_count": 0,
+        "live_filter_count": 0,
+        "retailer_link_count": 0,
+        "blocked_link_count": 0,
+        "safe_cta_count": 0,
+        "coverage_gap_summary": "vertical NOINDEX_UNPROVEN (not LIVE); no direct_buyable safe CTAs in repo retailer_links",
+        "recommended_action": "Run wedge buyer-path coverage snapshot for appliance_air (launch NOINDEX_UNPROVEN) and queue top blocked OEM/search rows.",
+        "priority_score": 18
+      }
+    ],
+    "top_pages": [
+      {
+        "ctr": 0,
+        "key": "https://buckparts.com/air-purifier",
+        "clicks": 0,
+        "impressions": 125,
+        "average_position": 43.672
+      },
+      {
+        "ctr": 0.034482758620689655,
+        "key": "https://buckparts.com/air-purifier/model/shark-hp150",
+        "clicks": 2,
+        "impressions": 58,
+        "average_position": 11.172413793103448
+      },
+      {
+        "ctr": 0,
+        "key": "https://buckparts.com/search",
+        "clicks": 0,
+        "impressions": 30,
+        "average_position": 36.06666666666667
+      },
+      {
+        "ctr": 0,
+        "key": "https://buckparts.com/",
+        "clicks": 0,
+        "impressions": 29,
+        "average_position": 22
+      },
+      {
+        "ctr": 0.058823529411764705,
+        "key": "https://buckparts.com/catalog",
+        "clicks": 1,
+        "impressions": 17,
+        "average_position": 10.470588235294118
+      },
+      {
+        "ctr": 0,
+        "key": "https://buckparts.com/brand/frigidaire",
+        "clicks": 0,
+        "impressions": 14,
+        "average_position": 3
+      },
+      {
+        "ctr": 0,
+        "key": "https://buckparts.com/air-purifier/model/levoit-lap-v102s-ausr",
+        "clicks": 0,
+        "impressions": 9,
+        "average_position": 7.555555555555555
+      },
+      {
+        "ctr": 0,
+        "key": "https://buckparts.com/air-purifier/model/winix-sku-1022-0233-00",
+        "clicks": 0,
+        "impressions": 9,
+        "average_position": 6.444444444444445
+      },
+      {
+        "ctr": 0,
+        "key": "https://buckparts.com/air-purifier/model/shark-hp300",
+        "clicks": 0,
+        "impressions": 7,
+        "average_position": 11.142857142857142
+      },
+      {
+        "ctr": 0,
+        "key": "https://buckparts.com/search?q=EQ-600R",
+        "clicks": 0,
+        "impressions": 7,
+        "average_position": 6
+      }
+    ],
+    "top_queries": [
+      {
+        "ctr": 0,
+        "key": "air purifier filter replacement",
+        "clicks": 0,
+        "impressions": 18,
+        "average_position": 68.27777777777777
+      },
+      {
+        "ctr": 0,
+        "key": "filter parts price",
+        "clicks": 0,
+        "impressions": 3,
+        "average_position": 40.666666666666664
+      },
+      {
+        "ctr": 0,
+        "key": "filter replacement for air purifier",
+        "clicks": 0,
+        "impressions": 3,
+        "average_position": 89.66666666666667
+      },
+      {
+        "ctr": 0,
+        "key": "filter spare parts",
+        "clicks": 0,
+        "impressions": 3,
+        "average_position": 76.33333333333333
+      },
+      {
+        "ctr": 0,
+        "key": "fridge filter finder",
+        "clicks": 0,
+        "impressions": 3,
+        "average_position": 80
+      },
+      {
+        "ctr": 0,
+        "key": "air purifier filters replacement",
+        "clicks": 0,
+        "impressions": 2,
+        "average_position": 68.5
+      },
+      {
+        "ctr": 0,
+        "key": "are replacement parts available for reusable air filters?",
+        "clicks": 0,
+        "impressions": 2,
+        "average_position": 92
+      },
+      {
+        "ctr": 0,
+        "key": "find my fridge filter",
+        "clicks": 0,
+        "impressions": 2,
+        "average_position": 90
+      },
+      {
+        "ctr": 0,
+        "key": "lxi air purifier parts",
+        "clicks": 0,
+        "impressions": 2,
+        "average_position": 49.5
+      },
+      {
+        "ctr": 0,
+        "key": "refrigerator filter lookup",
+        "clicks": 0,
+        "impressions": 2,
+        "average_position": 71.5
+      }
+    ],
+    "coverage_gap": {
+      "highest_demand_wedge": "air_purifier",
+      "highest_blocked_wedge": "air_purifier",
+      "active_batch_wedge": "refrigerator_water",
+      "gap_rationale": "air_purifier priority_score=274.05: 65 blocked/search-placeholder retailer links; no direct_buyable safe CTAs in repo retailer_links; thin sitemap inventory (4 URLs)"
+    },
+    "next_action": "Demand-selected air_purifier open batch is proven read-only (run_id=ap-demand-selected-batch-run-v1-2026-06-23); batch closeout and apply readiness are not proven.",
+    "notes": [
+      "GSC totals: impressions=289, clicks=3.",
+      "Vertical launch states: refrigerator=LIVE, air-purifier=LIVE, whole-house-water=NOINDEX_UNPROVEN, vacuum=NOINDEX_UNPROVEN, humidifier=NOINDEX_UNPROVEN, appliance-air=NOINDEX_UNPROVEN."
+    ],
+    "proven_facts": [
+      "demand_to_coverage_next_lane_v1 is read_only=true and data_mutation=false.",
+      "Recommended wedge is air_purifier.",
+      "Recommendation status is START_NEW_DEMAND_SELECTED_BATCH.",
+      "Winner row: air_purifier priority_score=274.05; launch_state=LIVE.",
+      "PROVEN: AP demand-selected run registry data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json proves open batch existence (evidence_collection_started=true).",
+      "PROVEN: batch closeout is NOT_PROVEN (closeout_complete remains false on open demand-selected registry).",
+      "PROVEN: apply readiness is NOT_PROVEN; this lane does not authorize batch start, CSV apply, or evidence writes."
+    ],
+    "inferred_facts": [],
+    "unknown_facts": []
+  },
+  "blocked_reasons": [],
+  "next_expected_state": "New run-registry + lane_selected — batch loop restarts.",
+  "read_only": true,
+  "data_mutation": false
+}

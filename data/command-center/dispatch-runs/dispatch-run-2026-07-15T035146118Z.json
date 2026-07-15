@@ -1,0 +1,19 @@
+{
+  "report_name": "buckparts_command_center_dispatch_run_v1",
+  "generated_at": "2026-07-15T03:51:46.118Z",
+  "source_commit": "ce2ee6e732675ec8959d0ed967f328d8fc68100e",
+  "dispatch_status_before": "READY",
+  "selected_subsystem": "demand_to_coverage_next_lane",
+  "exact_command": "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+  "execution_allowed": false,
+  "execution_status": "REFUSED",
+  "stdout_excerpt": "",
+  "stderr_excerpt": "",
+  "parsed_json_summary": null,
+  "blocked_reasons": [
+    "Refused: command_surface must be terminal|none in v1."
+  ],
+  "next_expected_state": "Do not mutate CSV/Supabase without a fresh owner-approved plan.",
+  "read_only": true,
+  "data_mutation": false
+}
