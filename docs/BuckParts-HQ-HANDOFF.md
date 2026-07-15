@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (Phase 0 reporting-repair review tree on baseline `d017d40`):** Pre-repair baseline HEAD / `origin/main` remains **`d017d40`** (Register GE Supabase writer in service-role inventory) until this reporting-repair lane is committed. After commit, update this banner to the repair commit SHA. Prior GE MWFP/XWFE guarded Supabase retailer_links sync **applied** at `e797fe2` (exactly **`smartwater-mwfp` + `xwfe`**; UPDATE-only; **`xwf` untouched**). Post-write CTA/go remains **PASS 27 / FAIL 1** (remaining fail **`ge-gte18gsnrss`** remain-no-buy). GE sync dispatch is **`NOT_NEEDED`** (notes-only residual drift). After GE sync surfacing (`ce2ee6e`), Command Center dispatch **executed** read-only **`demand_to_coverage_next_lane`**, then **AP demand-selected owner review**, then **AP closeout/readiness proof**, and **hard-stopped before mutation** (`batch_closeout` / `apply_readiness` = **NOT_PROVEN**). Repository-proven Netlify deploy-preflight defect: GE Supabase writer existed but was **missing from the service-role inventory** (`d017d40` registration). Owner-supplied Netlify logs support that inventory gap; **whether any additional secret-related failure also occurred is not independently ruled out beyond those supplied logs**. Production Netlify **Published `main@d017d40`** remains owner-reported. Do **not** overclaim GE PDPs or AP closeout as revenue/conversion wins. **Root `AGENTS.md` remains the agent operating contract**. **Conversion / revenue / ranking / SEO impact remain `UNKNOWN`**. Credits available ≠ deploy authorization.
+> **Current operational stopping point (Phase 0 reporting-integrity repair committed at `65f357c`):** Pre-repair baseline was **`d017d40`** (Register GE Supabase writer in service-role inventory). The bounded reporting-integrity repair was committed and clean-tree validated at **`65f357c`**. Prior GE MWFP/XWFE guarded Supabase retailer_links sync **applied** at `e797fe2` (exactly **`smartwater-mwfp` + `xwfe`**; UPDATE-only; **`xwf` untouched**). Post-write CTA/go remains **PASS 27 / FAIL 1** (remaining fail **`ge-gte18gsnrss`** remain-no-buy). GE sync dispatch is **`NOT_NEEDED`** (notes-only residual drift). After GE sync surfacing (`ce2ee6e`), Command Center dispatch **executed** read-only **`demand_to_coverage_next_lane`**, then **AP demand-selected owner review**, then **AP closeout/readiness proof**, and **hard-stopped before mutation** (`batch_closeout` / `apply_readiness` = **NOT_PROVEN**). Repository-proven Netlify deploy-preflight defect: GE Supabase writer existed but was **missing from the service-role inventory** (`d017d40` registration). Owner-supplied Netlify logs support that inventory gap; **whether any additional secret-related failure also occurred is not independently ruled out beyond those supplied logs**. Production Netlify **Published `main@d017d40`** remains owner-reported. Do **not** overclaim GE PDPs or AP closeout as revenue/conversion wins. **Root `AGENTS.md` remains the agent operating contract**. **Conversion / revenue / ranking / SEO impact remain `UNKNOWN`**. Credits available ≠ deploy authorization.
 
 ## Execution Stack
 
@@ -54,7 +54,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — Phase 0 reporting integrity repair (baseline `d017d40`; repair commit TBD)
+## Current stopping point — Phase 0 reporting integrity repair (`65f357c`)
 
 **Read this section first** for LIVE pre-repair baseline, GE MWFP/XWFE post-sync posture, AP demand-selected dispatch hard-stop, and Netlify preflight inventory repair.
 
@@ -64,7 +64,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 |------|-------|
 | Branch | **`main`** |
 | Pre-repair baseline HEAD / `origin/main` | **`d017d40`** — Register GE Supabase writer in service-role inventory |
-| Repair commit | **TBD after founder commit** — replace this row with the repair SHA once committed |
+| Reporting-integrity repair commit | **`65f357c`** — clean-tree validator PASS |
 | Prior GE Supabase sync apply | **`e797fe2`** — UPDATE-only `smartwater-mwfp` + `xwfe`; `rows_updated=2`; `inserts=0`; `deletes=0`; **`xwf` excluded** |
 | Post-write CTA/go | **`SAFE_BUYER_PATH_PASS=27` / `SAFE_BUYER_PATH_FAIL=1` / `UNKNOWN=0`** |
 | Remaining FAIL | **`ge-gte18gsnrss`** (remain-no-buy) |
@@ -88,13 +88,13 @@ Conversion, revenue, user clicks, ranking, SEO impact, AP batch closeout, AP app
 2. Treat AP demand-selected closeout/apply as **NOT_PROVEN**; hard-stop before mutation until a separate founder-authorized lane.
 3. Keep **`ge-gte18gsnrss`** remain-no-buy; do **not** invent buyer-path wins.
 4. Before any production deploy spend: Credit Control + ship-guard (credits available ≠ deploy authorization).
-5. Commit this Phase 0 reporting-repair lane, then update this HQ stopping point to the repair commit SHA and re-run `npm run buckparts:phase0-reporting-integrity -- --require-clean`.
+5. Reporting-integrity repair committed at **`65f357c`** and clean-tree validator passed. Phase 1 remains separately gated by the Grand Audit plan.
 
 ---
 
 ## Prior completed lane — GE MWFP/XWFE Supabase sync applied (`e797fe2`)
 
-**Historical reference** for the guarded Supabase retailer_links sync apply itself (superseded for operational pickup by **§ Current stopping point — Phase 0 reporting integrity repair (baseline `d017d40`; repair commit TBD)** above).
+**Historical reference** for the guarded Supabase retailer_links sync apply itself (superseded for operational pickup by **§ Current stopping point — Phase 0 reporting integrity repair (`65f357c`)** above).
 
 ### Milestone summary (PROVEN at apply time)
 
