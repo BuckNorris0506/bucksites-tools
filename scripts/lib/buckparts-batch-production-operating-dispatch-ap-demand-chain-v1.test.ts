@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { AIR_PURIFIER_DEMAND_SELECTED_BATCH_OWNER_REVIEW_EXACT_COMMAND_V1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
+import { AP_DEMAND_SELECTED_BATCH_CLOSEOUT_READINESS_PROOF_EXACT_COMMAND_V1 } from "./ap-demand-selected-batch-closeout-readiness-proof-v1";
 import {
   buildBatchProductionOperatingDispatchV1,
   type BatchProductionOperatingDispatchV1,
@@ -74,7 +75,7 @@ function growthChecklistFixture(
   } as BatchProductionOperatingChecklistV1;
 }
 
-test("demand selection chains to AP demand-selected owner-review when open batch is PROVEN", () => {
+test("demand selection chains to AP demand-selected owner-review when open batch is PROVEN but evidence incomplete", () => {
   const dispatch = buildBatchProductionOperatingDispatchV1(growthChecklistFixture(), {
     ap_demand_selected_batch_owner_review: {
       read_only: true,
@@ -88,6 +89,8 @@ test("demand selection chains to AP demand-selected owner-review when open batch
         batch_closeout: "NOT_PROVEN",
         apply_readiness: "NOT_PROVEN",
       },
+      evidence_completeness_v1: { status: "INCOMPLETE" },
+      batch_run_registry: { stage: "evidence_collection_planned" },
     },
   });
 
@@ -98,6 +101,36 @@ test("demand selection chains to AP demand-selected owner-review when open batch
   assert.equal(dispatch.exact_command, AIR_PURIFIER_DEMAND_SELECTED_BATCH_OWNER_REVIEW_EXACT_COMMAND_V1);
   assert.match(dispatch.why_this_is_next, /owner-review/i);
   assert.match(dispatch.proof_required_before_execution, /Hard-stop/i);
+});
+
+test("complete evidence chains to closeout/readiness proof instead of discovery/owner-review", () => {
+  const dispatch = buildBatchProductionOperatingDispatchV1(growthChecklistFixture(), {
+    ap_demand_selected_batch_owner_review: {
+      read_only: true,
+      data_mutation: false,
+      csv_apply_authorized: false,
+      supabase_mutation_authorized: false,
+      source_recommendation_status: "START_NEW_DEMAND_SELECTED_BATCH",
+      recommended_wedge: "air_purifier",
+      open_batch_proof_v1: {
+        open_batch_existence: "PROVEN",
+        batch_closeout: "NOT_PROVEN",
+        apply_readiness: "NOT_PROVEN",
+      },
+      evidence_completeness_v1: { status: "COMPLETE" },
+      batch_run_registry: { stage: "read_only_evidence_collection_complete" },
+    },
+  });
+
+  assert.equal(
+    dispatch.selected_subsystem,
+    "air_purifier_demand_selected_batch_closeout_readiness_proof",
+  );
+  assert.equal(dispatch.command_surface, "terminal");
+  assert.equal(dispatch.mutation_allowed, false);
+  assert.equal(dispatch.exact_command, AP_DEMAND_SELECTED_BATCH_CLOSEOUT_READINESS_PROOF_EXACT_COMMAND_V1);
+  assert.match(dispatch.why_this_is_next, /closeout\/apply-readiness proof/i);
+  assert.match(dispatch.why_this_is_next, /not HyperAgent discovery again/i);
 });
 
 test("without open-batch proof, growth path keeps demand_to_coverage terminal command", () => {

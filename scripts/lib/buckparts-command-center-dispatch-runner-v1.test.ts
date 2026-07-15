@@ -477,15 +477,15 @@ test("runner does not prefer GE sync when NOT_NEEDED; demand_to_coverage termina
   }
 });
 
-test("runner does not prefer GE sync when NOT_NEEDED; AP owner-review terminal executes", async () => {
+test("runner executes allowlisted AP closeout/readiness proof when command_surface=terminal", async () => {
   const dispatchRunsDir = tempDispatchRunsDir();
-  const ownerReviewCmd =
-    "npx tsx scripts/report-air-purifier-demand-selected-batch-owner-review-v1.ts";
+  const cmd =
+    "npx tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts";
   let executed: string | null = null;
   try {
     const base = fakeReportWithDispatch({
-      selected_subsystem: "air_purifier_demand_selected_batch_owner_review",
-      exact_command: ownerReviewCmd,
+      selected_subsystem: "air_purifier_demand_selected_batch_closeout_readiness_proof",
+      exact_command: cmd,
       command_surface: "terminal",
       dispatch_status: "READY",
       mutation_allowed: false,
@@ -504,16 +504,24 @@ test("runner does not prefer GE sync when NOT_NEEDED; AP owner-review terminal e
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
       dispatchRunsDirRel: dispatchRunsDir,
-      now: () => new Date("2026-07-15T05:00:01.000Z"),
+      now: () => new Date("2026-07-15T05:30:00.000Z"),
       reportBuilder: async () => base,
-      exec: async (cmd) => {
-        executed = cmd;
-        return { stdout: '{"ok":true}', stderr: "", exitCode: 0 };
+      exec: async (c) => {
+        executed = c;
+        return {
+          stdout:
+            '{"contract":"ap_demand_selected_batch_closeout_readiness_proof_v1","batch_closeout":"NOT_PROVEN","apply_readiness":"NOT_PROVEN","hard_stop":true}',
+          stderr: "",
+          exitCode: 0,
+        };
       },
     });
-    assert.equal(executed, ownerReviewCmd);
+    assert.equal(executed, cmd);
     assert.equal(res.artifact.execution_status, "EXECUTED");
-    assert.equal(res.artifact.selected_subsystem, "air_purifier_demand_selected_batch_owner_review");
+    assert.equal(
+      res.artifact.selected_subsystem,
+      "air_purifier_demand_selected_batch_closeout_readiness_proof",
+    );
   } finally {
     rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
   }

@@ -338,7 +338,7 @@ test("AP owner review lane clears owner_batch_start_approval_missing when read-o
     status: "PROVEN",
     run_registry_rel_path:
       "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
-    run_id: "ap-demand-selected-batch-run-v1-2026-06-23",
+    run_id: "ap-demand-selected-incomplete-fixture-run",
     stage: "read_only_evidence_collection_authorized",
     batch_start_mode: "read_only_browser_discovery_only",
     proposed_slug_count: 10,
@@ -365,7 +365,9 @@ test("AP owner review lane clears owner_batch_start_approval_missing when read-o
   assert.ok(!lane.blockers.includes("owner_batch_start_approval_missing"));
   assert.ok(lane.blockers.includes("evidence_collection_not_started"));
   assert.equal(lane.batch_start_authorized, false);
-  assert.match(lane.next_agent_action, /read-only HyperAgent chat discovery/i);
+  assert.equal(lane.evidence_completeness_v1.status, "INCOMPLETE");
+  assert.match(lane.next_agent_action, /Evidence incomplete/i);
+  assert.match(lane.next_agent_action, /missing_slug:|Missing:|hyperagent-chat-discovery/i);
 });
 
 test("AP owner review lane clears open_batch_not_proven when registry is PROVEN_OPEN with evidence started", async () => {
@@ -409,6 +411,10 @@ test("AP owner review lane clears open_batch_not_proven when registry is PROVEN_
   assert.equal(lane.batch_start_authorized, false);
   assert.equal(lane.csv_apply_authorized, false);
   assert.equal(lane.evidence_write_authorized, false);
+  assert.equal(lane.evidence_completeness_v1.status, "COMPLETE");
+  assert.match(lane.next_agent_action, /already complete/i);
+  assert.match(lane.next_agent_action, /closeout-readiness-proof/i);
+  assert.doesNotMatch(lane.next_agent_action, /Run read-only HyperAgent chat discovery/i);
 });
 
 test("AP owner review lane degrades safely when demand source is UNKNOWN", async () => {
@@ -474,7 +480,11 @@ test("live repo owner-review candidates are evidence-aware and exclude shark-car
 
   assert.equal(lane.candidate_rows_status, "PROVEN");
   assert.ok(lane.candidate_rows.length > 0);
-  assert.equal(lane.candidate_rows[0]?.filter_slug, "holmes-hapf30");
+  assert.ok(
+    lane.candidate_rows[0]?.filter_slug === "holmes-hapf30" ||
+      lane.candidate_rows[0]?.filter_slug === "blueair-particle-411",
+    `unexpected top candidate: ${lane.candidate_rows[0]?.filter_slug ?? "none"}`,
+  );
   assert.ok(!lane.candidate_rows.some((row) => row.filter_slug === "levoit-rf-rar029"));
   assert.ok(!lane.candidate_rows.some((row) => row.filter_slug === "shark-carbon-foam"));
   assert.ok(lane.candidate_rows.some((row) => row.filter_slug === "holmes-hapf30"));

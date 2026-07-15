@@ -28,6 +28,7 @@ import {
   BATCH_PRODUCTION_PARITY_DRY_RUN_COMMAND_V1,
 } from "./buckparts-batch-production-operating-checklist-v1";
 import { AIR_PURIFIER_DEMAND_SELECTED_BATCH_OWNER_REVIEW_EXACT_COMMAND_V1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
+import { AP_DEMAND_SELECTED_BATCH_CLOSEOUT_READINESS_PROOF_EXACT_COMMAND_V1 } from "./ap-demand-selected-batch-closeout-readiness-proof-v1";
 import type { ApDemandSelectedOpenBatchProofStatusV1 } from "./ap-demand-selected-batch-run-registry-v1";
 import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next-lane-v1";
 
@@ -64,6 +65,7 @@ export type BatchProductionSelectedSubsystemV1 =
   | "expansion_loop_next_batch_selection"
   | "demand_to_coverage_next_lane"
   | "air_purifier_demand_selected_batch_owner_review"
+  | "air_purifier_demand_selected_batch_closeout_readiness_proof"
   | "ap_batch_v3_run_instantiation"
   | "ap_batch_v3_agent_evidence_required"
   | "ap_batch_v3_aggregation_review"
@@ -158,6 +160,8 @@ function subsystemCommandSurface(
     case "demand_to_coverage_next_lane":
     // Read-only allowlisted terminal report (`report-air-purifier-demand-selected-batch-owner-review-v1.ts`).
     case "air_purifier_demand_selected_batch_owner_review":
+    // Read-only allowlisted terminal closeout/readiness proof.
+    case "air_purifier_demand_selected_batch_closeout_readiness_proof":
       return "terminal";
     case "none":
       return "none";
@@ -180,6 +184,12 @@ export type BatchProductionOperatingDispatchExpansionContextV1 = {
     data_mutation?: boolean;
     csv_apply_authorized?: boolean;
     supabase_mutation_authorized?: boolean;
+    evidence_completeness_v1?: {
+      status?: "COMPLETE" | "INCOMPLETE" | "UNKNOWN" | null;
+    } | null;
+    batch_run_registry?: {
+      stage?: string | null;
+    } | null;
   } | null;
 };
 
@@ -464,6 +474,41 @@ export function buildBatchProductionOperatingDispatchV1(
       ownerReviewCtx.open_batch_proof_v1.batch_closeout === "NOT_PROVEN" &&
       ownerReviewCtx.open_batch_proof_v1.apply_readiness === "NOT_PROVEN";
 
+    const evidenceComplete =
+      ownerReviewCtx?.evidence_completeness_v1?.status === "COMPLETE" ||
+      ownerReviewCtx?.batch_run_registry?.stage === "read_only_evidence_collection_complete";
+
+    if (preferApDemandSelectedOwnerReview && evidenceComplete) {
+      return {
+        contract: BATCH_PRODUCTION_OPERATING_DISPATCH_CONTRACT_V1,
+        read_only: true,
+        data_mutation: false,
+        runtime_status: checklist.runtime_status,
+        dispatch_status: "READY",
+        current_stage_id: null,
+        next_stage_id: "lane_selected",
+        selected_subsystem: "air_purifier_demand_selected_batch_closeout_readiness_proof",
+        exact_command: AP_DEMAND_SELECTED_BATCH_CLOSEOUT_READINESS_PROOF_EXACT_COMMAND_V1,
+        command_surface: "terminal",
+        allowed_mutations: ["ap_demand_selected_closeout_readiness_proof_read_only"],
+        forbidden_mutations: [...FORBIDDEN_MUTATIONS_BASE_V1],
+        owner_approval_required: false,
+        mutation_allowed: false,
+        proof_required_before_execution:
+          "AP demand-selected read-only evidence is complete; emit closeout/apply-readiness posture proof only. Hard-stop before CSV/Supabase/evidence/public mutation.",
+        expected_artifact_paths,
+        success_transition:
+          "Closeout/readiness proof printed — batch_closeout and apply_readiness remain NOT_PROVEN; mutation unauthorized; conversion/revenue UNKNOWN.",
+        failure_transition:
+          "Remain read-only — do not mutate CSV/Supabase/retailer_links/public guidance; do not re-run discovery when evidence is COMPLETE.",
+        why_this_is_next:
+          "Registry stage/evidence completeness shows read-only discovery is already complete; next safe stage is the AP demand-selected closeout/apply-readiness proof, not HyperAgent discovery again.",
+        blocked_reasons: [],
+        expansion_blocked: false,
+        derived_from_checklist_contract: checklist.contract,
+      };
+    }
+
     if (preferApDemandSelectedOwnerReview) {
       return {
         contract: BATCH_PRODUCTION_OPERATING_DISPATCH_CONTRACT_V1,
@@ -481,14 +526,14 @@ export function buildBatchProductionOperatingDispatchV1(
         owner_approval_required: false,
         mutation_allowed: false,
         proof_required_before_execution:
-          "AP demand-selected open batch is proven; emit read-only owner-review packet proving closeout_complete=false and apply_readiness=NOT_PROVEN. Hard-stop before CSV/Supabase/evidence/public mutation.",
+          "AP demand-selected open batch is proven; emit read-only owner-review packet for missing evidence/closeout posture. Hard-stop before CSV/Supabase/evidence/public mutation.",
         expected_artifact_paths,
         success_transition:
           "Owner-review packet printed — batch closeout and apply readiness remain NOT_PROVEN; mutation unauthorized; do not invent buyer-path closure or revenue.",
         failure_transition:
           "Remain read-only — do not mutate CSV/Supabase/retailer_links/public guidance; conversion/revenue UNKNOWN.",
         why_this_is_next:
-          "Demand selection already chose air_purifier with an open demand-selected batch; next safe stage is the read-only AP demand-selected owner-review report (closeout + apply-readiness posture), not another demand selection pass.",
+          "Demand selection already chose air_purifier with an open demand-selected batch; evidence is not COMPLETE yet, so owner-review remains the next safe read-only stage (with exact missing evidence list).",
         blocked_reasons: [],
         expansion_blocked: false,
         derived_from_checklist_contract: checklist.contract,

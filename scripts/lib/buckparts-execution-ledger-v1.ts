@@ -202,6 +202,9 @@ function validationFromDispatch(exactCommand: string, executionStatus: string): 
   if (exactCommand.includes("report-air-purifier-demand-selected-batch-owner-review")) {
     validation.push("buckparts:ap-demand-selected-batch-owner-review report");
   }
+  if (exactCommand.includes("report-air-purifier-demand-selected-batch-closeout-readiness-proof")) {
+    validation.push("buckparts:ap-demand-selected-batch-closeout-readiness-proof report");
+  }
   if (validation.length === 0) validation.push("UNKNOWN");
   return validation;
 }
