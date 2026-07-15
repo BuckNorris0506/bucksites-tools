@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -143,6 +143,10 @@ test("fridge guarded Supabase apply writers are write_guarded with mutation_lane
       "scripts/lib/samsung-pass-repair-supabase-compat-sync-guarded-apply-v1.ts",
       "samsung_pass_repair_supabase_compat_sync_guarded_apply_v1",
     ],
+    [
+      "scripts/lib/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-apply-v1.ts",
+      "fridge_model_pdp_ge_mwfp_xwfe_retailer_links_supabase_sync_apply_v1",
+    ],
   ];
   for (const [rel, lane] of expected) {
     assert.equal(guarded.get(rel), lane, rel);
@@ -153,4 +157,114 @@ test("fridge guarded Supabase apply writers are write_guarded with mutation_lane
   }
   const drift = auditSupabaseServiceRoleInventoryDriftV1({ rootDir: process.cwd() });
   assert.equal(drift.ok, true);
+});
+
+test("authorized GE MWFP/XWFE Supabase sync apply writer is inventoried write_guarded", () => {
+  const geRel =
+    "scripts/lib/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-apply-v1.ts";
+  const entry = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find((e) => e.rel_path === geRel);
+  assert.ok(entry, "GE sync apply writer must be inventoried");
+  assert.equal(entry.access_class, "write_guarded");
+  assert.equal(
+    entry.mutation_lane,
+    "fridge_model_pdp_ge_mwfp_xwfe_retailer_links_supabase_sync_apply_v1",
+  );
+  const writers = discoverSupabaseServiceRoleWritersV1({ rootDir: process.cwd() });
+  assert.ok(writers.includes(geRel));
+  const drift = auditSupabaseServiceRoleInventoryDriftV1({ rootDir: process.cwd() });
+  assert.equal(drift.ok, true);
+});
+
+test("path variants cannot evade service-role inventory (exact posix rel_path required)", () => {
+  const root = mkdtempSync(path.join(tmpdir(), "sr-inventory-path-variant-"));
+  try {
+    mkdirSync(path.join(root, "scripts/lib"), { recursive: true });
+    writeFileSync(
+      path.join(root, "scripts/lib/supabase-admin.ts"),
+      `export function getSupabaseAdmin() { return {}; }\n`,
+      "utf8",
+    );
+    const realRel = "scripts/lib/path-variant-writer.ts";
+    writeFileSync(
+      path.join(root, realRel),
+      `import { getSupabaseAdmin } from "./supabase-admin";
+export async function run() {
+  const supabase = getSupabaseAdmin();
+  await supabase.from("filters").update({ slug: "x" }).eq("id", 1);
+}
+`,
+      "utf8",
+    );
+    const discovered = discoverSupabaseServiceRoleWritersV1({ rootDir: root });
+    assert.deepEqual(discovered, [realRel]);
+
+    // Truncated / alternate spellings must not satisfy inventory coverage.
+    const evasionRelPaths = [
+      "scripts/lib/path-variant-writer",
+      "./scripts/lib/path-variant-writer.ts",
+      "scripts\\lib\\path-variant-writer.ts",
+      "scripts/lib/path-variant-writer.ts.ts",
+      "Scripts/lib/path-variant-writer.ts",
+    ];
+    for (const fake of evasionRelPaths) {
+      assert.ok(!discovered.includes(fake), `discovered must not use variant: ${fake}`);
+    }
+
+    const drift = auditSupabaseServiceRoleInventoryDriftV1({ rootDir: root });
+    assert.equal(drift.ok, false);
+    if (!drift.ok) {
+      assert.ok(
+        drift.blockers.includes(`supabase_service_role_inventory_missing:${realRel}`),
+        "exact discovered path must still be reported missing when only variants exist",
+      );
+      for (const fake of evasionRelPaths) {
+        assert.ok(
+          !drift.blockers.includes(`supabase_service_role_inventory_missing:${fake}`),
+          `blocker must use canonical path, not ${fake}`,
+        );
+      }
+    }
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("client/public app code cannot access service-role credentials helpers", () => {
+  const root = process.cwd();
+  const srcRoot = path.join(root, "src");
+  const publicRoot = path.join(root, "public");
+  const offenders: string[] = [];
+  const secretExposureRe =
+    /from\s+["'].*supabase-admin["']|\bgetSupabaseAdmin\s*\(|NEXT_PUBLIC_SUPABASE_SERVICE_ROLE|process\.env\.SUPABASE_SERVICE_ROLE_KEY/;
+  const isClientModule = (text: string): boolean =>
+    /^\s*["']use client["']\s*;?/.test(text);
+  const checkText = (rel: string, text: string, clientOnly: boolean): void => {
+    if (clientOnly && !isClientModule(text)) return;
+    if (secretExposureRe.test(text)) offenders.push(rel);
+  };
+  const walk = (abs: string, rel: string, clientOnly: boolean): void => {
+    for (const entry of readdirSync(abs, { withFileTypes: true })) {
+      const entryAbs = path.join(abs, entry.name);
+      const entryRel = path.posix.join(rel, entry.name);
+      if (entry.isDirectory()) {
+        walk(entryAbs, entryRel, clientOnly);
+        continue;
+      }
+      if (!entry.isFile()) continue;
+      if (!/\.(ts|tsx|js|jsx|mjs|cjs|html|json|txt)$/.test(entry.name)) continue;
+      const text = readFileSync(entryAbs, "utf8");
+      checkText(entryRel, text, clientOnly);
+    }
+  };
+  assert.equal(statSync(srcRoot).isDirectory(), true);
+  walk(srcRoot, "src", true);
+  if (statSync(publicRoot).isDirectory()) {
+    walk(publicRoot, "public", false);
+  }
+  checkText("next.config.mjs", readFileSync(path.join(root, "next.config.mjs"), "utf8"), false);
+  assert.deepEqual(
+    offenders,
+    [],
+    `service-role must stay out of client/public exposure surfaces; offenders=${offenders.join(",")}`,
+  );
 });

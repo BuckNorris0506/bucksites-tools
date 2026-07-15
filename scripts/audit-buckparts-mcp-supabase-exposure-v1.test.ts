@@ -67,6 +67,17 @@ test("enforceMcpSupabaseExposureAuditV1 passes on repo root", () => {
   assert.equal(report.blockers.length, 0);
 });
 
+test("deploy preflight exposure stage passes after GE Supabase writer registration", () => {
+  const geWriterRel =
+    "scripts/lib/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-apply-v1.ts";
+  const report = auditMcpSupabaseExposureV1({ rootDir: process.cwd(), enforce: true });
+  assert.equal(report.status, "PASS");
+  assert.ok(
+    !report.blockers.includes(`supabase_service_role_inventory_missing:${geWriterRel}`),
+    "registered GE writer must not block Netlify deploy preflight exposure audit",
+  );
+});
+
 test("auditMcpControlPlaneLiveBuildGuardV1 requires escape hatch before live build", () => {
   const root = mkdtempSync(path.join(tmpdir(), "mcp-exposure-guard-"));
   try {
