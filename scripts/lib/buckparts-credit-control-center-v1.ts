@@ -31,6 +31,11 @@ export const BUCKPARTS_CREDIT_CONTROL_CENTER_MD_REL_V1 =
 export const BUCKPARTS_CREDIT_CONTROL_SOURCE_COMMAND_V1 =
   "npm run buckparts:credit-control" as const;
 
+/** Owner credit evidence older than this fails closed for production-deploy recommendation. */
+export const BUCKPARTS_CREDIT_EVIDENCE_STALE_DAYS_V1 = 7 as const;
+
+export type CreditEvidenceFreshnessV1 = "FRESH" | "STALE" | "UNKNOWN";
+
 export const BUCKPARTS_CREDIT_CONTROL_ALLOWED_WRITE_REL_PATHS_V1 = [
   BUCKPARTS_CREDIT_CONTROL_CENTER_JSON_REL_V1,
   BUCKPARTS_CREDIT_CONTROL_CENTER_MD_REL_V1,
@@ -76,7 +81,113 @@ export type BuckpartsNetlifyCreditStateV1 = {
   notes?: string;
   live_netlify_api_state?: string;
   netlify_api_call_authorized?: boolean;
+  /** Required when status is available/restored; must be a finite non-negative number. */
+  available_credits?: number;
 };
+
+export const NETLIFY_CREDIT_STATUS_VALUES_V1: readonly NetlifyCreditStatusV1[] = [
+  "exhausted",
+  "available",
+  "unknown",
+  "paused",
+  "restored",
+] as const;
+
+function isNetlifyCreditStatusV1(value: unknown): value is NetlifyCreditStatusV1 {
+  return (
+    typeof value === "string" &&
+    (NETLIFY_CREDIT_STATUS_VALUES_V1 as readonly string[]).includes(value)
+  );
+}
+
+/**
+ * Canonical credit evidence schema validation. Invalid evidence must fail closed
+ * (validation errors + UNKNOWN freshness/posture at report build).
+ */
+export function validateBuckpartsNetlifyCreditStateV1(
+  raw: unknown,
+  args?: { now?: Date },
+): { evidence: BuckpartsNetlifyCreditStateV1 | null; errors: string[] } {
+  const errors: string[] = [];
+  const now = args?.now ?? new Date();
+
+  if (raw == null || typeof raw !== "object" || Array.isArray(raw)) {
+    return { evidence: null, errors: ["credit evidence must be a JSON object"] };
+  }
+
+  const obj = raw as Record<string, unknown>;
+
+  if (obj.contract !== BUCKPARTS_NETLIFY_CREDIT_STATE_CONTRACT_V1) {
+    errors.push(
+      `credit evidence contract mismatch: expected ${BUCKPARTS_NETLIFY_CREDIT_STATE_CONTRACT_V1}`,
+    );
+  }
+  if (obj.provider !== "netlify") {
+    errors.push(`credit evidence provider must be netlify, got ${String(obj.provider)}`);
+  }
+  if (obj.read_only !== true) {
+    errors.push("credit evidence read_only must equal true");
+  }
+  if (obj.data_mutation !== false) {
+    errors.push("credit evidence data_mutation must equal false");
+  }
+  if (obj.netlify_api_call_authorized !== false) {
+    errors.push("credit evidence netlify_api_call_authorized must equal false");
+  }
+  if (!isNetlifyCreditStatusV1(obj.status)) {
+    errors.push(
+      `credit evidence status must be one of ${NETLIFY_CREDIT_STATUS_VALUES_V1.join("|")}, got ${String(obj.status)}`,
+    );
+  }
+
+  const source = typeof obj.source === "string" ? obj.source.trim() : "";
+  if (!source) {
+    errors.push("credit evidence source must be a valid non-empty string");
+  }
+
+  const observedRaw = typeof obj.observed_at === "string" ? obj.observed_at.trim() : "";
+  if (!observedRaw) {
+    errors.push("credit evidence observed_at missing");
+  } else {
+    const observedMs = Date.parse(observedRaw);
+    if (Number.isNaN(observedMs)) {
+      errors.push("credit evidence observed_at must be a valid timestamp");
+    } else if (observedMs > now.getTime()) {
+      errors.push("credit evidence observed_at must not be in the future");
+    }
+  }
+
+  const status = isNetlifyCreditStatusV1(obj.status) ? obj.status : null;
+  const creditsRequired = status === "available" || status === "restored";
+  if (creditsRequired) {
+    const credits = obj.available_credits;
+    if (typeof credits !== "number" || !Number.isFinite(credits) || credits < 0) {
+      errors.push(
+        "credit evidence available_credits must be a finite non-negative number when status is available|restored",
+      );
+    }
+  } else if (obj.available_credits !== undefined && obj.available_credits !== null) {
+    const credits = obj.available_credits;
+    if (typeof credits !== "number" || !Number.isFinite(credits) || credits < 0) {
+      errors.push("credit evidence available_credits must be a finite non-negative number when present");
+    }
+  }
+
+  if (errors.length > 0) {
+    return { evidence: null, errors };
+  }
+
+  return {
+    evidence: {
+      ...(obj as unknown as BuckpartsNetlifyCreditStateV1),
+      source,
+      observed_at: observedRaw,
+      available_credits:
+        typeof obj.available_credits === "number" ? obj.available_credits : undefined,
+    },
+    errors: [],
+  };
+}
 
 export type CreditChangedPathRowV1 = {
   path: string;
@@ -103,6 +214,9 @@ export type BuckpartsCreditControlCenterReportV1 = {
   credit_evidence_present: boolean;
   credit_evidence: BuckpartsNetlifyCreditStateV1 | null;
   credit_evidence_errors: string[];
+  /** FRESH within STALE_DAYS; STALE when observed_at older than threshold; UNKNOWN when missing/invalid. */
+  credit_evidence_freshness: CreditEvidenceFreshnessV1;
+  credit_evidence_age_days: number | null;
   deploy_held: boolean;
   local_build_recommended: boolean;
   local_build_optional: boolean;
@@ -134,6 +248,7 @@ export function loadBuckpartsNetlifyCreditStateV1(args: {
   relPath?: string;
   readText?: (absPath: string) => string;
   fileExists?: (absPath: string) => boolean;
+  now?: Date;
 }): { evidence: BuckpartsNetlifyCreditStateV1 | null; errors: string[]; present: boolean } {
   const rel = args.relPath ?? BUCKPARTS_NETLIFY_CREDIT_STATE_JSON_REL_V1;
   const abs = path.join(args.rootDir, rel);
@@ -145,29 +260,12 @@ export function loadBuckpartsNetlifyCreditStateV1(args: {
   }
 
   try {
-    const raw = JSON.parse(readText(abs)) as BuckpartsNetlifyCreditStateV1;
-    const errors: string[] = [];
-    if (raw.contract !== BUCKPARTS_NETLIFY_CREDIT_STATE_CONTRACT_V1) {
-      errors.push(
-        `credit evidence contract mismatch: expected ${BUCKPARTS_NETLIFY_CREDIT_STATE_CONTRACT_V1}`,
-      );
+    const parsed: unknown = JSON.parse(readText(abs));
+    const validated = validateBuckpartsNetlifyCreditStateV1(parsed, { now: args.now });
+    if (validated.errors.length > 0) {
+      return { evidence: null, errors: validated.errors, present: true };
     }
-    if (raw.provider !== "netlify") {
-      errors.push(`credit evidence provider must be netlify, got ${String(raw.provider)}`);
-    }
-    if (!raw.status) {
-      errors.push("credit evidence status missing");
-    }
-    if (!raw.observed_at) {
-      errors.push("credit evidence observed_at missing");
-    }
-    if (!raw.source) {
-      errors.push("credit evidence source missing");
-    }
-    if (errors.length > 0) {
-      return { evidence: null, errors, present: true };
-    }
-    return { evidence: raw, errors: [], present: true };
+    return { evidence: validated.evidence, errors: [], present: true };
   } catch (err) {
     return {
       evidence: null,
@@ -212,13 +310,39 @@ export function classifyCreditWorkClassV1(
   return { work_class: "mixed_non_production", rows };
 }
 
+export function classifyCreditEvidenceFreshnessV1(args: {
+  evidence: BuckpartsNetlifyCreditStateV1 | null;
+  present: boolean;
+  errors: string[];
+  now: Date;
+  staleDays?: number;
+}): { freshness: CreditEvidenceFreshnessV1; age_days: number | null } {
+  if (!args.present || args.errors.length > 0 || !args.evidence) {
+    return { freshness: "UNKNOWN", age_days: null };
+  }
+  const observed = String(args.evidence.observed_at ?? "").trim();
+  if (!observed) return { freshness: "UNKNOWN", age_days: null };
+  const instant = new Date(observed);
+  if (Number.isNaN(instant.getTime())) return { freshness: "UNKNOWN", age_days: null };
+  const age_days = (args.now.getTime() - instant.getTime()) / (24 * 60 * 60 * 1000);
+  if (age_days < 0) return { freshness: "UNKNOWN", age_days };
+  const staleDays = args.staleDays ?? BUCKPARTS_CREDIT_EVIDENCE_STALE_DAYS_V1;
+  if (age_days > staleDays) return { freshness: "STALE", age_days };
+  return { freshness: "FRESH", age_days };
+}
+
 export function classifyCreditDeploymentPostureV1(args: {
   creditStatus: NetlifyCreditStatusV1 | null;
   creditEvidencePresent: boolean;
   creditEvidenceErrors: string[];
   workClass: CreditWorkClassV1;
+  /** When UNKNOWN (missing/invalid date), posture is UNKNOWN_CREDIT_STATE. STALE does not force UNKNOWN posture. */
+  creditEvidenceFreshness?: CreditEvidenceFreshnessV1;
 }): CreditDeploymentPostureV1 {
   if (!args.creditEvidencePresent || args.creditEvidenceErrors.length > 0) {
+    return "UNKNOWN_CREDIT_STATE";
+  }
+  if (args.creditEvidenceFreshness === "UNKNOWN") {
     return "UNKNOWN_CREDIT_STATE";
   }
   if (args.creditStatus == null || args.creditStatus === "unknown") {
@@ -339,15 +463,23 @@ export function buildBuckpartsCreditControlCenterV1(
     relPath: creditEvidenceRelPath,
     readText: deps.readText,
     fileExists: deps.fileExists,
+    now: now(),
   });
 
   const { work_class, rows } = classifyCreditWorkClassV1(git.changed_paths);
   const creditStatus = loaded.evidence?.status ?? null;
+  const freshness = classifyCreditEvidenceFreshnessV1({
+    evidence: loaded.evidence,
+    present: loaded.present,
+    errors: loaded.errors,
+    now: now(),
+  });
   const deployment_posture = classifyCreditDeploymentPostureV1({
     creditStatus,
     creditEvidencePresent: loaded.present,
     creditEvidenceErrors: loaded.errors,
     workClass: work_class,
+    creditEvidenceFreshness: freshness.freshness,
   });
 
   const flags = deriveCreditGovernanceFlagsV1({
@@ -358,6 +490,10 @@ export function buildBuckpartsCreditControlCenterV1(
 
   // Dirty production-impacting always means deploy not recommended (even if credits available).
   if (work_class === "production_impacting" && !git.git_status_clean) {
+    flags.production_deploy_recommended = false;
+  }
+  // Stale credit evidence fails closed for production-deploy recommendation (credits ≠ deploy auth).
+  if (freshness.freshness === "STALE" || freshness.freshness === "UNKNOWN") {
     flags.production_deploy_recommended = false;
   }
 
@@ -373,6 +509,11 @@ export function buildBuckpartsCreditControlCenterV1(
   if (deployment_posture === "UNKNOWN_CREDIT_STATE") {
     governance_recommendations.push(
       "Update data/ops/credit-control/netlify-credit-state-v1.json with owner screenshot evidence before any deploy spend.",
+    );
+  }
+  if (freshness.freshness === "STALE") {
+    governance_recommendations.push(
+      `Credit evidence is STALE (>${String(BUCKPARTS_CREDIT_EVIDENCE_STALE_DAYS_V1)}d). Refresh observed_at before any production-deploy recommendation.`,
     );
   }
   if (work_class === "docs_only") {
@@ -399,8 +540,9 @@ export function buildBuckpartsCreditControlCenterV1(
     `PROVEN: deployment_posture=${deployment_posture}; deploy_held=${String(flags.deploy_held)}.`,
     `PROVEN: work_class=${work_class}; git_status_clean=${String(git.git_status_clean)}; changed_path_count=${String(git.changed_paths.length)}.`,
     `PROVEN: repo_head=${git.repo_head ?? "UNKNOWN"}; origin_main_head=${git.origin_main_head ?? "UNKNOWN"}.`,
-    `PROVEN: credit_evidence_present=${String(loaded.present)}; credit_status=${creditStatus ?? "none"}.`,
+    `PROVEN: credit_evidence_present=${String(loaded.present)}; credit_status=${creditStatus ?? "none"}; credit_evidence_freshness=${freshness.freshness}.`,
     `PROVEN: local_build_recommended=${String(flags.local_build_recommended)}; local_build_optional=${String(flags.local_build_optional)}; push_allowed=${String(flags.push_allowed)}; production_deploy_recommended=${String(flags.production_deploy_recommended)}.`,
+    "PROVEN: credits available does not equal deploy authorization; credit_spend_authorized=false.",
   ];
   if (loaded.evidence?.reset_at) {
     proven_facts.push(`PROVEN: owner-recorded credit reset_at=${loaded.evidence.reset_at}.`);
@@ -445,6 +587,8 @@ export function buildBuckpartsCreditControlCenterV1(
     credit_evidence_present: loaded.present,
     credit_evidence: loaded.evidence,
     credit_evidence_errors: loaded.errors,
+    credit_evidence_freshness: freshness.freshness,
+    credit_evidence_age_days: freshness.age_days,
     deploy_held: flags.deploy_held,
     local_build_recommended: flags.local_build_recommended,
     local_build_optional: flags.local_build_optional,
@@ -487,6 +631,8 @@ export function buildBuckpartsCreditControlCenterMarkdownV1(
     "",
     `- path: \`${report.credit_evidence_rel_path}\``,
     `- present: **${String(report.credit_evidence_present)}**`,
+    `- freshness: **${report.credit_evidence_freshness}**`,
+    `- age_days: \`${report.credit_evidence_age_days == null ? "null" : String(report.credit_evidence_age_days)}\``,
     `- status: \`${report.credit_evidence?.status ?? "none"}\``,
     `- observed_at: \`${report.credit_evidence?.observed_at ?? "none"}\``,
     `- reset_at: \`${report.credit_evidence?.reset_at ?? "none"}\``,

@@ -1159,6 +1159,11 @@ export type CommandCenterV2Report = {
   distribution_opportunity_registry_v1: DistributionOpportunityRegistryLaneV1;
   /** Read-only Truth Integrity Department ledger — surfaces truth debt from committed registry JSON; no enforcement. */
   truth_integrity_registry_v1: TruthIntegrityRegistryCommandCenterLaneV1;
+  /**
+   * Phase 1 operating circuit — Ship Guard enforce summary, canonical Credit Control,
+   * dispatch history, repository provenance, GSC/GA4 freshness blockers.
+   */
+  phase1_operating_circuit_v1: import("./buckparts-phase1-operating-circuit-v1").Phase1OperatingCircuitV1;
   /** Read-only Customer Reality scoreboard — aggregated on full report build; does not replace next_best_action. */
   customer_reality_scoreboard_v1?: import("./customer-reality-scoreboard-v1").CustomerRealityScoreboardV1;
   /** Read-only customer vs factory steering comparison — dry-run only; does not replace next_best_action. */
@@ -1292,6 +1297,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "refrigerator_model_first_batch_resolver_v1"
   | "refrigerator_model_first_qa_approval_packet_v1"
   | "deploy_live_site_monitor_v1"
+  | "phase1_operating_circuit_v1"
   | "deploy_publish_queue_v1"
   | "air_purifier_truth_spine_v1"
   | "air_purifier_batch_coverage_director_v1"

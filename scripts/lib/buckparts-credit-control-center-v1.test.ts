@@ -15,6 +15,8 @@ import {
   classifyCreditDeploymentPostureV1,
   classifyCreditWorkClassV1,
   deriveCreditGovernanceFlagsV1,
+  loadBuckpartsNetlifyCreditStateV1,
+  validateBuckpartsNetlifyCreditStateV1,
   writeBuckpartsCreditControlCenterArtifactsV1,
   type BuckpartsNetlifyCreditStateV1,
 } from "./buckparts-credit-control-center-v1";
@@ -105,6 +107,7 @@ test("dirty production-impacting files => deploy not recommended", () => {
   try {
     const available = exhaustedEvidence();
     available.status = "available";
+    available.available_credits = 1000;
     writeEvidence(tmp, available);
     const report = buildBuckpartsCreditControlCenterV1({
       rootDir: tmp,
@@ -322,4 +325,126 @@ test("deploy awareness summary surfaces exhausted hold for pre-push/ship-guard c
   assert.equal(summary.push_allowed, true);
   assert.match(summary.operator_line, /DEPLOY_HOLD_CREDITS_EXHAUSTED/);
   assert.match(summary.push_with_deploy_hold_message ?? "", /production deploy is held/);
+});
+
+test("credit evidence schema rejects adversarial / invalid fixtures fail-closed", () => {
+  const now = new Date("2026-07-15T12:00:00.000Z");
+  const base = {
+    contract: "buckparts_netlify_credit_state_v1",
+    read_only: true,
+    data_mutation: false,
+    provider: "netlify",
+    status: "available",
+    observed_at: "2026-07-14T12:00:00.000Z",
+    reset_at: null,
+    source: "owner_reported",
+    netlify_api_call_authorized: false,
+    available_credits: 100,
+  };
+
+  const cases: Array<{ name: string; raw: unknown; expectErrorPart: string }> = [
+    { name: "invalid status", raw: { ...base, status: "bogus" }, expectErrorPart: "status must be one of" },
+    { name: "read_only false", raw: { ...base, read_only: false }, expectErrorPart: "read_only must equal true" },
+    {
+      name: "data_mutation true",
+      raw: { ...base, data_mutation: true },
+      expectErrorPart: "data_mutation must equal false",
+    },
+    {
+      name: "netlify_api true",
+      raw: { ...base, netlify_api_call_authorized: true },
+      expectErrorPart: "netlify_api_call_authorized must equal false",
+    },
+    {
+      name: "malformed date",
+      raw: { ...base, observed_at: "not-a-date" },
+      expectErrorPart: "valid timestamp",
+    },
+    {
+      name: "future date",
+      raw: { ...base, observed_at: "2099-01-01T00:00:00.000Z" },
+      expectErrorPart: "must not be in the future",
+    },
+    {
+      name: "empty source",
+      raw: { ...base, source: "   " },
+      expectErrorPart: "source must be a valid non-empty string",
+    },
+    {
+      name: "negative credits",
+      raw: { ...base, available_credits: -1 },
+      expectErrorPart: "available_credits",
+    },
+    {
+      name: "missing credits for available",
+      raw: { ...base, available_credits: undefined },
+      expectErrorPart: "available_credits",
+    },
+  ];
+
+  for (const c of cases) {
+    const validated = validateBuckpartsNetlifyCreditStateV1(c.raw, { now });
+    assert.equal(validated.evidence, null, c.name);
+    assert.ok(
+      validated.errors.some((e) => e.includes(c.expectErrorPart)),
+      `${c.name}: ${validated.errors.join(" | ")}`,
+    );
+  }
+
+  // Combined malicious fixture (Codex-style): mutate governance flags + forge available posture.
+  const malicious = {
+    ...base,
+    read_only: false,
+    data_mutation: true,
+    netlify_api_call_authorized: true,
+    status: "available",
+    available_credits: 999999,
+    observed_at: "2099-01-01T00:00:00.000Z",
+  };
+  const tmp = mkdtempSync(path.join(tmpdir(), "credit-malicious-"));
+  try {
+    writeEvidence(tmp, malicious as BuckpartsNetlifyCreditStateV1);
+    const loaded = loadBuckpartsNetlifyCreditStateV1({ rootDir: tmp, now });
+    assert.equal(loaded.evidence, null);
+    assert.ok(loaded.errors.length >= 3);
+    const report = buildBuckpartsCreditControlCenterV1({
+      rootDir: tmp,
+      now: () => now,
+      gitSnapshot: {
+        repo_head: "abc",
+        origin_main_head: "abc",
+        git_status_clean: true,
+        changed_paths: ["src/app/page.tsx"],
+      },
+    });
+    assert.equal(report.credit_evidence_freshness, "UNKNOWN");
+    assert.equal(report.deployment_posture, "UNKNOWN_CREDIT_STATE");
+    assert.equal(report.production_deploy_recommended, false);
+    assert.equal(report.credit_spend_authorized, false);
+    assert.equal(report.netlify_api_call_authorized, false);
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+
+  // Missing evidence
+  const missingRoot = mkdtempSync(path.join(tmpdir(), "credit-missing-"));
+  try {
+    mkdirSync(path.join(missingRoot, "data/ops/credit-control"), { recursive: true });
+    const report = buildBuckpartsCreditControlCenterV1({
+      rootDir: missingRoot,
+      now: () => now,
+      gitSnapshot: {
+        repo_head: "abc",
+        origin_main_head: "abc",
+        git_status_clean: true,
+        changed_paths: [],
+      },
+    });
+    assert.equal(report.credit_evidence_present, false);
+    assert.equal(report.credit_evidence_freshness, "UNKNOWN");
+    assert.equal(report.deployment_posture, "UNKNOWN_CREDIT_STATE");
+    assert.equal(report.production_deploy_recommended, false);
+  } finally {
+    rmSync(missingRoot, { recursive: true, force: true });
+  }
 });

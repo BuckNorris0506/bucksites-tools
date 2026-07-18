@@ -72,7 +72,7 @@
 | **GitHub Actions** | **PROVEN** workflows: checkout, setup-node, `npm ci`, scripts, `GITHUB_STEP_SUMMARY`, `upload-artifact` | **PROVEN** for **repo scripts** only — not Cursor/Codex inside the job. |
 | **Local terminal** | **PROVEN** `tsx`/`node`, `npm run`, `spawnSync` patterns | **PROVEN** for subprocesses **you** invoke. |
 | **`gh` CLI** | Workflows use Actions, not `gh` from app code | **UNKNOWN** on any given laptop until `command -v gh`. |
-| **Netlify** | **PROVEN** `@netlify/plugin-nextjs` in `package.json`; `netlify.toml` `command = "npm run build"` | **INFERRED** deploy/build surface, not a generic agent runner unless added. |
+| **Netlify** | **PROVEN** `@netlify/plugin-nextjs` in `package.json`; `netlify.toml` `command = "npm run buckparts:deploy:preflight && npm run build"` | **INFERRED** deploy/build surface, not a generic agent runner unless added. |
 | **Slack / email** | **PROVEN absent** for digest — `buckparts-founder-digest-v1.ts` + `scripts/buckparts-founder-digest-workflow.test.ts` | N/A for Runner alerts today. |
 
 ---

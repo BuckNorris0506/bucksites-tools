@@ -22,7 +22,7 @@ export const BUCKPARTS_SHIP_GUARD_CONTRACT_V1 = "buckparts_ship_guard_v1" as con
 export const BUCKPARTS_SHIP_GUARD_COMMAND_V1 = "npm run buckparts:ship-guard" as const;
 export const PROTECTED_RETAILER_LINKS_CSV_REL = "data/retailer_links.csv" as const;
 
-export type ShipGuardModeV1 = "dry_run" | "commit" | "push";
+export type ShipGuardModeV1 = "dry_run" | "commit" | "push" | "enforce";
 
 export type ShipGuardGitProviderV1 = {
   revParseHead: () => string | null;
@@ -569,9 +569,13 @@ function buildBuckpartsShipGuardReportInternalV1(args: {
   let recommended_next_action =
     push_assessment === "BLOCKED"
       ? "Resolve blockers before push; re-run npm run buckparts:ship-guard. Do not mutate protected paths without owner review."
-      : mode === "dry_run"
-        ? "Review report; run npm run buckparts:ship-guard -- --commit to execute recommended validations without committing."
-        : "If validations passed, operator may git push manually — ship guard never pushes automatically.";
+      : mode === "enforce"
+        ? push_assessment === "SAFE"
+          ? "Ship guard enforce PASS — continue preflight/build. Does not authorize deploy spend."
+          : "Ship guard enforce UNKNOWN — fail closed until origin/main and head are resolvable."
+        : mode === "dry_run"
+          ? "Review report; run npm run buckparts:ship-guard -- --commit to execute recommended validations without committing."
+          : "If validations passed, operator may git push manually — ship guard never pushes automatically.";
 
   if (credit_control.deploy_held && push_assessment !== "BLOCKED") {
     recommended_next_action = credit_control.push_with_deploy_hold_message
@@ -621,7 +625,16 @@ function buildBuckpartsShipGuardReportInternalV1(args: {
 }
 
 export function parseShipGuardArgv(argv: string[]): ShipGuardModeV1 {
+  if (argv.includes("--enforce")) return "enforce";
   if (argv.includes("--push")) return "push";
   if (argv.includes("--commit")) return "commit";
   return "dry_run";
+}
+
+/** Fail-closed exit helper for enforce/preflight: BLOCKED and UNKNOWN both fail. */
+export function shipGuardEnforceExitCodeV1(report: Pick<ShipGuardReportV1, "mode" | "push_assessment">): number {
+  if (report.mode !== "enforce") {
+    return report.push_assessment === "BLOCKED" ? 1 : 0;
+  }
+  return report.push_assessment === "SAFE" ? 0 : 1;
 }

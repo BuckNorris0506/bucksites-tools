@@ -50,6 +50,7 @@ import {
   loadLearningOutcomesConfidenceApprovalsRegistry,
 } from "./lib/learning-outcomes-confidence-approvals-registry-v1";
 import { buildExternalMeasurementFreshnessV1 } from "../src/lib/owner-dashboard/external-measurement-freshness-v1";
+import { buildPhase1OperatingCircuitV1 } from "./lib/buckparts-phase1-operating-circuit-v1";
 import { buildOwnerIntegritySentinelV1 } from "../src/lib/owner-dashboard/owner-integrity-sentinel-v1";
 import { buildOwnerQuarantinedFridgeModelsV1 } from "../src/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
 import { buildOwnerVerticalLaunchPolicyV1 } from "../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
@@ -1266,6 +1267,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "external_quality_signal_usefulness_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
+    | "phase1_operating_circuit_v1"
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
     | "mission_factory_registry_v1"
@@ -1494,6 +1496,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "truth_integrity_registry_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
+    | "phase1_operating_circuit_v1"
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
     | "mission_factory_registry_v1"
@@ -1660,6 +1663,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "truth_integrity_registry_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
+    | "phase1_operating_circuit_v1"
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
     | "mission_factory_registry_v1"
@@ -2360,6 +2364,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "next_execution_packet_summary_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
+    | "phase1_operating_circuit_v1"
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
     | "mission_factory_registry_v1"
@@ -2863,7 +2868,7 @@ export async function buildBuckpartsCommandCenterReport(
 
   const command_center_v2_with_operator_digest: Omit<
     CommandCenterV2Report,
-    "semi_cruise_status_summary_v1" | "agent_control_plane_v1" | "command_center_issue_registry_v1" | "command_center_issue_reaudit_v1" | "seo_opportunity_registry_v1" | "revenue_opportunity_registry_v1" | "distribution_opportunity_registry_v1" | "truth_integrity_registry_v1" | "owner_drift_detector_v1" | "batch_run_registry_intake_v1" | "mission_factory_registry_v1" | "mission_factory_orchestrator_v1" | "fridge_guarded_batch_closeout_learning_v1" | "fridge_guarded_batch_lifecycle_rule_proposal_v1" | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1" | "command_center_efficiency_truth_table_v1" | "command_center_control_graph_rollup_v1" | "universal_batch_lifecycle_apply_readiness_v1" | "universal_batch_lifecycle_apply_execution_plan_v1" | "universal_batch_lifecycle_mutation_authorization_review_v1" | "universal_batch_lifecycle_truth_table_v1"
+    "semi_cruise_status_summary_v1" | "phase1_operating_circuit_v1" | "agent_control_plane_v1" | "command_center_issue_registry_v1" | "command_center_issue_reaudit_v1" | "seo_opportunity_registry_v1" | "revenue_opportunity_registry_v1" | "distribution_opportunity_registry_v1" | "truth_integrity_registry_v1" | "owner_drift_detector_v1" | "batch_run_registry_intake_v1" | "mission_factory_registry_v1" | "mission_factory_orchestrator_v1" | "fridge_guarded_batch_closeout_learning_v1" | "fridge_guarded_batch_lifecycle_rule_proposal_v1" | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1" | "command_center_efficiency_truth_table_v1" | "command_center_control_graph_rollup_v1" | "universal_batch_lifecycle_apply_readiness_v1" | "universal_batch_lifecycle_apply_execution_plan_v1" | "universal_batch_lifecycle_mutation_authorization_review_v1" | "universal_batch_lifecycle_truth_table_v1"
   > = {
     ...command_center_v2,
     operator_digest_v1: {
@@ -2930,6 +2935,13 @@ export async function buildBuckpartsCommandCenterReport(
     command_center_v2: command_center_v2_with_operator_digest,
     owner_command_center_neurons,
     spend_ledger_entries: loadSpendLedgerEntriesReadOnly(),
+  });
+
+  const phase1_operating_circuit_v1 = buildPhase1OperatingCircuitV1({
+    rootDir,
+    now,
+    externalMeasurementFreshness:
+      command_center_v2_with_operator_digest.external_measurement_freshness_v1,
   });
 
   const agent_control_plane_v1 = buildBuckpartsAgentControlPlaneV1Report({
@@ -3072,6 +3084,7 @@ export async function buildBuckpartsCommandCenterReport(
     revenue_opportunity_registry_v1,
     distribution_opportunity_registry_v1,
     truth_integrity_registry_v1,
+    phase1_operating_circuit_v1,
   };
 
   return {

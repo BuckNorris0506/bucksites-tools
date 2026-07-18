@@ -49,17 +49,18 @@ export function buildBuckpartsExecutionLedgerCommandCenterLaneV1(args: {
   trigger_source?: string;
 }): BuckpartsExecutionLedgerCommandCenterLaneV1 {
   const triggerSource = args.trigger_source ?? EXECUTION_LEDGER_TRIGGER_COMMAND_CENTER_V1;
+  // Default: load-only. Refresh requires explicit auto_refresh=true opt-in.
   const report =
-    args.auto_refresh === false
-      ? loadBuckpartsExecutionLedgerReportV1({ rootDir: args.rootDir })
-      : refreshBuckpartsExecutionLedgerV1({
+    args.auto_refresh === true
+      ? refreshBuckpartsExecutionLedgerV1({
           rootDir: args.rootDir,
           trigger_source: triggerSource,
           now: args.now,
-        }).report;
+        }).report
+      : loadBuckpartsExecutionLedgerReportV1({ rootDir: args.rootDir });
 
   if (!report) {
-    throw new Error("execution ledger artifact missing and auto_refresh=false");
+    throw new Error("execution ledger artifact missing and auto_refresh!=true");
   }
 
   return {

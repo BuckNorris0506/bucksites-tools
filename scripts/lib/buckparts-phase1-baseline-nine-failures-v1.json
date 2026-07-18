@@ -1,0 +1,53 @@
+{
+  "contract": "buckparts_phase1_baseline_nine_failures_v1",
+  "baseline_commit": "04a1fdb40fc03ae30e8b1332c91e20f797e9d14f",
+  "note": "PRE_EXISTING_BASELINE_FAILURE identities proven on clean 04a1fdb via --test-reporter=tap. Signatures bind to each test's YAML diagnostic block. Never treat dirty-tree output as clean-baseline evidence.",
+  "tests": [
+    {
+      "id": "owner_decisions_real_registry",
+      "name": "command_center_v2 batch_production_owner_decisions_lane_v1 with real registry export",
+      "signature_all": ["actual: 'UNKNOWN_PARSE_ERROR'", "expected: 'OK'"]
+    },
+    {
+      "id": "batch_run_registry_intake",
+      "name": "command_center_v2.batch_run_registry_intake_v1 is read-only universal run-registry intake lane",
+      "signature_all": ["actual: 'PROVEN_PRESENT_NOT_CLOSED'", "expected: 'PROVEN_CLOSED'"]
+    },
+    {
+      "id": "fridge_batch_approval",
+      "name": "command_center_v2.fridge_buyer_path_batch_approval_v1 is read-only approval bridge lane",
+      "signature_all": ["actual: 'UNKNOWN'", "expected: 'owner_approved_for_next_planning_only'"]
+    },
+    {
+      "id": "fridge_apply_plan_approval",
+      "name": "command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1 is read-only apply-plan approval lane",
+      "signature_all": ["The expression evaluated to a falsy value", "actual: false", "expected: true"]
+    },
+    {
+      "id": "issue_registry_tier_0",
+      "name": "command_center_v2.command_center_issue_registry_v1 is read-only and does not steer DEPLOYED TIER_0 repair NBA",
+      "signature_all": ["actual: 4", "expected: 6"]
+    },
+    {
+      "id": "ap_truth_spine",
+      "name": "command_center_v2.air_purifier_truth_spine_v1 is read-only AP truth spine",
+      "signature_all": ["safe_cta_count > 0", "actual: false"]
+    },
+    {
+      "id": "ap_demand_selected_owner_review",
+      "name": "command_center_v2.air_purifier_demand_selected_batch_owner_review_v1 is read-only owner packet",
+      "signature_all": ["actual: 'UNKNOWN'", "expected: 'air_purifier'"],
+      "note": "Clean 04a1fdb first TAP assertion is wedge UNKNOWN vs air_purifier."
+    },
+    {
+      "id": "ap_batch_coverage_director",
+      "name": "command_center_v2.air_purifier_batch_coverage_director_v1 is read-only AP batch coverage director",
+      "signature_all": ["actual: 0", "expected: 10"]
+    },
+    {
+      "id": "whw_batch_production_director",
+      "name": "command_center_v2.whole_house_water_batch_production_director_v1 is read-only WHW batch director",
+      "signature_all": ["actual: 2", "expected: 0"]
+    }
+  ]
+}

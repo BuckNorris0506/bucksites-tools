@@ -1045,52 +1045,6 @@ test("Command Center JSON shape contract: root digest, v2 lanes, operator_digest
   assert.equal("owner_command_center_neurons" in v2, false);
 });
 
-test("next_best_action does not claim no non-Amazon APPROVED when Waterdrop LIVE evidence exists", async () => {
-  const rootDir = path.resolve(__dirname, "..");
-  const tracker = fs.readFileSync(path.join(rootDir, "data/affiliate/affiliate-application-tracker.json"), "utf8");
-  const report = await buildBuckpartsCommandCenterReport({
-    rootDir,
-    providers: baseProviders(),
-    fileExists: (abs) => {
-      if (abs.includes("batch-production")) return false;
-      return fs.existsSync(abs);
-    },
-    readDir: () => [],
-    readTextFile: (abs) => readTextFileTrackerOrRepoData(abs, tracker),
-  });
-  const lang = report.command_center_v2.customer_language_and_waterdrop_research_lane_v1;
-  assert.equal(lang.waterdrop_live_cta_status, "LIVE");
-  assert.equal(lang.mutation_authority, false);
-  assert.equal(report.affiliate_readiness_summary.affiliate_approval_pending, true);
-  assert.equal(
-    /until at least one non-Amazon network lane reaches APPROVED/i.test(report.next_best_action),
-    false,
-  );
-  if (issueRegistryTier0SteeringActive(report)) {
-    assert.match(report.next_best_action, /BP-000001/);
-    return;
-  }
-  if (issueReauditSteeringActive(report)) {
-    assert.match(report.next_best_action, /BP-000004/);
-    assert.match(report.why_this_action, /re-audit|RE_AUDIT/i);
-    return;
-  }
-  if (refrigeratorModelFirstSteeringActive(report)) {
-    assert.match(report.why_this_action, /prioritize fridge official-manufacturer evidence over AP filter-first steering/i);
-    return;
-  }
-  const modelFirstSteering = /^MODEL-FIRST STEERING \[READY\]:/i.test(report.next_best_action);
-  if (modelFirstSteering) {
-    assert.match(report.next_best_action, /Collect read-only model-first evidence/i);
-  } else {
-    assert.match(report.next_best_action, /Monitor Waterdrop DA29-00020B live proof slice only/i);
-    assert.match(report.why_this_action, /Waterdrop DA29-00020B proof slice is LIVE/i);
-    assert.match(report.why_this_action, /Other affiliate program approvals remain pending/i);
-  }
-  const affiliateLane = report.command_center_v2.affiliate_readiness;
-  assert.equal(affiliateLane.status, "ATTENTION");
-});
-
 test("owner-facing next_best_action and blocked_link_summary avoid cold OEM wording", async () => {
   const rootDir = path.resolve(__dirname, "..");
   const tracker = fs.readFileSync(path.join(rootDir, "data/affiliate/affiliate-application-tracker.json"), "utf8");

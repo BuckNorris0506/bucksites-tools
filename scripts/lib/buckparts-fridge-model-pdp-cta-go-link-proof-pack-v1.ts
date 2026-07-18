@@ -115,13 +115,17 @@ export type FridgeCtaGoProofFridgeLoadV1 =
 export type BuildBuckpartsFridgeModelPdpCtaGoLinkProofDepsV1 = {
   rootDir: string;
   now?: () => Date;
-  /** Test override for provenance resolution. */
-  worktreeClean?: boolean | null;
-  baseCommit?: string | "UNKNOWN";
   loadRenderedTruthPack?: () => BuckpartsFridgePdpRenderedTruthProofPackV1;
   loadFridge?: (slug: string) => Promise<FridgeCtaGoProofFridgeLoadV1> | FridgeCtaGoProofFridgeLoadV1;
   resolveQuarantine?: (slug: string) => { quarantine: boolean; reason: string | null };
 };
+
+/** Test-only deps: provenance injection. Not used by CLI/production paths. */
+export type BuildBuckpartsFridgeModelPdpCtaGoLinkProofForTestsDepsV1 =
+  BuildBuckpartsFridgeModelPdpCtaGoLinkProofDepsV1 & {
+    worktreeClean?: boolean | null;
+    baseCommit?: string | "UNKNOWN";
+  };
 
 function normalizeSlug(value: string): string {
   return value.trim().toLowerCase();
@@ -351,6 +355,37 @@ export function classifyFridgeModelPdpCtaGoLinkSlugV1(args: {
 
 export async function buildBuckpartsFridgeModelPdpCtaGoLinkProofPackV1(
   deps: BuildBuckpartsFridgeModelPdpCtaGoLinkProofDepsV1,
+): Promise<BuckpartsFridgeModelPdpCtaGoLinkProofPackV1> {
+  // Fresh allowlisted object only — never forward caller object (blocks runtime provenance forgery).
+  return buildBuckpartsFridgeModelPdpCtaGoLinkProofPackInternalV1({
+    rootDir: deps.rootDir,
+    now: deps.now,
+    loadRenderedTruthPack: deps.loadRenderedTruthPack,
+    loadFridge: deps.loadFridge,
+    resolveQuarantine: deps.resolveQuarantine,
+  });
+}
+
+/**
+ * Test-only builder: may inject provenance overrides.
+ * Not called by CLI or production runtime paths.
+ */
+export async function buildBuckpartsFridgeModelPdpCtaGoLinkProofPackForTestsV1(
+  deps: BuildBuckpartsFridgeModelPdpCtaGoLinkProofForTestsDepsV1,
+): Promise<BuckpartsFridgeModelPdpCtaGoLinkProofPackV1> {
+  return buildBuckpartsFridgeModelPdpCtaGoLinkProofPackInternalV1({
+    rootDir: deps.rootDir,
+    now: deps.now,
+    loadRenderedTruthPack: deps.loadRenderedTruthPack,
+    loadFridge: deps.loadFridge,
+    resolveQuarantine: deps.resolveQuarantine,
+    worktreeClean: deps.worktreeClean,
+    baseCommit: deps.baseCommit,
+  });
+}
+
+async function buildBuckpartsFridgeModelPdpCtaGoLinkProofPackInternalV1(
+  deps: BuildBuckpartsFridgeModelPdpCtaGoLinkProofForTestsDepsV1,
 ): Promise<BuckpartsFridgeModelPdpCtaGoLinkProofPackV1> {
   const generated_at = (deps.now ?? (() => new Date()))().toISOString();
   const provenance = resolveArtifactProvenanceV1({

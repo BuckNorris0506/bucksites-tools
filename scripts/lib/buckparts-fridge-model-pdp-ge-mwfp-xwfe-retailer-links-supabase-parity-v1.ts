@@ -341,6 +341,40 @@ export function classifyOverallGeMwfpXwfeParitySyncStatusV1(
 export async function buildGeMwfpXwfeRetailerLinksSupabaseParityProofV1(args: {
   rootDir: string;
   now?: () => Date;
+  readText?: (abs: string) => string;
+  loadSupabase?: typeof loadScopedSupabasePrimariesV1<GeMwfpXwfeRetailerLinksSupabaseParityFilterSlugV1>;
+}): Promise<GeMwfpXwfeRetailerLinksSupabaseParityProofV1> {
+  // Fresh allowlisted object only — never forward caller object (blocks runtime provenance forgery).
+  return buildGeMwfpXwfeRetailerLinksSupabaseParityProofInternalV1({
+    rootDir: args.rootDir,
+    now: args.now,
+    readText: args.readText,
+    loadSupabase: args.loadSupabase,
+  });
+}
+
+/** Test-only builder with provenance injection. Not used by CLI/production paths. */
+export async function buildGeMwfpXwfeRetailerLinksSupabaseParityProofForTestsV1(args: {
+  rootDir: string;
+  now?: () => Date;
+  worktreeClean?: boolean | null;
+  baseCommit?: string | "UNKNOWN";
+  readText?: (abs: string) => string;
+  loadSupabase?: typeof loadScopedSupabasePrimariesV1<GeMwfpXwfeRetailerLinksSupabaseParityFilterSlugV1>;
+}): Promise<GeMwfpXwfeRetailerLinksSupabaseParityProofV1> {
+  return buildGeMwfpXwfeRetailerLinksSupabaseParityProofInternalV1({
+    rootDir: args.rootDir,
+    now: args.now,
+    readText: args.readText,
+    loadSupabase: args.loadSupabase,
+    worktreeClean: args.worktreeClean,
+    baseCommit: args.baseCommit,
+  });
+}
+
+async function buildGeMwfpXwfeRetailerLinksSupabaseParityProofInternalV1(args: {
+  rootDir: string;
+  now?: () => Date;
   worktreeClean?: boolean | null;
   baseCommit?: string | "UNKNOWN";
   readText?: (abs: string) => string;

@@ -36,6 +36,11 @@ export type DispatchRunnerDepsV1 = {
   rootDir: string;
   /** Override dispatch-run output directory (absolute or relative to rootDir). Tests must use a temp dir. */
   dispatchRunsDirRel?: string;
+  /**
+   * When true: execute allowlisted read-only command (if READY) but write no dispatch-run artifact
+   * and do not refresh the execution ledger. Stdout still carries the full result JSON.
+   */
+  noArtifact?: boolean;
   now?: () => Date;
   reportBuilder?: () => Promise<Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>>;
   exec?: (cmd: string, cwd: string) => Promise<{ stdout: string; stderr: string; exitCode: number }>;
@@ -54,8 +59,9 @@ export type DispatchRunnerDepsV1 = {
 };
 
 export type DispatchRunnerResultV1 = {
-  artifact_abs_path: string;
+  artifact_abs_path: string | null;
   artifact: BuckpartsCommandCenterDispatchRunV1;
+  no_artifact: boolean;
 };
 
 const ALLOWLIST_EXACT_COMMANDS_V1 = [
@@ -69,6 +75,29 @@ const ALLOWLIST_EXACT_COMMANDS_V1 = [
   "npm run lint",
   "npm run build",
 ] as const;
+
+/**
+ * Commands proven stdout-only under default argv (no --write / --write-artifacts / build caches).
+ * Used exclusively when deps.noArtifact === true.
+ */
+export const NO_ARTIFACT_ALLOWLIST_EXACT_COMMANDS_V1 = [
+  "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+  "npx tsx scripts/report-air-purifier-demand-selected-batch-owner-review-v1.ts",
+  "npx tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts",
+] as const;
+
+export const NO_ARTIFACT_ALLOWLIST_EXCLUSION_REASONS_V1: Record<string, string> = {
+  "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json":
+    "parity apply lane may write when authorized; excluded from --no-artifact",
+  "npx tsx scripts/report-buckparts-command-center.ts":
+    "Command Center build is heavy and historically refreshed ledger; excluded from --no-artifact",
+  "npx tsx scripts/report-ap-batch-v3-run-instantiation-v1.ts":
+    "batch instantiation supports --write packet/registry writes; excluded from --no-artifact",
+  "npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review -- --write-artifacts":
+    "command contains --write-artifacts; excluded from --no-artifact",
+  "npm run lint": "lint may write eslint/next cache under ignored paths; excluded from --no-artifact",
+  "npm run build": "build writes .next and other generated artifacts; excluded from --no-artifact",
+};
 
 type DispatchPickV1 = {
   dispatch_status: string;
@@ -209,7 +238,11 @@ export async function runBuckpartsCommandCenterDispatchRunnerV1(
 
   const report = deps.reportBuilder
     ? await deps.reportBuilder()
-    : await buildBuckpartsCommandCenterReport({ rootDir: deps.rootDir });
+    : await buildBuckpartsCommandCenterReport({
+        rootDir: deps.rootDir,
+        // Dispatch must never refresh the ledger as a side effect of building CC.
+        // Explicit ledger refresh remains post-EXECUTED only when !noArtifact.
+      });
   const blocked_reasons: string[] = [];
 
   if (report.read_only !== true || report.data_mutation !== false) {
@@ -230,9 +263,21 @@ export async function runBuckpartsCommandCenterDispatchRunnerV1(
     blocked_reasons.push(`Refused: exact_command contains forbidden patterns: ${dangerNeedles.join(", ")}`);
   }
 
+  const noArtifact = deps.noArtifact === true;
   const allowlisted = (ALLOWLIST_EXACT_COMMANDS_V1 as readonly string[]).includes(exact_command);
   if (!allowlisted) {
     blocked_reasons.push("Refused: exact_command is not allowlisted for v1.");
+  }
+  if (noArtifact && allowlisted) {
+    const noArtOk = (NO_ARTIFACT_ALLOWLIST_EXACT_COMMANDS_V1 as readonly string[]).includes(
+      exact_command,
+    );
+    if (!noArtOk) {
+      const why =
+        NO_ARTIFACT_ALLOWLIST_EXCLUSION_REASONS_V1[exact_command] ??
+        "command not proven stdout-only for --no-artifact";
+      blocked_reasons.push(`Refused: --no-artifact forbids this allowlisted command (${why}).`);
+    }
   }
 
   if (dispatch?.command_surface !== "terminal" && dispatch?.command_surface !== "none") {
@@ -254,9 +299,12 @@ export async function runBuckpartsCommandCenterDispatchRunnerV1(
   const dirAbs = path.isAbsolute(dispatchRunsDirRel)
     ? dispatchRunsDirRel
     : path.join(deps.rootDir, dispatchRunsDirRel);
-  if (!exists(dirAbs)) mkdirp(dirAbs);
   const fileBase = `dispatch-run-${generated_at.replaceAll(":", "").replaceAll(".", "")}.json`;
-  const artifact_abs_path = path.join(dirAbs, fileBase);
+  const artifact_abs_path = noArtifact ? null : path.join(dirAbs, fileBase);
+
+  if (!noArtifact) {
+    if (!exists(dirAbs)) mkdirp(dirAbs);
+  }
 
   let execution_status: CommandCenterDispatchRunnerExecutionStatusV1 = "REFUSED";
   let execution_allowed = blocked_reasons.length === 0;
@@ -298,28 +346,30 @@ export async function runBuckpartsCommandCenterDispatchRunnerV1(
     data_mutation: false,
   };
 
-  writeText(artifact_abs_path, JSON.stringify(artifact, null, 2) + "\n");
+  if (!noArtifact && artifact_abs_path) {
+    writeText(artifact_abs_path, JSON.stringify(artifact, null, 2) + "\n");
 
-  // Ledger intakes only EXECUTED dispatch-run JSONs under the default dispatch-runs path.
-  // Skip when tests write into a temp dir (override present).
-  const usingDefaultDispatchRunsDir = deps.dispatchRunsDirRel == null;
-  if (usingDefaultDispatchRunsDir) {
-    const refresh =
-      deps.refreshExecutionLedger ??
-      ((args: {
-        execution_status: CommandCenterDispatchRunnerExecutionStatusV1;
-        artifact_abs_path: string;
-      }) => {
-        if (args.execution_status !== "EXECUTED") return;
-        refreshBuckpartsExecutionLedgerV1({
-          rootDir: deps.rootDir,
-          trigger_source: "npm run buckparts:command-center:run-dispatch",
-          now,
+    // Ledger intakes only EXECUTED dispatch-run JSONs under the default dispatch-runs path.
+    // Skip when tests write into a temp dir (override present) or --no-artifact.
+    const usingDefaultDispatchRunsDir = deps.dispatchRunsDirRel == null;
+    if (usingDefaultDispatchRunsDir) {
+      const refresh =
+        deps.refreshExecutionLedger ??
+        ((args: {
+          execution_status: CommandCenterDispatchRunnerExecutionStatusV1;
+          artifact_abs_path: string;
+        }) => {
+          if (args.execution_status !== "EXECUTED") return;
+          refreshBuckpartsExecutionLedgerV1({
+            rootDir: deps.rootDir,
+            trigger_source: "npm run buckparts:command-center:run-dispatch",
+            now,
+          });
         });
-      });
-    refresh({ execution_status, artifact_abs_path });
+      refresh({ execution_status, artifact_abs_path });
+    }
   }
 
-  return { artifact_abs_path, artifact };
+  return { artifact_abs_path, artifact, no_artifact: noArtifact };
 }
 
