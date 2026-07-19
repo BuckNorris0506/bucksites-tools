@@ -11,6 +11,7 @@ import {
   buildBuckpartsExecutionLedgerReportV1,
   computeExecutionLedgerFreshnessV1,
   EXECUTION_LEDGER_STALE_AFTER_MS_V1,
+  loadBuckpartsExecutionLedgerReportV1,
   refreshBuckpartsExecutionLedgerV1,
   resolveExecutionLedgerFreshnessV1,
 } from "./buckparts-execution-ledger-v1";
@@ -74,9 +75,14 @@ test("execution ledger marks older lane entries superseded_by newer", () => {
 });
 
 test("command center lane projects execution ledger read-only", () => {
+  const loaded = loadBuckpartsExecutionLedgerReportV1({ rootDir: REPO_ROOT });
+  assert.ok(loaded);
+  const generatedMs = Date.parse(loaded!.generated_at);
+  assert.ok(Number.isFinite(generatedMs));
+  // now just after generated_at → FRESH; future timestamps score UNKNOWN, not FRESH.
   const lane = buildBuckpartsExecutionLedgerCommandCenterLaneV1({
     rootDir: REPO_ROOT,
-    now: () => new Date("2026-06-10T12:00:00.000Z"),
+    now: () => new Date(generatedMs + 60_000),
   });
 
   assert.equal(lane.recommended_jq_path, BUCKPARTS_EXECUTION_LEDGER_CC_JQ_PATH_V1);
@@ -145,6 +151,14 @@ test("freshness marks ledger FRESH inside stale window and STALE after", () => {
     last_refresh_trigger_source: "test",
   });
   assert.equal(stale.freshness_status, "STALE");
+
+  const future = computeExecutionLedgerFreshnessV1({
+    generated_at: "2099-01-01T00:00:00.000Z",
+    source_artifact_count: 1,
+    now: () => new Date("2026-07-15T00:00:00.000Z"),
+    last_refresh_trigger_source: "test",
+  });
+  assert.equal(future.freshness_status, "UNKNOWN");
 });
 
 test("refresh writes ledger artifact with trigger source provenance", () => {

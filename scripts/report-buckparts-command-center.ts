@@ -73,6 +73,12 @@ import {
   buildCustomerSteeringComparisonV1,
   type FactorySteeringOverrideSourceV1,
 } from "./lib/customer-steering-comparison-v1";
+import {
+  buildCanonicalFinalOperatingDecisionV1,
+  demoteAdvisoryBrainV1,
+  type SteeringCandidateInputV1,
+} from "./lib/buckparts-canonical-final-operating-decision-v1";
+import { ALLOWLIST_EXACT_COMMANDS_V1 } from "./lib/buckparts-command-center-dispatch-allowlist-v1";
 import { buildCustomerClosureReportV1 } from "./lib/customer-closure-report-v1";
 import { buildCustomerAuthorityScoreV1 } from "./lib/customer-authority-score-v1";
 import {
@@ -1005,23 +1011,31 @@ export async function buildBuckpartsCommandCenterReport(
       ? amazonFirstSummary.deferred_unknown_top_tokens.join(", ")
       : "see buckparts:amazon-first-blocked-queue unknown_evidence_deferred";
 
-  let { next_best_action: nextBestAction, why_this_action: whyThisAction } =
-    resolveCommandCenterNextBestActionV1({
-      preferAmazonFirstConversion,
-      affiliateApprovalPending,
-      nonAmazonApproved,
-      waterdropLiveProofSlice,
-      waterdropProductionRowId: waterdropResearchLane.waterdrop_production_row_id,
-      pendingNetworkOrPrograms,
-      topMoneyQueue,
-      amazonFirstTokenHint,
-      amazonUnknownEvidenceDeferredCount: amazonFirstSummary.unknown_evidence_deferred_count,
-      amazonDeferredUnknownTopTokens,
-      flexoffersMonetizationBlocked,
-      blockedLinkRecommendedFirstAction: blockedQueue.recommended_first_action,
-    });
+  const rootResolvedNba = resolveCommandCenterNextBestActionV1({
+    preferAmazonFirstConversion,
+    affiliateApprovalPending,
+    nonAmazonApproved,
+    waterdropLiveProofSlice,
+    waterdropProductionRowId: waterdropResearchLane.waterdrop_production_row_id,
+    pendingNetworkOrPrograms,
+    topMoneyQueue,
+    amazonFirstTokenHint,
+    amazonUnknownEvidenceDeferredCount: amazonFirstSummary.unknown_evidence_deferred_count,
+    amazonDeferredUnknownTopTokens,
+    flexoffersMonetizationBlocked,
+    blockedLinkRecommendedFirstAction: blockedQueue.recommended_first_action,
+  });
+  let nextBestAction = rootResolvedNba.next_best_action;
+  let whyThisAction = rootResolvedNba.why_this_action;
+  const rootResolveNbaBaseline = nextBestAction;
+  const rootResolveWhyBaseline = whyThisAction;
+
+  let repairClinicNba = "";
+  let repairClinicWhy = "";
+  let repairClinicRewrote = false;
 
   // Explicit safeguard: never recommend RepairClinic evidence when affiliate is not launch-ready.
+  // Must set steering source repairclinic_affiliate_suppression when this rewrite wins.
   if (
     (repairclinicStatus === "NOT_STARTED" || repairclinicStatus === "DRAFTING") &&
     /repairclinic/i.test(nextBestAction)
@@ -1031,42 +1045,43 @@ export async function buildBuckpartsCommandCenterReport(
         isTopMoneyQueueLaneActionable(lane) && !/repairclinic/i.test(lane.recommended_action),
     );
     if (altMoneyLane) {
-      nextBestAction = withWaterdropLiveMonitorPrefix(
+      repairClinicNba = withWaterdropLiveMonitorPrefix(
         altMoneyLane.recommended_action,
         waterdropLiveProofSlice,
       );
       if (altMoneyLane.lane === "frigidaire_next_monetizable") {
-        whyThisAction =
+        repairClinicWhy =
           "Frigidaire lane still has candidates; RepairClinic-tagged manufacturer catalog/search cohort action is suppressed while RepairClinic affiliate status is not approval-ready.";
       } else if (altMoneyLane.lane === "flexoffers_readiness_refrigerator_water") {
-        whyThisAction =
+        repairClinicWhy =
           "Weak/zero-CTA placeholder readiness queue is next after RepairClinic-tagged manufacturer catalog/search cohort action is suppressed while RepairClinic affiliate status is not approval-ready.";
       } else {
-        whyThisAction =
+        repairClinicWhy =
           "RepairClinic affiliate lane is not approval-ready, so RepairClinic-tagged retailer_links work is suppressed; using the next monetizable queue lane.";
       }
     } else {
-      nextBestAction = withWaterdropLiveMonitorPrefix(
+      repairClinicNba = withWaterdropLiveMonitorPrefix(
         blockedQueue.recommended_first_action,
         waterdropLiveProofSlice,
       );
-      whyThisAction =
+      repairClinicWhy =
         "RepairClinic affiliate lane is not approval-ready; FlexOffers network is REJECTED in affiliate tracker, so blocked-link remediation is the next actionable money path.";
     }
-    whyThisAction = appendWaterdropAndAffiliatePendingWhy(whyThisAction, {
-      next_best_action: nextBestAction,
+    repairClinicWhy = appendWaterdropAndAffiliatePendingWhy(repairClinicWhy, {
+      next_best_action: repairClinicNba,
       waterdropLiveProofSlice,
       waterdropProductionRowId: waterdropResearchLane.waterdrop_production_row_id,
       affiliateApprovalPending,
       staleAffiliateGate: staleAffiliateNbaGate,
       pendingNetworkOrPrograms,
     });
+    repairClinicRewrote = true;
+    nextBestAction = repairClinicNba;
+    whyThisAction = repairClinicWhy;
   }
 
-  const operatorAwayStatus: CommandCenterReport["operator_can_be_away_status"] =
-    nextBestAction.length === 0
-      ? "NOT_READY"
-      : "READY_FOR_AUTONOMOUS_READ_ONLY";
+  // Provisional only — recomputed from canonical final operating decision after steering.
+  let operatorAwayStatus: CommandCenterReport["operator_can_be_away_status"] = "NOT_READY";
 
   const knownUnknowns = [
     ...commandSurface.known_unknowns,
@@ -2624,11 +2639,6 @@ export async function buildBuckpartsCommandCenterReport(
     command_center_issue_reaudit_v1,
   );
 
-  if (brainGate.brain_status === "STOP_THE_LINE") {
-    nextBestAction = brainGate.next_brain_action;
-    whyThisAction = brainGate.lane_work_allowed_reason;
-  }
-
   const fridgeModelFirstSteeringOverride = resolveRefrigeratorModelFirstSteeringOverrideV1({
     resolver: refrigerator_model_first_batch_resolver_v1,
     brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
@@ -2708,148 +2718,208 @@ export async function buildBuckpartsCommandCenterReport(
     lifecycleOverride: universalBatchLifecycleSteeringOverride,
   });
 
-  let steeringOverrideSource: FactorySteeringOverrideSourceV1 = "root_resolve";
+  type OverrideSideEffects = {
+    source: FactorySteeringOverrideSourceV1;
+    next_best_action: string;
+    why_this_action: string;
+    next_move_command: string;
+    mutation_block_reasons: string[];
+    replace_mutation_reasons?: boolean;
+  };
 
-  if (brainGate.brain_status !== "STOP_THE_LINE" && issueRegistrySteeringOverride) {
-    steeringOverrideSource = "issue_registry_tier_0";
-    nextBestAction = issueRegistrySteeringOverride.next_best_action;
-    whyThisAction = issueRegistrySteeringOverride.why_this_action;
+  const typedOverrideEffects: OverrideSideEffects[] = [];
+  if (issueRegistrySteeringOverride) {
+    typedOverrideEffects.push({
+      source: "issue_registry_tier_0",
+      next_best_action: issueRegistrySteeringOverride.next_best_action,
+      why_this_action: issueRegistrySteeringOverride.why_this_action,
+      next_move_command: issueRegistrySteeringOverride.next_move_command,
+      mutation_block_reasons: issueRegistrySteeringOverride.mutation_block_reasons,
+    });
+  }
+  if (issueReauditSteeringOverride) {
+    typedOverrideEffects.push({
+      source: "issue_registry_reaudit",
+      next_best_action: issueReauditSteeringOverride.next_best_action,
+      why_this_action: issueReauditSteeringOverride.why_this_action,
+      next_move_command: issueReauditSteeringOverride.next_move_command,
+      mutation_block_reasons: issueReauditSteeringOverride.mutation_block_reasons,
+    });
+  }
+  if (fridgeModelFirstSteeringOverride) {
+    typedOverrideEffects.push({
+      source: "refrigerator_model_first",
+      next_best_action: fridgeModelFirstSteeringOverride.next_best_action,
+      why_this_action: fridgeModelFirstSteeringOverride.why_this_action,
+      next_move_command: fridgeModelFirstSteeringOverride.next_move_command,
+      mutation_block_reasons: fridgeModelFirstSteeringOverride.mutation_block_reasons,
+    });
+  }
+  if (modelFirstSteeringOverride) {
+    typedOverrideEffects.push({
+      source: "model_first",
+      next_best_action: modelFirstSteeringOverride.next_best_action,
+      why_this_action: modelFirstSteeringOverride.why_this_action,
+      next_move_command: modelFirstSteeringOverride.next_move_command,
+      mutation_block_reasons: modelFirstSteeringOverride.mutation_block_reasons,
+    });
+  }
+  if (demandSelectedCorrectnessRisksSteeringOverride) {
+    typedOverrideEffects.push({
+      source: "demand_selected_correctness_risks",
+      next_best_action: demandSelectedCorrectnessRisksSteeringOverride.next_best_action,
+      why_this_action: demandSelectedCorrectnessRisksSteeringOverride.why_this_action,
+      next_move_command: demandSelectedCorrectnessRisksSteeringOverride.next_move_command,
+      mutation_block_reasons: demandSelectedCorrectnessRisksSteeringOverride.mutation_block_reasons,
+      replace_mutation_reasons: true,
+    });
+  }
+  if (demandToCoverageAfterFridgeCloseoutSteeringOverride) {
+    typedOverrideEffects.push({
+      source: "demand_to_coverage",
+      next_best_action: demandToCoverageAfterFridgeCloseoutSteeringOverride.next_best_action,
+      why_this_action: demandToCoverageAfterFridgeCloseoutSteeringOverride.why_this_action,
+      next_move_command: demandToCoverageAfterFridgeCloseoutSteeringOverride.next_move_command,
+      mutation_block_reasons:
+        demandToCoverageAfterFridgeCloseoutSteeringOverride.mutation_block_reasons,
+      replace_mutation_reasons: true,
+    });
+  }
+  if (applyUniversalBatchLifecycleSteering && universalBatchLifecycleSteeringOverride) {
+    typedOverrideEffects.push({
+      source: "universal_batch_lifecycle",
+      next_best_action: universalBatchLifecycleSteeringOverride.next_best_action,
+      why_this_action: universalBatchLifecycleSteeringOverride.why_this_action,
+      next_move_command: universalBatchLifecycleSteeringOverride.next_move_command,
+      mutation_block_reasons: universalBatchLifecycleSteeringOverride.mutation_block_reasons,
+      replace_mutation_reasons: true,
+    });
+  }
+  if (fridgeApplyPlanApprovalSteeringOverride && batchDispatchOverride) {
+    typedOverrideEffects.push({
+      source: "fridge_apply_plan_approval",
+      next_best_action: fridgeApplyPlanApprovalSteeringOverride.next_best_action,
+      why_this_action: fridgeApplyPlanApprovalSteeringOverride.why_this_action,
+      next_move_command: fridgeApplyPlanApprovalSteeringOverride.next_move_command,
+      mutation_block_reasons: fridgeApplyPlanApprovalSteeringOverride.mutation_block_reasons,
+    });
+  }
+  if (fridgeApplyPlanApprovedPlanningSteeringOverride && batchDispatchOverride) {
+    typedOverrideEffects.push({
+      source: "fridge_apply_plan_approved_planning",
+      next_best_action: fridgeApplyPlanApprovedPlanningSteeringOverride.next_best_action,
+      why_this_action: fridgeApplyPlanApprovedPlanningSteeringOverride.why_this_action,
+      next_move_command: fridgeApplyPlanApprovedPlanningSteeringOverride.next_move_command,
+      mutation_block_reasons: fridgeApplyPlanApprovedPlanningSteeringOverride.mutation_block_reasons,
+    });
+  }
+  if (fridgeApplyPlanSteeringOverride && batchDispatchOverride) {
+    typedOverrideEffects.push({
+      source: "fridge_apply_plan_proposal",
+      next_best_action: fridgeApplyPlanSteeringOverride.next_best_action,
+      why_this_action: fridgeApplyPlanSteeringOverride.why_this_action,
+      next_move_command: fridgeApplyPlanSteeringOverride.next_move_command,
+      mutation_block_reasons: fridgeApplyPlanSteeringOverride.mutation_block_reasons,
+    });
+  }
+  if (batchRunRegistryIntakeSteeringOverride && batchDispatchOverride) {
+    typedOverrideEffects.push({
+      source: "batch_run_registry_intake",
+      next_best_action: batchRunRegistryIntakeSteeringOverride.next_best_action,
+      why_this_action: batchRunRegistryIntakeSteeringOverride.why_this_action,
+      next_move_command: batchRunRegistryIntakeSteeringOverride.next_move_command,
+      mutation_block_reasons: batchRunRegistryIntakeSteeringOverride.mutation_block_reasons,
+    });
+  }
+  if (batchDispatchOverride) {
+    typedOverrideEffects.push({
+      source: "batch_dispatch",
+      next_best_action: batchDispatchOverride.next_best_action,
+      why_this_action: batchDispatchOverride.why_this_action,
+      next_move_command: batchDispatchOverride.next_move_command,
+      mutation_block_reasons: batchDispatchOverride.mutation_block_reasons,
+    });
+  }
+
+  // Each candidate owns its exact_command — STOP / RepairClinic / root_resolve must not
+  // inherit a stale prior executable command from another winner.
+  const steeringCandidates: SteeringCandidateInputV1[] = [
+    {
+      source: "brain_stop_the_line",
+      next_best_action: brainGate.next_brain_action,
+      why_this_action: brainGate.lane_work_allowed_reason,
+      exact_command: "",
+      active: brainGate.brain_status === "STOP_THE_LINE",
+    },
+    ...typedOverrideEffects.map((o) => ({
+      source: o.source,
+      next_best_action: o.next_best_action,
+      why_this_action: o.why_this_action,
+      exact_command: o.next_move_command,
+      // issue_registry_tier_0 remains inactive under STOP (legacy gate); STOP itself outranks reaudit.
+      active:
+        o.source === "issue_registry_tier_0"
+          ? brainGate.brain_status !== "STOP_THE_LINE"
+          : true,
+    })),
+    {
+      source: "repairclinic_affiliate_suppression",
+      next_best_action: repairClinicNba,
+      why_this_action: repairClinicWhy,
+      exact_command: "",
+      active: repairClinicRewrote,
+    },
+    {
+      source: "root_resolve",
+      next_best_action: rootResolveNbaBaseline,
+      why_this_action: rootResolveWhyBaseline,
+      // Root baseline may carry the root-resolved next move only — never a foreign override command.
+      exact_command: repairClinicRewrote ? "" : nextMoveCommand,
+      active: !repairClinicRewrote,
+    },
+  ];
+
+  // Apply typed-override mutation side-effects from the provisional winner, then bind once.
+  const provisionalCanonical = buildCanonicalFinalOperatingDecisionV1({
+    generated_at: now().toISOString(),
+    candidates: steeringCandidates,
+    mutating_block_reasons: mutatingBlockedReasons,
+    allowlisted_commands: ALLOWLIST_EXACT_COMMANDS_V1,
+  });
+
+  const winnerSource = provisionalCanonical.steering_override_source;
+  const winnerEffect = typedOverrideEffects.find((o) => o.source === winnerSource);
+  if (winnerSource === "brain_stop_the_line") {
+    nextBestAction = brainGate.next_brain_action;
+    whyThisAction = brainGate.lane_work_allowed_reason;
     effectiveNextMoveMode = "READ_ONLY";
-    effectiveNextMoveCommand = issueRegistrySteeringOverride.next_move_command;
-    for (const reason of issueRegistrySteeringOverride.mutation_block_reasons) {
-      if (!mutatingBlockedReasons.includes(reason)) {
-        mutatingBlockedReasons.push(reason);
-      }
-    }
-    mutatingBlocked = mutatingBlockedReasons.length > 0;
-  } else if (issueReauditSteeringOverride) {
-    steeringOverrideSource = "issue_registry_reaudit";
-    nextBestAction = issueReauditSteeringOverride.next_best_action;
-    whyThisAction = issueReauditSteeringOverride.why_this_action;
+    effectiveNextMoveCommand = "";
+  } else if (winnerSource === "repairclinic_affiliate_suppression") {
+    nextBestAction = repairClinicNba;
+    whyThisAction = repairClinicWhy;
+    effectiveNextMoveCommand = "";
+  } else if (winnerSource === "root_resolve") {
+    nextBestAction = rootResolveNbaBaseline;
+    whyThisAction = rootResolveWhyBaseline;
+    // Keep root nextMoveCommand only when root won; cleared below if non-executable.
+    effectiveNextMoveCommand = nextMoveCommand;
+  } else if (winnerEffect) {
+    nextBestAction = winnerEffect.next_best_action;
+    whyThisAction = winnerEffect.why_this_action;
     effectiveNextMoveMode = "READ_ONLY";
-    effectiveNextMoveCommand = issueReauditSteeringOverride.next_move_command;
-    for (const reason of issueReauditSteeringOverride.mutation_block_reasons) {
-      if (!mutatingBlockedReasons.includes(reason)) {
-        mutatingBlockedReasons.push(reason);
-      }
-    }
-    mutatingBlocked = mutatingBlockedReasons.length > 0;
-  } else if (fridgeModelFirstSteeringOverride) {
-    steeringOverrideSource = "refrigerator_model_first";
-    nextBestAction = fridgeModelFirstSteeringOverride.next_best_action;
-    whyThisAction = fridgeModelFirstSteeringOverride.why_this_action;
-    effectiveNextMoveMode = "READ_ONLY";
-    effectiveNextMoveCommand = fridgeModelFirstSteeringOverride.next_move_command;
-    for (const reason of fridgeModelFirstSteeringOverride.mutation_block_reasons) {
-      if (!mutatingBlockedReasons.includes(reason)) {
-        mutatingBlockedReasons.push(reason);
-      }
-    }
-    mutatingBlocked = mutatingBlockedReasons.length > 0;
-  } else if (modelFirstSteeringOverride) {
-    steeringOverrideSource = "model_first";
-    nextBestAction = modelFirstSteeringOverride.next_best_action;
-    whyThisAction = modelFirstSteeringOverride.why_this_action;
-    effectiveNextMoveMode = "READ_ONLY";
-    effectiveNextMoveCommand = modelFirstSteeringOverride.next_move_command;
-    for (const reason of modelFirstSteeringOverride.mutation_block_reasons) {
-      if (!mutatingBlockedReasons.includes(reason)) {
-        mutatingBlockedReasons.push(reason);
-      }
-    }
-    mutatingBlocked = mutatingBlockedReasons.length > 0;
-  } else if (demandSelectedCorrectnessRisksSteeringOverride) {
-    steeringOverrideSource = "demand_selected_correctness_risks";
-    nextBestAction = demandSelectedCorrectnessRisksSteeringOverride.next_best_action;
-    whyThisAction = demandSelectedCorrectnessRisksSteeringOverride.why_this_action;
-    effectiveNextMoveMode = "READ_ONLY";
-    effectiveNextMoveCommand = demandSelectedCorrectnessRisksSteeringOverride.next_move_command;
-    mutatingBlockedReasons.length = 0;
-    mutatingBlockedReasons.push(
-      ...demandSelectedCorrectnessRisksSteeringOverride.mutation_block_reasons,
-    );
-    mutatingBlocked = mutatingBlockedReasons.length > 0;
-  } else if (demandToCoverageAfterFridgeCloseoutSteeringOverride) {
-    steeringOverrideSource = "demand_to_coverage";
-    nextBestAction = demandToCoverageAfterFridgeCloseoutSteeringOverride.next_best_action;
-    whyThisAction = demandToCoverageAfterFridgeCloseoutSteeringOverride.why_this_action;
-    effectiveNextMoveMode = "READ_ONLY";
-    effectiveNextMoveCommand = demandToCoverageAfterFridgeCloseoutSteeringOverride.next_move_command;
-    mutatingBlockedReasons.length = 0;
-    mutatingBlockedReasons.push(
-      ...demandToCoverageAfterFridgeCloseoutSteeringOverride.mutation_block_reasons,
-    );
-    mutatingBlocked = mutatingBlockedReasons.length > 0;
-  } else if (applyUniversalBatchLifecycleSteering && universalBatchLifecycleSteeringOverride) {
-    steeringOverrideSource = "universal_batch_lifecycle";
-    nextBestAction = universalBatchLifecycleSteeringOverride.next_best_action;
-    whyThisAction = universalBatchLifecycleSteeringOverride.why_this_action;
-    effectiveNextMoveMode = "READ_ONLY";
-    effectiveNextMoveCommand = universalBatchLifecycleSteeringOverride.next_move_command;
-    mutatingBlockedReasons.length = 0;
-    mutatingBlockedReasons.push(...universalBatchLifecycleSteeringOverride.mutation_block_reasons);
-    mutatingBlocked = mutatingBlockedReasons.length > 0;
-  } else if (fridgeApplyPlanApprovalSteeringOverride && batchDispatchOverride) {
-    steeringOverrideSource = "fridge_apply_plan_approval";
-    nextBestAction = fridgeApplyPlanApprovalSteeringOverride.next_best_action;
-    whyThisAction = fridgeApplyPlanApprovalSteeringOverride.why_this_action;
-    effectiveNextMoveMode = "READ_ONLY";
-    effectiveNextMoveCommand = fridgeApplyPlanApprovalSteeringOverride.next_move_command;
-    for (const reason of fridgeApplyPlanApprovalSteeringOverride.mutation_block_reasons) {
-      if (!mutatingBlockedReasons.includes(reason)) {
-        mutatingBlockedReasons.push(reason);
-      }
-    }
-    mutatingBlocked = mutatingBlockedReasons.length > 0;
-  } else if (fridgeApplyPlanApprovedPlanningSteeringOverride && batchDispatchOverride) {
-    steeringOverrideSource = "fridge_apply_plan_approved_planning";
-    nextBestAction = fridgeApplyPlanApprovedPlanningSteeringOverride.next_best_action;
-    whyThisAction = fridgeApplyPlanApprovedPlanningSteeringOverride.why_this_action;
-    effectiveNextMoveMode = "READ_ONLY";
-    effectiveNextMoveCommand = fridgeApplyPlanApprovedPlanningSteeringOverride.next_move_command;
-    for (const reason of fridgeApplyPlanApprovedPlanningSteeringOverride.mutation_block_reasons) {
-      if (!mutatingBlockedReasons.includes(reason)) {
-        mutatingBlockedReasons.push(reason);
-      }
-    }
-    mutatingBlocked = mutatingBlockedReasons.length > 0;
-  } else if (fridgeApplyPlanSteeringOverride && batchDispatchOverride) {
-    steeringOverrideSource = "fridge_apply_plan_proposal";
-    nextBestAction = fridgeApplyPlanSteeringOverride.next_best_action;
-    whyThisAction = fridgeApplyPlanSteeringOverride.why_this_action;
-    effectiveNextMoveMode = "READ_ONLY";
-    effectiveNextMoveCommand = fridgeApplyPlanSteeringOverride.next_move_command;
-    for (const reason of fridgeApplyPlanSteeringOverride.mutation_block_reasons) {
-      if (!mutatingBlockedReasons.includes(reason)) {
-        mutatingBlockedReasons.push(reason);
-      }
-    }
-    mutatingBlocked = mutatingBlockedReasons.length > 0;
-  } else if (batchRunRegistryIntakeSteeringOverride && batchDispatchOverride) {
-    steeringOverrideSource = "batch_run_registry_intake";
-    nextBestAction = batchRunRegistryIntakeSteeringOverride.next_best_action;
-    whyThisAction = batchRunRegistryIntakeSteeringOverride.why_this_action;
-    effectiveNextMoveMode = "READ_ONLY";
-    effectiveNextMoveCommand = batchRunRegistryIntakeSteeringOverride.next_move_command;
-    for (const reason of batchRunRegistryIntakeSteeringOverride.mutation_block_reasons) {
-      if (!mutatingBlockedReasons.includes(reason)) {
-        mutatingBlockedReasons.push(reason);
-      }
-    }
-    mutatingBlocked = mutatingBlockedReasons.length > 0;
-  } else if (batchDispatchOverride) {
-    steeringOverrideSource = "batch_dispatch";
-    nextBestAction = batchDispatchOverride.next_best_action;
-    whyThisAction = batchDispatchOverride.why_this_action;
-    effectiveNextMoveMode = "READ_ONLY";
-    effectiveNextMoveCommand = batchDispatchOverride.next_move_command;
-    for (const reason of batchDispatchOverride.mutation_block_reasons) {
-      if (!mutatingBlockedReasons.includes(reason)) {
-        mutatingBlockedReasons.push(reason);
+    effectiveNextMoveCommand = winnerEffect.next_move_command;
+    if (winnerEffect.replace_mutation_reasons) {
+      mutatingBlockedReasons.length = 0;
+      mutatingBlockedReasons.push(...winnerEffect.mutation_block_reasons);
+    } else {
+      for (const reason of winnerEffect.mutation_block_reasons) {
+        if (!mutatingBlockedReasons.includes(reason)) mutatingBlockedReasons.push(reason);
       }
     }
     mutatingBlocked = mutatingBlockedReasons.length > 0;
   }
+
+  let steeringOverrideSource: FactorySteeringOverrideSourceV1 = winnerSource;
 
   if (brainGate.brain_status === "PROCEED_WITH_KNOWN_LIMITS") {
     const brainCaveat = brainGate.proven_facts.find((f) => f.startsWith("BRAIN_CAVEAT:"));
@@ -2857,6 +2927,38 @@ export async function buildBuckpartsCommandCenterReport(
       whyThisAction = `${whyThisAction} ${brainCaveat}`;
     }
   }
+
+  const canonical_final_operating_decision_v1 = buildCanonicalFinalOperatingDecisionV1({
+    generated_at: provisionalCanonical.generated_at,
+    candidates: steeringCandidates.map((c) => {
+      if (c.source !== winnerSource) return c;
+      const winnerExact =
+        winnerSource === "brain_stop_the_line" ||
+        winnerSource === "repairclinic_affiliate_suppression"
+          ? ""
+          : winnerSource === "root_resolve"
+            ? nextMoveCommand
+            : (winnerEffect?.next_move_command ?? c.exact_command ?? "");
+      return {
+        ...c,
+        next_best_action: nextBestAction,
+        why_this_action: whyThisAction,
+        exact_command: winnerExact,
+        active: true,
+      };
+    }),
+    mutating_block_reasons: mutatingBlockedReasons,
+    allowlisted_commands: ALLOWLIST_EXACT_COMMANDS_V1,
+  });
+
+  nextBestAction = canonical_final_operating_decision_v1.next_best_action;
+  whyThisAction = canonical_final_operating_decision_v1.why_this_action;
+  steeringOverrideSource = canonical_final_operating_decision_v1.steering_override_source;
+  operatorAwayStatus = canonical_final_operating_decision_v1.operator_can_be_away_status;
+  // Non-executable canonical must clear compatibility execution guidance (no stale command).
+  effectiveNextMoveCommand = canonical_final_operating_decision_v1.command_executable
+    ? canonical_final_operating_decision_v1.exact_command
+    : "";
 
   const execution_guidance: CommandCenterReport["execution_guidance"] = {
     next_move_mode: effectiveNextMoveMode,
@@ -2925,17 +3027,26 @@ export async function buildBuckpartsCommandCenterReport(
     pagePublishabilityTruth: command_center_v2.page_publishability_truth_summary_v1,
   });
 
-  const semi_cruise_status_summary_v1 = buildSemiCruiseStatusSummaryV1({
-    generated_at: now().toISOString(),
-    read_only: true,
-    data_mutation: false,
-    operator_can_be_away_status: operatorAwayStatus,
-    system_health_status: commandSurface.system_health.status,
-    execution_guidance,
-    command_center_v2: command_center_v2_with_operator_digest,
-    owner_command_center_neurons,
-    spend_ledger_entries: loadSpendLedgerEntriesReadOnly(),
-  });
+  const semi_cruise_status_summary_v1 = demoteAdvisoryBrainV1({
+    payload: buildSemiCruiseStatusSummaryV1({
+      generated_at: now().toISOString(),
+      read_only: true,
+      data_mutation: false,
+      operator_can_be_away_status: operatorAwayStatus,
+      system_health_status: commandSurface.system_health.status,
+      execution_guidance,
+      command_center_v2: command_center_v2_with_operator_digest,
+      owner_command_center_neurons,
+      spend_ledger_entries: loadSpendLedgerEntriesReadOnly(),
+    }) as unknown as Record<string, unknown>,
+    canonical_source: ".command_center_v2.phase1_operating_circuit_v1.credit_control_canonical_v1",
+    reason:
+      "semi_cruise credit/deploy narrative is advisory_only; canonical Credit Control is the only deploy-credit authority",
+  }) as unknown as ReturnType<typeof buildSemiCruiseStatusSummaryV1> & {
+    advisory_only: true;
+    non_authoritative: true;
+    canonical_source: string;
+  };
 
   const phase1_operating_circuit_v1 = buildPhase1OperatingCircuitV1({
     rootDir,
@@ -3065,7 +3176,19 @@ export async function buildBuckpartsCommandCenterReport(
     fridge_guarded_batch_lifecycle_rule_proposal_v1,
     fridge_guarded_batch_lifecycle_rule_promotion_plan_v1,
     command_center_efficiency_truth_table_v1,
-    command_center_control_graph_rollup_v1,
+    command_center_control_graph_rollup_v1: demoteAdvisoryBrainV1({
+      payload: command_center_control_graph_rollup_v1 as unknown as Record<string, unknown>,
+      canonical_source: ".command_center_v2.canonical_final_operating_decision_v1",
+      reason:
+        "control-graph NBA is advisory_only when it conflicts with canonical final operating decision; do not reconcile two owner-facing NBAs",
+    }) as unknown as typeof command_center_control_graph_rollup_v1 & {
+      advisory_only: true;
+      non_authoritative: true;
+      canonical_source: string;
+    },
+    canonical_final_operating_decision_v1,
+    competing_steering_candidates_v1:
+      canonical_final_operating_decision_v1.competing_steering_candidates_v1,
     universal_batch_lifecycle_apply_readiness_v1,
     universal_batch_lifecycle_apply_execution_plan_v1,
     universal_batch_lifecycle_mutation_authorization_review_v1,

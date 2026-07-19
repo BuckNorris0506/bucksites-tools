@@ -797,10 +797,21 @@ export function computeExecutionLedgerFreshnessV1(args: {
       last_refresh_trigger_source: args.last_refresh_trigger_source ?? "UNKNOWN",
     };
   }
+  const nowMs = now().getTime();
+  // Future-dated ledger timestamps must never score as FRESH.
+  if (generatedMs > nowMs) {
+    return {
+      last_generated_at: args.generated_at,
+      source_artifact_count: args.source_artifact_count,
+      stale_after: "UNKNOWN",
+      freshness_status: "UNKNOWN",
+      last_refresh_trigger_source: args.last_refresh_trigger_source ?? "UNKNOWN",
+    };
+  }
   const staleAfterMs = generatedMs + EXECUTION_LEDGER_STALE_AFTER_MS_V1;
   const stale_after = new Date(staleAfterMs).toISOString();
   const freshness_status: ExecutionLedgerFreshnessStatusV1 =
-    now().getTime() < staleAfterMs ? "FRESH" : "STALE";
+    nowMs < staleAfterMs ? "FRESH" : "STALE";
   return {
     last_generated_at: args.generated_at,
     source_artifact_count: args.source_artifact_count,

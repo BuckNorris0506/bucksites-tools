@@ -692,7 +692,7 @@ test("dispatch --no-artifact successful stdout-only path leaves isolated temp-re
               "npx tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts",
             command_surface: "terminal",
             mutation_allowed: false,
-            selected_subsystem: "air_purifier_demand_selected_batch_closeout_readiness_proof",
+            selected_subsystem: "proof:ap_closeout_readiness",
             success_transition: "ok",
             failure_transition: "fail",
           },
@@ -715,7 +715,11 @@ test("dispatch --no-artifact successful stdout-only path leaves isolated temp-re
 
   assert.equal(result.no_artifact, true);
   assert.equal(result.artifact_abs_path, null);
-  assert.equal(result.artifact.execution_status, "EXECUTED");
+  assert.equal(
+    result.artifact.execution_status,
+    "EXECUTED",
+    result.artifact.blocked_reasons.join(" | "),
+  );
   assert.ok(result.artifact.parsed_json_summary != null);
   assert.equal(
     (result.artifact.parsed_json_summary as { contract?: string }).contract,

@@ -115,9 +115,6 @@
     "buckparts:fridge-safe-link-eptwfu01-retailer-links-supabase-parity": "tsx scripts/report-fridge-safe-link-eptwfu01-retailer-links-supabase-parity-v1.ts",
     "buckparts:browser-proof-collector": "tsx scripts/run-browser-proof-collector-v1.ts",
     "buckparts:browser-proof-collector-owner-review-bridge": "tsx scripts/run-browser-proof-collector-owner-review-bridge-v1.ts",
-
-
-
     "buckparts:coverage-production-sprint-v2": "tsx scripts/report-coverage-production-sprint-v2.ts",
     "buckparts:fridge-safe-link-gswf-apply-readiness": "tsx scripts/report-fridge-safe-link-gswf-apply-readiness-v1.ts",
     "buckparts:fridge-safe-link-gswf-ge-official-proof": "tsx scripts/report-fridge-safe-link-gswf-ge-official-proof-v1.ts",
@@ -281,7 +278,8 @@
     "buckparts:staged-filter:review-brand": "tsx scripts/review-staged-filter-brand-refrigerator.ts",
     "buckparts:staged-filter:apply-brand": "tsx scripts/apply-staged-filter-brand-refrigerator.ts",
     "search:gaps:review-part-resolution:fridge": "tsx scripts/review-staged-part-resolution-refrigerator.ts",
-    "search:gaps:apply-part-choice:fridge": "tsx scripts/apply-staged-compat-part-choice-refrigerator.ts"
+    "search:gaps:apply-part-choice:fridge": "tsx scripts/apply-staged-compat-part-choice-refrigerator.ts",
+    "buckparts:phase2-operating-coherence": "bash scripts/validate-buckparts-phase2-operating-coherence-v1.sh"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.52.0",

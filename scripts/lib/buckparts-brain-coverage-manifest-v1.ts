@@ -455,7 +455,12 @@ const CURATED_ENTRIES: EntrySeed[] = [
     verdict: "DEPRECATED",
     blocks_lane_work: false,
     validation_command: "test -f docs/BuckParts-HQ-HANDOFF.md",
-    reason: "Migration/context handoff only; operating truth must come from Command Center JSON.",
+    reason:
+      "advisory_only; non_authoritative; canonical_source=.command_center_v2.canonical_final_operating_decision_v1 — HQ handoff is migration/context only, never operational NBA/credit truth.",
+    steering_authority: false,
+    mutation_authority: false,
+    notes:
+      "advisory_only=true; non_authoritative=true; do not ask owner to reconcile HQ handoff vs Command Center",
   },
   {
     system_id: "sentry_error_monitoring",

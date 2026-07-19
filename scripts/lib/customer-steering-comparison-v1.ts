@@ -17,6 +17,8 @@ export const CUSTOMER_STEERING_COMPARISON_SOURCE_COMMAND_V1 =
 
 export type FactorySteeringOverrideSourceV1 =
   | "root_resolve"
+  | "brain_stop_the_line"
+  | "repairclinic_affiliate_suppression"
   | "issue_registry_tier_0"
   | "issue_registry_reaudit"
   | "refrigerator_model_first"

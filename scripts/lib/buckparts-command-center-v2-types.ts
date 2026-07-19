@@ -1164,6 +1164,13 @@ export type CommandCenterV2Report = {
    * dispatch history, repository provenance, GSC/GA4 freshness blockers.
    */
   phase1_operating_circuit_v1: import("./buckparts-phase1-operating-circuit-v1").Phase1OperatingCircuitV1;
+  /**
+   * Phase 2 — sole owner-facing operating authority for NBA + dispatch binding.
+   * Dispatch must not substitute a conflicting lane after this decision.
+   */
+  canonical_final_operating_decision_v1?: import("./buckparts-canonical-final-operating-decision-v1").CanonicalFinalOperatingDecisionV1;
+  /** Phase 2 — read-only competing steering candidates under documented precedence. */
+  competing_steering_candidates_v1?: import("./buckparts-canonical-final-operating-decision-v1").CompetingSteeringCandidatesV1;
   /** Read-only Customer Reality scoreboard — aggregated on full report build; does not replace next_best_action. */
   customer_reality_scoreboard_v1?: import("./customer-reality-scoreboard-v1").CustomerRealityScoreboardV1;
   /** Read-only customer vs factory steering comparison — dry-run only; does not replace next_best_action. */

@@ -8,8 +8,19 @@ import {
   COMMAND_CENTER_DISPATCH_RUNS_DIR_REL_V1,
   runBuckpartsCommandCenterDispatchRunnerV1,
 } from "./buckparts-command-center-dispatch-runner-v1";
+import { lookupDispatchAllowlistEntryV1 } from "./buckparts-command-center-dispatch-allowlist-v1";
 
 const REPO_ROOT = process.cwd();
+
+const BOUND_PROVENANCE = {
+  provenance_status: "BOUND_TO_SOURCE_COMMIT" as const,
+  base_commit: "abc1234",
+  source_commit: "abc1234",
+  worktree_clean: true,
+};
+
+const AP_PARITY_CMD =
+  "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json";
 
 function tempDispatchRunsDir(): string {
   const root = mkdtempSync(path.join(tmpdir(), "cc-dispatch-runs-"));
@@ -17,7 +28,23 @@ function tempDispatchRunsDir(): string {
   return dir;
 }
 
+function matchingMetaFields(exact_command: string): Record<string, unknown> {
+  const meta = lookupDispatchAllowlistEntryV1(exact_command);
+  if (!meta) return {};
+  return {
+    selected_subsystem: meta.selected_subsystem,
+    owner_review_required: meta.owner_review_required,
+    command_kind: meta.command_kind,
+    artifact_write_behavior: meta.artifact_write_behavior,
+    no_artifact_allowed: meta.no_artifact_allowed,
+    mutation_allowed: meta.mutation_posture.mutation_allowed,
+  };
+}
+
 function fakeReportWithDispatch(overrides: Record<string, unknown>): any {
+  const exact =
+    typeof overrides.exact_command === "string" ? overrides.exact_command : AP_PARITY_CMD;
+  const metaFields = matchingMetaFields(exact);
   return {
     report_name: "buckparts_command_center_v1",
     generated_at: "2026-05-25T00:00:00.000Z",
@@ -81,14 +108,11 @@ function fakeReportWithDispatch(overrides: Record<string, unknown>): any {
         dispatch_status: "READY",
         current_stage_id: "supabase_parity_applied",
         next_stage_id: "production_runtime_smoke_complete",
-        selected_subsystem: "supabase_parity_apply_proof",
-        exact_command:
-          "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
+        exact_command: AP_PARITY_CMD,
         command_surface: "terminal",
         allowed_mutations: ["parity_dry_run_read_only"],
         forbidden_mutations: ["product_csv_write"],
         owner_approval_required: false,
-        mutation_allowed: false,
         proof_required_before_execution: "x",
         expected_artifact_paths: [],
         success_transition: "x",
@@ -97,9 +121,33 @@ function fakeReportWithDispatch(overrides: Record<string, unknown>): any {
         blocked_reasons: [],
         expansion_blocked: true,
         derived_from_checklist_contract: "batch_production_operating_checklist_v1",
+        ...metaFields,
         ...overrides,
+        // Keep subsystem aligned with allowlist unless the test intentionally mismatches it.
+        selected_subsystem:
+          typeof overrides.selected_subsystem === "string"
+            ? overrides.selected_subsystem
+            : (metaFields.selected_subsystem as string) ?? "parity:ap_supabase_plan",
       },
     },
+  };
+}
+
+function matchingCanonical(exact_command: string, overrides: Record<string, unknown> = {}) {
+  const meta = lookupDispatchAllowlistEntryV1(exact_command)!;
+  return {
+    command_executable: !meta.owner_review_required,
+    exact_command,
+    selected_subsystem: meta.selected_subsystem,
+    dispatch_status: meta.owner_review_required ? "OWNER_REVIEW_REQUIRED" : "READY",
+    steering_override_source: "batch_dispatch",
+    owner_review_required: meta.owner_review_required,
+    command_kind: meta.command_kind,
+    artifact_write_behavior: meta.artifact_write_behavior,
+    no_artifact_allowed: meta.no_artifact_allowed,
+    mutation_posture: { ...meta.mutation_posture },
+    blockers: meta.owner_review_required ? ["owner_review_required"] : [],
+    ...overrides,
   };
 }
 
@@ -109,6 +157,7 @@ test("runner refuses OWNER_REVIEW_REQUIRED dispatch and writes artifact", async 
   try {
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
       dispatchRunsDirRel: dispatchRunsDir,
       now: () => fixedNow,
       reportBuilder: async () => fakeReportWithDispatch({ dispatch_status: "OWNER_REVIEW_REQUIRED" }),
@@ -133,6 +182,7 @@ test("runner refuses --apply, git push/commit, and mutation patterns", async () 
   try {
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
       dispatchRunsDirRel: dispatchRunsDir,
       now: () => fixedNow,
       reportBuilder: async () =>
@@ -154,6 +204,7 @@ test("runner refuses git push/commit commands", async () => {
   try {
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
       dispatchRunsDirRel: dispatchRunsDir,
       now: () => fixedNow,
       reportBuilder: async () => fakeReportWithDispatch({ exact_command: "git push origin main" }),
@@ -175,6 +226,7 @@ test("runner executes allowlisted command when dispatch is READY (mocked)", asyn
   try {
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
       dispatchRunsDirRel: dispatchRunsDir,
       now: () => fixedNow,
       reportBuilder: async () => fakeReportWithDispatch({ exact_command: allowlisted }),
@@ -185,18 +237,21 @@ test("runner executes allowlisted command when dispatch is READY (mocked)", asyn
     });
     assert.equal(executed, allowlisted);
     assert.equal(res.artifact.execution_status, "EXECUTED");
-    assert.equal(res.artifact.execution_allowed, true);
+    // Terminal EXECUTED: further execution not allowed (idempotent complete).
+    assert.equal(res.artifact.execution_allowed, false);
     assert.deepEqual(res.artifact.parsed_json_summary, { ok: true });
   } finally {
     rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
   }
 });
 
-test("runner prefers GE MWFP/XWFE spine READY exact_command over batch dispatch", async () => {
+test("runner does not substitute GE spine when canonical decision selects batch command", async () => {
   const dispatchRunsDir = tempDispatchRunsDir();
   const fixedNow = new Date("2026-05-25T00:00:04.000Z");
   const geCmd =
     "npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review -- --write-artifacts";
+  const batchCmd =
+    "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json";
   let executed: string | null = null;
   try {
     const base = fakeReportWithDispatch({});
@@ -213,22 +268,57 @@ test("runner prefers GE MWFP/XWFE spine READY exact_command over batch dispatch"
         failure_transition: "remain drifted",
       },
     };
+    base.command_center_v2.canonical_final_operating_decision_v1 = matchingCanonical(batchCmd, {
+      steering_override_source: "batch_dispatch",
+    });
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
       dispatchRunsDirRel: dispatchRunsDir,
       now: () => fixedNow,
       reportBuilder: async () => base,
       exec: async (cmd) => {
         executed = cmd;
-        return { stdout: "{\"ok\":true,\"contract\":\"ge_sync_owner_review\"}", stderr: "", exitCode: 0 };
+        return { stdout: "{\"ok\":true}", stderr: "", exitCode: 0 };
       },
     });
-    assert.equal(executed, geCmd);
-    assert.equal(res.artifact.execution_status, "EXECUTED");
-    assert.equal(res.artifact.exact_command, geCmd);
-    assert.equal(
-      res.artifact.selected_subsystem,
-      "ge_mwfp_xwfe_retailer_links_supabase_sync_owner_review",
+    assert.equal(executed, batchCmd);
+    assert.notEqual(executed, geCmd);
+    assert.equal(res.artifact.exact_command, batchCmd);
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
+});
+
+test("runner refuses GE owner-review even if mis-shaped canonical claims READY", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
+  const fixedNow = new Date("2026-05-25T00:00:05.000Z");
+  const geCmd =
+    "npm run buckparts:fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-review -- --write-artifacts";
+  let execCount = 0;
+  try {
+    const base = fakeReportWithDispatch({});
+    base.command_center_v2.canonical_final_operating_decision_v1 = matchingCanonical(geCmd, {
+      // Adversarial mis-shape: claim READY/executable despite owner-review allowlist.
+      command_executable: true,
+      dispatch_status: "READY",
+      steering_override_source: "root_resolve",
+    });
+    const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => fixedNow,
+      reportBuilder: async () => base,
+      exec: async () => {
+        execCount += 1;
+        throw new Error("must not exec owner-review");
+      },
+    });
+    assert.equal(execCount, 0);
+    assert.equal(res.artifact.execution_status, "REFUSED");
+    assert.ok(
+      res.artifact.blocked_reasons.some((b) => b.includes("owner_review_required")),
     );
   } finally {
     rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
@@ -241,6 +331,7 @@ test("runner does not mutate product CSV", async () => {
   try {
     await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
       dispatchRunsDirRel: dispatchRunsDir,
       now: () => new Date("2026-05-25T00:00:03.000Z"),
       reportBuilder: async () =>
@@ -265,11 +356,11 @@ test("runner executes allowlisted demand_to_coverage_next_lane when command_surf
   try {
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
       dispatchRunsDirRel: dispatchRunsDir,
       now: () => fixedNow,
       reportBuilder: async () =>
         fakeReportWithDispatch({
-          selected_subsystem: "demand_to_coverage_next_lane",
           exact_command: demandCmd,
           command_surface: "terminal",
           dispatch_status: "READY",
@@ -286,8 +377,8 @@ test("runner executes allowlisted demand_to_coverage_next_lane when command_surf
     });
     assert.equal(executed, demandCmd);
     assert.equal(res.artifact.execution_status, "EXECUTED");
-    assert.equal(res.artifact.execution_allowed, true);
-    assert.equal(res.artifact.selected_subsystem, "demand_to_coverage_next_lane");
+    assert.equal(res.artifact.execution_allowed, false);
+    assert.equal(res.artifact.selected_subsystem, "steering:demand_to_coverage");
     assert.equal(res.artifact.exact_command, demandCmd);
     assert.equal(res.artifact.read_only, true);
     assert.equal(res.artifact.data_mutation, false);
@@ -301,11 +392,11 @@ test("runner refuses missing command_surface", async () => {
   try {
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
       dispatchRunsDirRel: dispatchRunsDir,
       now: () => new Date("2026-07-15T04:00:01.000Z"),
       reportBuilder: async () =>
         fakeReportWithDispatch({
-          selected_subsystem: "demand_to_coverage_next_lane",
           exact_command: "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
           command_surface: undefined,
         }),
@@ -325,11 +416,11 @@ test("runner refuses non-terminal unsafe command_surface", async () => {
   try {
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
       dispatchRunsDirRel: dispatchRunsDir,
       now: () => new Date("2026-07-15T04:00:02.000Z"),
       reportBuilder: async () =>
         fakeReportWithDispatch({
-          selected_subsystem: "demand_to_coverage_next_lane",
           exact_command: "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
           command_surface: "cursor_agent",
         }),
@@ -349,6 +440,7 @@ test("runner refuses non-allowlisted command", async () => {
   try {
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
       dispatchRunsDirRel: dispatchRunsDir,
       now: () => new Date("2026-07-15T04:00:03.000Z"),
       reportBuilder: async () =>
@@ -372,11 +464,11 @@ test("runner refuses mutation_allowed=true even when allowlisted terminal", asyn
   try {
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
       dispatchRunsDirRel: dispatchRunsDir,
       now: () => new Date("2026-07-15T04:00:04.000Z"),
       reportBuilder: async () =>
         fakeReportWithDispatch({
-          selected_subsystem: "demand_to_coverage_next_lane",
           exact_command: "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
           command_surface: "terminal",
           mutation_allowed: true,
@@ -392,41 +484,33 @@ test("runner refuses mutation_allowed=true even when allowlisted terminal", asyn
   }
 });
 
-test("runner executes allowlisted AP demand-selected owner-review when command_surface=terminal", async () => {
+test("runner refuses AP demand-selected owner-review (subprocess_calls=0)", async () => {
   const dispatchRunsDir = tempDispatchRunsDir();
   const fixedNow = new Date("2026-07-15T05:00:00.000Z");
   const ownerReviewCmd =
     "npx tsx scripts/report-air-purifier-demand-selected-batch-owner-review-v1.ts";
-  let executed: string | null = null;
+  let execCount = 0;
   try {
+    const base = fakeReportWithDispatch({});
+    base.command_center_v2.canonical_final_operating_decision_v1 = matchingCanonical(
+      ownerReviewCmd,
+      { steering_override_source: "demand_to_coverage" },
+    );
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
       dispatchRunsDirRel: dispatchRunsDir,
       now: () => fixedNow,
-      reportBuilder: async () =>
-        fakeReportWithDispatch({
-          selected_subsystem: "air_purifier_demand_selected_batch_owner_review",
-          exact_command: ownerReviewCmd,
-          command_surface: "terminal",
-          dispatch_status: "READY",
-          mutation_allowed: false,
-        }),
-      exec: async (cmd) => {
-        executed = cmd;
-        return {
-          stdout:
-            '{"contract":"air_purifier_demand_selected_batch_owner_review_v1","open_batch_proof_v1":{"open_batch_existence":"PROVEN","batch_closeout":"NOT_PROVEN","apply_readiness":"NOT_PROVEN"}}',
-          stderr: "",
-          exitCode: 0,
-        };
+      reportBuilder: async () => base,
+      exec: async () => {
+        execCount += 1;
+        throw new Error("must not exec owner-review");
       },
     });
-    assert.equal(executed, ownerReviewCmd);
-    assert.equal(res.artifact.execution_status, "EXECUTED");
-    assert.equal(res.artifact.execution_allowed, true);
-    assert.equal(res.artifact.selected_subsystem, "air_purifier_demand_selected_batch_owner_review");
-    assert.equal(res.artifact.read_only, true);
-    assert.equal(res.artifact.data_mutation, false);
+    assert.equal(execCount, 0);
+    assert.equal(res.artifact.execution_status, "REFUSED");
+    assert.equal(res.artifact.dispatch_status_before, "OWNER_REVIEW_REQUIRED");
+    assert.ok(res.artifact.blocked_reasons.some((b) => /owner_review|OWNER_REVIEW/i.test(b)));
   } finally {
     rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
   }
@@ -438,7 +522,6 @@ test("runner does not prefer GE sync when NOT_NEEDED; demand_to_coverage termina
   let executed: string | null = null;
   try {
     const base = fakeReportWithDispatch({
-      selected_subsystem: "demand_to_coverage_next_lane",
       exact_command: demandCmd,
       command_surface: "terminal",
       dispatch_status: "READY",
@@ -457,6 +540,7 @@ test("runner does not prefer GE sync when NOT_NEEDED; demand_to_coverage termina
     };
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
       dispatchRunsDirRel: dispatchRunsDir,
       now: () => new Date("2026-07-15T04:00:05.000Z"),
       reportBuilder: async () => base,
@@ -467,10 +551,10 @@ test("runner does not prefer GE sync when NOT_NEEDED; demand_to_coverage termina
     });
     assert.equal(executed, demandCmd);
     assert.equal(res.artifact.execution_status, "EXECUTED");
-    assert.equal(res.artifact.selected_subsystem, "demand_to_coverage_next_lane");
+    assert.equal(res.artifact.selected_subsystem, "steering:demand_to_coverage");
     assert.notEqual(
       res.artifact.selected_subsystem,
-      "ge_mwfp_xwfe_retailer_links_supabase_sync_owner_review",
+      "owner_review:ge_mwfp_xwfe_supabase_sync",
     );
   } finally {
     rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
@@ -484,7 +568,6 @@ test("runner executes allowlisted AP closeout/readiness proof when command_surfa
   let executed: string | null = null;
   try {
     const base = fakeReportWithDispatch({
-      selected_subsystem: "air_purifier_demand_selected_batch_closeout_readiness_proof",
       exact_command: cmd,
       command_surface: "terminal",
       dispatch_status: "READY",
@@ -503,6 +586,7 @@ test("runner executes allowlisted AP closeout/readiness proof when command_surfa
     };
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
       rootDir: REPO_ROOT,
+      provenanceResolver: () => BOUND_PROVENANCE,
       dispatchRunsDirRel: dispatchRunsDir,
       now: () => new Date("2026-07-15T05:30:00.000Z"),
       reportBuilder: async () => base,
@@ -518,10 +602,7 @@ test("runner executes allowlisted AP closeout/readiness proof when command_surfa
     });
     assert.equal(executed, cmd);
     assert.equal(res.artifact.execution_status, "EXECUTED");
-    assert.equal(
-      res.artifact.selected_subsystem,
-      "air_purifier_demand_selected_batch_closeout_readiness_proof",
-    );
+    assert.equal(res.artifact.selected_subsystem, "proof:ap_closeout_readiness");
   } finally {
     rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
   }
