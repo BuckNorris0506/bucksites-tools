@@ -38,7 +38,38 @@ export const GE_OWNER_REVIEW_EXACT_COMMAND_V1 =
 export const AP_OWNER_REVIEW_EXACT_COMMAND_V1 =
   "npx tsx scripts/report-air-purifier-demand-selected-batch-owner-review-v1.ts" as const;
 
+/** Guarded mutation executor. It must never be dispatch-allowlisted. */
+export const BUCKPARTS_RETAILER_LINK_PARITY_GUARDED_APPLY_WRITE_COMMAND_V1 =
+  "BUCKPARTS_IO_CAPABILITY=MUTATION npx tsx scripts/lib/buckparts-retailer-link-parity-guarded-apply-v1.ts --write --plan-file <plan.json>" as const;
+
 export const DISPATCH_ALLOWLIST_ENTRIES_V1: readonly DispatchAllowlistEntryV1[] = [
+  {
+    exact_command: "npm run buckparts:retailer-link-parity-correction",
+    selected_subsystem: "retailer_link_parity:detect",
+    command_kind: "read_only_report",
+    owner_review_required: false,
+    artifact_write_behavior: "optional",
+    no_artifact_allowed: true,
+    mutation_posture: MUTATION_POSTURE,
+  },
+  {
+    exact_command: "npm run buckparts:retailer-link-parity-correction -- --plan-dry-run",
+    selected_subsystem: "retailer_link_parity:plan_dry_run",
+    command_kind: "parity_plan",
+    owner_review_required: false,
+    artifact_write_behavior: "optional",
+    no_artifact_allowed: true,
+    mutation_posture: MUTATION_POSTURE,
+  },
+  {
+    exact_command: "npm run buckparts:retailer-link-parity-correction -- --owner-review",
+    selected_subsystem: "retailer_link_parity:owner_review",
+    command_kind: "owner_review",
+    owner_review_required: true,
+    artifact_write_behavior: "optional",
+    no_artifact_allowed: true,
+    mutation_posture: MUTATION_POSTURE,
+  },
   {
     exact_command:
       "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",

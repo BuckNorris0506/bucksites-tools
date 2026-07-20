@@ -940,6 +940,43 @@ export type OperatorDigestProjectionV1 = {
   source: "buckparts_command_center_v1_root_digest";
 };
 
+/** Read-only Phase 3 projection; it cannot authorize its guarded apply executor. */
+export type BuckpartsRetailerLinkParityCorrectionCommandCenterLaneV1 = {
+  contract: "buckparts_retailer_link_parity_correction_command_center_lane_v1";
+  read_only: true;
+  data_mutation: false;
+  mutation_authorized: false;
+  runtime_status: "ARMED_AND_IDLE" | "NOT_PROVEN";
+  detected_count: number;
+  /** Intake candidate count (DISCOVERED cohort size when no apply-ready plan). */
+  discovered_count: number;
+  classified_count: number;
+  planned_count: number;
+  awaiting_approval_count: number;
+  approved_ready_count: number;
+  applied_count: number;
+  verified_count: number;
+  failed_or_reconciliation_count: number;
+  owner_action_count: number;
+  cohorts: Array<{
+    status:
+      | "DISCOVERED"
+      | "PLANNED"
+      | "AWAITING_APPROVAL"
+      | "APPROVED_READY"
+      | "APPLIED"
+      | "VERIFIED"
+      | "FAILED_RECONCILIATION"
+      | "NOT_PROVEN";
+    count: number;
+    row_ids: string[];
+  }>;
+  blockers: string[];
+  proof_sources: string[];
+  steering_note: string;
+  next_action: string;
+};
+
 export type CommandCenterV2Report = {
   schema_version: "1";
   generated_at: string;
@@ -1149,6 +1186,8 @@ export type CommandCenterV2Report = {
   agent_control_plane_v1: BuckpartsAgentControlPlaneV1;
   /** Read-only issue lifecycle registry — shared truth for HyperAgent, Cursor, and Command Center. */
   command_center_issue_registry_v1: CommandCenterIssueRegistryLaneV1;
+  /** Read-only Phase 3 retailer-link parity correction projection; issue registry remains steering. */
+  buckparts_retailer_link_parity_correction_v1?: BuckpartsRetailerLinkParityCorrectionCommandCenterLaneV1;
   /** Read-only re-audit plan for DEPLOYED issues awaiting live RE_AUDIT — feeds HyperAgent. */
   command_center_issue_reaudit_v1: CommandCenterIssueReauditLaneV1;
   /** Read-only SEO opportunity planning registry — starter examples only; no NBA steering. */

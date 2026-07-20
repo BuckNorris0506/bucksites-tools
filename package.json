@@ -279,7 +279,10 @@
     "buckparts:staged-filter:apply-brand": "tsx scripts/apply-staged-filter-brand-refrigerator.ts",
     "search:gaps:review-part-resolution:fridge": "tsx scripts/review-staged-part-resolution-refrigerator.ts",
     "search:gaps:apply-part-choice:fridge": "tsx scripts/apply-staged-compat-part-choice-refrigerator.ts",
-    "buckparts:phase2-operating-coherence": "bash scripts/validate-buckparts-phase2-operating-coherence-v1.sh"
+    "buckparts:phase2-operating-coherence": "bash scripts/validate-buckparts-phase2-operating-coherence-v1.sh",
+    "buckparts:retailer-link-parity-correction": "npx tsx scripts/report-buckparts-retailer-link-parity-correction-v1.ts",
+    "buckparts:retailer-link-parity-guarded-apply": "npx tsx scripts/lib/buckparts-retailer-link-parity-guarded-apply-v1.ts",
+    "buckparts:phase3-self-correction": "bash scripts/validate-buckparts-phase3-self-correction-v1.sh"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.52.0",

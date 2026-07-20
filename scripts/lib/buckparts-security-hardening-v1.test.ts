@@ -342,7 +342,7 @@ describe("security hardening v1", () => {
     const guarded = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.filter(
       (e) => e.access_class === "write_guarded",
     );
-    assert.equal(guarded.length, 27);
+    assert.equal(guarded.length, 28);
     assert.ok(
       guarded.some(
         (e) =>
@@ -352,6 +352,15 @@ describe("security hardening v1", () => {
             "fridge_model_pdp_ge_mwfp_xwfe_retailer_links_supabase_sync_apply_v1",
       ),
       "GE MWFP/XWFE Supabase sync apply writer must be write_guarded in inventory",
+    );
+    assert.ok(
+      guarded.some(
+        (e) =>
+          e.rel_path ===
+            "scripts/lib/buckparts-retailer-link-parity-guarded-apply-v1.ts" &&
+          e.mutation_lane === "retailer_link_parity_guarded_apply_v1",
+      ),
+      "retailer-link parity guarded apply writer must be write_guarded in inventory",
     );
 
     const loWriter = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(

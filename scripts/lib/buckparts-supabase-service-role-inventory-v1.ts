@@ -34,6 +34,15 @@ export function fileHasSupabaseWriteOperationV1(text: string): boolean {
 export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInventoryEntryV1[] =
   [
     {
+      rel_path: "scripts/lib/buckparts-retailer-link-parity-guarded-apply-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "retailer_link_parity_guarded_apply_v1",
+    },
+    {
+      rel_path: "scripts/lib/buckparts-retailer-link-parity-issue-intake-v1.ts",
+      access_class: "read_only",
+    },
+    {
       rel_path: "scripts/lib/air-purifier-supabase-apply-parity-v1.ts",
       access_class: "write_guarded",
       mutation_lane: "air_purifier_supabase_parity_apply_v1",

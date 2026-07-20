@@ -24,6 +24,7 @@ import {
   withWaterdropLiveMonitorPrefix,
 } from "./lib/buckparts-command-center-next-best-action-v1";
 import { buildCommandCenterV2Report } from "./lib/buckparts-command-center-v2";
+import { deriveRetailerLinkParityCorrectionProjectionV1 } from "./report-buckparts-retailer-link-parity-correction-v1";
 import { buildCustomerLanguageAndWaterdropResearchLaneV1 } from "../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 import {
   parseSpendLedgerFileV1,
@@ -32,12 +33,16 @@ import {
 import { buildSemiCruiseStatusSummaryV1 } from "../src/lib/owner-dashboard/semi-cruise-status-summary-v1";
 import type {
   CommandCenterV2Report,
+  BuckpartsRetailerLinkParityCorrectionCommandCenterLaneV1,
   DemandToCoverageEngineV1,
   EvidenceToLearningOutcomesCandidateImportV1,
   LearningOutcomesConfidenceApprovalsLoadedV1,
   LearningOutcomesReadModelV1,
   LiveSiteMonitorV1,
 } from "./lib/buckparts-command-center-v2-types";
+import type { BuckpartsRetailerLinkParityIssueIntakeReportV1 } from "./lib/buckparts-retailer-link-parity-issue-intake-v1";
+import type { BuckpartsRetailerLinkParityCorrectionPlanV1 } from "./lib/buckparts-retailer-link-parity-correction-plan-v1";
+import type { BuckpartsRetailerLinkParityCloseoutReceiptV1 } from "./lib/buckparts-retailer-link-parity-closeout-v1";
 import { loadOrRunLiveSiteMonitorForCommandCenter } from "./lib/load-live-site-monitor-artifact";
 import { buildDeployLiveSiteMonitorCommandCenterLaneFromMonitor } from "./lib/deploy-live-site-monitor-command-center-lane-v1";
 import {
@@ -504,6 +509,8 @@ type BuildOptions = {
   learningOutcomesConfidenceApprovalsLoader?: () => LearningOutcomesConfidenceApprovalsLoadedV1;
   /** When set, skips catalog/Supabase joins for page publishability truth (tests). */
   pagePublishabilityTruthSummaryLoader?: () => Promise<PagePublishabilityTruthSummaryV1>;
+  /** Optional Phase 3 intake seam. Omission fails closed without a parity detector/DB read. */
+  retailerLinkParityIntakeLoader?: () => Promise<BuckpartsRetailerLinkParityIssueIntakeReportV1>;
   /** When true, append one read-only authority snapshot for snapshot_date_utc (skip if file exists). */
   writeAuthorityHistory?: boolean;
   providers?: {
@@ -517,6 +524,100 @@ type BuildOptions = {
     clickEventsSnapshot?: () => Promise<import("./lib/buckparts-command-center-v2-types").ClickVisibilitySnapshot>;
   };
 };
+
+export function buildRetailerLinkParityCorrectionCommandCenterLaneV1(args: {
+  intake?: BuckpartsRetailerLinkParityIssueIntakeReportV1;
+  plan?: BuckpartsRetailerLinkParityCorrectionPlanV1;
+  approvalPresent?: boolean;
+  executionReceipt?: { execution_id?: string; apply_status?: string } | null;
+  closeout?: BuckpartsRetailerLinkParityCloseoutReceiptV1 | null;
+  awaitingOwnerReview?: boolean;
+  unavailable_reason?: string;
+}): BuckpartsRetailerLinkParityCorrectionCommandCenterLaneV1 {
+  const steering_note =
+    "Operational projection only: issue_registry remains steering; canonical_final remains NBA; credit_control remains credit.";
+  if (!args.intake) {
+    const blocker = `retailer_link_parity_intake_not_proven:${args.unavailable_reason ?? "not_injected"}`;
+    return {
+      contract: "buckparts_retailer_link_parity_correction_command_center_lane_v1",
+      read_only: true,
+      data_mutation: false,
+      mutation_authorized: false,
+      runtime_status: "NOT_PROVEN",
+      detected_count: 0,
+      discovered_count: 0,
+      classified_count: 0,
+      planned_count: 0,
+      awaiting_approval_count: 0,
+      approved_ready_count: 0,
+      applied_count: 0,
+      verified_count: 0,
+      failed_or_reconciliation_count: 0,
+      owner_action_count: 0,
+      cohorts: [{ status: "NOT_PROVEN", count: 0, row_ids: [] }],
+      blockers: [blocker],
+      proof_sources: [],
+      steering_note,
+      next_action: "ARMED_AND_IDLE: provide a read-only retailer-link parity intake before planning correction.",
+    };
+  }
+  const discovered = args.intake.candidates.map((candidate) => candidate.issue_id).sort();
+  const validPlan = !!args.plan && args.plan.row_count > 0 && args.plan.blockers.length === 0;
+  const plannedIds = validPlan ? args.plan!.rows.map((row) => row.issue_id).sort() : [];
+  const receiptApplied = !!args.executionReceipt?.execution_id && args.executionReceipt.apply_status === "APPLIED";
+  const verified = args.closeout?.closeout_status === "VERIFIED";
+  const failed = !!args.closeout && !verified;
+  // Cohorts are a lifecycle partition. Each issue appears once at its furthest
+  // proven stage, never in DISCOVERED plus AWAITING_APPROVAL.
+  const lifecycleStatus = verified
+    ? "VERIFIED"
+    : failed
+      ? "FAILED_RECONCILIATION"
+      : receiptApplied
+        ? "APPLIED"
+      : validPlan && args.approvalPresent
+        ? "APPROVED_READY"
+        : validPlan
+          ? args.awaitingOwnerReview === false ? "PLANNED" : "AWAITING_APPROVAL"
+          : "DISCOVERED";
+  const lifecycleIds = validPlan ? plannedIds : discovered;
+  const noOp = discovered.length > 0 && !validPlan && args.plan?.row_count === 0;
+  const lifecycleCount = lifecycleIds.length;
+  const is = (status: typeof lifecycleStatus) => lifecycleStatus === status ? lifecycleCount : 0;
+  return {
+    contract: "buckparts_retailer_link_parity_correction_command_center_lane_v1",
+    read_only: true,
+    data_mutation: false,
+    mutation_authorized: false,
+    runtime_status: noOp || (discovered.length === 0 && args.intake.blockers.length === 0) ? "ARMED_AND_IDLE" : "NOT_PROVEN",
+    detected_count: args.intake.detected_count,
+    discovered_count: is("DISCOVERED"),
+    classified_count:
+      args.intake.correctable_count + args.intake.non_correctable_count + args.intake.blocked_count,
+    planned_count: is("PLANNED"),
+    awaiting_approval_count: is("AWAITING_APPROVAL"),
+    approved_ready_count: is("APPROVED_READY"),
+    applied_count: is("APPLIED"),
+    verified_count: is("VERIFIED"),
+    failed_or_reconciliation_count: is("FAILED_RECONCILIATION"),
+    owner_action_count: is("AWAITING_APPROVAL"),
+    cohorts: [
+      { status: lifecycleStatus, count: lifecycleIds.length, row_ids: lifecycleIds },
+    ],
+    // Exact merge: intake + plan blockers, no rewrite. Deterministic sort + dedupe.
+    // Plan refusals (e.g. no_op_update_refused / zero_row_plan_refused) must surface
+    // on ARMED_AND_IDLE without becoming FAILED_RECONCILIATION.
+    blockers: [...new Set([
+      ...args.intake.blockers,
+      ...(args.plan?.blockers ?? []),
+    ])].sort(),
+    proof_sources: [...args.intake.proof_sources].sort(),
+    steering_note,
+    next_action: noOp
+      ? "No apply-ready parity correction exists. Continue read-only monitoring."
+      : args.intake.recommended_next_action,
+  };
+}
 
 function safeJsonParse(input: string): unknown | null {
   try {
@@ -3028,6 +3129,7 @@ export async function buildBuckpartsCommandCenterReport(
   });
 
   const semi_cruise_status_summary_v1 = demoteAdvisoryBrainV1({
+    // Typed debt: dashboard summary lacks a string index signature required by generic demotion helper.
     payload: buildSemiCruiseStatusSummaryV1({
       generated_at: now().toISOString(),
       read_only: true,
@@ -3166,6 +3268,31 @@ export async function buildBuckpartsCommandCenterReport(
     scoreboard: customer_reality_scoreboard_v1,
   });
 
+  let buckparts_retailer_link_parity_correction_v1: BuckpartsRetailerLinkParityCorrectionCommandCenterLaneV1;
+  try {
+    const derived = await deriveRetailerLinkParityCorrectionProjectionV1({
+      rootDir,
+      builders: options.retailerLinkParityIntakeLoader
+        ? {
+            buildIntake: async () => options.retailerLinkParityIntakeLoader!(),
+            buildPostDiff: async () => {
+              throw new Error("postDiff is not required for command-center projection");
+            },
+          }
+        : undefined,
+    });
+    buckparts_retailer_link_parity_correction_v1 =
+      buildRetailerLinkParityCorrectionCommandCenterLaneV1({
+        intake: derived.intake,
+        plan: derived.plan,
+      });
+  } catch (error) {
+    buckparts_retailer_link_parity_correction_v1 =
+      buildRetailerLinkParityCorrectionCommandCenterLaneV1({
+        unavailable_reason: error instanceof Error ? error.message : String(error),
+      });
+  }
+
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
     owner_drift_detector_v1,
@@ -3177,6 +3304,7 @@ export async function buildBuckpartsCommandCenterReport(
     fridge_guarded_batch_lifecycle_rule_promotion_plan_v1,
     command_center_efficiency_truth_table_v1,
     command_center_control_graph_rollup_v1: demoteAdvisoryBrainV1({
+      // Typed debt: rollup lacks a string index signature required by generic demotion helper.
       payload: command_center_control_graph_rollup_v1 as unknown as Record<string, unknown>,
       canonical_source: ".command_center_v2.canonical_final_operating_decision_v1",
       reason:
@@ -3208,6 +3336,7 @@ export async function buildBuckpartsCommandCenterReport(
     distribution_opportunity_registry_v1,
     truth_integrity_registry_v1,
     phase1_operating_circuit_v1,
+    buckparts_retailer_link_parity_correction_v1,
   };
 
   return {
