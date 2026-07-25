@@ -25,6 +25,10 @@ import {
 } from "./lib/buckparts-command-center-next-best-action-v1";
 import { buildCommandCenterV2Report } from "./lib/buckparts-command-center-v2";
 import { deriveRetailerLinkParityCorrectionProjectionV1 } from "./report-buckparts-retailer-link-parity-correction-v1";
+import {
+  buildPhase4CoverageScoreboardUnknownV1,
+  buildPhase4CoverageScoreboardV1,
+} from "./lib/buckparts-phase4-coverage-scoreboard-v1";
 import { buildCustomerLanguageAndWaterdropResearchLaneV1 } from "../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 import {
   parseSpendLedgerFileV1,
@@ -3293,6 +3297,24 @@ export async function buildBuckpartsCommandCenterReport(
       });
   }
 
+  let phase4_coverage_scoreboard_v1;
+  try {
+    phase4_coverage_scoreboard_v1 = buildPhase4CoverageScoreboardV1({
+      now,
+      census: all_product_safe_buyer_path_census_v1,
+      demandNextLane: demand_to_coverage_next_lane_v1,
+      sitemapAudit: sitemap_indexability_audit_v1,
+      wedgeMatrix: wedge_truth_spine_coverage_matrix_v1,
+      retailerLinkParity: buckparts_retailer_link_parity_correction_v1,
+      fridgeTruthSpine: fridge_truth_spine_v1,
+    });
+  } catch (error) {
+    phase4_coverage_scoreboard_v1 = buildPhase4CoverageScoreboardUnknownV1({
+      reason: error instanceof Error ? error.message : String(error),
+      now,
+    });
+  }
+
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
     owner_drift_detector_v1,
@@ -3337,6 +3359,7 @@ export async function buildBuckpartsCommandCenterReport(
     truth_integrity_registry_v1,
     phase1_operating_circuit_v1,
     buckparts_retailer_link_parity_correction_v1,
+    phase4_coverage_scoreboard_v1,
   };
 
   return {

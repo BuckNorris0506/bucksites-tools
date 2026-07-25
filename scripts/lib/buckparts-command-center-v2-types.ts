@@ -1188,6 +1188,11 @@ export type CommandCenterV2Report = {
   command_center_issue_registry_v1: CommandCenterIssueRegistryLaneV1;
   /** Read-only Phase 3 retailer-link parity correction projection; issue registry remains steering. */
   buckparts_retailer_link_parity_correction_v1?: BuckpartsRetailerLinkParityCorrectionCommandCenterLaneV1;
+  /**
+   * Phase 4 P4-ENTRY coverage scoreboard — read-only rollup of census/demand/sitemap/parity/spine.
+   * Prefer census safe-buyer-path truth; no mutation or NBA authority.
+   */
+  phase4_coverage_scoreboard_v1?: import("./buckparts-phase4-coverage-scoreboard-v1").Phase4CoverageScoreboardV1;
   /** Read-only re-audit plan for DEPLOYED issues awaiting live RE_AUDIT — feeds HyperAgent. */
   command_center_issue_reaudit_v1: CommandCenterIssueReauditLaneV1;
   /** Read-only SEO opportunity planning registry — starter examples only; no NBA steering. */
