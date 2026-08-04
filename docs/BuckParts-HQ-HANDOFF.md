@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (Phase 0 reporting-integrity repair committed at `65f357c`):** Pre-repair baseline was **`d017d40`** (Register GE Supabase writer in service-role inventory). The bounded reporting-integrity repair was committed and clean-tree validated at **`65f357c`**. Prior GE MWFP/XWFE guarded Supabase retailer_links sync **applied** at `e797fe2` (exactly **`smartwater-mwfp` + `xwfe`**; UPDATE-only; **`xwf` untouched**). Post-write CTA/go remains **PASS 27 / FAIL 1** (remaining fail **`ge-gte18gsnrss`** remain-no-buy). GE sync dispatch is **`NOT_NEEDED`** (notes-only residual drift). After GE sync surfacing (`ce2ee6e`), Command Center dispatch **executed** read-only **`demand_to_coverage_next_lane`**, then **AP demand-selected owner review**, then **AP closeout/readiness proof**, and **hard-stopped before mutation** (`batch_closeout` / `apply_readiness` = **NOT_PROVEN**). Repository-proven Netlify deploy-preflight defect: GE Supabase writer existed but was **missing from the service-role inventory** (`d017d40` registration). Owner-supplied Netlify logs support that inventory gap; **whether any additional secret-related failure also occurred is not independently ruled out beyond those supplied logs**. Production Netlify **Published `main@d017d40`** remains owner-reported. Do **not** overclaim GE PDPs or AP closeout as revenue/conversion wins. **Root `AGENTS.md` remains the agent operating contract**. **Conversion / revenue / ranking / SEO impact remain `UNKNOWN`**. Credits available ≠ deploy authorization.
+> **Current operational stopping point (Phase 4 Decision-Capture v1 committed at `16b79d1`):** HEAD / `origin/main` = **`16b79d1`** (`Build Phase 4 Decision-Capture sibling scoreboard`). Read-only sibling to P4-ENTRY supply coverage (`4642bb2` / `phase4_coverage_scoreboard_v1`): evidence-entered BUY / DO-NOT-BUY / UNKNOWN capture at `.command_center_v2.phase4_decision_capture_v1`. Live snapshot at commit: **universe=42**, **confident_buy=27**, **confident_do_not_buy=1**, **honest_unknown=14**. Posture: **`read_only=true`**, **`mutation_authorized=false`**, **`steering_authority=false`**. Brain manifest **CONNECTED**. Prior Phase 0 reporting-integrity repair at **`65f357c`** and GE/AP hard-stop chronology remain in force below as historical/prior lanes. Do **not** claim Phase 4 complete, inventory coverage complete, revenue/SEO, autonomous apply, or HyperAgent eligibility. **Root `AGENTS.md` remains the agent operating contract**. Credits available ≠ deploy authorization.
 
 ## Execution Stack
 
@@ -54,9 +54,55 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — Phase 0 reporting integrity repair (`65f357c`)
+## Current stopping point — Phase 4 Decision-Capture v1 (`16b79d1`)
 
-**Read this section first** for LIVE pre-repair baseline, GE MWFP/XWFE post-sync posture, AP demand-selected dispatch hard-stop, and Netlify preflight inventory repair.
+**Read this section first** for LIVE Phase 4 Decision-Capture sibling posture (evidence-entered decision opportunities; not inventory coverage).
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| HEAD / `origin/main` | **`16b79d1`** — Build Phase 4 Decision-Capture sibling scoreboard |
+| Contract | `docs/BuckParts-PHASE4-DECISION-CAPTURE-CONTRACT-V1.md` |
+| Command Center path | `command_center_v2.phase4_decision_capture_v1` |
+| Impl | `scripts/lib/buckparts-phase4-decision-capture-v1.ts` |
+| Brain manifest | **CONNECTED** (`phase4_decision_capture`; `mutation_authority=false`; `steering_authority=false`) |
+| Sibling (unchanged) | P4-ENTRY supply scoreboard at **`4642bb2`** — `phase4_coverage_scoreboard_v1` / `docs/BuckParts-PHASE4-COVERAGE-CONTRACT-V1.md` |
+| Posture | **`read_only=true`**; **`data_mutation=false`**; **`mutation_authorized=false`**; **`steering_authority=false`** |
+| Validator | `npm run buckparts:phase4-decision-capture` |
+| Live snapshot at commit | **universe=42**; **confident_buy=27**; **confident_do_not_buy=1**; **honest_unknown=14** |
+| Denominator | Evidence-entered decision opportunities (CTA/go scope + quarantined/PARTIAL exclusions). Raw inventory does **not** enter the denominator. |
+| Remain-no-buy (current DO-NOT-BUY) | **`ge-gte18gsnrss`** |
+
+### Validation proven
+
+| Gate | Result |
+|------|--------|
+| Decision-Capture validator | **`PHASE4_DECISION_CAPTURE_PASS`** |
+| Phase 4 P4-ENTRY (supply scoreboard unchanged) | **`PHASE4_P4_ENTRY_PASS`** |
+| Phase 3 | **`PHASE3_SELF_CORRECTION_PASS`** |
+| Phase 2 | **`PHASE2_OPERATING_COHERENCE_PASS`** |
+| Ship Guard | **PASS** (`--enforce`) |
+| Build | **PASS** |
+
+### Not claimed
+
+Phase 4 complete, inventory coverage complete, revenue/SEO improvements, autonomous apply, HyperAgent eligibility — **not claimed**. Conversion / ranking / deploy spend authorization remain **`UNKNOWN` / not claimed**. Decision-Capture does **not** authorize CSV / Supabase / retailer_links / evidence / approval / dispatch mutation and does **not** set NBA.
+
+### Current recommendation (founder-gated)
+
+1. Treat Decision-Capture as a **read-only sibling** to the supply coverage scoreboard; do **not** overwrite census-backed `SAFE_BUYER_PATH_*` page counts.
+2. Use evidence-entered universe counts (42 / 27 / 1 / 14 at this commit) — never raw fridge inventory — when discussing decision closure.
+3. Keep **`ge-gte18gsnrss`** remain-no-buy; do **not** invent buyer-path wins for honest_unknown quarantine/PARTIAL rows.
+4. Before any production deploy spend: Credit Control + ship-guard (credits available ≠ deploy authorization).
+5. Prior GE/AP hard-stop and Phase 0 reporting-integrity chronology remain below; Decision-Capture does not reopen those mutation lanes.
+
+---
+
+## Prior completed lane — Phase 0 reporting integrity repair (`65f357c`)
+
+**Historical reference** for LIVE pre-repair baseline, GE MWFP/XWFE post-sync posture, AP demand-selected dispatch hard-stop, and Netlify preflight inventory repair — superseded for operational pickup by **§ Current stopping point — Phase 4 Decision-Capture v1 (`16b79d1`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -82,7 +128,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 Conversion, revenue, user clicks, ranking, SEO impact, AP batch closeout, AP apply readiness, autonomous mutation — **`UNKNOWN` / not claimed**. Notes-only residual GE parity drift is **not** a re-write trigger. AP closeout chain did **not** mutate CSV / compatibility / retailer_links CSV / public CTA / sitemap / robots / Product JSON-LD. GE parity path reuse is historical only: founder decision binds pre-apply parity content sha256 `98dfcccdede32e1e3e880404b05bb8cde8dc9c1ac64d3aae0a93751cdffddc98` (not the current HEAD body). The same path at HEAD holds a later post-apply immutable receipt sha256 `0dc44138c845031089178c09c117a349969e28c4e41f49a74e1f8579cc31df32` (notes-only residual; **not** founder-approval-bound). Canonical GE parity drafts under `data/fridge/batch-production/drafts/` remain the operational source consumed by the fridge truth spine. Phase 0 sidecars under `data/ops/phase0-reporting-integrity/` are immutable reporting/provenance snapshots — not the sole operational truth source.
 
-### Current recommendation (founder-gated)
+### Recommendation at that time (historical)
 
 1. Treat GE MWFP/XWFE Supabase URL sync as **complete** for this scoped write; do **not** re-run sync owner-review/write dispatch.
 2. Treat AP demand-selected closeout/apply as **NOT_PROVEN**; hard-stop before mutation until a separate founder-authorized lane.
@@ -94,7 +140,7 @@ Conversion, revenue, user clicks, ranking, SEO impact, AP batch closeout, AP app
 
 ## Prior completed lane — GE MWFP/XWFE Supabase sync applied (`e797fe2`)
 
-**Historical reference** for the guarded Supabase retailer_links sync apply itself (superseded for operational pickup by **§ Current stopping point — Phase 0 reporting integrity repair (`65f357c`)** above).
+**Historical reference** for the guarded Supabase retailer_links sync apply itself (superseded for operational pickup by **§ Prior completed lane — Phase 0 reporting integrity repair (`65f357c`)**; current pickup is **§ Current stopping point — Phase 4 Decision-Capture v1 (`16b79d1`)** above).
 
 ### Milestone summary (PROVEN at apply time)
 
