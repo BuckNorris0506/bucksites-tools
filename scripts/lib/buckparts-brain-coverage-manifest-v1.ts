@@ -174,6 +174,23 @@ const CURATED_ENTRIES: EntrySeed[] = [
       "Sibling to phase4_coverage_scoreboard only; census remains canonical for SAFE_BUYER_PATH_* page counts; issue_registry remains steering; canonical_final remains NBA.",
   },
   {
+    system_id: "phase4_demand_capture",
+    npm_script_or_path:
+      "scripts/lib/buckparts-phase4-demand-capture-v1.ts + docs/BuckParts-PHASE4-DEMAND-CAPTURE-CONTRACT-V1.md",
+    cc_json_path: "command_center_v2.phase4_demand_capture_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command: "npm run buckparts:phase4-demand-capture",
+    reason:
+      "Read-only Phase 4 Demand-Capture sibling; demand visibility only; UNKNOWN never coerced to zero; no mutation, dispatch, owner-approval, or NBA authority.",
+    role: "operational demand-capture projection",
+    mutation_authority: false,
+    steering_authority: false,
+    notes:
+      "Sibling to phase4_coverage_scoreboard and phase4_decision_capture only; no prioritization or page recommendations; issue_registry remains steering; canonical_final remains NBA.",
+  },
+  {
     system_id: "universal_coverage_factory_v1",
     npm_script_or_path:
       "src/lib/coverage-factory/universal-coverage-factory-v1.ts (read-only factory; not yet a Command Center lane)",

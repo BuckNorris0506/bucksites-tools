@@ -33,6 +33,10 @@ import {
   buildPhase4DecisionCaptureUnknownV1,
   buildPhase4DecisionCaptureV1,
 } from "./lib/buckparts-phase4-decision-capture-v1";
+import {
+  buildPhase4DemandCaptureUnknownV1,
+  buildPhase4DemandCaptureV1,
+} from "./lib/buckparts-phase4-demand-capture-v1";
 import { buildCustomerLanguageAndWaterdropResearchLaneV1 } from "../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 import {
   parseSpendLedgerFileV1,
@@ -3333,6 +3337,22 @@ export async function buildBuckpartsCommandCenterReport(
     });
   }
 
+  let phase4_demand_capture_v1;
+  try {
+    phase4_demand_capture_v1 = buildPhase4DemandCaptureV1({
+      now,
+      demandNextLane: demand_to_coverage_next_lane_v1,
+      externalMeasurementFreshness:
+        command_center_v2_with_operator_digest.external_measurement_freshness_v1,
+      searchAndClick: searchAndClickSummary,
+    });
+  } catch (error) {
+    phase4_demand_capture_v1 = buildPhase4DemandCaptureUnknownV1({
+      reason: error instanceof Error ? error.message : String(error),
+      now,
+    });
+  }
+
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
     owner_drift_detector_v1,
@@ -3379,6 +3399,7 @@ export async function buildBuckpartsCommandCenterReport(
     buckparts_retailer_link_parity_correction_v1,
     phase4_coverage_scoreboard_v1,
     phase4_decision_capture_v1,
+    phase4_demand_capture_v1,
   };
 
   return {
