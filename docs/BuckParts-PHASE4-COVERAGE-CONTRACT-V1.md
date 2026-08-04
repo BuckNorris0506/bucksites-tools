@@ -85,6 +85,19 @@ node --import tsx scripts/report-buckparts-command-center.ts \
 
 ---
 
-## 6. Not claimed
+## 6. Sibling pointer (Decision-Capture)
+
+Supply-side P4-ENTRY scoreboard behavior is unchanged by Decision-Capture.
+
+Customer decision outcomes (BUY / DO-NOT-BUY / UNKNOWN) are measured by the sibling contract:
+
+- `docs/BuckParts-PHASE4-DECISION-CAPTURE-CONTRACT-V1.md`
+- CC path: `.command_center_v2.phase4_decision_capture_v1`
+
+Decision-Capture does not overwrite census-backed supply dimensions in `phase4_coverage_scoreboard_v1`.
+
+---
+
+## 7. Not claimed
 
 Conversion, revenue, ranking, SEO impact, executable safe-buyer-path delta, Phase 4 complete, HyperAgent eligibility, deploy/credit spend authorization.

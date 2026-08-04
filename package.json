@@ -283,7 +283,8 @@
     "buckparts:retailer-link-parity-correction": "npx tsx scripts/report-buckparts-retailer-link-parity-correction-v1.ts",
     "buckparts:retailer-link-parity-guarded-apply": "npx tsx scripts/lib/buckparts-retailer-link-parity-guarded-apply-v1.ts",
     "buckparts:phase3-self-correction": "bash scripts/validate-buckparts-phase3-self-correction-v1.sh",
-    "buckparts:phase4-p4-entry": "bash scripts/validate-buckparts-phase4-p4-entry-v1.sh"
+    "buckparts:phase4-p4-entry": "bash scripts/validate-buckparts-phase4-p4-entry-v1.sh",
+    "buckparts:phase4-decision-capture": "bash scripts/validate-buckparts-phase4-decision-capture-v1.sh"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.52.0",

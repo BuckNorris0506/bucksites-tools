@@ -1193,6 +1193,11 @@ export type CommandCenterV2Report = {
    * Prefer census safe-buyer-path truth; no mutation or NBA authority.
    */
   phase4_coverage_scoreboard_v1?: import("./buckparts-phase4-coverage-scoreboard-v1").Phase4CoverageScoreboardV1;
+  /**
+   * Phase 4 Decision-Capture — read-only sibling to coverage scoreboard.
+   * Evidence-entered BUY / DO-NOT-BUY / UNKNOWN; no mutation or NBA authority.
+   */
+  phase4_decision_capture_v1?: import("./buckparts-phase4-decision-capture-v1").Phase4DecisionCaptureV1;
   /** Read-only re-audit plan for DEPLOYED issues awaiting live RE_AUDIT — feeds HyperAgent. */
   command_center_issue_reaudit_v1: CommandCenterIssueReauditLaneV1;
   /** Read-only SEO opportunity planning registry — starter examples only; no NBA steering. */

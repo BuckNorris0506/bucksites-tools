@@ -29,6 +29,10 @@ import {
   buildPhase4CoverageScoreboardUnknownV1,
   buildPhase4CoverageScoreboardV1,
 } from "./lib/buckparts-phase4-coverage-scoreboard-v1";
+import {
+  buildPhase4DecisionCaptureUnknownV1,
+  buildPhase4DecisionCaptureV1,
+} from "./lib/buckparts-phase4-decision-capture-v1";
 import { buildCustomerLanguageAndWaterdropResearchLaneV1 } from "../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 import {
   parseSpendLedgerFileV1,
@@ -3315,6 +3319,20 @@ export async function buildBuckpartsCommandCenterReport(
     });
   }
 
+  let phase4_decision_capture_v1;
+  try {
+    phase4_decision_capture_v1 = buildPhase4DecisionCaptureV1({
+      rootDir,
+      now,
+      demandNextLane: demand_to_coverage_next_lane_v1,
+    });
+  } catch (error) {
+    phase4_decision_capture_v1 = buildPhase4DecisionCaptureUnknownV1({
+      reason: error instanceof Error ? error.message : String(error),
+      now,
+    });
+  }
+
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
     owner_drift_detector_v1,
@@ -3360,6 +3378,7 @@ export async function buildBuckpartsCommandCenterReport(
     phase1_operating_circuit_v1,
     buckparts_retailer_link_parity_correction_v1,
     phase4_coverage_scoreboard_v1,
+    phase4_decision_capture_v1,
   };
 
   return {

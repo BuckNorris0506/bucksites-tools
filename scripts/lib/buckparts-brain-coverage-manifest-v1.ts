@@ -157,6 +157,23 @@ const CURATED_ENTRIES: EntrySeed[] = [
       "Census is canonical for SAFE_BUYER_PATH_PROVEN; demand safe_cta_count is not interchangeable; issue_registry remains steering; canonical_final remains NBA.",
   },
   {
+    system_id: "phase4_decision_capture",
+    npm_script_or_path:
+      "scripts/lib/buckparts-phase4-decision-capture-v1.ts + docs/BuckParts-PHASE4-DECISION-CAPTURE-CONTRACT-V1.md",
+    cc_json_path: "command_center_v2.phase4_decision_capture_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command: "npm run buckparts:phase4-decision-capture",
+    reason:
+      "Read-only Phase 4 Decision-Capture sibling; evidence-entered BUY/DO-NOT-BUY/UNKNOWN; raw inventory excluded from denominator; no mutation or NBA authority.",
+    role: "operational decision-capture projection",
+    mutation_authority: false,
+    steering_authority: false,
+    notes:
+      "Sibling to phase4_coverage_scoreboard only; census remains canonical for SAFE_BUYER_PATH_* page counts; issue_registry remains steering; canonical_final remains NBA.",
+  },
+  {
     system_id: "universal_coverage_factory_v1",
     npm_script_or_path:
       "src/lib/coverage-factory/universal-coverage-factory-v1.ts (read-only factory; not yet a Command Center lane)",
