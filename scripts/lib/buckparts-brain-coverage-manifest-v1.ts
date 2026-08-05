@@ -191,6 +191,23 @@ const CURATED_ENTRIES: EntrySeed[] = [
       "Sibling to phase4_coverage_scoreboard and phase4_decision_capture only; no prioritization or page recommendations; issue_registry remains steering; canonical_final remains NBA.",
   },
   {
+    system_id: "phase4_outcome_capture",
+    npm_script_or_path:
+      "scripts/lib/buckparts-phase4-outcome-capture-v1.ts + docs/BuckParts-PHASE4-OUTCOME-CAPTURE-CONTRACT-V1.md",
+    cc_json_path: "command_center_v2.phase4_outcome_capture_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command: "npm run buckparts:phase4-outcome-capture",
+    reason:
+      "Read-only final Phase 4 Outcome-Capture sibling; handoffs from confident decisions only; never rewards raw clicks; Goodhart guard; no mutation or NBA authority.",
+    role: "operational outcome-capture projection",
+    mutation_authority: false,
+    steering_authority: false,
+    notes:
+      "Final Phase 4 sibling after coverage/decision/demand; /go-unavailable is its own class; wrong-part clicks never positive; issue_registry remains steering; canonical_final remains NBA.",
+  },
+  {
     system_id: "universal_coverage_factory_v1",
     npm_script_or_path:
       "src/lib/coverage-factory/universal-coverage-factory-v1.ts (read-only factory; not yet a Command Center lane)",

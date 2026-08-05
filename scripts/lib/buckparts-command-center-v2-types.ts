@@ -1203,6 +1203,11 @@ export type CommandCenterV2Report = {
    * Demand visibility only; UNKNOWN never coerced to zero; no mutation/NBA/dispatch authority.
    */
   phase4_demand_capture_v1?: import("./buckparts-phase4-demand-capture-v1").Phase4DemandCaptureV1;
+  /**
+   * Phase 4 Outcome-Capture — final read-only sibling.
+   * Handoffs from confident decisions only; never rewards raw clicks; Goodhart guard required.
+   */
+  phase4_outcome_capture_v1?: import("./buckparts-phase4-outcome-capture-v1").Phase4OutcomeCaptureV1;
   /** Read-only re-audit plan for DEPLOYED issues awaiting live RE_AUDIT — feeds HyperAgent. */
   command_center_issue_reaudit_v1: CommandCenterIssueReauditLaneV1;
   /** Read-only SEO opportunity planning registry — starter examples only; no NBA steering. */
