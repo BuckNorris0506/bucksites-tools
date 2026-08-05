@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (Phase 4 Demand-Capture v1 committed at `45ec7c7`):** HEAD / `origin/main` = **`45ec7c7`** (`Build Phase 4 Demand-Capture sibling scoreboard`). Read-only sibling measuring **customer demand visibility** at `.command_center_v2.phase4_demand_capture_v1` (`phase4_demand_capture_v1`). Live snapshot at commit: **demand_signal=PROVEN**, **gsc=STALE**, **ga4=STALE**, **search_events=PROVEN**, **click_events=PROVEN**, **demand_questions=UNKNOWN**, **blocked_by_no_safe_path=UNKNOWN**, **freshness=STALE**. Posture: **`read_only=true`**, **`mutation_authorized=false`**, **`steering_authority=false`**. Brain manifest **CONNECTED**. Prior Decision-Capture at **`16b79d1`**, P4-ENTRY supply coverage at **`4642bb2`**, and Phase 0 / GE/AP chronology remain below as prior lanes. Do **not** claim Phase 4 complete, inventory coverage complete, revenue/SEO, autonomous apply, prioritization, or HyperAgent eligibility. UNKNOWN must never become numeric zero. **Root `AGENTS.md` remains the agent operating contract**. Credits available ≠ deploy authorization.
+> **Current operational stopping point (Phase 4 Outcome-Capture v1 committed at `5640078`):** HEAD = **`5640078`** (`Build Phase 4 Outcome-Capture sibling scoreboard`). **Phase 4 is NOT complete.** Final read-only Phase 4 instrumentation sibling measuring **handoffs from confident decisions** (not raw clicks) at `.command_center_v2.phase4_outcome_capture_v1` (`phase4_outcome_capture_v1` — `docs/BuckParts-PHASE4-OUTCOME-CAPTURE-CONTRACT-V1.md`). Live snapshot at commit: **confident_decision_origin=PROVEN**, **handoff_from_confident_buy=UNKNOWN**, **handoff_from_confident_do_not_buy=UNKNOWN**, **go_unavailable=UNKNOWN**, **wrong_part_click=UNKNOWN**, **remain_no_buy_preserved=1**, **raw_click_events_visibility=PROVEN**, **revenue/retailer_conversion/returns/ltv/serp=UNKNOWN**, **runtime_status=ATTENTION**. Posture: **`read_only=true`**, **`data_mutation=false`**, **`mutation_authorized=false`**, **`steering_authority=false`**. Brain manifest **CONNECTED** (`phase4_outcome_capture`; **`mutation_authority=false`**; **`steering_authority=false`**). Prior Demand-Capture at **`45ec7c7`**, Decision-Capture at **`16b79d1`**, P4-ENTRY supply coverage at **`4642bb2`**, and Phase 0 / GE/AP chronology remain below as prior lanes. Phase 3 / Phase 2 baseline exceptions at **`5640078`** are **commit-scoped only** and do **not** establish Phase 4 completion. Do **not** claim Phase 4 complete, inventory coverage complete, revenue/SEO, autonomous apply, prioritization, or HyperAgent eligibility. UNKNOWN must never become numeric zero. Never reward raw clicks. **Root `AGENTS.md` remains the agent operating contract**. Credits available ≠ deploy authorization.
 
 ## Execution Stack
 
@@ -54,21 +54,66 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — Phase 4 Demand-Capture v1 (`45ec7c7`)
+## Current stopping point — Phase 4 Outcome-Capture v1 (`5640078`)
 
-**Read this section first** for LIVE Phase 4 Demand-Capture sibling posture (customer demand visibility; not supply coverage; not decision outcomes).
+**Read this section first** for LIVE Phase 4 Outcome-Capture sibling posture (handoffs from confident decisions; not raw clicks; not supply coverage; not demand visibility). **Phase 4 is NOT complete.**
 
 ### Milestone summary (PROVEN)
 
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
-| HEAD / `origin/main` | **`45ec7c7`** — Build Phase 4 Demand-Capture sibling scoreboard |
+| HEAD | **`5640078`** — Build Phase 4 Outcome-Capture sibling scoreboard |
+| Contract | `phase4_outcome_capture_v1` — `docs/BuckParts-PHASE4-OUTCOME-CAPTURE-CONTRACT-V1.md` |
+| Command Center path | `.command_center_v2.phase4_outcome_capture_v1` |
+| Impl | `scripts/lib/buckparts-phase4-outcome-capture-v1.ts` |
+| Brain manifest | **CONNECTED** (`phase4_outcome_capture`; `mutation_authority=false`; `steering_authority=false`) |
+| Siblings (unchanged) | Demand-Capture at **`45ec7c7`** — `phase4_demand_capture_v1`; Decision-Capture at **`16b79d1`** — `phase4_decision_capture_v1`; P4-ENTRY supply at **`4642bb2`** — `phase4_coverage_scoreboard_v1` |
+| Posture | **`read_only=true`**; **`data_mutation=false`**; **`mutation_authorized=false`**; **`steering_authority=false`** |
+| Validator | `npm run buckparts:phase4-outcome-capture` |
+| Live snapshot at commit | **confident_decision_origin=PROVEN**; **handoff_from_confident_buy=UNKNOWN**; **handoff_from_confident_do_not_buy=UNKNOWN**; **go_unavailable=UNKNOWN**; **wrong_part_click=UNKNOWN**; **remain_no_buy_preserved=1**; **raw_click_events_visibility=PROVEN**; **revenue/retailer_conversion/returns/ltv/serp=UNKNOWN**; **runtime_status=ATTENTION** |
+| Goodhart guard | Raw clicks never positive outcomes; wrong-part clicks never positive; page count not outcome denominator; `/go-unavailable` is its own class |
+
+### Validation proven
+
+| Gate | Result |
+|------|--------|
+| Outcome-Capture validator | **`PHASE4_OUTCOME_CAPTURE_PASS`** |
+| Demand-Capture (sibling unchanged) | unchanged — not reopened by Outcome-Capture |
+| Decision-Capture (sibling unchanged) | unchanged — not reopened by Outcome-Capture |
+| Phase 4 P4-ENTRY (supply scoreboard unchanged) | unchanged — not reopened by Outcome-Capture |
+| Phase 3 | **commit-scoped baseline exception only** — fails identically on clean HEAD (absent Supabase URL env vars); authorizes **`5640078`** only; does **not** establish Phase 4 completion |
+| Phase 2 | **commit-scoped baseline exception only** — fails identically on clean HEAD at existing Phase 1 baseline signature gate; authorizes **`5640078`** only; does **not** establish Phase 4 completion |
+
+### Not claimed
+
+**Phase 4 is NOT complete.** Inventory coverage complete, revenue/SEO improvements, autonomous apply, prioritization, page recommendations, HyperAgent eligibility — **not claimed**. Conversion / ranking / deploy spend authorization remain **`UNKNOWN` / not claimed**. Outcome-Capture does **not** authorize CSV / Supabase / retailer_links / evidence / approval / dispatch mutation and does **not** set NBA. Handoff / go-unavailable / wrong-part counts stay **UNKNOWN** until a proven Decision-Capture ↔ telemetry join exists (never coerced to numeric zero). Never reward raw clicks.
+
+### Current recommendation (founder-gated)
+
+1. Treat Outcome-Capture as the **final read-only Phase 4 instrumentation sibling** for post-decision handoff visibility only; do **not** overwrite Coverage / Decision-Capture / Demand-Capture projections.
+2. Treat **UNKNOWN** handoff / go-unavailable / wrong-part / revenue placeholders as honest gaps — do **not** invent zeros, click rewards, or page recommendations.
+3. Keep prior Decision-Capture remain-no-buy **`ge-gte18gsnrss`**; Outcome-Capture does not reopen mutation lanes.
+4. Before any production deploy spend: Credit Control + ship-guard (credits available ≠ deploy authorization).
+5. Prior Demand-Capture, Decision-Capture, P4-ENTRY, GE/AP hard-stop, and Phase 0 chronology remain below.
+
+---
+
+## Prior completed lane — Phase 4 Demand-Capture v1 (`45ec7c7`)
+
+**Historical reference** for LIVE Phase 4 Demand-Capture sibling posture (customer demand visibility; not supply coverage; not decision outcomes) — superseded for operational pickup by **§ Current stopping point — Phase 4 Outcome-Capture v1 (`5640078`)** above.
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Commit | **`45ec7c7`** — Build Phase 4 Demand-Capture sibling scoreboard |
 | Contract | `phase4_demand_capture_v1` — `docs/BuckParts-PHASE4-DEMAND-CAPTURE-CONTRACT-V1.md` |
 | Command Center path | `command_center_v2.phase4_demand_capture_v1` |
 | Impl | `scripts/lib/buckparts-phase4-demand-capture-v1.ts` |
 | Brain manifest | **CONNECTED** (`phase4_demand_capture`; `mutation_authority=false`; `steering_authority=false`) |
-| Siblings (unchanged) | Decision-Capture at **`16b79d1`** — `phase4_decision_capture_v1`; P4-ENTRY supply at **`4642bb2`** — `phase4_coverage_scoreboard_v1` |
+| Siblings (unchanged at that commit) | Decision-Capture at **`16b79d1`** — `phase4_decision_capture_v1`; P4-ENTRY supply at **`4642bb2`** — `phase4_coverage_scoreboard_v1` |
 | Posture | **`read_only=true`**; **`data_mutation=false`**; **`mutation_authorized=false`**; **`steering_authority=false`** |
 | Validator | `npm run buckparts:phase4-demand-capture` |
 | Live snapshot at commit | **demand_signal=PROVEN**; **gsc=STALE**; **ga4=STALE**; **search_events=PROVEN**; **click_events=PROVEN**; **demand_questions=UNKNOWN**; **blocked_by_no_safe_path=UNKNOWN**; **freshness=STALE** |
@@ -89,7 +134,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 Phase 4 complete, inventory coverage complete, revenue/SEO improvements, autonomous apply, prioritization, page recommendations, HyperAgent eligibility — **not claimed**. Conversion / ranking / deploy spend authorization remain **`UNKNOWN` / not claimed**. Demand-Capture does **not** authorize CSV / Supabase / retailer_links / evidence / approval / dispatch mutation and does **not** set NBA. Missing telemetry stays **UNKNOWN** (never coerced to numeric zero).
 
-### Current recommendation (founder-gated)
+### Recommendation at that time (historical)
 
 1. Treat Demand-Capture as a **read-only sibling** for demand visibility only; do **not** overwrite Coverage supply counts or Decision-Capture BUY/DO-NOT-BUY partitions.
 2. Treat **STALE** GSC/GA4 freshness and **UNKNOWN** demand_questions / blocked_by_no_safe_path as honest gaps — do **not** invent zeros or page recommendations.
@@ -101,7 +146,7 @@ Phase 4 complete, inventory coverage complete, revenue/SEO improvements, autonom
 
 ## Prior completed lane — Phase 4 Decision-Capture v1 (`16b79d1`)
 
-**Historical reference** for LIVE Phase 4 Decision-Capture sibling posture (evidence-entered decision opportunities; not inventory coverage) — superseded for operational pickup by **§ Current stopping point — Phase 4 Demand-Capture v1 (`45ec7c7`)** above.
+**Historical reference** for LIVE Phase 4 Decision-Capture sibling posture (evidence-entered decision opportunities; not inventory coverage) — superseded for operational pickup by **§ Prior completed lane — Phase 4 Demand-Capture v1 (`45ec7c7`)**; current pickup is **§ Current stopping point — Phase 4 Outcome-Capture v1 (`5640078`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -147,7 +192,7 @@ Phase 4 complete, inventory coverage complete, revenue/SEO improvements, autonom
 
 ## Prior completed lane — Phase 0 reporting integrity repair (`65f357c`)
 
-**Historical reference** for LIVE pre-repair baseline, GE MWFP/XWFE post-sync posture, AP demand-selected dispatch hard-stop, and Netlify preflight inventory repair — superseded for operational pickup by **§ Prior completed lane — Phase 4 Decision-Capture v1 (`16b79d1`)**; current pickup is **§ Current stopping point — Phase 4 Demand-Capture v1 (`45ec7c7`)** above.
+**Historical reference** for LIVE pre-repair baseline, GE MWFP/XWFE post-sync posture, AP demand-selected dispatch hard-stop, and Netlify preflight inventory repair — superseded for operational pickup by **§ Prior completed lane — Phase 4 Decision-Capture v1 (`16b79d1`)**; current pickup is **§ Current stopping point — Phase 4 Outcome-Capture v1 (`5640078`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -185,7 +230,7 @@ Conversion, revenue, user clicks, ranking, SEO impact, AP batch closeout, AP app
 
 ## Prior completed lane — GE MWFP/XWFE Supabase sync applied (`e797fe2`)
 
-**Historical reference** for the guarded Supabase retailer_links sync apply itself (superseded for operational pickup by **§ Prior completed lane — Phase 0 reporting integrity repair (`65f357c`)**; current pickup is **§ Current stopping point — Phase 4 Demand-Capture v1 (`45ec7c7`)** above).
+**Historical reference** for the guarded Supabase retailer_links sync apply itself (superseded for operational pickup by **§ Prior completed lane — Phase 0 reporting integrity repair (`65f357c`)**; current pickup is **§ Current stopping point — Phase 4 Outcome-Capture v1 (`5640078`)** above).
 
 ### Milestone summary (PROVEN at apply time)
 
