@@ -1,0 +1,36 @@
+{
+  "contract": "buckparts_strategic_documentation_migration_approval_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "commit_authorized": false,
+  "push_authorized": false,
+  "deploy_authorized": false,
+  "target_rel_path": "docs/BuckParts-GRAND-AUDIT-PHASE8-COMPANY-IDENTITY-V1.md",
+  "document_class": "grand_audit_source",
+  "source_deliverable_title": "BUCKPARTS PHASE 8 \u2014 COMPANY IDENTITY AUDIT (FINAL) \u2014 What Company Should BuckParts Become? \u2014 Consolidated Deliverable",
+  "source_deliverable_path": "/Users/jaredbuckman/Downloads/buckparts-phase-8-company-identity-audit-final-what-company-should-buckparts-bec.md",
+  "source_deliverable_sha256": "5205eb0e2bf55f4b3c70946b4fb362a862e430f2d76d2c7a91fd50bf82128088",
+  "authoritative_identity": "THE HOME'S PARTS AUTHORITY",
+  "content_fingerprint": "85c8052582ae509bea9f462182a6b00072c146fae81aedf4ea9707354f8deabe",
+  "content_fingerprint_alg": "sha256",
+  "decision_status": "approved_for_commit",
+  "approved_by": "Jared Buckman",
+  "approved_at": "2026-08-06T01:41:26Z",
+  "repo_head_at_approval": "ec101c3e1df8fcf9576287f297e5b9007eeee510",
+  "migration_plan_rel_path": "docs/BuckParts-STRATEGIC-DOCUMENTATION-MIGRATION-PLAN-V1.md",
+  "notes": "Approves commit of the Phase 8 Company Identity source artifact only. Does not authorize Identity V1, Strategy Doctrine, Execution Playbook, Operating System authorship, production mutation, push, or deploy. Presence of this file does not auto-commit.",
+  "scope": {
+    "allowed_paths": [
+      "docs/BuckParts-GRAND-AUDIT-PHASE8-COMPANY-IDENTITY-V1.md",
+      "data/owner-decisions/2026-08-05-strategic-documentation-migration-phase8-company-identity-owner-approval-v1.json"
+    ],
+    "forbidden": [
+      "production_code",
+      "csv_mutation",
+      "supabase_mutation",
+      "retailer_links_mutation",
+      "governing_docs_identity_doctrine_playbook_os"
+    ]
+  }
+}
