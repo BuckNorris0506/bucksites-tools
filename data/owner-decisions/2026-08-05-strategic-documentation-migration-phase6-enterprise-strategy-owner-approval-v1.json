@@ -1,0 +1,37 @@
+{
+  "contract": "buckparts_strategic_documentation_migration_approval_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "commit_authorized": false,
+  "push_authorized": false,
+  "deploy_authorized": false,
+  "target_rel_path": "docs/BuckParts-GRAND-AUDIT-PHASE6-V1.md",
+  "document_class": "grand_audit_source",
+  "source_deliverable_title": "BUCKPARTS PHASE 6 \u2014 ENTERPRISE STRATEGY AUDIT (HEAD 39e4f8e) \u2014 Consolidated Deliverable (REVISED)",
+  "source_deliverable_path": "/Users/jaredbuckman/Downloads/buckparts-phase-6-enterprise-strategy-audit-head-39e4f8e-consolidated-deliverabl.md",
+  "source_deliverable_sha256": "b8051d64e40a9d2a7b18d6b0c07dda506833d42f932590baa931bcad3c99b1bb",
+  "authoritative_verdict_label": "PHASE6_ENTERPRISE_VERDICT (REVISED)",
+  "superseded_within_packet_verdict_label": "PHASE6_ENTERPRISE_VERDICT (first)",
+  "content_fingerprint": "c92ef7becd5ffab4bf27670384ee4dfed16f516c8524752ae2c308d8d9b18a1e",
+  "content_fingerprint_alg": "sha256",
+  "decision_status": "approved_for_commit",
+  "approved_by": "Jared Buckman",
+  "approved_at": "2026-08-06T01:32:59Z",
+  "repo_head_at_approval": "b1a5b82bde2bb007fb13fb0d62e4ed03bb749faf",
+  "migration_plan_rel_path": "docs/BuckParts-STRATEGIC-DOCUMENTATION-MIGRATION-PLAN-V1.md",
+  "notes": "Approves commit of the Phase 6 Enterprise Strategy source artifact only, with REVISED verdict authoritative. Does not authorize Identity, Strategy Doctrine, Execution Playbook, Operating System authorship, production mutation, push, or deploy. Presence of this file does not auto-commit.",
+  "scope": {
+    "allowed_paths": [
+      "docs/BuckParts-GRAND-AUDIT-PHASE6-V1.md",
+      "data/owner-decisions/2026-08-05-strategic-documentation-migration-phase6-enterprise-strategy-owner-approval-v1.json"
+    ],
+    "forbidden": [
+      "production_code",
+      "csv_mutation",
+      "supabase_mutation",
+      "retailer_links_mutation",
+      "governing_docs_identity_doctrine_playbook_os"
+    ]
+  }
+}
