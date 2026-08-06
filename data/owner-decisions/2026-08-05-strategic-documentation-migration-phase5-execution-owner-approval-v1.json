@@ -1,0 +1,35 @@
+{
+  "contract": "buckparts_strategic_documentation_migration_approval_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "commit_authorized": false,
+  "push_authorized": false,
+  "deploy_authorized": false,
+  "target_rel_path": "docs/BuckParts-GRAND-AUDIT-PHASE5-EXECUTION-V1.md",
+  "document_class": "grand_audit_source",
+  "source_deliverable_title": "BUCKPARTS PHASE 5 \u2014 STRATEGIC EXECUTION AUDIT (HEAD 39e4f8e) \u2014 Consolidated Deliverable",
+  "source_deliverable_path": "/Users/jaredbuckman/Downloads/buckparts-phase-5-strategic-execution-audit-head-39e4f8e-consolidated-deliverabl.md",
+  "source_deliverable_sha256": "6c9eb464306ef0d4813b7d619bcf23cfd80d7f6cb24b43f021acea02a47023f6",
+  "content_fingerprint": "6e6a7e04b02ee454b43c07c9b3306b89af27c838182e4d3252ee7f738476db3b",
+  "content_fingerprint_alg": "sha256",
+  "decision_status": "approved_for_commit",
+  "approved_by": "Jared Buckman",
+  "approved_at": "2026-08-06T01:25:24Z",
+  "repo_head_at_approval": "17fe77ba5603b6c626117538464f9e67a580e54b",
+  "migration_plan_rel_path": "docs/BuckParts-STRATEGIC-DOCUMENTATION-MIGRATION-PLAN-V1.md",
+  "notes": "Approves commit of the Phase 5 Strategic Execution source artifact only. Does not authorize Identity, Strategy Doctrine, Execution Playbook, Operating System authorship, production mutation, push, or deploy. Presence of this file does not auto-commit.",
+  "scope": {
+    "allowed_paths": [
+      "docs/BuckParts-GRAND-AUDIT-PHASE5-EXECUTION-V1.md",
+      "data/owner-decisions/2026-08-05-strategic-documentation-migration-phase5-execution-owner-approval-v1.json"
+    ],
+    "forbidden": [
+      "production_code",
+      "csv_mutation",
+      "supabase_mutation",
+      "retailer_links_mutation",
+      "governing_docs_identity_doctrine_playbook_os"
+    ]
+  }
+}
