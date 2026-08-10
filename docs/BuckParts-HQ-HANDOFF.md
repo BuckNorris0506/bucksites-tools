@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (Phase 4 Outcome-Capture v1 committed at `5640078`):** HEAD = **`5640078`** (`Build Phase 4 Outcome-Capture sibling scoreboard`). **Phase 4 is NOT complete.** Final read-only Phase 4 instrumentation sibling measuring **handoffs from confident decisions** (not raw clicks) at `.command_center_v2.phase4_outcome_capture_v1` (`phase4_outcome_capture_v1` — `docs/BuckParts-PHASE4-OUTCOME-CAPTURE-CONTRACT-V1.md`). Live snapshot at commit: **confident_decision_origin=PROVEN**, **handoff_from_confident_buy=UNKNOWN**, **handoff_from_confident_do_not_buy=UNKNOWN**, **go_unavailable=UNKNOWN**, **wrong_part_click=UNKNOWN**, **remain_no_buy_preserved=1**, **raw_click_events_visibility=PROVEN**, **revenue/retailer_conversion/returns/ltv/serp=UNKNOWN**, **runtime_status=ATTENTION**. Posture: **`read_only=true`**, **`data_mutation=false`**, **`mutation_authorized=false`**, **`steering_authority=false`**. Brain manifest **CONNECTED** (`phase4_outcome_capture`; **`mutation_authority=false`**; **`steering_authority=false`**). Prior Demand-Capture at **`45ec7c7`**, Decision-Capture at **`16b79d1`**, P4-ENTRY supply coverage at **`4642bb2`**, and Phase 0 / GE/AP chronology remain below as prior lanes. Phase 3 / Phase 2 baseline exceptions at **`5640078`** are **commit-scoped only** and do **not** establish Phase 4 completion. Do **not** claim Phase 4 complete, inventory coverage complete, revenue/SEO, autonomous apply, prioritization, or HyperAgent eligibility. UNKNOWN must never become numeric zero. Never reward raw clicks. **Root `AGENTS.md` remains the agent operating contract**. Credits available ≠ deploy authorization.
+> **Current operational stopping point (Executive OS execution — Outcome Join / First Sensory Path at `9944e32`):** Branch **`cursor/phase4-outcome-join-v0-89d5`** (PR `#3`); commit **`9944e32`** (`Add Phase 4 outcome join for confident-BUY /go handoffs`). **Mode: execution, not research.** Outcome Join is the First Sensory Path inside `.command_center_v2.phase4_outcome_capture_v1` — human-likely `/go` `click_events` joined to Decision-Capture pages by `page_slug` ↔ `model_slug`; emits `handoff_from_confident_buy_count` + `handoff_join_by_decision_class`. Validated: focused tests **10/10 PASS**; `npm run buckparts:phase4-outcome-capture` → **`PHASE4_OUTCOME_CAPTURE_PASS`**. Posture unchanged: **`read_only=true`**, **`data_mutation=false`**, **`mutation_authorized=false`**, **`steering_authority=false`**, **`nba_authority=false`**. Join stays **UNKNOWN** when click rows are missing or `page_slug` does not intersect the decision universe (no false zero). **Current NBA:** feed this sensory path with real customer activity (qualifiable `/go` attribution on decision pages) — do **not** invent NBA/Dispatch/Daily consumers or new metrics. **Execution loop:** build one permanent capability → expose it to reality → measure → correct → repeat. Prior Outcome-Capture shell at **`5640078`**, Demand-Capture **`45ec7c7`**, Decision-Capture **`16b79d1`**, P4-ENTRY **`4642bb2`** remain below. Do **not** claim Phase 4 complete, revenue/SEO, autonomous apply, or HyperAgent eligibility. Never reward raw clicks. **Root `AGENTS.md` remains the agent operating contract**.
 
 ## Execution Stack
 
@@ -54,11 +54,66 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — Phase 4 Outcome-Capture v1 (`5640078`)
+## Current stopping point — Executive OS execution (Outcome Join / First Sensory Path) (`9944e32`)
 
-**Read this section first** for LIVE Phase 4 Outcome-Capture sibling posture (handoffs from confident decisions; not raw clicks; not supply coverage; not demand visibility). **Phase 4 is NOT complete.**
+**Read this section first.** BuckParts has transitioned from Executive OS **research** to Executive OS **execution**. Operate from this section; prior Phase 4 chronology below is historical.
 
-### Milestone summary (PROVEN)
+### Operating posture (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Mode | **Execution** (not research / not architecture expansion) |
+| Branch | **`cursor/phase4-outcome-join-v0-89d5`** (PR `#3` — https://github.com/BuckNorris0506/bucksites-tools/pull/3) |
+| HEAD (this lane) | **`9944e32`** — Add Phase 4 outcome join for confident-BUY /go handoffs |
+| Sensory path | Outcome Join (Feedback Organ v0) inside `phase4_outcome_capture_v1` |
+| CC path | `.command_center_v2.phase4_outcome_capture_v1` |
+| Contract | `docs/BuckParts-PHASE4-OUTCOME-CAPTURE-CONTRACT-V1.md` |
+| Impl | `scripts/lib/buckparts-phase4-outcome-capture-v1.ts` (`joinGoClicksToDecisionClassesV1`) |
+| What it measures | Human-likely `/go` clicks joined to Decision-Capture pages (`page_slug` ↔ `model_slug`) → `handoff_from_confident_buy_count` + `handoff_join_by_decision_class` |
+| Authority | **`read_only=true`**; **`mutation_authorized=false`**; **`steering_authority=false`**; **`nba_authority=false`**; does **not** set Dispatch or Daily Operator |
+| Validator | `npm run buckparts:phase4-outcome-capture` → **`PHASE4_OUTCOME_CAPTURE_PASS`** (focused tests **10/10**) |
+
+### Current NBA (operational)
+
+**Feed the new sensory path with real customer activity** so `handoff_from_confident_buy_count` can leave UNKNOWN when the join key qualifies (decision-page `/go` attribution that intersects Decision-Capture `model_slug`s).
+
+Do **not** wire Outcome Join into NBA / Dispatch / Daily / census ranking / opportunity registries. Sensory path informs via the Outcome-Capture lane only until the join is routinely PROVEN.
+
+### Execution philosophy (operational)
+
+Build **one** permanent capability → expose it to reality → measure → correct → repeat.
+
+No new stores, no new metrics, no Executive OS expansion for its own sake.
+
+### Execution Drift Watch (operational guidance — not doctrine)
+
+| ID | Watch | Current status |
+|----|--------|----------------|
+| **F1** Wrong Goal | Building research/architecture instead of feeding the shipped sensory path | Active watch — stay on execution NBA above |
+| **F2** Regime Shift | Treating Outcome Join as executive steering / NBA input | Active watch — Outcome remains non-steering |
+| **F3** Incentive Drift | Optimizing for click volume or false zeros | Future — Goodhart guard holds; UNKNOWN preferred over false zero |
+| **F4** Map Eats Territory | Expanding Command Center consumers before reality qualifies the join | Active watch — prefer no new consumers |
+| **F5** Principal Drift | Founder/agent attention leaves “feed the sensor” for adjacent lanes | **Primary watch** |
+| **F6** Verification Trap | Passing tests/validators mistaken for customer handoff proof | Engineering watch — tests prove join honesty, not traffic |
+
+### Not claimed
+
+Phase 4 complete, revenue/SEO, autonomous apply, HyperAgent eligibility, NBA/Dispatch changes from Outcome Join — **not claimed**. Merge to `main` is founder-gated via PR `#3`. Live handoff counts may remain **UNKNOWN** until customer `/go` attribution intersects the decision universe.
+
+### Current recommendation (founder-gated)
+
+1. Merge or continue PR `#3` when ready; treat **`9944e32`** as the execution anchor for Outcome Join.
+2. Next work: real customer activity / attribution that qualifies the join — not new Executive OS surfaces.
+3. Keep Drift Watch F5 (Principal Drift) primary: do not abandon the sensor for unrelated lanes.
+4. Prior Outcome-Capture shell (`5640078`) and earlier Phase 4 siblings remain below as history.
+
+---
+
+## Prior completed lane — Phase 4 Outcome-Capture v1 shell (`5640078`)
+
+**Historical reference** for the pre-join Outcome-Capture sibling (handoff fields UNKNOWN by design; no Decision-Capture ↔ `/go` join). Superseded for operational pickup by **§ Current stopping point — Executive OS execution (`9944e32`)** above.
+
+### Milestone summary (PROVEN at that commit)
 
 | Item | Value |
 |------|-------|
@@ -74,7 +129,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | Live snapshot at commit | **confident_decision_origin=PROVEN**; **handoff_from_confident_buy=UNKNOWN**; **handoff_from_confident_do_not_buy=UNKNOWN**; **go_unavailable=UNKNOWN**; **wrong_part_click=UNKNOWN**; **remain_no_buy_preserved=1**; **raw_click_events_visibility=PROVEN**; **revenue/retailer_conversion/returns/ltv/serp=UNKNOWN**; **runtime_status=ATTENTION** |
 | Goodhart guard | Raw clicks never positive outcomes; wrong-part clicks never positive; page count not outcome denominator; `/go-unavailable` is its own class |
 
-### Validation proven
+### Validation proven (at `5640078`)
 
 | Gate | Result |
 |------|--------|
@@ -85,23 +140,15 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | Phase 3 | **commit-scoped baseline exception only** — fails identically on clean HEAD (absent Supabase URL env vars); authorizes **`5640078`** only; does **not** establish Phase 4 completion |
 | Phase 2 | **commit-scoped baseline exception only** — fails identically on clean HEAD at existing Phase 1 baseline signature gate; authorizes **`5640078`** only; does **not** establish Phase 4 completion |
 
-### Not claimed
+### Not claimed (at `5640078`)
 
 **Phase 4 is NOT complete.** Inventory coverage complete, revenue/SEO improvements, autonomous apply, prioritization, page recommendations, HyperAgent eligibility — **not claimed**. Conversion / ranking / deploy spend authorization remain **`UNKNOWN` / not claimed**. Outcome-Capture does **not** authorize CSV / Supabase / retailer_links / evidence / approval / dispatch mutation and does **not** set NBA. Handoff / go-unavailable / wrong-part counts stay **UNKNOWN** until a proven Decision-Capture ↔ telemetry join exists (never coerced to numeric zero). Never reward raw clicks.
-
-### Current recommendation (founder-gated)
-
-1. Treat Outcome-Capture as the **final read-only Phase 4 instrumentation sibling** for post-decision handoff visibility only; do **not** overwrite Coverage / Decision-Capture / Demand-Capture projections.
-2. Treat **UNKNOWN** handoff / go-unavailable / wrong-part / revenue placeholders as honest gaps — do **not** invent zeros, click rewards, or page recommendations.
-3. Keep prior Decision-Capture remain-no-buy **`ge-gte18gsnrss`**; Outcome-Capture does not reopen mutation lanes.
-4. Before any production deploy spend: Credit Control + ship-guard (credits available ≠ deploy authorization).
-5. Prior Demand-Capture, Decision-Capture, P4-ENTRY, GE/AP hard-stop, and Phase 0 chronology remain below.
 
 ---
 
 ## Prior completed lane — Phase 4 Demand-Capture v1 (`45ec7c7`)
 
-**Historical reference** for LIVE Phase 4 Demand-Capture sibling posture (customer demand visibility; not supply coverage; not decision outcomes) — superseded for operational pickup by **§ Current stopping point — Phase 4 Outcome-Capture v1 (`5640078`)** above.
+**Historical reference** for LIVE Phase 4 Demand-Capture sibling posture (customer demand visibility; not supply coverage; not decision outcomes) — superseded for operational pickup by **§ Current stopping point — Executive OS execution (`9944e32`)** above.
 
 ### Milestone summary (PROVEN)
 
