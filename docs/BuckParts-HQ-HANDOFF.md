@@ -193,7 +193,7 @@ Phase 4 complete, inventory coverage complete, revenue/SEO improvements, autonom
 
 ## Prior completed lane — Phase 4 Decision-Capture v1 (`16b79d1`)
 
-**Historical reference** for LIVE Phase 4 Decision-Capture sibling posture (evidence-entered decision opportunities; not inventory coverage) — superseded for operational pickup by **§ Prior completed lane — Phase 4 Demand-Capture v1 (`45ec7c7`)**; current pickup is **§ Current stopping point — Phase 4 Outcome-Capture v1 (`5640078`)** above.
+**Historical reference** for LIVE Phase 4 Decision-Capture sibling posture (evidence-entered decision opportunities; not inventory coverage) — superseded for operational pickup by **§ Prior completed lane — Phase 4 Demand-Capture v1 (`45ec7c7`)**; current pickup is **§ Current stopping point — Executive OS execution (`9944e32`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -239,7 +239,7 @@ Phase 4 complete, inventory coverage complete, revenue/SEO improvements, autonom
 
 ## Prior completed lane — Phase 0 reporting integrity repair (`65f357c`)
 
-**Historical reference** for LIVE pre-repair baseline, GE MWFP/XWFE post-sync posture, AP demand-selected dispatch hard-stop, and Netlify preflight inventory repair — superseded for operational pickup by **§ Prior completed lane — Phase 4 Decision-Capture v1 (`16b79d1`)**; current pickup is **§ Current stopping point — Phase 4 Outcome-Capture v1 (`5640078`)** above.
+**Historical reference** for LIVE pre-repair baseline, GE MWFP/XWFE post-sync posture, AP demand-selected dispatch hard-stop, and Netlify preflight inventory repair — superseded for operational pickup by **§ Prior completed lane — Phase 4 Decision-Capture v1 (`16b79d1`)**; current pickup is **§ Current stopping point — Executive OS execution (`9944e32`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -277,7 +277,7 @@ Conversion, revenue, user clicks, ranking, SEO impact, AP batch closeout, AP app
 
 ## Prior completed lane — GE MWFP/XWFE Supabase sync applied (`e797fe2`)
 
-**Historical reference** for the guarded Supabase retailer_links sync apply itself (superseded for operational pickup by **§ Prior completed lane — Phase 0 reporting integrity repair (`65f357c`)**; current pickup is **§ Current stopping point — Phase 4 Outcome-Capture v1 (`5640078`)** above).
+**Historical reference** for the guarded Supabase retailer_links sync apply itself (superseded for operational pickup by **§ Prior completed lane — Phase 0 reporting integrity repair (`65f357c`)**; current pickup is **§ Current stopping point — Executive OS execution (`9944e32`)** above).
 
 ### Milestone summary (PROVEN at apply time)
 
