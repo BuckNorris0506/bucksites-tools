@@ -3365,6 +3365,7 @@ export async function buildBuckpartsCommandCenterReport(
       searchAndClick: searchAndClickSummary,
       clickVisibility:
         command_center_v2_with_operator_digest.revenue_snapshot?.click_visibility ?? null,
+      clickRows30d,
     });
   } catch (error) {
     phase4_outcome_capture_v1 = buildPhase4OutcomeCaptureUnknownV1({

@@ -42,7 +42,7 @@ Outcome-Capture measures a **handoff from a confident decision** (Decision-Captu
 | `serp_rank_status` | Placeholder — UNKNOWN unless proven |
 | `goodhart_guard` | Explicit anti-Goodhart posture |
 
-v1: without a proven join of Decision-Capture universe ↔ click_events / go-unavailable telemetry, handoff and go-unavailable counts remain **`UNKNOWN`**.
+**Feedback Organ v0 (handoff join):** `handoff_from_confident_buy_count` (and free `handoff_join_by_decision_class`) become numeric only when human-likely `/go` `click_events` rows join Decision-Capture pages by `page_slug` ↔ `model_slug`. If click rows are unavailable, or the click `page_slug` set does not intersect the decision universe (join key unqualified), handoff counts remain **`UNKNOWN`** — never a false zero. `/go-unavailable` and wrong-part counts remain **`UNKNOWN`** until their own evidence exists.
 
 ---
 

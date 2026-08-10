@@ -2,9 +2,19 @@
  * Phase 4 Outcome-Capture v1 — final read-only Phase 4 sibling scoreboard.
  * Measures handoffs FROM a confident decision. Never rewards raw clicks.
  * Wrong-part clicks never positive. UNKNOWN never coerced to zero. Goodhart guard required.
+ *
+ * Feedback Organ v0: join human-likely /go click_events to Decision-Capture pages by
+ * page_slug ↔ model_slug. Numeric handoff counts only when that join key qualifies.
  */
 
-import type { Phase4DecisionCaptureV1 } from "./buckparts-phase4-decision-capture-v1";
+import type {
+  Phase4DecisionCaptureV1,
+  Phase4DecisionOutcomeV1,
+} from "./buckparts-phase4-decision-capture-v1";
+import {
+  classifyClickUserAgent,
+  type ClickEventReadRow,
+} from "./buckparts-click-events-snapshot";
 
 export const PHASE4_OUTCOME_CAPTURE_CONTRACT_V1 = "phase4_outcome_capture_v1" as const;
 
@@ -61,6 +71,12 @@ export type Phase4OutcomeCaptureDimensionV1 = {
   notes: string[];
 };
 
+export type Phase4OutcomeHandoffJoinByDecisionClassV1 = {
+  confident_buy: Phase4CountOrUnknownV1;
+  confident_do_not_buy: Phase4CountOrUnknownV1;
+  honest_unknown: Phase4CountOrUnknownV1;
+};
+
 export type Phase4OutcomeCaptureV1 = {
   contract: typeof PHASE4_OUTCOME_CAPTURE_CONTRACT_V1;
   read_only: true;
@@ -80,6 +96,8 @@ export type Phase4OutcomeCaptureV1 = {
   confident_do_not_buy_origin_count: Phase4CountOrUnknownV1;
   handoff_from_confident_buy_count: Phase4CountOrUnknownV1;
   handoff_from_confident_do_not_buy_count: Phase4CountOrUnknownV1;
+  /** Free grouping of joined human-likely /go clicks by Decision-Capture outcome class. */
+  handoff_join_by_decision_class: Phase4OutcomeHandoffJoinByDecisionClassV1;
   go_unavailable_count: Phase4CountOrUnknownV1;
   wrong_part_click_count: Phase4CountOrUnknownV1;
   wrong_part_clicks_never_positive: true;
@@ -106,7 +124,159 @@ export type BuildPhase4OutcomeCaptureArgsV1 = {
   decisionCapture?: Phase4DecisionCaptureV1 | null;
   searchAndClick?: Phase4OutcomeCaptureSearchClickInputV1 | null;
   clickVisibility?: Phase4OutcomeCaptureClickVisibilityInputV1 | null;
+  /**
+   * Existing 30d `/go` click_events rows from the Command Center click snapshot.
+   * `null`/`undefined` = rows unavailable (join stays UNKNOWN). `[]` = proven empty window.
+   */
+  clickRows30d?: ClickEventReadRow[] | null;
 };
+
+const UNKNOWN_HANDOFF_BY_CLASS: Phase4OutcomeHandoffJoinByDecisionClassV1 = {
+  confident_buy: "UNKNOWN",
+  confident_do_not_buy: "UNKNOWN",
+  honest_unknown: "UNKNOWN",
+};
+
+function unknownHandoffJoin(args: {
+  notes: string[];
+  blockers: string[];
+}): {
+  status: "UNKNOWN";
+  handoff_from_confident_buy_count: "UNKNOWN";
+  handoff_from_confident_do_not_buy_count: "UNKNOWN";
+  by_decision_class: Phase4OutcomeHandoffJoinByDecisionClassV1;
+  notes: string[];
+  blockers: string[];
+} {
+  return {
+    status: "UNKNOWN",
+    handoff_from_confident_buy_count: "UNKNOWN",
+    handoff_from_confident_do_not_buy_count: "UNKNOWN",
+    by_decision_class: { ...UNKNOWN_HANDOFF_BY_CLASS },
+    notes: args.notes,
+    blockers: args.blockers,
+  };
+}
+
+/**
+ * Join human-likely `/go` click_events to Decision-Capture pages by page_slug ↔ model_slug.
+ * Does not invent filter→model attribution. Does not coerce missing joins to zero.
+ */
+export function joinGoClicksToDecisionClassesV1(args: {
+  decisionCapture: Phase4DecisionCaptureV1 | null | undefined;
+  clickRows30d: ClickEventReadRow[] | null | undefined;
+}): {
+  status: "PROVEN" | "UNKNOWN";
+  handoff_from_confident_buy_count: Phase4CountOrUnknownV1;
+  handoff_from_confident_do_not_buy_count: Phase4CountOrUnknownV1;
+  by_decision_class: Phase4OutcomeHandoffJoinByDecisionClassV1;
+  notes: string[];
+  blockers: string[];
+} {
+  const decision = args.decisionCapture;
+  const decisionOk =
+    !!decision &&
+    decision.contract === "phase4_decision_capture_v1" &&
+    decision.decision_universe_count > 0 &&
+    Array.isArray(decision.rows);
+
+  if (!decisionOk) {
+    return unknownHandoffJoin({
+      notes: [
+        "UNKNOWN: Decision-Capture origin unavailable — cannot join /go clicks to confident decisions.",
+      ],
+      blockers: [
+        "phase4_outcome_capture_decision_origin_unknown",
+        "phase4_outcome_capture_handoff_from_confident_buy_unknown",
+        "phase4_outcome_capture_handoff_from_confident_do_not_buy_unknown",
+      ],
+    });
+  }
+
+  if (args.clickRows30d == null) {
+    return unknownHandoffJoin({
+      notes: [
+        "UNKNOWN: click_events rows unavailable — Decision-Capture ↔ /go join not proven (not coerced to zero).",
+      ],
+      blockers: [
+        "phase4_outcome_capture_handoff_from_confident_buy_unknown",
+        "phase4_outcome_capture_handoff_from_confident_do_not_buy_unknown",
+      ],
+    });
+  }
+
+  const outcomeBySlug = new Map<string, Phase4DecisionOutcomeV1>();
+  for (const row of decision.rows) {
+    const slug = String(row.model_slug ?? "")
+      .trim()
+      .toLowerCase();
+    if (!slug) continue;
+    outcomeBySlug.set(slug, row.outcome);
+  }
+
+  if (outcomeBySlug.size === 0) {
+    return unknownHandoffJoin({
+      notes: [
+        "UNKNOWN: Decision-Capture rows lack joinable model_slug keys — handoff join not proven.",
+      ],
+      blockers: [
+        "phase4_outcome_capture_handoff_join_key_unqualified",
+        "phase4_outcome_capture_handoff_from_confident_buy_unknown",
+        "phase4_outcome_capture_handoff_from_confident_do_not_buy_unknown",
+      ],
+    });
+  }
+
+  const counts: Record<Phase4DecisionOutcomeV1, number> = {
+    confident_buy: 0,
+    confident_do_not_buy: 0,
+    honest_unknown: 0,
+  };
+  let intersectingHumanLikelyClicks = 0;
+
+  for (const click of args.clickRows30d) {
+    if (classifyClickUserAgent(click.user_agent) !== "HUMAN_LIKELY") continue;
+    const slug = String(click.page_slug ?? "")
+      .trim()
+      .toLowerCase();
+    if (!slug) continue;
+    const outcome = outcomeBySlug.get(slug);
+    if (!outcome) continue;
+    counts[outcome] += 1;
+    intersectingHumanLikelyClicks += 1;
+  }
+
+  // Non-empty click window with zero page_slug ∩ decision-universe intersection means the
+  // join key is not qualifiable (e.g. fridge /go logs filter slugs; decisions use model slugs).
+  // Prefer UNKNOWN over a false zero.
+  if (args.clickRows30d.length > 0 && intersectingHumanLikelyClicks === 0) {
+    return unknownHandoffJoin({
+      notes: [
+        "UNKNOWN: click_events page_slug set does not intersect Decision-Capture model_slug universe — join key unqualified (not coerced to zero).",
+      ],
+      blockers: [
+        "phase4_outcome_capture_handoff_join_key_unqualified",
+        "phase4_outcome_capture_handoff_from_confident_buy_unknown",
+        "phase4_outcome_capture_handoff_from_confident_do_not_buy_unknown",
+      ],
+    });
+  }
+
+  return {
+    status: "PROVEN",
+    handoff_from_confident_buy_count: counts.confident_buy,
+    handoff_from_confident_do_not_buy_count: counts.confident_do_not_buy,
+    by_decision_class: {
+      confident_buy: counts.confident_buy,
+      confident_do_not_buy: counts.confident_do_not_buy,
+      honest_unknown: counts.honest_unknown,
+    },
+    notes: [
+      `PROVEN: handoff join page_slug↔model_slug — confident_buy=${counts.confident_buy}; confident_do_not_buy=${counts.confident_do_not_buy}; honest_unknown=${counts.honest_unknown} (human-likely /go clicks only; raw totals never scores).`,
+    ],
+    blockers: [],
+  };
+}
 
 function sortedUnique(values: string[]): string[] {
   return [...new Set(values.filter((value) => typeof value === "string" && value.trim()))].sort();
@@ -269,6 +439,7 @@ function emptyCapture(args: {
     confident_do_not_buy_origin_count: "UNKNOWN",
     handoff_from_confident_buy_count: "UNKNOWN",
     handoff_from_confident_do_not_buy_count: "UNKNOWN",
+    handoff_join_by_decision_class: { ...UNKNOWN_HANDOFF_BY_CLASS },
     go_unavailable_count: "UNKNOWN",
     wrong_part_click_count: "UNKNOWN",
     wrong_part_clicks_never_positive: true,
@@ -319,9 +490,16 @@ export function buildPhase4OutcomeCaptureV1(
     ? decision.evidence_backed_wrong_part_prevention_count
     : "UNKNOWN";
 
-  // Post-handoff joins are not proven in v1 — fail closed to UNKNOWN (never invent 0).
-  const handoff_from_confident_buy_count: Phase4CountOrUnknownV1 = "UNKNOWN";
-  const handoff_from_confident_do_not_buy_count: Phase4CountOrUnknownV1 = "UNKNOWN";
+  const handoffJoin = joinGoClicksToDecisionClassesV1({
+    decisionCapture: decision,
+    clickRows30d: args.clickRows30d,
+  });
+  const handoff_from_confident_buy_count = handoffJoin.handoff_from_confident_buy_count;
+  const handoff_from_confident_do_not_buy_count =
+    handoffJoin.handoff_from_confident_do_not_buy_count;
+  const handoff_join_by_decision_class = handoffJoin.by_decision_class;
+
+  // /go-unavailable and wrong-part remain fail-closed UNKNOWN (own classes; not this join).
   const go_unavailable_count: Phase4CountOrUnknownV1 = "UNKNOWN";
   const wrong_part_click_count: Phase4CountOrUnknownV1 = "UNKNOWN";
 
@@ -340,6 +518,7 @@ export function buildPhase4OutcomeCaptureV1(
       "PROVEN: wrong-part clicks are never positive outcomes.",
       "PROVEN: page-count / inventory is not an outcome denominator.",
       "PROVEN: /go-unavailable is its own outcome class (not folded into success/fail buy).",
+      "PROVEN: handoff_from_confident_buy_count counts only human-likely /go clicks joined to confident_buy pages — never raw click totals.",
       `PROVEN: commission_or_revenue posture observed as ${String(commission)} — revenue outcome remains UNKNOWN unless separately proven.`,
     ]),
   };
@@ -347,8 +526,7 @@ export function buildPhase4OutcomeCaptureV1(
   const blockers = sortedUnique([
     ...(decisionOk ? [] : ["phase4_outcome_capture_decision_origin_unknown"]),
     ...clickVis.blockers,
-    "phase4_outcome_capture_handoff_from_confident_buy_unknown",
-    "phase4_outcome_capture_handoff_from_confident_do_not_buy_unknown",
+    ...handoffJoin.blockers,
     "phase4_outcome_capture_go_unavailable_unknown",
     "phase4_outcome_capture_wrong_part_click_unknown",
     "phase4_outcome_capture_revenue_unknown",
@@ -371,19 +549,22 @@ export function buildPhase4OutcomeCaptureV1(
     },
     {
       dimension_id: "handoff_from_confident_buy_count",
-      status: "UNKNOWN",
+      status: handoffJoin.status === "PROVEN" ? "PROVEN" : "UNKNOWN",
       value: handoff_from_confident_buy_count,
-      notes: [
-        "UNKNOWN: no proven join of confident_buy universe ↔ successful /go handoffs — not coerced to zero.",
-      ],
+      notes: handoffJoin.notes.filter(
+        (n) => n.includes("confident_buy") || n.includes("join") || n.startsWith("UNKNOWN:"),
+      ),
     },
     {
       dimension_id: "handoff_from_confident_do_not_buy_count",
-      status: "UNKNOWN",
+      status: handoffJoin.status === "PROVEN" ? "PROVEN" : "UNKNOWN",
       value: handoff_from_confident_do_not_buy_count,
-      notes: [
-        "UNKNOWN: no proven post-decision handoff telemetry from DO-NOT-BUY — not coerced to zero.",
-      ],
+      notes:
+        handoffJoin.status === "PROVEN"
+          ? [
+              `PROVEN: joined human-likely /go clicks on confident_do_not_buy pages=${String(handoff_from_confident_do_not_buy_count)} (not a positive outcome reward).`,
+            ]
+          : handoffJoin.notes.filter((n) => n.startsWith("UNKNOWN:")),
     },
     {
       dimension_id: "go_unavailable_count",
@@ -479,6 +660,7 @@ export function buildPhase4OutcomeCaptureV1(
     confident_do_not_buy_origin_count,
     handoff_from_confident_buy_count,
     handoff_from_confident_do_not_buy_count,
+    handoff_join_by_decision_class,
     go_unavailable_count,
     wrong_part_click_count,
     wrong_part_clicks_never_positive: true,
@@ -495,6 +677,7 @@ export function buildPhase4OutcomeCaptureV1(
       "phase4_decision_capture_v1",
       "search_and_click_intelligence_summary",
       "revenue_snapshot.click_visibility",
+      "click_events_rows_30d",
     ]),
     blockers,
     proven_facts: sortedUnique([
@@ -504,13 +687,27 @@ export function buildPhase4OutcomeCaptureV1(
       "PROVEN: mutation_authorized=false; steering_authority=false; dispatch_authority=false; nba_authority=false.",
       `PROVEN: confident_decision_origin_status=${confident_decision_origin_status}; remain_no_buy_decision_preserved_count=${String(remain_no_buy_decision_preserved_count)}.`,
       `PROVEN: raw_click_events_visibility_status=${clickVis.status} (visibility only).`,
+      ...(handoffJoin.status === "PROVEN"
+        ? [
+            `PROVEN: handoff_from_confident_buy_count=${String(handoff_from_confident_buy_count)} via page_slug↔model_slug join (human-likely only).`,
+          ]
+        : []),
     ]),
     inferred_facts: sortedUnique([
-      "INFERRED: post-decision handoff joins and /go-unavailable volume require dedicated evidence before leaving UNKNOWN.",
+      ...(handoffJoin.status === "PROVEN"
+        ? []
+        : [
+            "INFERRED: Decision-Capture ↔ /go handoff join remains UNKNOWN until click rows intersect the decision slug universe.",
+          ]),
+      "INFERRED: /go-unavailable volume requires dedicated evidence before leaving UNKNOWN.",
     ]),
     unknown_facts: sortedUnique([
-      "UNKNOWN: handoff_from_confident_buy_count — Decision-Capture ↔ /go join not proven (not coerced to zero).",
-      "UNKNOWN: handoff_from_confident_do_not_buy_count — not coerced to zero.",
+      ...(handoffJoin.status === "PROVEN"
+        ? []
+        : [
+            ...handoffJoin.notes.filter((n) => n.startsWith("UNKNOWN:")),
+            "UNKNOWN: handoff_from_confident_do_not_buy_count — not coerced to zero while join unqualified.",
+          ]),
       "UNKNOWN: go_unavailable_count — own class; volume telemetry not proven (not coerced to zero).",
       "UNKNOWN: wrong_part_click_count — never positive; not coerced to zero.",
       "UNKNOWN: revenue_status / retailer_conversion_status / returns_status / ltv_status / serp_rank_status placeholders.",
