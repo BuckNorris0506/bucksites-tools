@@ -3,6 +3,11 @@
  * PROVEN: no I/O, no agents, no Runner wiring; does not alter Founder Decision Packet eligibility.
  */
 
+import {
+  validateDecisionPriorsV1,
+  type DecisionPriorIdV1,
+} from "./decision-priors-framework-v1";
+
 export const FOUNDER_DECISION_REGISTRY_CONTRACT_V1 = "founder_decision_registry_v1" as const;
 
 /** Short footer appended to each decision packet’s recommended block (registry pointer only). */
@@ -134,6 +139,12 @@ export type FounderDecisionRegistryRowV1 = {
    * Guarded apply verifies sha256_at_binding matches on-disk artifact at mutation time.
    */
   bound_artifacts_v1?: FounderDecisionRegistryBoundArtifactV1[];
+  /**
+   * Decision Priors Framework v1 — optional labels that influenced the Executive recommendation.
+   * Retained on OAR / disagreement-shaped rows (rejected|deferred|needs_more_evidence).
+   * Labels only: no scoring, weighting, or behavior change. Catalog validated when present.
+   */
+  executive_recommendation_decision_priors?: readonly DecisionPriorIdV1[];
 };
 
 export type FounderDecisionRegistryBoundArtifactV1 = {
@@ -785,6 +796,16 @@ export function validateFounderDecisionRegistryRowV1(
     boundArtifacts = boundParse.bound;
   }
 
+  let executiveRecommendationDecisionPriors: DecisionPriorIdV1[] | undefined;
+  if (o.executive_recommendation_decision_priors !== undefined) {
+    const priorsParse = validateDecisionPriorsV1(o.executive_recommendation_decision_priors);
+    if (!priorsParse.ok) {
+      errors.push(...priorsParse.errors.map((e) => `executive_recommendation_decision_priors: ${e}`));
+    } else {
+      executiveRecommendationDecisionPriors = priorsParse.decision_priors;
+    }
+  }
+
   const contextCount = [codexCtx, batchCtx, fridgeBatchCtx, fridgeApplyPlanCtx].filter(Boolean).length;
   if (contextCount > 1) {
     errors.push(
@@ -891,6 +912,9 @@ export function validateFounderDecisionRegistryRowV1(
       ? { fridge_buyer_path_batch_apply_plan_approval_context_v1: fridgeApplyPlanCtx }
       : {}),
     ...(boundArtifacts ? { bound_artifacts_v1: boundArtifacts } : {}),
+    ...(executiveRecommendationDecisionPriors !== undefined
+      ? { executive_recommendation_decision_priors: executiveRecommendationDecisionPriors }
+      : {}),
   };
   return { ok: true, row };
 }
