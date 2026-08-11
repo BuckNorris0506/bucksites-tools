@@ -1,8 +1,9 @@
 # BuckParts Precedent Clause Drafting Contract v1
 
 **Status:** PROVEN as a **read-only drafting discipline** only.  
-**Authority:** Subordinate to `docs/BuckParts-CONSTITUTION.md`. Does **not** authorize mutation, NBA, Dispatch, Daily Operator, Command Center steering, scoring, weighting, or behavior change.  
-**Reuse:** Existing Owner Approval Records (OAR = `founder_decision_registry_v1` under `data/owner-decisions/*.json`).
+**Authority:** Subordinate to `docs/BuckParts-CONSTITUTION.md` (Executive Constitution) and the Executive Operating System execution loop (`AGENTS.md`, current HQ stopping point in `docs/BuckParts-HQ-HANDOFF.md`). Does **not** authorize mutation, NBA, Dispatch, Daily Operator, Command Center steering, scoring, weighting, or behavior change.  
+**Reuse:** Existing Owner Approval Records (OAR = `founder_decision_registry_v1` under `data/owner-decisions/*.json`).  
+**Non-overlap:** Does **not** redefine, duplicate, or supersede Outcome Join / Phase 4 Outcome Capture (`docs/BuckParts-PHASE4-OUTCOME-CAPTURE-CONTRACT-V1.md`). Outcome Join is the First Sensory Path; this contract only drafts precedent text from closed OARs. This lane does **not** mutate HQ handoff narrative.
 
 ---
 
