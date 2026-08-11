@@ -64,8 +64,8 @@ require_contract_doc() {
     fail_validator "missing docs/BuckParts-DECISION-PRIORS-FRAMEWORK-CONTRACT-V1.md"
   grep -q "decision_priors_framework_v1" "$ROOT/docs/BuckParts-DECISION-PRIORS-FRAMEWORK-CONTRACT-V1.md" ||
     fail_validator "contract doc missing decision_priors_framework_v1"
-  grep -q "TEMPORARY ONLY" "$ROOT/docs/BuckParts-DECISION-PRIORS-FRAMEWORK-CONTRACT-V1.md" ||
-    fail_validator "contract doc must declare TEMPORARY ONLY (not permanent Executive organ)"
+  grep -q "INSTANTIATED_ZERO_AUTHORITY" "$ROOT/docs/BuckParts-DECISION-PRIORS-FRAMEWORK-CONTRACT-V1.md" ||
+    fail_validator "contract doc must declare INSTANTIATED_ZERO_AUTHORITY (existence ≠ permission)"
   grep -q "Labels only" "$ROOT/docs/BuckParts-DECISION-PRIORS-FRAMEWORK-CONTRACT-V1.md" ||
     fail_validator "contract doc missing Labels only rule"
   grep -q "no scores" "$ROOT/docs/BuckParts-DECISION-PRIORS-FRAMEWORK-CONTRACT-V1.md" ||

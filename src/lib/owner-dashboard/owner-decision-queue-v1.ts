@@ -83,7 +83,7 @@ export type OwnerDecisionRequestV1 = {
    * Decision Priors Framework v1 — optional label-only priors that influenced
    * this Executive recommendation. Absent on legacy ODRs (treated as untagged).
    * Does not score, weight, or change queue / Runner / NBA behavior.
-   * TEMPORARY ONLY under Executive Evolution Gate — not a permanent Executive organ.
+   * INSTANTIATED_ZERO_AUTHORITY — existence ≠ Executive permission.
    */
   decision_priors?: readonly DecisionPriorIdV1[];
   founder_decision_registry_bridge: {

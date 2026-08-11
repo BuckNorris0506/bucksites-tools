@@ -140,7 +140,7 @@ export type FounderDecisionRegistryRowV1 = {
    */
   bound_artifacts_v1?: FounderDecisionRegistryBoundArtifactV1[];
   /**
-   * Decision Priors Framework v1 (TEMPORARY ONLY — not a permanent Executive organ) —
+   * Decision Priors Framework v1 (INSTANTIATED_ZERO_AUTHORITY — existence ≠ permission) —
    * optional labels that influenced the Executive recommendation.
    * Retained on OAR / disagreement-shaped rows (rejected|deferred|needs_more_evidence).
    * Labels only: no scoring, weighting, or behavior change. Catalog validated when present.

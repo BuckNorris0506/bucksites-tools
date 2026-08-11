@@ -1,6 +1,6 @@
 /**
- * Decision Priors Framework v1 — TEMPORARY ONLY read-only labels for candidate executive decisions.
- * Not a permanent Executive organ; permanence not earned (Executive Evolution Gate PARK).
+ * Decision Priors Framework v1 — INSTANTIATED_ZERO_AUTHORITY read-only labels.
+ * Existence/tests do not grant Executive permission (Evolution Gate separation).
  *
  * Reuses existing Owner Approval Records (OAR = founder_decision_registry / owner-approval
  * JSON under data/owner-decisions/) and Owner Decision Requests (ODR =
