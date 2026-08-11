@@ -1,8 +1,80 @@
 # BuckParts Decision Priors Framework Contract v1
 
-**Status:** PROVEN as a **read-only labels-only** framework for tagging candidate executive decisions.  
-**Authority:** Subordinate to `docs/BuckParts-CONSTITUTION.md`. Does **not** authorize mutation, NBA, Dispatch, Daily Operator, Command Center steering, scoring, weighting, or behavior change.  
-**Reuse:** Existing Owner Approval Records (OAR = `founder_decision_registry_v1` / `data/owner-decisions/*-owner-approval*.json`) and Owner Decision Requests (ODR = `owner_decision_request_v1`).
+**Status:** **TEMPORARY ONLY** — read-only labels-only experiment for tagging candidate executive decisions. **Not** a permanent Executive organ. Permanence has **not** been earned.  
+**Authority:** Subordinate to `docs/BuckParts-CONSTITUTION.md`, the Executive Operating System (`AGENTS.md` + HQ stopping point), and `docs/BuckParts-EXECUTIVE-EVOLUTION-GATE-V1.md`. Does **not** authorize mutation, NBA, Dispatch, Daily Operator, Command Center steering, scoring, weighting, or behavior change.  
+**Reuse:** Existing Owner Approval Records (OAR = `founder_decision_registry_v1` / `data/owner-decisions/*-owner-approval*.json`) and Owner Decision Requests (ODR = `owner_decision_request_v1`).  
+**Gate verdict (applied):** `PARK` for permanence under Executive Evolution Gate v1 — may ship only as **TEMPORARY ONLY**.
+
+---
+
+## 0. Executive Evolution Gate packet (honest — current)
+
+```text
+EXECUTIVE EVOLUTION GATE v1 — ORGAN PROPOSAL
+proposer: PR #4 / Decision Priors Framework v1
+proposed_organ_name: decision_priors_framework_v1
+temporary_or_permanent_claim: TEMPORARY ONLY
+gate_verdict_applied: PARK (permanence not earned)
+
+1. Observation gained: PROVEN
+   Optional decision_priors[] on ODR and executive_recommendation_decision_priors[]
+   on OAR; readable via decision_priors_framework_v1 projection when tags exist.
+
+2. External outcome expected: INFERRED
+   Stated aim is founder/executive “later learning / review.” Customer/reality link
+   (decision quality → harm reduction) is implied by catalog labels, not written
+   as a direct external outcome.
+
+3. Existing organ overlap: INFERRED
+   Reuses OAR/ODR; no new durable store. Overlap with Precedent Clause
+   (closed-OAR drafting on main): priors are labels on ODR/OAR; Precedent cites
+   closed OARs — different jobs; no duplicate store. Why a peer framework vs
+   field-only registry extension is not fully proven.
+
+4. Constitutional necessity: UNKNOWN
+   No Constitution § fails if this experiment does not exist. Catalog restates
+   rules already binding via Constitution / AGENTS.md. Aids §5/§9 disagreement
+   memory only if tags exist — does not invent necessity.
+
+5. Measurable learning increase: UNKNOWN
+   No before/after decision change named. No auto-injection into Runner-halt ODR
+   builders. Real tagged history in repo is not yet required for this temporary
+   claim. Validator proves framework honesty, not learning.
+
+6. Failure mode: PROVEN
+   Unknown labels fail closed; empty tags valid; scoring/weighting/behavior_change
+   false; authority locks false; not attached to NBA/Dispatch/Daily/CC steering.
+
+7. Removal test: UNKNOWN (for permanence)
+   Removal is cheap (optional fields + framework files). Proven customer or
+   decision-quality loss if deleted: none evidenced yet — therefore permanence
+   is not earned. TEMPORARY ONLY accepts removable experiment cost.
+
+8. Graduation criteria: UNKNOWN until met (see §0.1 below)
+   Tests/validator alone do not graduate. Permanence requires real tagged history
+   and founder permanence approval.
+
+authority_locks_claimed:
+  read_only: true
+  data_mutation: false
+  mutation_authorized: false
+  steering_authority: false
+  nba_authority: false
+  dispatch_authority: false
+
+verdict_requested: PARK / TEMPORARY ONLY (not GATE PASS for permanence)
+```
+
+### 0.1 Graduation (required before any permanence claim)
+
+Decision Priors may be reconsidered for permanence **only** when **all** hold:
+
+1. **Real tagged history** — at least one real ODR with non-empty `decision_priors` and/or one real OAR/disagreement row with non-empty `executive_recommendation_decision_priors` in repo (not fixtures alone).
+2. **Non-steering posture held** — authority locks still false; no NBA / Dispatch / Daily / Command Center steering attach.
+3. **Founder permanence approval** — explicit founder decision that permanence is granted after a fresh Executive Evolution Gate review.
+4. **Re-submitted gate packet** — all eight fields re-answered; no field left UNKNOWN that the gate treats as fail-closed for permanence.
+
+Until then: **TEMPORARY ONLY**. Do **not** describe this as a permanent Executive organ. Do **not** claim permanence has already been earned.
 
 ---
 
@@ -18,6 +90,7 @@
 4. **Disagreement retention** — when founder status is `rejected` | `deferred` | `needs_more_evidence`, disagreement projections keep the priors that influenced the Executive recommendation.
 5. **Fail closed** on unknown prior labels.
 6. **No new durable store** unless later explicitly authorized.
+7. **TEMPORARY ONLY** — not a permanent Executive organ until §0.1 graduation + founder permanence approval.
 
 ---
 
@@ -48,11 +121,11 @@
 
 ## 4. Deliverable
 
-- Contract: `decision_priors_framework_v1`
+- Contract: `decision_priors_framework_v1` (**TEMPORARY ONLY**)
 - Impl: `src/lib/owner-dashboard/decision-priors-framework-v1.ts`
 - Disk projection: `scripts/lib/buckparts-decision-priors-framework-v1.ts`
 - Posture: `read_only=true`, `data_mutation=false`, `mutation_authorized=false`, `steering_authority=false`, `nba_authority=false`, `dispatch_authority=false`, `daily_operator_authority=false`, `command_center_authority=false`
-- Validator: `npm run buckparts:decision-priors-framework`
+- Validator: `npm run buckparts:decision-priors-framework` (proves label/authority honesty — **not** permanence)
 - **Not attached** to Command Center NBA / Dispatch / Daily Operator paths in v1
 
 ---
@@ -63,6 +136,7 @@
 - Does **not** set or compete for `next_best_action`
 - Does **not** write new ops JSONL / Supabase tables
 - Recommendations remain human-readable labels for later learning / review only
+- Does **not** claim permanent Executive-organ status
 
 ---
 
@@ -73,6 +147,7 @@
 - Command Center attachment as steering source
 - CSV / Supabase / retailer_links / public CTA mutation
 - HQ rewrite unless separately asked after commit
+- Claiming permanence or Executive-organ graduation without §0.1
 
 ---
 
