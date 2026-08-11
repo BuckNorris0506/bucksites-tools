@@ -39,6 +39,7 @@ import {
   type FounderDecisionRegistryReadModelV1,
 } from "@/lib/owner-dashboard/founder-decision-registry-read-model-v1";
 import { scanFounderDecisionRegistryJsonFilesV1 } from "@/lib/owner-dashboard/founder-decision-registry-scan-v1";
+import { loadClosedOarPrecedentSubstratesV1 } from "@/lib/owner-dashboard/precedent-clause-drafting-v1";
 import {
   FAILURE_PATTERN_REGISTRY_OWNER_DASHBOARD_LINE_V1,
   buildFailurePatternRegistryReadModelFromSeededV1,
@@ -1543,10 +1544,12 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
     source: "owner_dashboard",
   });
 
+  const closedOarRows = loadClosedOarPrecedentSubstratesV1(process.cwd());
   const founderDecisionPackets = buildFounderDecisionPacketsV1(founderActionQueue.rows, {
     generated_at: report.generated_at,
     source: "owner_dashboard",
     runner: null,
+    closed_oar_rows: closedOarRows,
   });
 
   const registryReadModel = buildFounderDecisionRegistryReadModelV1(

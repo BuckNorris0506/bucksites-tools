@@ -46,6 +46,7 @@ import {
   formatFounderDecisionRegistryReadModelDigestMarkdownV1,
 } from "../src/lib/owner-dashboard/founder-decision-registry-read-model-v1";
 import { scanFounderDecisionRegistryJsonFilesV1 } from "../src/lib/owner-dashboard/founder-decision-registry-scan-v1";
+import { loadClosedOarPrecedentSubstratesV1 } from "../src/lib/owner-dashboard/precedent-clause-drafting-v1";
 import {
   buildFailurePatternRegistryReadModelFromSeededV1,
   formatFailurePatternRegistryDigestMarkdownV1,
@@ -303,10 +304,12 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     source: "buckparts-founder-digest",
   });
   const runnerOverall = tryReadRunnerStepOverallStatusV1(rootDir);
+  const closedOarRows = loadClosedOarPrecedentSubstratesV1(rootDir);
   const decisionPackets = buildFounderDecisionPacketsV1(actionQueue.rows, {
     generated_at: new Date().toISOString(),
     source: "buckparts-founder-digest",
     runner: runnerOverall ? { overall_status: runnerOverall } : null,
+    closed_oar_rows: closedOarRows,
   });
   const nextPacket = executionPackets.packets[0] ?? null;
   const runner_step_digest_markdown = buildRunnerStepDigestMarkdownForFounderRunV1({

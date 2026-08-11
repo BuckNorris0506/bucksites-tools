@@ -13,6 +13,12 @@ import {
 } from "./founder-decision-registry-v1";
 import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
 import { scanFounderDecisionRegistryJsonFilesV1 } from "./founder-decision-registry-scan-v1";
+import {
+  buildPrecedentClauseDraftingV1,
+  loadClosedOarPrecedentSubstratesV1,
+  precedentClassForOwnerDecisionRequestV1,
+  type ClosedOarPrecedentSubstrateV1,
+} from "./precedent-clause-drafting-v1";
 
 export const OWNER_DECISION_QUEUE_CONTRACT_V1 = "owner_decision_queue_v1" as const;
 export const OWNER_DECISION_REQUEST_CONTRACT_V1 = "owner_decision_request_v1" as const;
@@ -67,6 +73,11 @@ export type OwnerDecisionRequestV1 = {
   exact_downstream_action_if_rejected: string;
   expires_or_stale_after: string | null;
   status: OwnerDecisionRequestStatusV1;
+  /**
+   * Precedent Clause drafting discipline v1 — read-only text only.
+   * Does not affect effective status, Runner gates, NBA, Dispatch, or Daily Operator.
+   */
+  precedent_clause?: string;
   founder_decision_registry_bridge: {
     expected_allowed_next_scope: "owner_mutation_approved";
     matching_registry_sources: string[];
@@ -498,6 +509,11 @@ export function buildOwnerDecisionRequestFromRunnerHaltV1(args: {
   haltDetail: string | null;
   parsedJson: unknown | null;
   now?: () => Date;
+  /**
+   * Existing closed OARs for Precedent Clause drafting only.
+   * Pass loaded rows (may be `[]`). Omit/undefined ⇒ clause reports UNKNOWN (does not invent zero).
+   */
+  closed_oar_rows?: readonly ClosedOarPrecedentSubstrateV1[] | null;
 }): OwnerDecisionRequestV1 {
   const now = args.now ?? (() => new Date());
   const iso = now().toISOString();
@@ -517,6 +533,14 @@ export function buildOwnerDecisionRequestFromRunnerHaltV1(args: {
 
   const decisionType = inferDecisionTypeFromRunnerStepV1(args.stepId);
   const slugLabel = targetSlugs.length > 0 ? targetSlugs.join(", ") : "scoped batch";
+  const precedent = buildPrecedentClauseDraftingV1({
+    decision_class: precedentClassForOwnerDecisionRequestV1(decisionType),
+    closed_oar_rows: args.closed_oar_rows,
+    current: {
+      recommended_option: DEFAULT_APPROVE_OPTION.option_id,
+      draft_status: "pending",
+    },
+  });
 
   return {
     contract: OWNER_DECISION_REQUEST_CONTRACT_V1,
@@ -546,6 +570,7 @@ export function buildOwnerDecisionRequestFromRunnerHaltV1(args: {
       "Record rejected/deferred outcome in founder_decision_registry_v1; Runner remains halted; no CSV or Supabase mutation.",
     expires_or_stale_after: new Date(now().getTime() + 14 * 24 * 60 * 60 * 1000).toISOString(),
     status: "PENDING_OWNER_DECISION",
+    precedent_clause: precedent.precedent_clause,
     founder_decision_registry_bridge: {
       expected_allowed_next_scope: "owner_mutation_approved",
       matching_registry_sources: [],
@@ -583,6 +608,7 @@ export function upsertOwnerDecisionRequestFromRunnerHaltV1(args: {
     }),
   );
   const existing = loadOwnerDecisionRequestV1(args.rootDir, existingRel);
+  const closedOars = loadClosedOarPrecedentSubstratesV1(args.rootDir);
   const request =
     existing ??
     buildOwnerDecisionRequestFromRunnerHaltV1({
@@ -594,11 +620,22 @@ export function upsertOwnerDecisionRequestFromRunnerHaltV1(args: {
       haltDetail: args.haltDetail,
       parsedJson: args.parsedJson,
       now,
+      closed_oar_rows: closedOars,
     });
+
+  const precedentRefresh = buildPrecedentClauseDraftingV1({
+    decision_class: precedentClassForOwnerDecisionRequestV1(request.decision_type),
+    closed_oar_rows: closedOars,
+    current: {
+      recommended_option: request.recommended_option,
+      draft_status: "pending",
+    },
+  });
 
   const updated: OwnerDecisionRequestV1 = {
     ...request,
     updated_at: now().toISOString(),
+    precedent_clause: precedentRefresh.precedent_clause,
     runner_halt_context: {
       mission_id: args.missionId,
       run_id: args.runId,

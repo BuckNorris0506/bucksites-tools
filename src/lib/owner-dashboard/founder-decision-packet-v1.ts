@@ -7,6 +7,11 @@
 import type { FounderActionQueueRowV1 } from "./founder-action-queue-v1";
 import { FOUNDER_DECISION_REGISTRY_PACKET_FOOTER_V1 } from "./founder-decision-registry-v1";
 import {
+  appendPrecedentClauseToDraftV1,
+  precedentClassForFounderQueueRowV1,
+  type ClosedOarPrecedentSubstrateV1,
+} from "./precedent-clause-drafting-v1";
+import {
   RUNNER_EXPECTED_DEFAULT_PROHIBITED_ACTION_LINES_V1,
 } from "../../../scripts/lib/buckparts-runner-safety-contract-v1";
 
@@ -22,6 +27,11 @@ export type FounderDecisionPacketContextV1 = {
   source?: string;
   /** When Runner Step JSON was produced in the same pipeline (optional). */
   runner?: FounderDecisionPacketRunnerHintV1 | null;
+  /**
+   * Existing closed OARs for Precedent Clause drafting only.
+   * Pass loaded registry rows (may be `[]`). Omit/undefined ⇒ clause reports UNKNOWN (does not invent zero).
+   */
+  closed_oar_rows?: readonly ClosedOarPrecedentSubstrateV1[] | null;
 };
 
 export type FounderDecisionPacketOptionV1 = {
@@ -511,6 +521,18 @@ export function buildFounderDecisionPacketsV1(
       const rowClass = resolveDecisionRowClassV1(row);
       const shaped = shapeDecisionFieldsForRowV1(row, rowClass);
       const why_jared = mergeWhyWithRunnerV1(shaped.why_jared, runner);
+      const recommendedBase = [
+        shaped.recommended_next_prompt_or_command.trimEnd(),
+        "",
+        "---",
+        FOUNDER_DECISION_REGISTRY_PACKET_FOOTER_V1,
+      ].join("\n");
+      const withPrecedent = appendPrecedentClauseToDraftV1({
+        draft_body: recommendedBase,
+        decision_class: precedentClassForFounderQueueRowV1(row.id),
+        closed_oar_rows: context?.closed_oar_rows,
+        current: { draft_status: "open" },
+      });
       decision_packets.push({
         id: `decision_packet_v1:${row.id}`,
         source_queue_row_id: row.id,
@@ -520,12 +542,7 @@ export function buildFounderDecisionPacketsV1(
         evidence_basis: row.evidence_basis,
         blocked_until_decided: blockedUntilDecided(row),
         options: shaped.options,
-        recommended_next_prompt_or_command: [
-          shaped.recommended_next_prompt_or_command.trimEnd(),
-          "",
-          "---",
-          FOUNDER_DECISION_REGISTRY_PACKET_FOOTER_V1,
-        ].join("\n"),
+        recommended_next_prompt_or_command: withPrecedent.draft_body,
         prohibited_actions,
       });
     } else {
