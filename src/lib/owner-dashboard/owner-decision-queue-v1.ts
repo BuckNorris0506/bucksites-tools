@@ -13,6 +13,7 @@ import {
 } from "./founder-decision-registry-v1";
 import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
 import { scanFounderDecisionRegistryJsonFilesV1 } from "./founder-decision-registry-scan-v1";
+import type { DecisionPriorIdV1 } from "./decision-priors-framework-v1";
 import {
   buildPrecedentClauseDraftingV1,
   loadClosedOarPrecedentSubstratesV1,
@@ -78,6 +79,13 @@ export type OwnerDecisionRequestV1 = {
    * Does not affect effective status, Runner gates, NBA, Dispatch, or Daily Operator.
    */
   precedent_clause?: string;
+  /**
+   * Decision Priors Framework v1 — optional label-only priors that influenced
+   * this Executive recommendation. Absent on legacy ODRs (treated as untagged).
+   * Does not score, weight, or change queue / Runner / NBA behavior.
+   * INSTANTIATED_ZERO_AUTHORITY — existence ≠ Executive permission.
+   */
+  decision_priors?: readonly DecisionPriorIdV1[];
   founder_decision_registry_bridge: {
     expected_allowed_next_scope: "owner_mutation_approved";
     matching_registry_sources: string[];
