@@ -13,7 +13,6 @@ import type {
   BuyPathGateSuppressionSummary,
   BuyPathSortContext,
 } from "@/lib/retailers/launch-buy-links";
-import type { ApGoAttributionV1 } from "@/lib/retailers/ap-go-attribution-v1";
 import type { PartTrustSummary } from "@/lib/trust/part-trust";
 
 function BuyPathSuppressionInventoryHints({ summary }: { summary: BuyPathGateSuppressionSummary }) {
@@ -62,8 +61,8 @@ export function TrustAwareBuySection({
   /** When buy is suppressed but inventory rows exist, explains why they are gated (refrigerator filter hub). */
   gateSuppressionSummary?: BuyPathGateSuppressionSummary | null;
   buyPathSortContext?: BuyPathSortContext;
-  /** When set (AP phase 1), forwarded to TieredBuyLinks for `/go` href attribution. */
-  goAttribution?: ApGoAttributionV1 | null;
+  /** When set, forwarded to TieredBuyLinks for `/go` href attribution (AP or fridge model PDP). */
+  goAttribution?: { page_type: string; page_slug: string } | null;
 }) {
   if (trust.buyer_path_state === "suppress_buy") {
     return (

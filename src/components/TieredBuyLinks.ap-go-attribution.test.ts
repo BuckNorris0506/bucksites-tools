@@ -9,6 +9,7 @@ import {
   buildAirPurifierFilterGoAttribution,
   buildAirPurifierModelGoAttribution,
 } from "@/lib/retailers/ap-go-attribution-v1";
+import { buildFridgeModelGoAttribution } from "@/lib/retailers/fridge-go-attribution-v1";
 
 const gatedLink: BuyLinkRow = {
   id: "550e8400-e29b-41d4-a716-446655440000",
@@ -17,7 +18,8 @@ const gatedLink: BuyLinkRow = {
   is_primary: true,
   retailer_key: "amazon",
   browser_truth_classification: "direct_buyable",
-  browser_truth_checked_at: "2026-05-01T00:00:00.000Z",
+  browser_truth_buyable_subtype: "SINGLE_UNIT_DIRECT_BUYABLE",
+  browser_truth_checked_at: new Date().toISOString(),
 };
 
 describe("TieredBuyLinks AP go attribution", () => {
@@ -47,5 +49,33 @@ describe("TieredBuyLinks AP go attribution", () => {
       html,
       /href="\/air-purifier\/go\/550e8400-e29b-41d4-a716-446655440000\?page_type=air_purifier_filter&amp;page_slug=levoit-rf-rar029"/,
     );
+  });
+});
+
+describe("TieredBuyLinks fridge model /go attribution", () => {
+  it("model PDP buy CTA emits page_slug=model_slug, not filter_slug", () => {
+    const html = renderToStaticMarkup(
+      createElement(TieredBuyLinks, {
+        links: [gatedLink],
+        goBase: "/go",
+        goAttribution: buildFridgeModelGoAttribution("ge-gfe28gmkes"),
+      }),
+    );
+    assert.match(
+      html,
+      /href="\/go\/550e8400-e29b-41d4-a716-446655440000\?page_type=fridge_model&amp;page_slug=ge-gfe28gmkes"/,
+    );
+    assert.ok(!html.includes("page_slug=mwf"));
+  });
+
+  it("omitted attribution leaves legacy /go href unchanged (filter hub)", () => {
+    const html = renderToStaticMarkup(
+      createElement(TieredBuyLinks, {
+        links: [gatedLink],
+        goBase: "/go",
+      }),
+    );
+    assert.match(html, /href="\/go\/550e8400-e29b-41d4-a716-446655440000"/);
+    assert.ok(!html.includes("page_type="));
   });
 });

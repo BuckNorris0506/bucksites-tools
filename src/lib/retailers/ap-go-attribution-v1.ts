@@ -43,10 +43,13 @@ export function buildApGoAttributionQueryString(attribution: ApGoAttributionV1):
 
 export function appendApGoAttributionToGoHref(
   goHrefWithoutQuery: string,
-  attribution?: ApGoAttributionV1 | null,
+  attribution?: { page_type: string; page_slug: string } | null,
 ): string {
   if (!attribution) return goHrefWithoutQuery;
-  const qs = buildApGoAttributionQueryString(attribution);
+  const qs = new URLSearchParams({
+    page_type: attribution.page_type,
+    page_slug: attribution.page_slug,
+  }).toString();
   return qs ? `${goHrefWithoutQuery}?${qs}` : goHrefWithoutQuery;
 }
 

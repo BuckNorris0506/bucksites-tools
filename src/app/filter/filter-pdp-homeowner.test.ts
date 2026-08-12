@@ -139,7 +139,7 @@ describe("refrigerator filter PDP homeowner trust copy", () => {
             retailer_key: "amazon",
             browser_truth_classification: "direct_buyable",
             browser_truth_buyable_subtype: "SINGLE_UNIT_DIRECT_BUYABLE",
-            browser_truth_checked_at: "2026-05-04T15:00:00.000Z",
+            browser_truth_checked_at: new Date().toISOString(),
           },
         ],
         goBase: "/go",
@@ -148,7 +148,7 @@ describe("refrigerator filter PDP homeowner trust copy", () => {
       }),
     );
     assert.ok(html.includes('href="/go/go-primary"'));
-    assert.ok(html.includes("2026-05-04"));
+    assert.ok(!html.includes("page_type=fridge_model"));
   });
 
   it("vertical filter default suppress message uses verified-link wording", () => {

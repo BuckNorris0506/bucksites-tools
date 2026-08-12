@@ -1,6 +1,10 @@
 import { NextRequest } from "next/server";
 import { getRetailerLinkById } from "@/lib/data/retailers";
 import {
+  fridgeGoModelAttributionClickEventKeys,
+  parseFridgeGoModelAttributionFromSearchParams,
+} from "@/lib/retailers/fridge-go-attribution-v1";
+import {
   GO_LINK_UUID_RE,
   goFallbackRedirect,
   logClickEventForGoRoute,
@@ -12,6 +16,10 @@ export const dynamic = "force-dynamic";
 /**
  * Legacy fridge wedge: `click_events` uses filter_id + retailer_slug + page_type/page_slug
  * (no retailer_link_id). Outbound truth is `target_url` = `go.outboundUrl` (see handler).
+ *
+ * Default attribution is the filter hub (`refrigerator_filter` / filter_slug).
+ * Decision-Capture model PDPs may pass `page_type=fridge_model&page_slug=<model_slug>`
+ * so Outcome Join can match page_slug ↔ model_slug without inventing filter→model joins.
  */
 export async function GET(
   request: NextRequest,
@@ -54,6 +62,10 @@ export async function GET(
     return goFallbackRedirect(request, "/go-unavailable");
   }
 
+  const modelAttribution = parseFridgeGoModelAttributionFromSearchParams(
+    new URL(request.url).searchParams,
+  );
+
   await logClickEventForGoRoute(
     request,
     go,
@@ -62,6 +74,7 @@ export async function GET(
       retailer_slug: row.retailer_key,
       page_type: "refrigerator_filter",
       page_slug: row.filter_slug?.trim() || "unknown",
+      ...fridgeGoModelAttributionClickEventKeys(modelAttribution),
     },
     "[go/fridge]",
   );

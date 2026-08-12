@@ -107,6 +107,10 @@ describe("money-page CTA composition (wedge data vs /go hop)", () => {
     );
     assert.ok(src.includes('goBase="/go"'), "fridge filter TieredBuyLinks must use goBase=\"/go\"");
     assert.ok(
+      !src.includes("buildFridgeModelGoAttribution"),
+      "fridge filter hub must not emit fridge_model page_slug attribution",
+    );
+    assert.ok(
       src.includes("<VisualReplacementMatchCard"),
       "expected VisualReplacementMatchCard on refrigerator filter PDP",
     );
@@ -137,6 +141,10 @@ describe("money-page CTA composition (wedge data vs /go hop)", () => {
     );
     assert.ok(sectionSrc.includes('goBase="/go"'), "fridge model hub must use legacy /go hop");
     assert.ok(
+      sectionSrc.includes("buildFridgeModelGoAttribution"),
+      "fridge model hub buy CTAs must attach Decision-Capture model_slug attribution",
+    );
+    assert.ok(
       !sectionSrc.includes('goBase="/air-purifier/go"') &&
         !sectionSrc.includes('goBase="/vacuum/go"') &&
         !sectionSrc.includes('goBase="/humidifier/go"'),
@@ -144,5 +152,14 @@ describe("money-page CTA composition (wedge data vs /go hop)", () => {
     );
     assertNoForeignVerticalDataModules(src, "");
     assert.ok(!src.includes("@/lib/data/filters"), "fridge model page must not import filter hub module");
+  });
+
+  it("legacy fridge /go keeps filter_slug default and honors fridge_model query override", () => {
+    const rel = "src/app/go/[linkId]/route.ts";
+    const src = readPage(rel);
+    assert.ok(src.includes("parseFridgeGoModelAttributionFromSearchParams"));
+    assert.ok(src.includes('page_type: "refrigerator_filter"'));
+    assert.ok(src.includes("row.filter_slug"));
+    assert.ok(src.includes("fridgeGoModelAttributionClickEventKeys"));
   });
 });

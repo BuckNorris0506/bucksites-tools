@@ -3,10 +3,7 @@ import {
   MULTIPACK_FALLBACK_COPY,
   shouldShowMultipackFallbackCopy,
 } from "@/lib/retailers/launch-buy-links";
-import {
-  appendApGoAttributionToGoHref,
-  type ApGoAttributionV1,
-} from "@/lib/retailers/ap-go-attribution-v1";
+import { appendApGoAttributionToGoHref } from "@/lib/retailers/ap-go-attribution-v1";
 
 export type BuyLinkRow = {
   id: string;
@@ -34,8 +31,8 @@ export function BuyLinks({
   links: BuyLinkRow[];
   /** e.g. `/air-purifier/go` — no trailing slash */
   goBase?: string;
-  /** When set (AP phase 1), appended as query params on `/go` hrefs for click_events attribution. */
-  goAttribution?: ApGoAttributionV1 | null;
+  /** When set, appended as query params on `/go` hrefs for click_events attribution. */
+  goAttribution?: { page_type: string; page_slug: string } | null;
 }) {
   const realLinks = filterRealBuyRetailerLinks(links);
 

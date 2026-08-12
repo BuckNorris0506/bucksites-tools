@@ -30,6 +30,8 @@ describe("fridge trust funnel wiring", () => {
     const details = read("src/components/fridge/FridgeModelFilterSection.tsx");
     assert.ok(chips.includes("event_name: \"fridge_filter_chip_click\""));
     assert.ok(details.includes("event_name: \"fridge_filter_detail_click_from_model\""));
+    assert.ok(details.includes("buildFridgeModelGoAttribution"));
+    assert.ok(details.includes("goAttribution="));
   });
 
   it("help-open dispatch points are wired for hero and source callout details", () => {

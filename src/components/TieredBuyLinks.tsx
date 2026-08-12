@@ -16,10 +16,7 @@ import {
   sortBestVerifiedBuyLinks,
   type BuyPathSortContext,
 } from "@/lib/retailers/launch-buy-links";
-import {
-  appendApGoAttributionToGoHref,
-  type ApGoAttributionV1,
-} from "@/lib/retailers/ap-go-attribution-v1";
+import { appendApGoAttributionToGoHref } from "@/lib/retailers/ap-go-attribution-v1";
 
 const MAX_SECONDARY = 2;
 
@@ -53,8 +50,8 @@ export function TieredBuyLinks({
   primaryCtaLabel?: string;
   /** When set (e.g. from `buyPathSortContextForFilter`), exact-OEM context can affect tie-break among gated links. */
   buyPathSortContext?: BuyPathSortContext;
-  /** When set (AP phase 1), appended as query params on `/go` hrefs for click_events attribution. */
-  goAttribution?: ApGoAttributionV1 | null;
+  /** When set, appended as query params on `/go` hrefs for click_events attribution. */
+  goAttribution?: { page_type: string; page_slug: string } | null;
 }) {
   const base = goBase.replace(/\/$/, "");
 

@@ -193,6 +193,24 @@ test("non-intersecting click page_slugs keep handoff UNKNOWN (no false zero)", (
   assert.ok(join.blockers.includes("phase4_outcome_capture_handoff_join_key_unqualified"));
 });
 
+test("fridge_model page_slug matching Decision-Capture model_slug qualifies Outcome Join", () => {
+  const join = joinGoClicksToDecisionClassesV1({
+    decisionCapture: decisionFixture(),
+    clickRows30d: [
+      clickRow({ page_slug: "ge-gfe28gmkes", page_type: "fridge_model" }),
+      clickRow({ page_slug: "mwf", page_type: "refrigerator_filter" }),
+    ],
+  });
+  assert.equal(join.status, "PROVEN");
+  assert.equal(join.handoff_from_confident_buy_count, 1);
+  assert.deepEqual(join.by_decision_class, {
+    confident_buy: 1,
+    confident_do_not_buy: 0,
+    honest_unknown: 0,
+  });
+  assert.equal(join.blockers.length, 0);
+});
+
 test("wrong-part clicks never positive; go-unavailable is own UNKNOWN class", () => {
   const capture = buildPhase4OutcomeCaptureV1({
     now: NOW,

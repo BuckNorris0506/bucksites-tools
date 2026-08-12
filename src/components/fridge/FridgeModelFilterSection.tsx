@@ -13,6 +13,7 @@ import {
   BUCKPARTS_VERIFIED_LINK_PLURAL,
 } from "@/lib/copy/buckparts-verified-link-copy";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
+import { buildFridgeModelGoAttribution } from "@/lib/retailers/fridge-go-attribution-v1";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
 
 const FRIDGE_MODEL_FILTER_BUY_SUPPRESS = BUCKPARTS_VERIFIED_LINK_NONE_YET;
@@ -175,6 +176,11 @@ export function FridgeModelFilterSection({
                       suppressMessage={FRIDGE_MODEL_FILTER_BUY_SUPPRESS}
                       gateSuppressionSummary={f.buy_path_gate_suppression}
                       buyPathSortContext={buyPathSortContext}
+                      goAttribution={
+                        telemetryBase?.page_slug
+                          ? buildFridgeModelGoAttribution(telemetryBase.page_slug)
+                          : null
+                      }
                     />
                   </BuckPartsVerifiedLinksSection>
                 </div>
