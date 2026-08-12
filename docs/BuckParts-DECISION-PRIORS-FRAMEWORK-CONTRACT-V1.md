@@ -3,7 +3,7 @@
 **Status:** **INSTANTIATED_ZERO_AUTHORITY** — capability may exist and be tested in-repo as read-only labels-only tagging. **Permission claimed: none** (advisory labels only; all Executive authority locks false). Existence is **not** an authority grant.  
 **Authority:** Subordinate to `docs/BuckParts-CONSTITUTION.md`, the Executive Operating System (`AGENTS.md` + HQ stopping point), and `docs/BuckParts-EXECUTIVE-EVOLUTION-GATE-V1.md`. Does **not** authorize mutation, NBA, Dispatch, Daily Operator, Command Center steering, scoring, weighting, or behavior change.  
 **Reuse:** Existing Owner Approval Records (OAR = `founder_decision_registry_v1` / `data/owner-decisions/*-owner-approval*.json`) and Owner Decision Requests (ODR = `owner_decision_request_v1`).  
-**Gate verdict (applied):** `INSTANTIATED_ZERO_AUTHORITY` for existence; `PARK` for any non-zero Executive permission / scope expansion. Do not use maturity labels (`temporary` / `permanent` / `graduated`).
+**Gate verdict (applied):** `INSTANTIATED_ZERO_AUTHORITY` for existence; `PARK` for any non-zero Executive permission / scope expansion. Capability existence, evidence, permission, scope, availability, and authority claims are distinct and must not be collapsed into one status.
 
 ---
 
@@ -45,7 +45,7 @@ gate_verdict_applied: INSTANTIATED_ZERO_AUTHORITY (existence); PARK (any non-zer
 5. Measurable learning increase: UNKNOWN
    No before/after decision change named. No auto-injection into Runner-halt ODR
    builders. Validator proves framework honesty, not learning. Real tagged history
-   is evidence for a future authority claim — not a maturity promotion.
+   is evidence for a future authority claim — not an authority assignment.
 
 6. Failure mode: PROVEN
    Unknown labels fail closed; empty tags valid; scoring/weighting/behavior_change
@@ -80,7 +80,7 @@ Decision Priors may later request a **named permission in a named scope** only v
 
 - **Existence:** allowed (instantiated, tested)
 - **Permission:** none / advisory labels only
-- **Do not say** temporary, graduated, promoted, or permanent
+- Documents must describe explicit authority claims, named permissions, and named scopes rather than lifecycle labels
 
 ---
 
