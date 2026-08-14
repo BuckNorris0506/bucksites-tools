@@ -78,6 +78,7 @@
     "buckparts:executive-runtime:wake-observe": "tsx scripts/run-buckparts-executive-runtime-wake-observe-v0.ts",
     "buckparts:executive-runtime:understand": "tsx scripts/run-buckparts-executive-runtime-understand-v1.ts",
     "buckparts:executive-runtime:broken-first": "tsx scripts/run-buckparts-executive-runtime-broken-first-v2.ts",
+    "buckparts:executive-runtime:worker-registry": "tsx scripts/run-buckparts-executive-runtime-worker-registry-v1.ts",
     "buckparts:external-signals-registry": "tsx scripts/report-external-signals-registry-v1.ts",
     "buckparts:customer-authority-history": "tsx scripts/report-customer-authority-history-v1.ts",
     "buckparts:all-product-safe-buyer-path-census": "tsx scripts/report-all-product-safe-buyer-path-census-v1.ts",
