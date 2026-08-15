@@ -38,6 +38,14 @@ export const GE_OWNER_REVIEW_EXACT_COMMAND_V1 =
 export const AP_OWNER_REVIEW_EXACT_COMMAND_V1 =
   "npx tsx scripts/report-air-purifier-demand-selected-batch-owner-review-v1.ts" as const;
 
+/**
+ * Proven AP model-first evidence-queue reporter (stdout JSON).
+ * Must stay equal to AP_MODEL_FIRST_EVIDENCE_QUEUE_COMMAND_V1.
+ * Read-only; not owner-review; not apply.
+ */
+export const AP_MODEL_FIRST_EVIDENCE_QUEUE_ALLOWLIST_COMMAND_V1 =
+  "npx tsx scripts/report-ap-model-first-evidence-queue-v1.ts" as const;
+
 /** Guarded mutation executor. It must never be dispatch-allowlisted. */
 export const BUCKPARTS_RETAILER_LINK_PARITY_GUARDED_APPLY_WRITE_COMMAND_V1 =
   "BUCKPARTS_IO_CAPABILITY=MUTATION npx tsx scripts/lib/buckparts-retailer-link-parity-guarded-apply-v1.ts --write --plan-file <plan.json>" as const;
@@ -111,6 +119,15 @@ export const DISPATCH_ALLOWLIST_ENTRIES_V1: readonly DispatchAllowlistEntryV1[] 
     exact_command:
       "npx tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts",
     selected_subsystem: "proof:ap_closeout_readiness",
+    command_kind: "read_only_report",
+    owner_review_required: false,
+    artifact_write_behavior: "optional",
+    no_artifact_allowed: true,
+    mutation_posture: MUTATION_POSTURE,
+  },
+  {
+    exact_command: AP_MODEL_FIRST_EVIDENCE_QUEUE_ALLOWLIST_COMMAND_V1,
+    selected_subsystem: "report:ap_model_first_evidence_queue",
     command_kind: "read_only_report",
     owner_review_required: false,
     artifact_write_behavior: "optional",
