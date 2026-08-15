@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
+import { AP_MODEL_FIRST_EVIDENCE_QUEUE_COMMAND_V1 } from "./ap-model-first-evidence-queue-v1";
 import { DISPATCH_ALLOWLIST_ENTRIES_V1 } from "./buckparts-command-center-dispatch-allowlist-v1";
 import {
   discoverExecutiveWorkV1,
@@ -174,6 +175,18 @@ test("catalog order is detector order, not ranked by executable", async () => {
   assert.equal(snap.work[0]?.executable, false);
   assert.equal(snap.work[1]?.executable, true);
   assert.equal("rank" in (snap.work[0] ?? {}), false);
+});
+
+test("live HEAD: ap_model_first_evidence is the first Executive-executable business work when present", async () => {
+  const snap = await discoverExecutiveWorkV1({ rootDir: REPO_ROOT });
+  const evidence = snap.work.find((w) => w.work_id === "ap_model_first_evidence");
+  if (!evidence) return;
+  assert.equal(evidence.executable, true);
+  assert.equal(evidence.blocking_reason, null);
+  assert.equal(evidence.exact_command, AP_MODEL_FIRST_EVIDENCE_QUEUE_COMMAND_V1);
+  assert.equal(evidence.executable_epistemic, "PROVEN");
+  assert.equal(snap.executable_work[0]?.work_id, "ap_model_first_evidence");
+  assert.ok(snap.executable_work.length >= 1);
 });
 
 test("live HEAD: required fields; executable_work is eligibility subset", async () => {

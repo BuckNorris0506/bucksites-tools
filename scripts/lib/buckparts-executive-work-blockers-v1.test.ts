@@ -274,7 +274,12 @@ test("live HEAD: every discovered work item has required blocker fields; AP allo
   }
   const apEvidence = out.work_blockers.find((w) => w.work_id === "ap_model_first_evidence");
   const apMapping = out.work_blockers.find((w) => w.work_id === "ap_model_first_mapping_review");
-  if (apEvidence && apMapping) {
+  if (apEvidence && apMapping && apEvidence.executable && apMapping.executable) {
+    assert.equal(apEvidence.blocker_class, null);
+    assert.equal(apMapping.blocker_class, null);
+    assert.equal(apEvidence.blocker_fingerprint, null);
+    assert.equal(apMapping.blocker_fingerprint, null);
+  } else if (apEvidence && apMapping && !apEvidence.executable && !apMapping.executable) {
     assert.equal(apEvidence.blocker_fingerprint, apMapping.blocker_fingerprint);
     assert.equal(out.highest_autonomy_blocker?.blocker_fingerprint, apEvidence.blocker_fingerprint);
     assert.ok((out.highest_autonomy_blocker?.blocked_work_count ?? 0) >= 2);

@@ -224,14 +224,23 @@ test("unobserved observation restore is UNKNOWN autonomy, not invented executabl
   assert.equal(out.highest_autonomy_opportunity, null);
 });
 
-test("live HEAD: AP allowlist opportunity is the unique proven autonomy winner when both AP work items exist", async () => {
+test("live HEAD: AP allowlist opportunity tracks whether those work items are still blocked", async () => {
   const workSnap = await discoverExecutiveWorkV1({ rootDir: REPO_ROOT });
   const out = await discoverExecutiveAutonomyBacklogV1({ rootDir: REPO_ROOT });
   assert.equal(out.opportunities.length, out.aggregated_opportunities.length);
-  const apIds = workSnap.work
-    .map((w) => w.work_id)
-    .filter((id) => id === "ap_model_first_evidence" || id === "ap_model_first_mapping_review");
-  if (apIds.length === 2) {
+  const apWork = workSnap.work.filter(
+    (w) => w.work_id === "ap_model_first_evidence" || w.work_id === "ap_model_first_mapping_review",
+  );
+  if (apWork.length === 2 && apWork.every((w) => w.executable === true)) {
+    assert.equal(
+      out.opportunities.some(
+        (o) =>
+          o.authority_required === "dispatch_allowlist_edit" &&
+          o.affected_work_items.includes("ap_model_first_evidence"),
+      ),
+      false,
+    );
+  } else if (apWork.length === 2 && apWork.every((w) => w.executable === false)) {
     assert.equal(out.highest_autonomy_opportunity?.expected_manual_steps_removed, 2);
     assert.equal(out.highest_autonomy_opportunity?.authority_required, "dispatch_allowlist_edit");
     assert.equal(out.autonomy_question.epistemic, "PROVEN");
