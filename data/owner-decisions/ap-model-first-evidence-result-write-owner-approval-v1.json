@@ -1,0 +1,34 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-08-15-ap-model-first-evidence-result-write",
+      "source_queue_row_id": "queue-ap-model-first-evidence-result-write-v1",
+      "source_decision_packet_id": "ap_model_first_evidence_result_write_grant_v1:recurring-class",
+      "decided_at": "2026-08-15T21:00:00.000Z",
+      "decision_status": "deferred",
+      "owner_note": "DRAFT — PENDING_OWNER_SIGNATURE. Intended grant after founder sets decision_status=approved: recurring class permission for The Executive to write ONLY existing AP model-first evidence RESULT artifacts via buildModelFirstEvidenceResultV1({ writeResult: true }) after a READY queue selects a valid top candidate. Validator validateModelFirstEvidenceResultV1 and path guard isAllowedModelFirstEvidenceResultRelPathV1 are required before any write. This draft does not authorize a write. Presence of owner_model_first_evidence_result_write_approved does not authorize a write until founder ratifies and a separate wiring step exists.",
+      "allowed_next_scope": "owner_model_first_evidence_result_write_approved",
+      "evidence_required_before_mutation": true,
+      "expires_at": "2026-11-15T00:00:00.000Z",
+      "review_after": "2026-11-15T00:00:00.000Z",
+      "prohibited_actions_still_apply": [
+        "Do not write files under data/air-purifier/batch-production/agent-packets-model-first-v1/.",
+        "Do not mutate product CSV, retailer_links.csv, filters.csv, models.csv, or compatibility_mappings.csv.",
+        "Do not mutate Supabase.",
+        "Do not run --apply or --write-csv.",
+        "Do not change public routes, sitemap, robots, buy CTA, or production publication.",
+        "Do not invent evidence, prices, fit, ratings, or buy eligibility.",
+        "Do not treat this row as owner_mutation_approved.",
+        "Do not authorize writes by enum presence or deferred status alone.",
+        "Do not change dispatch.",
+        "Fail closed unless ap_model_first_evidence_queue_v1.queue_status=READY and a valid top candidate exists.",
+        "Fail closed unless validateModelFirstEvidenceResultV1 passes.",
+        "Fail closed unless isAllowedModelFirstEvidenceResultRelPathV1 passes for the destination.",
+        "Destination is only data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-<anchor_filter_slug>-v1.results.json."
+      ]
+    }
+  ]
+}

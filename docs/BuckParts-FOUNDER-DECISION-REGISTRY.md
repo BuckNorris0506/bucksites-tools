@@ -38,11 +38,11 @@
 | `source_decision_packet_id` | string | yes | Founder Decision Packet id (e.g. `decision_packet_v1:queue-human-browser`), **or** when `codex_output_review_context_v1` is set: `codex_output_review_packet_v1:${source_queue_row_id}` exactly. |
 | `decided_at` | string (ISO 8601) | yes | When the founder recorded the decision. |
 | `decision_status` | string | yes | One of: `approved`, `rejected`, `deferred`, `needs_more_evidence`. |
-| `owner_note` | string | yes | Founder-authored text; **must be non-empty** when `allowed_next_scope` is `owner_mutation_approved`. |
-| `allowed_next_scope` | string | yes | One of: `none`, `read_only_agent`, `human_external`, `owner_mutation_approved`. |
+| `owner_note` | string | yes | Founder-authored text; **must be non-empty** when `allowed_next_scope` is `owner_mutation_approved` or `owner_model_first_evidence_result_write_approved`. |
+| `allowed_next_scope` | string | yes | One of: `none`, `read_only_agent`, `human_external`, `owner_mutation_approved`, `owner_model_first_evidence_result_write_approved`. |
 | `expires_at` | string (ISO 8601) or null | no | After this instant, the row must **not** be treated as an active standing approval for mutation-shaped scope. |
 | `review_after` | string (ISO 8601) or null | no | After this instant, treat active approval as stale (same as `expires_at` for “active mutation approval” helpers). |
-| `evidence_required_before_mutation` | boolean | yes | Must be **`true`** when `allowed_next_scope` is `owner_mutation_approved` (explicit evidence gate). |
+| `evidence_required_before_mutation` | boolean | yes | Must be **`true`** when `allowed_next_scope` is `owner_mutation_approved` or `owner_model_first_evidence_result_write_approved` (explicit evidence gate). |
 | `prohibited_actions_still_apply` | string[] | yes | Non-empty; typically copied from the decision packet snapshot. |
 | `codex_output_review_context_v1` | object | no | When present, records owner judgment for **`codex_output_review_packet_v1`** (digest/dashboard read model counts + digest correlation only). See subsection below. |
 | `batch_production_owner_review_context_v1` | object | no | When present, records owner judgment for **`batch_owner_screenshot_draft_packet_v1`** / batch owner approval checklist. See subsection below. |
@@ -83,12 +83,13 @@
 
 ## Semantic rules (PROVEN in validator)
 
-1. **`read_only_agent`** — does **not** authorize mutating npm targets, Supabase, `retailer_links`, evidence JSON writes, or affiliate URL changes. It only labels that read-only agent packets may align with founder intent. **`evidence_required_before_mutation: false` on a `read_only_agent` row does not grant mutation authority** — that flag is only **required** to be `true` when `allowed_next_scope` is `owner_mutation_approved` (validator-enforced). Treat `read_only_agent` as **never** mutation-shaped regardless of `decision_status` or Codex review option.
+1. **`read_only_agent`** — does **not** authorize mutating npm targets, Supabase, `retailer_links`, evidence JSON writes, or affiliate URL changes. It only labels that read-only agent packets may align with founder intent. **`evidence_required_before_mutation: false` on a `read_only_agent` row does not grant mutation authority** — that flag is only **required** to be `true` when `allowed_next_scope` is `owner_mutation_approved` or `owner_model_first_evidence_result_write_approved` (validator-enforced). Treat `read_only_agent` as **never** mutation-shaped regardless of `decision_status` or Codex review option.
 2. **`owner_mutation_approved`** — requires non-empty `owner_note` and `evidence_required_before_mutation === true` (explicit mutation-scoped evidence gate). Optional `expires_at` / `review_after` bound standing approval: if the reference time is **on or after** either instant, `isFounderRegistryRowActiveMutationApproval` is **false** (`founder-decision-registry-v1.ts`). **INFERRED:** Even a valid active row is **not** consumed by Runner, queues, or gates today — it is founder-local structured intent only until separately wired.
-3. **`approve_readonly_findings` (Codex review)** — validator requires `decision_status: approved` and `allowed_next_scope: read_only_agent`. **Must not** be treated as mutation approval, `owner_mutation_approved`, or authority for Supabase, `retailer_links`, evidence JSON, affiliate edits, commits, or Runner input. **PROVEN:** `founderRegistryRowGrantsMutatingRepoAuthority` returns **false** for these rows.
-4. Invalid `decision_status` or `allowed_next_scope` values fail validation.
-5. **`codex_output_review_context_v1`** — optional; when present, alignment rules in the subsection above are enforced (including **no** `owner_mutation_approved` pairing for `approve_readonly_findings`).
-6. **`batch_production_owner_review_context_v1`** — optional; when present, alignment rules in the subsection above are enforced (**no** `owner_mutation_approved` for `approve_for_next_planning_only`).
+3. **`owner_model_first_evidence_result_write_approved`** — founder-ratifiable class for bounded AP model-first evidence **result** JSON writes only. Requires non-empty `owner_note`, `evidence_required_before_mutation === true`, and `expires_at` after `decided_at`. **PROVEN:** this scope does **not** satisfy `isFounderRegistryRowActiveMutationApproval`, CSV/Supabase apply authorization, guarded apply bridge, or manufacturer-rescue mutation. Presence of the enum or a deferred row does **not** authorize a write; Executive write wiring is a separate step. Does **not** authorize packet-directory writes, CSV, Supabase, `--apply`, or public-site mutation.
+4. **`approve_readonly_findings` (Codex review)** — validator requires `decision_status: approved` and `allowed_next_scope: read_only_agent`. **Must not** be treated as mutation approval, `owner_mutation_approved`, or authority for Supabase, `retailer_links`, evidence JSON, affiliate edits, commits, or Runner input. **PROVEN:** `founderRegistryRowGrantsMutatingRepoAuthority` returns **false** for these rows.
+5. Invalid `decision_status` or `allowed_next_scope` values fail validation.
+6. **`codex_output_review_context_v1`** — optional; when present, alignment rules in the subsection above are enforced (including **no** `owner_mutation_approved` pairing for `approve_readonly_findings`).
+7. **`batch_production_owner_review_context_v1`** — optional; when present, alignment rules in the subsection above are enforced (**no** `owner_mutation_approved` for `approve_for_next_planning_only`).
 
 ---
 
@@ -165,6 +166,7 @@ A file **existing** with `deferred` + `none` means **“review recorded, mutatio
 
 | Date | Change |
 |------|--------|
+| 2026-08-15 | Added `owner_model_first_evidence_result_write_approved` (non-mutation evidence-result write class). Does not satisfy mutation gates. Enum presence does not authorize writes. |
 | 2026-06-27 | Documented guarded-apply activation workflow: manual `deferred`/`none` → `approved`/`owner_mutation_approved`; single authoritative store; inactive-row rejection rationale. |
 | 2026-05-16 | Clarified `read_only_agent` vs `owner_mutation_approved` vs `approve_readonly_findings` (no mutation authority from read-only scope or Codex approve-read-only). |
 | 2026-05-16 | Optional `codex_output_review_context_v1` on registry rows + read-model counts + digest queue correlation + Layer 6 `founder_decision_recording_for_codex_review_v1` (visibility only; Layer 6 still NOT_PROVEN). |
