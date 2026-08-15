@@ -271,16 +271,22 @@ test("expected_completion_artifact: stdout JSON is PROVEN only when allowlist no
   assert.ok(dry.expected_completion_artifact?.includes("stdout JSON"));
   assert.equal(dry.expected_completion_artifact?.includes("/opt/cursor"), false);
 
+  const evidence = expectedCompletionArtifactV1(AP_EVIDENCE_CMD);
+  assert.equal(evidence.expected_completion_artifact_epistemic, "PROVEN");
+  assert.ok(evidence.expected_completion_artifact?.includes("stdout JSON"));
+
   const required = expectedCompletionArtifactV1(CC_REPORT);
   assert.equal(required.expected_completion_artifact, null);
   assert.equal(required.expected_completion_artifact_epistemic, "UNKNOWN");
 
-  const unknown = expectedCompletionArtifactV1(AP_EVIDENCE_CMD);
+  const unknown = expectedCompletionArtifactV1(
+    "npx tsx scripts/report-batch-run-registry-intake-v1.ts",
+  );
   assert.equal(unknown.expected_completion_artifact, null);
   assert.equal(unknown.expected_completion_artifact_epistemic, "UNKNOWN");
 });
 
-test("live HEAD: EXECUTABLE WORK is empty and proof names every blocked work_id", async () => {
+test("live HEAD: queue splits discovery; empty executable set emits proof", async () => {
   const discovery = await discoverExecutiveWorkV1({ rootDir: REPO_ROOT });
   const queue = buildExecutiveWorkQueueFromSnapshotV1(discovery);
   assert.equal(queue.ranking_performed, false);
@@ -308,6 +314,11 @@ test("live HEAD: EXECUTABLE WORK is empty and proof names every blocked work_id"
     for (const row of queue.executable_work) {
       assert.ok(row.exact_command.length > 0);
       assert.equal(typeof row.authority, "string");
+    }
+    const first = queue.executable_work[0];
+    if (discovery.work.some((w) => w.work_id === "ap_model_first_evidence" && w.executable)) {
+      assert.equal(first?.work_id, "ap_model_first_evidence");
+      assert.equal(first?.exact_command, AP_EVIDENCE_CMD);
     }
   }
 });
