@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
@@ -35,6 +35,7 @@ test("unsigned grant template is not a live owner-decision and does not edit all
   assert.equal(template.dispatch_allowlist_edited, false);
   assert.equal(template.canonical_selector_edited, false);
   assert.equal(template.runtime_v3_implemented, false);
+  assert.equal(template.implementation_stopped_pending_founder_ratification, true);
   assert.equal(template.existing_oar_schema_sufficient, true);
   assert.equal(template.smallest_missing_first_class_field, null);
   assert.equal(existsSync(path.join(REPO_ROOT, GRANT_MD_REL)), true);
@@ -83,9 +84,18 @@ test("founder-filled registry document validates as read_only_agent with no muta
   assert.equal(ctx.second_selector_authorized, false);
   assert.equal(ctx.outcome_join_steering_authorized, false);
   assert.equal(ctx.new_objective_authority_authorized, false);
-  assert.equal(ctx.new_prioritization_authority_authorized, false);
-  assert.equal(ctx.dispatch_allowlist_membership_not_granted_by_this_row_alone, true);
+  assert.equal(ctx.precedence_reorder_authorized, false);
+  assert.equal(ctx.post_ratification_allowlist_membership_authorized, true);
+  assert.equal(ctx.post_ratification_existing_candidate_emission_authorized, true);
+  assert.equal(ctx.post_ratification_existing_source, "refrigerator_model_first");
+  assert.equal(
+    ctx.post_ratification_emit_when_eligible_expansion_work_exists_and_mapping_review_unknown_inactive,
+    true,
+  );
+  assert.equal(ctx.post_ratification_replace_mapping_review_command_while_mapping_review_remains, false);
+  assert.equal(ctx.dispatch_allowlist_membership_not_granted_until_live_approved_row, true);
   assert.equal(ctx.runtime_v3_not_authorized, true);
+  assert.equal(ctx.scheduling_not_authorized, true);
 
   const v = validateFounderDecisionRegistryDocumentV1(inner);
   assert.equal(v.ok, true, v.ok ? "" : v.errors.join("; "));
@@ -116,4 +126,26 @@ test("founder-filled registry document validates as read_only_agent with no muta
   assert.match(prohibitions, /Outcome Join/);
   assert.match(prohibitions, /Runtime v3/);
   assert.match(prohibitions, /DISPATCH_ALLOWLIST_ENTRIES_V1/);
+  assert.match(prohibitions, /live approved copy/);
+});
+
+test("no live owner-decision grants fridge expansion worker canonical dispatch", () => {
+  const ownerDir = path.join(REPO_ROOT, "data/owner-decisions");
+  const hits: string[] = [];
+  function walk(dir: string): void {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const abs = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(abs);
+        continue;
+      }
+      if (!entry.name.endsWith(".json")) continue;
+      const text = readFileSync(abs, "utf8");
+      if (text.includes(EXACT_COMMAND) || text.includes("fridge_expansion_worker_v1")) {
+        hits.push(path.relative(REPO_ROOT, abs));
+      }
+    }
+  }
+  walk(ownerDir);
+  assert.deepEqual(hits, []);
 });
