@@ -1,0 +1,214 @@
+{
+  "contract": "buckparts_fridge_expansion_worker_v1",
+  "source_command": "node --import tsx scripts/run-buckparts-fridge-expansion-worker-v1.ts",
+  "generated_at": "2026-08-14T04:26:17.095Z",
+  "cycle_status": "COMPLETED_STOP",
+  "question": "Can BuckParts expand one refrigerator page-factory integration without Jared orchestrating every step?",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "dispatch_invoked": false,
+  "dispatch_authority": false,
+  "nba_authority": false,
+  "steering_authority": false,
+  "executive_organ": false,
+  "selected_model": {
+    "fridge_slug": "ge-gfe28gmkes",
+    "model_number": "GFE28GMKES",
+    "brand_slug": "ge",
+    "already_in_fridge_models_csv": true,
+    "already_in_page_factory_registry": false,
+    "eligible_for_owner_review": true,
+    "selection_rule": "first_eligible_unregistered_proven_cohort_slug_asc",
+    "not_yet_integrated_means": "not_in_page_factory_targets_csv"
+  },
+  "filters": {
+    "mapped_filter_slugs": [
+      "rpwfe"
+    ],
+    "official_marketing_token": "RPWFE",
+    "evidence_source": "model_filter_correctness_audit_via_proven_cohort",
+    "model_first_confidence": "PROVEN",
+    "official_filter_token_or_name": "RPWFE",
+    "samsung_haf_qin_family": false
+  },
+  "pipeline": [
+    {
+      "step_id": "discover",
+      "status": "COMPLETED",
+      "existing_generator": "proven_cohort_page_factory_manifest_v1",
+      "summary": "Selected ge-gfe28gmkes (eligible, unregistered, slug-asc)",
+      "artifact_contract": "proven_cohort_page_factory_manifest_v1"
+    },
+    {
+      "step_id": "determine_filters",
+      "status": "COMPLETED",
+      "existing_generator": "model_filter_correctness_audit_v1 + refrigerator_model_first_batch_resolver_v1",
+      "summary": "Filters rpwfe token=RPWFE",
+      "artifact_contract": "model_filter_correctness_audit_v1"
+    },
+    {
+      "step_id": "build_integration",
+      "status": "SKIPPED",
+      "existing_generator": "proven_cohort_page_factory_manifest_v1.recommended_registry_row_proposal",
+      "summary": "Non-HAF-QIN path: registry proposal only (clone/quality-gate skipped to avoid inventing HAF-QIN)",
+      "artifact_contract": "proven_cohort_page_factory_manifest_v1"
+    },
+    {
+      "step_id": "validate_and_test",
+      "status": "COMPLETED",
+      "existing_generator": "scripts/npm-test-v1.sh",
+      "summary": "BUCKPARTS_TEST_FILES='scripts/lib/proven-cohort-page-factory-manifest-v1.test.ts scripts/lib/refrigerator-model-first-batch-resolver-v1.test.ts' bash scripts/npm-test-v1.sh",
+      "artifact_contract": null
+    },
+    {
+      "step_id": "owner_review_packet",
+      "status": "COMPLETED",
+      "existing_generator": "proven_cohort recommended_registry_row_proposal",
+      "summary": "Founder-gated packet emitted; registry CSV not applied",
+      "artifact_contract": "buckparts_fridge_expansion_worker_v1"
+    },
+    {
+      "step_id": "record_evidence",
+      "status": "COMPLETED",
+      "existing_generator": null,
+      "summary": "Draft JSON/MD under data/fridge/batch-production/drafts/",
+      "artifact_contract": null
+    },
+    {
+      "step_id": "stop",
+      "status": "COMPLETED",
+      "existing_generator": null,
+      "summary": "Stopped. No dispatch. No production apply.",
+      "artifact_contract": null
+    }
+  ],
+  "evidence_clone": {
+    "ran": false,
+    "status": "SKIPPED",
+    "family_key": null,
+    "source_slug": null,
+    "blockers": [
+      "unsupported_family:evidence_clone_v1 supports samsung::HAFQIN only"
+    ]
+  },
+  "quality_gate": {
+    "ran": false,
+    "quality_classification": null,
+    "publication_authorized": null,
+    "skipped_reason": "quality_gate inferred target assumes HAF-QIN; running it would invent the wrong filter family"
+  },
+  "tests": {
+    "ran": true,
+    "status": "PASSED",
+    "command": "BUCKPARTS_TEST_FILES='scripts/lib/proven-cohort-page-factory-manifest-v1.test.ts scripts/lib/refrigerator-model-first-batch-resolver-v1.test.ts' bash scripts/npm-test-v1.sh",
+    "test_files": [
+      "scripts/lib/proven-cohort-page-factory-manifest-v1.test.ts",
+      "scripts/lib/refrigerator-model-first-batch-resolver-v1.test.ts"
+    ],
+    "exit_code": 0,
+    "honesty": "PROVEN"
+  },
+  "owner_review_packet": {
+    "founder_approval_required": true,
+    "founder_approval_status": "pending",
+    "csv_apply_authorized": false,
+    "supabase_update_authorized": false,
+    "buy_link_mutation_authorized": false,
+    "public_page_change_authorized": false,
+    "page_factory_registry_apply_authorized": false,
+    "recommended_registry_row_proposal": {
+      "fridge_slug": "ge-gfe28gmkes",
+      "expected_filter_slugs": "rpwfe",
+      "forbidden_filter_slugs": "",
+      "official_marketing_token": "RPWFE",
+      "draft_md_relpath": "data/fridge/batch-production/drafts/ge-gfe28gmkes-page-1-draft-v1.md",
+      "evidence_json_relpath": "data/manual-evidence/refrigerator/ge-gfe28gmkes.json"
+    },
+    "markdown": "# Fridge Expansion Worker v1 — owner-review packet\n\nThis packet is a **Quality Assurance / page-factory expansion review**. It does not apply CSV, Supabase, buy links, or public pages.\n\n- fridge_slug: `ge-gfe28gmkes`\n- model_number: **GFE28GMKES**\n- brand_slug: `ge`\n- not_yet_integrated_means: **not_in_page_factory_targets_csv**\n- mapped_filter_slugs: `rpwfe`\n- official_marketing_token: **RPWFE**\n- model_first_confidence: **PROVEN**\n- evidence_clone: **SKIPPED**\n- quality_gate: **quality_gate inferred target assumes HAF-QIN; running it would invent the wrong filter family**\n- tests: **PASSED**\n\n## Recommended page-factory registry row (not applied)\n\n```\nge-gfe28gmkes,rpwfe,,RPWFE,data/fridge/batch-production/drafts/ge-gfe28gmkes-page-1-draft-v1.md,data/manual-evidence/refrigerator/ge-gfe28gmkes.json\n```\n\nFounder must approve adding this row to `data/fridge/batch-production/page-factory-targets-v1.csv`. No guarded apply executor exists for that CSV. This worker does not write it.\n\n## Hard gates\n\n- csv_apply_authorized: **false**\n- page_factory_registry_apply_authorized: **false**\n- supabase_update_authorized: **false**\n- buy_link_mutation_authorized: **false**\n- public_page_change_authorized: **false**\n- dispatch_invoked: **false**\n\n"
+  },
+  "evidence_recorded": {
+    "stdout_json": true,
+    "draft_json_rel": "data/fridge/batch-production/drafts/fridge-expansion-worker-v1.json",
+    "draft_md_rel": "data/fridge/batch-production/drafts/fridge-expansion-worker-v1.md"
+  },
+  "workflow_coverage": {
+    "denominator": 10,
+    "executable_count": 6,
+    "percent": 60,
+    "step_results": [
+      {
+        "id": "discover_eligible_unregistered_model",
+        "executable_this_run": true,
+        "reason": "Selected from proven-cohort eligible unregistered rows"
+      },
+      {
+        "id": "determine_compatible_filters_from_existing_evidence",
+        "executable_this_run": true,
+        "reason": "Mapped slugs from model-filter correctness audit via proven cohort"
+      },
+      {
+        "id": "generate_registry_row_proposal",
+        "executable_this_run": true,
+        "reason": "Existing proven-cohort recommended_registry_row_proposal"
+      },
+      {
+        "id": "evidence_clone_owner_review",
+        "executable_this_run": false,
+        "reason": "Existing clone generator supports samsung::HAFQIN only"
+      },
+      {
+        "id": "page_quality_gate",
+        "executable_this_run": false,
+        "reason": "Skipped: inferred quality-gate target is HAF-QIN-only and would invent the wrong family"
+      },
+      {
+        "id": "page_factory_preflight",
+        "executable_this_run": false,
+        "reason": "Existing preflight requires a page-factory-targets CSV row; selected model is unregistered by design"
+      },
+      {
+        "id": "owner_review_packet",
+        "executable_this_run": true,
+        "reason": "Worker-assembled founder-gated packet from existing generator outputs"
+      },
+      {
+        "id": "founder_approval_and_registry_apply",
+        "executable_this_run": false,
+        "reason": "Founder gate; no page-factory-targets guarded-apply executor exists"
+      },
+      {
+        "id": "run_existing_validation_tests",
+        "executable_this_run": true,
+        "reason": "Existing generator test files via npm-test-v1.sh"
+      },
+      {
+        "id": "record_evidence_and_stop",
+        "executable_this_run": true,
+        "reason": "Stdout JSON always; optional drafts write under allowed prefix; then stop"
+      }
+    ]
+  },
+  "missing_capabilities": [
+    "No selector exists for refrigerator models that are not already in data/fridge_models.csv (net-new catalog discovery is operator/Exa/search-gap, not this worker).",
+    "No autonomous official-manufacturer evidence capture; this worker reads committed audit/manual-evidence only.",
+    "Page-factory evidence clone v1 supports samsung::HAFQIN only.",
+    "Page quality gate inferred targets assume HAF-QIN; non-HAF-QIN models cannot safely use that generator.",
+    "Page-factory preflight requires an existing page-factory-targets-v1.csv row.",
+    "No guarded apply executor exists for page-factory-targets-v1.csv.",
+    "Founder approval and production CSV/Supabase/buy-path mutation remain outside this worker."
+  ],
+  "blocked_reasons": [],
+  "proven_facts": [
+    "PROVEN: this worker is a product-lane sequencer, not an Executive organ.",
+    "PROVEN: dispatch_invoked=false; mutation_authorized=false; nba_authority=false.",
+    "PROVEN: not_yet_integrated means not in data/fridge/batch-production/page-factory-targets-v1.csv.",
+    "PROVEN: selected models are already in data/fridge_models.csv; net-new catalog rows are not invented.",
+    "PROVEN: selected_model=ge-gfe28gmkes already_in_page_factory_registry=false eligible_for_owner_review=true.",
+    "PROVEN: mapped_filter_slugs=rpwfe from committed audit via proven cohort."
+  ],
+  "inferred_facts": [],
+  "unknown_facts": [
+    "UNKNOWN: whether founder will approve the proposed page-factory registry row."
+  ]
+}
