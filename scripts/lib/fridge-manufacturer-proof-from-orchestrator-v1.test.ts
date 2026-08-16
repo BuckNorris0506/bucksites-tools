@@ -16,7 +16,7 @@ import {
   loadOemCatalogSeedUrlsFromRetailerLinksV1,
   runFridgeManufacturerProofFromOrchestratorV1,
   selectNextManufacturerProofRefreshWorkItemV1,
-  slugHasCollectorBatchDraftV1,
+  slugHasCollectorDraftV1,
   slugHasOwnerReviewPacketV1,
 } from "./fridge-manufacturer-proof-from-orchestrator-v1";
 import {
@@ -166,21 +166,30 @@ test("orchestrator target_url is preferred manufacturer seed", () => {
   );
 });
 
-test("repo orchestrator next eligible slug is fppwfu01 via catalogsearch", () => {
+test("repo orchestrator seeds fppwfu01 catalogsearch and parks it after a collector draft", () => {
   const report = loadManufacturerBrowserProofRefreshOrchestratorReportV1({ rootDir: REPO_ROOT });
   assert.ok(report);
+  const seeds = loadManufacturerSeedUrlsForWorkItemV1({
+    rootDir: REPO_ROOT,
+    workItem: workItem({
+      filter_slug: "fppwfu01",
+      oem_part_token: "FPPWFU01",
+    }),
+  });
+  assert.equal(seeds.discovery_path, "retailer_links_oem_catalog");
+  assert.ok(seeds.seed_urls[0]?.includes("catalogsearch"));
+  assert.equal(slugHasCollectorDraftV1({ rootDir: REPO_ROOT, slug: "wf3cb" }), true);
+  assert.equal(slugHasOwnerReviewPacketV1({ rootDir: REPO_ROOT, slug: "wf3cb" }), true);
   const selected = selectNextManufacturerProofRefreshWorkItemV1({
     rootDir: REPO_ROOT,
     report: report!,
   });
-  assert.ok(selected);
-  assert.equal(selected!.work_item.filter_slug, "fppwfu01");
-  assert.equal(selected!.work_item.oem_part_token, "FPPWFU01");
-  assert.equal(selected!.discovery_path, "retailer_links_oem_catalog");
-  assert.equal(selected!.follow_search_to_product_links, true);
-  assert.ok(selected!.seed_urls[0]?.includes("catalogsearch"));
-  assert.equal(slugHasCollectorBatchDraftV1({ rootDir: REPO_ROOT, slug: "wf3cb" }), true);
-  assert.equal(slugHasOwnerReviewPacketV1({ rootDir: REPO_ROOT, slug: "wf3cb" }), true);
+  if (slugHasCollectorDraftV1({ rootDir: REPO_ROOT, slug: "fppwfu01" })) {
+    assert.notEqual(selected?.work_item.filter_slug, "fppwfu01");
+  } else {
+    assert.equal(selected?.work_item.filter_slug, "fppwfu01");
+    assert.equal(selected?.follow_search_to_product_links, true);
+  }
 });
 
 test("skips slug with existing collector batch and selects the next seeded item", () => {
@@ -191,7 +200,7 @@ test("skips slug with existing collector batch and selects the next seeded item"
   writeFileSync(
     path.join(
       tmp,
-      "data/fridge/batch-production/drafts/browser-proof-collector/alpha/browser-proof-collector-batch-alpha-aaaa.json",
+      "data/fridge/batch-production/drafts/browser-proof-collector/alpha/browser-proof-collector-alpha-aaaa-2026-08-16T00-00-00-000Z.json",
     ),
     "{}\n",
   );

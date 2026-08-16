@@ -165,7 +165,7 @@ export function collectorSlugDraftDirRelV1(slug: string): string {
   return `${BROWSER_PROOF_COLLECTOR_DRAFT_DIR_REL_V1}/${slug.trim().toLowerCase()}`;
 }
 
-export function slugHasCollectorBatchDraftV1(args: {
+export function slugHasCollectorDraftV1(args: {
   rootDir: string;
   slug: string;
   fileExists?: (abs: string) => boolean;
@@ -176,10 +176,25 @@ export function slugHasCollectorBatchDraftV1(args: {
   const abs = path.join(args.rootDir, collectorSlugDraftDirRelV1(args.slug));
   if (!fileExists(abs)) return false;
   try {
-    return readDir(abs).some((name) => name.startsWith("browser-proof-collector-batch-"));
+    return readDir(abs).some(
+      (name) =>
+        name.startsWith("browser-proof-collector-") &&
+        name.endsWith(".json") &&
+        !name.includes("owner-review-packet"),
+    );
   } catch {
     return false;
   }
+}
+
+/** @deprecated alias — single-URL captures write non-batch draft names. */
+export function slugHasCollectorBatchDraftV1(args: {
+  rootDir: string;
+  slug: string;
+  fileExists?: (abs: string) => boolean;
+  readDir?: (abs: string) => string[];
+}): boolean {
+  return slugHasCollectorDraftV1(args);
 }
 
 export function slugHasOwnerReviewPacketV1(args: {
@@ -277,7 +292,7 @@ export function selectNextManufacturerProofRefreshWorkItemV1(args: {
   };
   for (const work_item of listRefreshOrchestratorWorkItemsInOrderV1(args.report)) {
     if (
-      slugHasCollectorBatchDraftV1({
+      slugHasCollectorDraftV1({
         rootDir: args.rootDir,
         slug: work_item.filter_slug,
         fileExists: fs.fileExists,
