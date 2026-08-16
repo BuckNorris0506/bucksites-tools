@@ -10,9 +10,9 @@ import {
 } from "./ap-model-first-evidence-queue-v1";
 import { buildAirPurifierModelFirstProductionLaneV1Report } from "./air-purifier-model-first-production-lane-v1";
 import { buildAirPurifierWeakBuyerPathAuditV1Report } from "./air-purifier-weak-buyer-path-audit-v1";
-import { BATCH_PRODUCTION_DISPATCH_RUNS_DIR_REL_V1 } from "./buckparts-batch-production-operating-checklist-v1";
 
 const REPO_ROOT = process.cwd();
+const DISPATCH_RUNS_DIR_REL_V1 = "data/command-center/dispatch-runs";
 
 test("model-first evidence queue is read-only", () => {
   const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
@@ -115,6 +115,36 @@ test("winix completed artifact is demoted but preserved as mapping review opport
   assert.ok(opp!.result_artifact_rel.includes("ap-model-first-winix-carbon-116131-live-browser-v1.results.json"));
 });
 
+test("hp200 official-PDP catalog-token mismatch is completed_no_mutation, not mapping_review", () => {
+  const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+  const report = buildApModelFirstEvidenceQueueV1Report({
+    rootDir: REPO_ROOT,
+    modelFirstLane: lane,
+    weakBuyerPathAudit: weak,
+  });
+
+  assert.ok(report.result_history.no_mutation_completed_filter_slugs.includes("shark-hepa-hp200"));
+  assert.ok(!report.top_candidates.some((c) => c.filter_slug === "shark-hepa-hp200"));
+  assert.equal(
+    report.result_history.mapping_review_required_filter_slugs.includes("shark-hepa-hp200"),
+    false,
+  );
+  assert.equal(
+    report.mapping_review_opportunities.some((o) => o.filter_slug === "shark-hepa-hp200"),
+    false,
+  );
+  const completed = report.completed_no_mutation_candidates.find(
+    (c) => c.filter_slug === "shark-hepa-hp200",
+  );
+  assert.ok(completed);
+  assert.equal(completed!.result_pass_count, 0);
+  assert.ok(completed!.result_artifact_rel.includes("shark-hepa-hp200-live-browser-v1"));
+  assert.ok(report.result_history.mapping_review_required_filter_slugs.includes("winix-carbon-116131"));
+  assert.ok(report.result_history.mapping_review_required_filter_slugs.includes("levoit-rf-rar029"));
+  assert.ok(report.result_history.mapping_review_required_filter_slugs.includes("shark-carbon-foam"));
+});
+
 test("queue does not claim products unavailable or CSV mutation safety", () => {
   const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
   const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
@@ -165,7 +195,7 @@ test("read-only build does not mutate CSV Supabase dispatch-run batch-review", (
     "data/air-purifier/compatibility_mappings.csv",
   ];
   const before = new Map(csvPaths.map((p) => [p, readFileSync(path.join(REPO_ROOT, p), "utf8")]));
-  const dispatchDir = path.join(REPO_ROOT, BATCH_PRODUCTION_DISPATCH_RUNS_DIR_REL_V1);
+  const dispatchDir = path.join(REPO_ROOT, DISPATCH_RUNS_DIR_REL_V1);
   const dispatchBefore = new Map<string, string>();
   for (const name of readdirSync(dispatchDir)) {
     if (name.endsWith(".json")) {

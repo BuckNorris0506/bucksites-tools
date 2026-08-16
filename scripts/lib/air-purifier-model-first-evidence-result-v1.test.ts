@@ -14,6 +14,7 @@ import {
   buildHolmesHapf30ModelFirstEvidenceFromQueueV1,
   buildModelFirstEvidenceResultV1,
   isAllowedModelFirstEvidenceResultRelPathV1,
+  isAllowedModelFirstLiveBrowserEvidenceResultRelPathV1,
   loadAllRepoModelSlugsForAnchorFilterV1,
   liveBrowserBuyerPathMayRecommendCsvMutationV1,
   loadModelFirstEvidenceResultV1,
@@ -21,9 +22,9 @@ import {
 } from "./air-purifier-model-first-evidence-result-v1";
 import { buildAirPurifierModelFirstProductionLaneV1Report } from "./air-purifier-model-first-production-lane-v1";
 import { buildAirPurifierWeakBuyerPathAuditV1Report } from "./air-purifier-weak-buyer-path-audit-v1";
-import { BATCH_PRODUCTION_DISPATCH_RUNS_DIR_REL_V1 } from "./buckparts-batch-production-operating-checklist-v1";
 
 const REPO_ROOT = process.cwd();
+const DISPATCH_RUNS_DIR_REL = "data/command-center/dispatch-runs";
 
 test("model-first evidence result schema is valid", () => {
   const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
@@ -57,7 +58,7 @@ test("building holmes result read-only does not mutate CSV Supabase dispatch bat
     "data/air-purifier/compatibility_mappings.csv",
   ];
   const before = new Map(csvPaths.map((p) => [p, readFileSync(path.join(REPO_ROOT, p), "utf8")]));
-  const dispatchDir = path.join(REPO_ROOT, BATCH_PRODUCTION_DISPATCH_RUNS_DIR_REL_V1);
+  const dispatchDir = path.join(REPO_ROOT, DISPATCH_RUNS_DIR_REL);
   const dispatchBefore = new Map<string, string>();
   for (const name of readdirSync(dispatchDir)) {
     if (name.endsWith(".json")) dispatchBefore.set(name, readFileSync(path.join(dispatchDir, name), "utf8"));
@@ -124,6 +125,13 @@ test("live-browser artifact path is only under allowed model-first results dir",
     AP_MODEL_FIRST_HOLMES_HAPF30_LIVE_BROWSER_RESULT_REL_V1.startsWith(
       AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1,
     ),
+  );
+  assert.ok(isAllowedModelFirstLiveBrowserEvidenceResultRelPathV1(AP_MODEL_FIRST_HOLMES_HAPF30_LIVE_BROWSER_RESULT_REL_V1));
+  assert.equal(
+    isAllowedModelFirstLiveBrowserEvidenceResultRelPathV1(
+      `${AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1}/ap-model-first-holmes-hapf30-v1.results.json`,
+    ),
+    false,
   );
   assert.equal(isAllowedModelFirstEvidenceResultRelPathV1("data/air-purifier/filters.csv"), false);
   assert.equal(
