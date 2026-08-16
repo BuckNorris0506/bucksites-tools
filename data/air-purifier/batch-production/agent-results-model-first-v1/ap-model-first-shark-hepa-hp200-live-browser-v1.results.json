@@ -1,0 +1,119 @@
+{
+  "contract": "air_purifier_model_first_evidence_result_v1",
+  "report_name": "air_purifier_model_first_evidence_result_v1",
+  "packet_id": "ap-model-first-shark-hepa-hp200-live-browser-v1",
+  "run_id": "ap-model-first-shark-hepa-hp200-live-browser-2026-08-16",
+  "queue_contract": "ap_model_first_evidence_queue_v1",
+  "anchor_filter_slug": "shark-hepa-hp200",
+  "filter_slug": "shark-hepa-hp200",
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-08-16T16:20:50.861Z",
+  "checked_at": "2026-08-16T16:20:50.861Z",
+  "source_status": "PARTIAL",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "evidence_mode": "live_browser_model_first_v1",
+  "model_slugs_checked": [
+    "shark-hp200",
+    "shark-hp201",
+    "shark-hp202",
+    "shark-hp230",
+    "shark-hp231",
+    "shark-hp232"
+  ],
+  "model_rows": [
+    {
+      "model_slug": "shark-hp200",
+      "model_number": "Shark HP200",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "SHARK-HEPA-HP200"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_OFFICIAL_UNIT_OR_FILTER_PAGE_MATCH",
+      "notes": "UNKNOWN: No captured official/model/support/PDP page in this run mentioned Shark HP200. Live-browser seed URLs were repo retailer_links/batch-v3 only; search URLs are omitted from candidate_buyer_paths."
+    },
+    {
+      "model_slug": "shark-hp201",
+      "model_number": "Shark HP201",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "SHARK-HEPA-HP200"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_OFFICIAL_UNIT_OR_FILTER_PAGE_MATCH",
+      "notes": "UNKNOWN: No captured official/model/support/PDP page in this run mentioned Shark HP201. Live-browser seed URLs were repo retailer_links/batch-v3 only; search URLs are omitted from candidate_buyer_paths."
+    },
+    {
+      "model_slug": "shark-hp202",
+      "model_number": "Shark HP202",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "SHARK-HEPA-HP200"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_OFFICIAL_UNIT_OR_FILTER_PAGE_MATCH",
+      "notes": "UNKNOWN: No captured official/model/support/PDP page in this run mentioned Shark HP202. Live-browser seed URLs were repo retailer_links/batch-v3 only; search URLs are omitted from candidate_buyer_paths."
+    },
+    {
+      "model_slug": "shark-hp230",
+      "model_number": "Shark HP230",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "SHARK-HEPA-HP200"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_OFFICIAL_UNIT_OR_FILTER_PAGE_MATCH",
+      "notes": "UNKNOWN: No captured official/model/support/PDP page in this run mentioned Shark HP230. Live-browser seed URLs were repo retailer_links/batch-v3 only; search URLs are omitted from candidate_buyer_paths."
+    },
+    {
+      "model_slug": "shark-hp231",
+      "model_number": "Shark HP231",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "SHARK-HEPA-HP200"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_OFFICIAL_UNIT_OR_FILTER_PAGE_MATCH",
+      "notes": "UNKNOWN: No captured official/model/support/PDP page in this run mentioned Shark HP231. Live-browser seed URLs were repo retailer_links/batch-v3 only; search URLs are omitted from candidate_buyer_paths."
+    },
+    {
+      "model_slug": "shark-hp232",
+      "model_number": "Shark HP232",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "SHARK-HEPA-HP200"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_OFFICIAL_UNIT_OR_FILTER_PAGE_MATCH",
+      "notes": "UNKNOWN: No captured official/model/support/PDP page in this run mentioned Shark HP232. Live-browser seed URLs were repo retailer_links/batch-v3 only; search URLs are omitted from candidate_buyer_paths."
+    }
+  ],
+  "candidate_buyer_paths": [],
+  "filter_first_cross_reference": null,
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 0,
+    "UNKNOWN": 6,
+    "BLOCKED": 0
+  },
+  "recommended_csv_mutation": null,
+  "safe_apply_authorized": false,
+  "proven_facts": [
+    "PROVEN: Live-browser collector opened 1 repo seed URL(s) for shark-hepa-hp200 (no Jared --slug/--token/--url).",
+    "PROVEN: Collector captured 1 page(s); search URLs omitted from candidate_buyer_paths.",
+    "PROVEN: 6 model row(s) checked; evidence_status_counts.PASS=0; safe_apply_authorized=false.",
+    "PROVEN: recommended_csv_mutation=null; data_mutation=false; no CSV/Supabase/--apply."
+  ],
+  "inferred_facts": [],
+  "unknown_facts": [
+    "UNKNOWN: Whether official pages document HEPA filter for mid-size Shark purifiers as the catalog token SHARK-HEPA-HP200 on each checked model.",
+    "UNKNOWN: Live purchase availability beyond signals captured on opened pages."
+  ]
+}
