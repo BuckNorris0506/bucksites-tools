@@ -824,6 +824,21 @@ export function buildCaptureAttemptPlanV1(
     },
   ];
 
+  // One bounded headed fallback after the headless retry profile.
+  // Uses existing `--headed` launch path; not a new browser engine or retry service.
+  if (!headed) {
+    plan.push({
+      attempt_id: "a6_headed_load_desktop_chrome_ua_disable_http2",
+      wait_until: "load",
+      user_agent_mode: customMode,
+      user_agent: primaryUa,
+      headed: true,
+      wait_ms,
+      timeout_ms,
+      launch_args: http2Args,
+    });
+  }
+
   return plan;
 }
 
@@ -871,6 +886,15 @@ export function buildBrowserProofCollectorDraftFromCandidatesV1(args: {
     candidates,
     capture_attempts: allAttempts,
   });
+  const headedFallbackAttempt = allAttempts.find(
+    (a) => a.attempt_id === "a6_headed_load_desktop_chrome_ua_disable_http2",
+  );
+  const headedSuccess = allAttempts.some((a) => a.headed === true && a.success === true);
+  const capture_method =
+    headedSuccess
+      ? "playwright_headed"
+      : (args.captureMethod ??
+        (headed ? "playwright_headed" : "playwright_headless"));
 
   const bestNote =
     best && best.verdict === "PASS"
@@ -891,9 +915,7 @@ export function buildBrowserProofCollectorDraftFromCandidatesV1(args: {
     promotes_to_owner_browser_proof_result: false,
     founder_approval_authorized: false,
     generated_at: now().toISOString(),
-    capture_method:
-      args.captureMethod ??
-      (headed ? "playwright_headed" : "playwright_headless"),
+    capture_method,
     capture_options: {
       headed,
       wait_ms,
@@ -928,6 +950,11 @@ export function buildBrowserProofCollectorDraftFromCandidatesV1(args: {
       `PROVEN: capture_outcome=${captureOutcome.capture_outcome} reason=${captureOutcome.reason}.`,
       `PROVEN: candidate_count=${String(candidates.length)} batch_mode=${String(batch_mode)}.`,
       `PROVEN: capture_attempts=${String(allAttempts.length)} success=${String(allAttempts.some((a) => a.success))}.`,
+      ...(headedFallbackAttempt
+        ? [
+            `PROVEN: headed_fallback attempt_id=${headedFallbackAttempt.attempt_id} success=${String(headedFallbackAttempt.success)}.`,
+          ]
+        : []),
       ...(best
         ? [
             `PROVEN: best_candidate_rank=${String(bestRank)} source_class=${best.facts.source_class} verdict=${best.verdict}.`,

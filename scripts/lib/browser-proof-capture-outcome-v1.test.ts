@@ -145,6 +145,67 @@ test("loaded Cloudflare/captcha page is TRANSIENT_NETWORK_FAILURE, not NO_EVIDEN
   );
 });
 
+test("headed fallback success is recorded as playwright_headed and not TRANSIENT", () => {
+  const facts = extractBrowserProofVisibleFactsV1({
+    candidateUrl: "https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01",
+    finalUrl: "https://www.frigidaire.com/en/not-found",
+    title: "Not Found",
+    h1: "",
+    textSample: "Sorry ! Requested page is not available…",
+    purchaseActions: [],
+    expectedToken: "FPPWFU01",
+    forbiddenTokens: ["FPPWFU02"],
+    captureSucceeded: true,
+    navigationError: null,
+  });
+  const draft = buildBrowserProofCollectorDraftFromFactsV1({
+    input: {
+      slug: "fppwfu01",
+      expected_token: "FPPWFU01",
+      candidate_url:
+        "https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01",
+      forbidden_tokens: ["FPPWFU02"],
+    },
+    facts,
+    captureAttempts: [
+      {
+        attempt_id: "a1_domcontentloaded_collector_ua",
+        wait_until: "domcontentloaded",
+        user_agent_mode: "collector",
+        user_agent: "collector",
+        headed: false,
+        wait_ms: 2000,
+        timeout_ms: 48000,
+        launch_args: [],
+        success: false,
+        error: "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR",
+        final_url: "about:blank",
+      },
+      {
+        attempt_id: "a6_headed_load_desktop_chrome_ua_disable_http2",
+        wait_until: "load",
+        user_agent_mode: "desktop_chrome",
+        user_agent: "chrome",
+        headed: true,
+        wait_ms: 2000,
+        timeout_ms: 48000,
+        launch_args: ["--disable-http2"],
+        success: true,
+        error: null,
+        final_url: "https://www.frigidaire.com/en/not-found",
+      },
+    ],
+  });
+  assert.equal(draft.capture_method, "playwright_headed");
+  assert.equal(draft.capture_outcome, "PERMANENT_SITE_FAILURE");
+  assert.equal(draft.overall_verdict, "FAIL_AS_PROOF");
+  assert.ok(
+    draft.proven_facts.some((f) =>
+      f.includes("headed_fallback attempt_id=a6_headed_load_desktop_chrome_ua_disable_http2 success=true"),
+    ),
+  );
+});
+
 test("HTTP2 capture failure draft built by collector is TRANSIENT_NETWORK_FAILURE", () => {
   const facts = extractBrowserProofVisibleFactsV1({
     candidateUrl: "https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01",

@@ -331,6 +331,27 @@ test("capture attempt plan includes load, networkidle, desktop UA, and http2 mit
   assert.ok(plan.every((p) => p.timeout_ms === 60000));
 });
 
+test("default plan appends one bounded headed fallback after headless attempts", () => {
+  const plan = buildCaptureAttemptPlanV1();
+  assert.equal(plan.length, 6);
+  assert.ok(plan.slice(0, 5).every((p) => p.headed === false));
+  const fallback = plan[5];
+  assert.equal(fallback?.attempt_id, "a6_headed_load_desktop_chrome_ua_disable_http2");
+  assert.equal(fallback?.headed, true);
+  assert.equal(fallback?.wait_until, "load");
+  assert.ok(fallback?.launch_args.includes("--disable-http2"));
+});
+
+test("--headed plan does not add a second headed fallback", () => {
+  const plan = buildCaptureAttemptPlanV1({ headed: true });
+  assert.equal(plan.length, 5);
+  assert.ok(plan.every((p) => p.headed === true));
+  assert.equal(
+    plan.some((p) => p.attempt_id === "a6_headed_load_desktop_chrome_ua_disable_http2"),
+    false,
+  );
+});
+
 function candidateFixture(args: {
   url: string;
   verdictFacts: Parameters<typeof extractBrowserProofVisibleFactsV1>[0];
