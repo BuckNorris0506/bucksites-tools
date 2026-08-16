@@ -261,6 +261,7 @@ test("capture failure remains UNKNOWN and records attempt errors", () => {
 
 
   assert.equal(draft.overall_verdict, "UNKNOWN");
+  assert.equal(draft.capture_outcome, "TRANSIENT_NETWORK_FAILURE");
   assert.equal(draft.capture_attempts.length, 2);
   assert.ok(draft.capture_attempts.every((a) => a.success === false));
   assert.ok(draft.capture_attempts.every((a) => Boolean(a.error)));

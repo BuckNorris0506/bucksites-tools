@@ -19,6 +19,11 @@ import {
 } from "@/lib/retailers/launch-buy-links";
 
 import {
+  captureOutcomeParksManufacturerProofRefreshV1,
+  classifyBrowserProofCaptureOutcomeFromUnknownDraftV1,
+  type BrowserProofCaptureOutcomeV1,
+} from "./browser-proof-capture-outcome-v1";
+import {
   BROWSER_PROOF_COLLECTOR_DRAFT_DIR_REL_V1,
   resolveForbiddenTokensV1,
   runBrowserProofCollectorBatchV1,
@@ -65,6 +70,9 @@ export type ManufacturerProofRefreshOutcomeV1 = {
   follow_search_to_product_links: boolean;
   collector_draft_rel: string | null;
   collector_overall_verdict: BrowserProofCollectorDraftV1["overall_verdict"] | null;
+  collector_capture_outcome: BrowserProofCaptureOutcomeV1 | null;
+  collector_capture_outcome_reason: string | null;
+  slug_remains_eligible_for_refresh: boolean;
   owner_review_packet_rel: string | null;
   owner_acceptance_status: "PENDING_OWNER_ACCEPTANCE" | null;
   blocked_reason: ManufacturerProofRefreshBlockedReasonV1 | null;
@@ -100,6 +108,9 @@ function emptyOutcome(
     follow_search_to_product_links: false,
     collector_draft_rel: null,
     collector_overall_verdict: null,
+    collector_capture_outcome: null,
+    collector_capture_outcome_reason: null,
+    slug_remains_eligible_for_refresh: false,
     owner_review_packet_rel: null,
     owner_acceptance_status: null,
     collector_error: null,
@@ -197,6 +208,85 @@ export function slugHasCollectorBatchDraftV1(args: {
   return slugHasCollectorDraftV1(args);
 }
 
+export function listCollectorDraftFileNamesV1(names: readonly string[]): string[] {
+  return names.filter(
+    (name) =>
+      name.startsWith("browser-proof-collector-") &&
+      name.endsWith(".json") &&
+      !name.includes("owner-review-packet"),
+  );
+}
+
+export function loadLatestBrowserProofCollectorDraftJsonV1(args: {
+  rootDir: string;
+  slug: string;
+  fileExists?: (abs: string) => boolean;
+  readDir?: (abs: string) => string[];
+  readText?: (abs: string) => string;
+}): unknown | null {
+  const fileExists = args.fileExists ?? existsSync;
+  const readDir = args.readDir ?? ((abs: string) => readdirSync(abs));
+  const readText = args.readText ?? ((abs: string) => readFileSync(abs, "utf8"));
+  const abs = path.join(args.rootDir, collectorSlugDraftDirRelV1(args.slug));
+  if (!fileExists(abs)) return null;
+  let names: string[] = [];
+  try {
+    names = listCollectorDraftFileNamesV1(readDir(abs));
+  } catch {
+    return null;
+  }
+  if (names.length === 0) return null;
+  let latest: unknown | null = null;
+  let latestKey = "";
+  for (const name of names) {
+    const fileAbs = path.join(abs, name);
+    if (!fileExists(fileAbs)) continue;
+    let parsed: unknown = null;
+    try {
+      parsed = JSON.parse(readText(fileAbs));
+    } catch {
+      continue;
+    }
+    const generatedAt =
+      parsed &&
+      typeof parsed === "object" &&
+      typeof (parsed as { generated_at?: unknown }).generated_at === "string"
+        ? (parsed as { generated_at: string }).generated_at
+        : "";
+    const key = generatedAt || name;
+    if (!latest || key > latestKey) {
+      latest = parsed;
+      latestKey = key;
+    }
+  }
+  return latest;
+}
+
+export function slugCollectorOutcomeParksRefreshV1(args: {
+  rootDir: string;
+  slug: string;
+  fileExists?: (abs: string) => boolean;
+  readDir?: (abs: string) => string[];
+  readText?: (abs: string) => string;
+}): boolean {
+  const draft = loadLatestBrowserProofCollectorDraftJsonV1(args);
+  if (!draft) return false;
+  const classified = classifyBrowserProofCaptureOutcomeFromUnknownDraftV1(draft);
+  return captureOutcomeParksManufacturerProofRefreshV1(classified.capture_outcome);
+}
+
+export function slugManufacturerProofRefreshParkedV1(args: {
+  rootDir: string;
+  slug: string;
+  fileExists?: (abs: string) => boolean;
+  readDir?: (abs: string) => string[];
+  readText?: (abs: string) => string;
+}): boolean {
+  return (
+    slugHasOwnerReviewPacketV1(args) || slugCollectorOutcomeParksRefreshV1(args)
+  );
+}
+
 export function slugHasOwnerReviewPacketV1(args: {
   rootDir: string;
   slug: string;
@@ -292,21 +382,12 @@ export function selectNextManufacturerProofRefreshWorkItemV1(args: {
   };
   for (const work_item of listRefreshOrchestratorWorkItemsInOrderV1(args.report)) {
     if (
-      slugHasCollectorDraftV1({
+      slugManufacturerProofRefreshParkedV1({
         rootDir: args.rootDir,
         slug: work_item.filter_slug,
         fileExists: fs.fileExists,
         readDir: fs.readDir,
-      })
-    ) {
-      continue;
-    }
-    if (
-      slugHasOwnerReviewPacketV1({
-        rootDir: args.rootDir,
-        slug: work_item.filter_slug,
-        fileExists: fs.fileExists,
-        readDir: fs.readDir,
+        readText: fs.readText,
       })
     ) {
       continue;
@@ -412,8 +493,14 @@ export async function runFridgeManufacturerProofFromOrchestratorV1(args: {
       seed_urls: selected.seed_urls,
       follow_search_to_product_links: selected.follow_search_to_product_links,
       collector_error: message,
+      slug_remains_eligible_for_refresh: true,
     });
   }
+
+  const classified = classifyBrowserProofCaptureOutcomeFromUnknownDraftV1(draft);
+  const remainsEligible = !captureOutcomeParksManufacturerProofRefreshV1(
+    classified.capture_outcome,
+  );
 
   const base = emptyOutcome({
     blocked_reason: null,
@@ -425,6 +512,9 @@ export async function runFridgeManufacturerProofFromOrchestratorV1(args: {
     follow_search_to_product_links: selected.follow_search_to_product_links,
     collector_draft_rel: draft_json_rel,
     collector_overall_verdict: draft.overall_verdict,
+    collector_capture_outcome: classified.capture_outcome,
+    collector_capture_outcome_reason: classified.reason,
+    slug_remains_eligible_for_refresh: remainsEligible,
   });
 
   if (draft.promotes_to_owner_browser_proof_result !== false) {

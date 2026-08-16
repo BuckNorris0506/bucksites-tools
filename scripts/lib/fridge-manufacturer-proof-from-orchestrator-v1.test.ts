@@ -16,8 +16,10 @@ import {
   loadOemCatalogSeedUrlsFromRetailerLinksV1,
   runFridgeManufacturerProofFromOrchestratorV1,
   selectNextManufacturerProofRefreshWorkItemV1,
+  slugCollectorOutcomeParksRefreshV1,
   slugHasCollectorDraftV1,
   slugHasOwnerReviewPacketV1,
+  slugManufacturerProofRefreshParkedV1,
 } from "./fridge-manufacturer-proof-from-orchestrator-v1";
 import {
   loadManufacturerBrowserProofRefreshOrchestratorReportV1,
@@ -166,7 +168,7 @@ test("orchestrator target_url is preferred manufacturer seed", () => {
   );
 });
 
-test("repo orchestrator seeds fppwfu01 catalogsearch and parks it after a collector draft", () => {
+test("repo orchestrator keeps fppwfu01 eligible after HTTP2 UNKNOWN collector draft", () => {
   const report = loadManufacturerBrowserProofRefreshOrchestratorReportV1({ rootDir: REPO_ROOT });
   assert.ok(report);
   const seeds = loadManufacturerSeedUrlsForWorkItemV1({
@@ -180,19 +182,22 @@ test("repo orchestrator seeds fppwfu01 catalogsearch and parks it after a collec
   assert.ok(seeds.seed_urls[0]?.includes("catalogsearch"));
   assert.equal(slugHasCollectorDraftV1({ rootDir: REPO_ROOT, slug: "wf3cb" }), true);
   assert.equal(slugHasOwnerReviewPacketV1({ rootDir: REPO_ROOT, slug: "wf3cb" }), true);
+  assert.equal(slugManufacturerProofRefreshParkedV1({ rootDir: REPO_ROOT, slug: "wf3cb" }), true);
+  assert.equal(slugHasCollectorDraftV1({ rootDir: REPO_ROOT, slug: "fppwfu01" }), true);
+  assert.equal(slugCollectorOutcomeParksRefreshV1({ rootDir: REPO_ROOT, slug: "fppwfu01" }), false);
+  assert.equal(
+    slugManufacturerProofRefreshParkedV1({ rootDir: REPO_ROOT, slug: "fppwfu01" }),
+    false,
+  );
   const selected = selectNextManufacturerProofRefreshWorkItemV1({
     rootDir: REPO_ROOT,
     report: report!,
   });
-  if (slugHasCollectorDraftV1({ rootDir: REPO_ROOT, slug: "fppwfu01" })) {
-    assert.notEqual(selected?.work_item.filter_slug, "fppwfu01");
-  } else {
-    assert.equal(selected?.work_item.filter_slug, "fppwfu01");
-    assert.equal(selected?.follow_search_to_product_links, true);
-  }
+  assert.equal(selected?.work_item.filter_slug, "fppwfu01");
+  assert.equal(selected?.follow_search_to_product_links, true);
 });
 
-test("skips slug with existing collector batch and selects the next seeded item", () => {
+test("skips slug with NO_EVIDENCE collector draft and selects the next seeded item", () => {
   const tmp = mkdtempSync(path.join(os.tmpdir(), "fridge-mfr-proof-"));
   mkdirSync(path.join(tmp, "data/fridge/batch-production/drafts/browser-proof-collector/alpha"), {
     recursive: true,
@@ -202,7 +207,20 @@ test("skips slug with existing collector batch and selects the next seeded item"
       tmp,
       "data/fridge/batch-production/drafts/browser-proof-collector/alpha/browser-proof-collector-alpha-aaaa-2026-08-16T00-00-00-000Z.json",
     ),
-    "{}\n",
+    `${JSON.stringify({
+      generated_at: "2026-08-16T00:00:00.000Z",
+      overall_verdict: "FAIL_AS_PROOF",
+      candidates: [
+        {
+          verdict: "FAIL_AS_PROOF",
+          facts: {
+            capture_succeeded: true,
+            final_url: "https://www.frigidaire.com/en/catalogsearch/result/?q=ALPHA",
+            page_type: "search_page",
+          },
+        },
+      ],
+    })}\n`,
   );
   writeFileSync(
     path.join(tmp, "data/retailer_links.csv"),
@@ -218,6 +236,56 @@ test("skips slug with existing collector batch and selects the next seeded item"
     ]),
   });
   assert.equal(selected?.work_item.filter_slug, "beta");
+});
+
+test("HTTP2 UNKNOWN collector draft does not park the slug", () => {
+  const tmp = mkdtempSync(path.join(os.tmpdir(), "fridge-mfr-proof-http2-"));
+  mkdirSync(path.join(tmp, "data/fridge/batch-production/drafts/browser-proof-collector/alpha"), {
+    recursive: true,
+  });
+  writeFileSync(
+    path.join(
+      tmp,
+      "data/fridge/batch-production/drafts/browser-proof-collector/alpha/browser-proof-collector-alpha-http2-2026-08-16T00-00-00-000Z.json",
+    ),
+    `${JSON.stringify({
+      generated_at: "2026-08-16T17:19:43.398Z",
+      overall_verdict: "UNKNOWN",
+      candidates: [
+        {
+          verdict: "UNKNOWN",
+          facts: {
+            capture_succeeded: false,
+            final_url: "about:blank",
+            page_type: "blocked",
+            navigation_error: "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR",
+          },
+          capture_attempts: [
+            {
+              success: false,
+              error: "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR",
+              final_url: "about:blank",
+            },
+          ],
+        },
+      ],
+    })}\n`,
+  );
+  writeFileSync(
+    path.join(tmp, "data/retailer_links.csv"),
+    "filter_slug,retailer_name,affiliate_url,is_primary,sort_order,retailer_key,browser_truth_classification,browser_truth_notes,browser_truth_checked_at\n" +
+      "alpha,OEM,https://www.frigidaire.com/en/catalogsearch/result/?q=ALPHA,true,0,oem-parts-catalog,,,\n" +
+      "beta,OEM,https://www.frigidaire.com/en/catalogsearch/result/?q=BETA,true,0,oem-parts-catalog,,,\n",
+  );
+  const selected = selectNextManufacturerProofRefreshWorkItemV1({
+    rootDir: tmp,
+    report: miniReport([
+      workItem({ filter_slug: "alpha", oem_part_token: "ALPHA" }),
+      workItem({ filter_slug: "beta", oem_part_token: "BETA" }),
+    ]),
+  });
+  assert.equal(selected?.work_item.filter_slug, "alpha");
+  assert.equal(slugCollectorOutcomeParksRefreshV1({ rootDir: tmp, slug: "alpha" }), false);
 });
 
 test("fail closed when the only scheduled slug is Amazon-only", () => {
@@ -316,6 +384,8 @@ test("orchestrator refresh runs collector then owner-review bridge and never aut
           },
         ],
         overall_verdict: "PASS",
+        capture_outcome: "SUCCESS",
+        capture_outcome_reason: "overall_verdict=PASS",
         recommended_next_action: "owner review",
         proven_facts: [],
         unknown_facts: [],
@@ -339,6 +409,8 @@ test("orchestrator refresh runs collector then owner-review bridge and never aut
   });
 
   assert.equal(outcome.selected_slug, "fppwfu01");
+  assert.equal(outcome.collector_capture_outcome, "SUCCESS");
+  assert.equal(outcome.slug_remains_eligible_for_refresh, false);
   assert.equal(outcome.owner_acceptance_status, "PENDING_OWNER_ACCEPTANCE");
   assert.equal(outcome.promotes_to_owner_browser_proof_result, false);
   assert.equal(outcome.activates_owner_browser_proof_result, false);
@@ -355,4 +427,115 @@ test("flagless collector command is dispatch-allowlisted read-only", () => {
   assert.equal(entry?.owner_review_required, false);
   assert.equal(entry?.mutation_posture.mutation_allowed, false);
   assert.equal(entry?.mutation_posture.data_mutation, false);
+});
+
+test("transient collector outcome does not run owner-review bridge and stays eligible", async () => {
+  const tmp = mkdtempSync(path.join(os.tmpdir(), "fridge-mfr-proof-transient-"));
+  mkdirSync(path.join(tmp, "data/fridge/batch-production/drafts"), { recursive: true });
+  const live = loadManufacturerBrowserProofRefreshOrchestratorReportV1({ rootDir: REPO_ROOT });
+  assert.ok(live);
+  writeFileSync(
+    path.join(
+      tmp,
+      "data/fridge/batch-production/drafts/manufacturer-browser-proof-refresh-orchestrator-v1.json",
+    ),
+    `${JSON.stringify(live)}\n`,
+  );
+  writeFileSync(
+    path.join(tmp, "data/retailer_links.csv"),
+    readFileSync(path.join(REPO_ROOT, "data/retailer_links.csv"), "utf8"),
+  );
+
+  let bridgeRan = false;
+  const outcome = await runFridgeManufacturerProofFromOrchestratorV1({
+    rootDir: tmp,
+    writeDrafts: false,
+    runCollector: async () => ({
+      draft: {
+        contract: BROWSER_PROOF_COLLECTOR_CONTRACT_V1,
+        read_only: true,
+        data_mutation: false,
+        mutation_authorized: false,
+        verified_link_authorized: false,
+        csv_apply_authorized: false,
+        supabase_mutation_authorized: false,
+        evidence_write_authorized: false,
+        production_go_click_authorized: false,
+        apply_plan_proposal_justified: false,
+        promotes_to_owner_browser_proof_result: false,
+        founder_approval_authorized: false,
+        generated_at: "2026-08-16T17:19:43.398Z",
+        capture_method: "playwright_headless",
+        capture_options: {
+          headed: false,
+          wait_ms: 2000,
+          timeout_ms: 48000,
+          user_agent_mode: "desktop_chrome",
+        },
+        capture_attempts: [],
+        batch_mode: false,
+        collect_all: false,
+        early_stop: { stopped: false, reason: null, stopped_after_candidate_url: null },
+        best_candidate_url: "https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01",
+        best_candidate_rank: 50,
+        slug: "fppwfu01",
+        expected_token: "FPPWFU01",
+        forbidden_tokens: ["FPPWFU02"],
+        confusion_family_owner_review_required: true,
+        owner_review_required: true,
+        candidates: [
+          {
+            candidate_url: "https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01",
+            verdict: "UNKNOWN",
+            blockers: ["browser_capture_not_completed"],
+            facts: {
+              final_url: "about:blank",
+              title: "",
+              h1: "",
+              visible_text_snippet: "",
+              exact_expected_token_present: false,
+              forbidden_tokens_present: [],
+              price_like_text_present: false,
+              stock_or_buyability_signal_present: false,
+              add_to_cart_or_subscription_signals: [],
+              unavailable_signal_present: false,
+              page_type: "blocked",
+              source_class: "unknown",
+              capture_succeeded: false,
+              navigation_error: "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR",
+              extraction_uncertain: true,
+            },
+            screenshot_rel_path: null,
+            assessment: "UNKNOWN",
+            capture_attempts: [],
+          },
+        ],
+        overall_verdict: "UNKNOWN",
+        capture_outcome: "TRANSIENT_NETWORK_FAILURE",
+        capture_outcome_reason: "no_page_capture",
+        recommended_next_action: "temporarily unreachable",
+        proven_facts: [],
+        unknown_facts: [],
+        not_authorized: ["owner_browser_proof_result_auto_write"],
+      },
+      draft_json_rel:
+        "data/fridge/batch-production/drafts/browser-proof-collector/fppwfu01/browser-proof-collector-fppwfu01-test.json",
+    }),
+    runBridge: () => {
+      bridgeRan = true;
+      throw new Error("owner-review bridge must not run on TRANSIENT_NETWORK_FAILURE");
+    },
+  });
+
+  assert.equal(outcome.selected_slug, "fppwfu01");
+  assert.equal(outcome.collector_overall_verdict, "UNKNOWN");
+  assert.equal(outcome.collector_capture_outcome, "TRANSIENT_NETWORK_FAILURE");
+  assert.equal(outcome.collector_capture_outcome_reason, "no_page_capture");
+  assert.equal(outcome.slug_remains_eligible_for_refresh, true);
+  assert.equal(outcome.owner_review_packet_rel, null);
+  assert.equal(outcome.owner_acceptance_status, null);
+  assert.equal(outcome.promotes_to_owner_browser_proof_result, false);
+  assert.equal(outcome.mutation_authorized, false);
+  assert.equal(outcome.data_mutation, false);
+  assert.equal(bridgeRan, false);
 });

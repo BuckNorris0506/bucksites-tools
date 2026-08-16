@@ -13,6 +13,11 @@ import { setTimeout as delay } from "node:timers/promises";
 import { chromium } from "playwright";
 
 import {
+  classifyBrowserProofCaptureOutcomeV1,
+  recommendedNextActionForCaptureOutcomeV1,
+  type BrowserProofCaptureOutcomeV1,
+} from "./browser-proof-capture-outcome-v1";
+import {
   FRIGIDAIRE_CONFUSION_FAMILY_REVIEW_SLUGS_V1,
   FRIGIDAIRE_WRONG_FAMILY_FORBIDDEN_TOKENS_V1,
 } from "./manufacturer-safe-link-rescue-frigidaire-config-v1";
@@ -174,6 +179,8 @@ export type BrowserProofCollectorDraftV1 = {
   owner_review_required: true;
   candidates: BrowserProofCollectorCandidateResultV1[];
   overall_verdict: BrowserProofCollectorVerdictV1;
+  capture_outcome: BrowserProofCaptureOutcomeV1;
+  capture_outcome_reason: string;
   recommended_next_action: string;
   proven_facts: string[];
   unknown_facts: string[];
@@ -859,6 +866,11 @@ export function buildBrowserProofCollectorDraftFromCandidatesV1(args: {
     stopped_after_candidate_url: null,
   };
   const bestRank = best ? rankBrowserProofCandidateV1(best) : null;
+  const captureOutcome = classifyBrowserProofCaptureOutcomeV1({
+    overall_verdict: overall,
+    candidates,
+    capture_attempts: allAttempts,
+  });
 
   const bestNote =
     best && best.verdict === "PASS"
@@ -901,19 +913,19 @@ export function buildBrowserProofCollectorDraftFromCandidatesV1(args: {
     owner_review_required: true,
     candidates,
     overall_verdict: overall,
-    recommended_next_action:
-      overall === "PASS"
-        ? `Owner review draft collector output.${bestNote} If accepted, manually author owner-browser-proof-result + evidence; do not treat collector PASS as apply-ready.`
-        : overall === "FAIL_AS_PROOF"
-          ? "No candidate is usable as browser proof. Capture a product PDP (official manufacturer or authorized parts distributor PartDetail), not search/category."
-          : attemptErrors.length > 0
-            ? `Resolve UNKNOWN capture failure. Attempts: ${attemptErrors.slice(0, 5).join(" | ")}${attemptErrors.length > 5 ? " …" : ""}. Retry with --headed --wait-ms 3000 or owner browser checklist.`
-            : "Resolve UNKNOWN (blocked page, ambiguous identity/buyability, or capture failure) before owner-browser-proof-result.",
+    capture_outcome: captureOutcome.capture_outcome,
+    capture_outcome_reason: captureOutcome.reason,
+    recommended_next_action: recommendedNextActionForCaptureOutcomeV1({
+      classification: captureOutcome,
+      bestNote,
+      attemptErrors,
+    }),
     proven_facts: [
       "PROVEN: browser_proof_collector_v1 is draft-only; all mutation and approval flags false.",
       "PROVEN: collector does not write owner-browser-proof-result or founder approvals.",
       "PROVEN: capture failure can never produce PASS.",
       `PROVEN: overall_verdict=${overall}.`,
+      `PROVEN: capture_outcome=${captureOutcome.capture_outcome} reason=${captureOutcome.reason}.`,
       `PROVEN: candidate_count=${String(candidates.length)} batch_mode=${String(batch_mode)}.`,
       `PROVEN: capture_attempts=${String(allAttempts.length)} success=${String(allAttempts.some((a) => a.success))}.`,
       ...(best
@@ -931,6 +943,11 @@ export function buildBrowserProofCollectorDraftFromCandidatesV1(args: {
     unknown_facts: [
       "UNKNOWN: owner acceptance of this draft as committed browser proof.",
       "UNKNOWN: readiness-gate eligibility until owner-browser-proof-result is authored separately.",
+      ...(captureOutcome.capture_outcome === "TRANSIENT_NETWORK_FAILURE"
+        ? [
+            "UNKNOWN: whether manufacturer evidence exists — the manufacturer page was not captured.",
+          ]
+        : []),
       ...(attemptErrors.length > 0 && candidates.every((c) => !c.facts.capture_succeeded)
         ? [`UNKNOWN: all capture attempts failed (${attemptErrors.length}).`]
         : []),

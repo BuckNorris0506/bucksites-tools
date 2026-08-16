@@ -53,7 +53,7 @@ async function main(): Promise<void> {
       collectAll: args.collect_all,
     });
     process.stderr.write(
-      `orchestrator_refresh: slug=${outcome.selected_slug ?? "none"} token=${outcome.oem_part_token ?? "none"} discovery=${outcome.discovery_path ?? "none"} follow_search=${String(outcome.follow_search_to_product_links)} collector=${outcome.collector_overall_verdict ?? "none"} owner_acceptance=${outcome.owner_acceptance_status ?? "none"} blocked=${outcome.blocked_reason ?? "none"} promotes_to_owner_browser_proof_result=false mutation_authorized=false\n`,
+      `orchestrator_refresh: slug=${outcome.selected_slug ?? "none"} token=${outcome.oem_part_token ?? "none"} discovery=${outcome.discovery_path ?? "none"} follow_search=${String(outcome.follow_search_to_product_links)} collector=${outcome.collector_overall_verdict ?? "none"} capture_outcome=${outcome.collector_capture_outcome ?? "none"} remains_eligible=${String(outcome.slug_remains_eligible_for_refresh)} owner_acceptance=${outcome.owner_acceptance_status ?? "none"} blocked=${outcome.blocked_reason ?? "none"} promotes_to_owner_browser_proof_result=false mutation_authorized=false\n`,
     );
     if (outcome.collector_draft_rel) {
       process.stderr.write(`Wrote draft ${outcome.collector_draft_rel}\n`);
@@ -97,7 +97,7 @@ async function main(): Promise<void> {
 
   const best = draft.candidates.find((c) => c.candidate_url === draft.best_candidate_url);
   process.stderr.write(
-    `${draft.contract}: slug=${draft.slug} batch=${String(draft.batch_mode)} overall=${draft.overall_verdict} best=${best?.verdict ?? "none"}/${best?.facts.source_class ?? "n/a"} candidates=${String(draft.candidates.length)} early_stop=${String(draft.early_stop.stopped)} owner_review_required=true promotes_to_owner_browser_proof_result=false\n`,
+    `${draft.contract}: slug=${draft.slug} batch=${String(draft.batch_mode)} overall=${draft.overall_verdict} capture_outcome=${draft.capture_outcome} best=${best?.verdict ?? "none"}/${best?.facts.source_class ?? "n/a"} candidates=${String(draft.candidates.length)} early_stop=${String(draft.early_stop.stopped)} owner_review_required=true promotes_to_owner_browser_proof_result=false\n`,
   );
   if (draft_json_rel) {
     process.stderr.write(`Wrote draft ${draft_json_rel}\n`);
