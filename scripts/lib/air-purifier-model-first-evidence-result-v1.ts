@@ -318,6 +318,15 @@ export function isAllowedModelFirstEvidenceResultRelPathV1(relPath: string): boo
   return true;
 }
 
+const LIVE_BROWSER_RESULT_REL_RE_V1 =
+  /^data\/air-purifier\/batch-production\/agent-results-model-first-v1\/ap-model-first-[a-z0-9]+(?:-[a-z0-9]+)*-live-browser-v1\.results\.json$/;
+
+export function isAllowedModelFirstLiveBrowserEvidenceResultRelPathV1(relPath: string): boolean {
+  const normalized = relPath.replace(/\\/g, "/");
+  if (!isAllowedModelFirstEvidenceResultRelPathV1(normalized)) return false;
+  return LIVE_BROWSER_RESULT_REL_RE_V1.test(normalized);
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }

@@ -16,6 +16,7 @@ import {
   rankBrowserProofCandidateV1,
   resolveForbiddenTokensV1,
   selectBestBrowserProofCandidateV1,
+  selectFollowOnProductUrlsFromHrefsV1,
   type BrowserProofCaptureAttemptV1,
 } from "./browser-proof-collector-v1";
 
@@ -440,4 +441,45 @@ test("CLI accepts repeated --url and --collect-all", () => {
   assert.equal(parsed.urls.length, 3);
   assert.equal(parsed.collect_all, true);
   assert.equal(parsed.headed, true);
+  assert.equal("follow_search_to_product_links" in parsed, false);
+});
+
+test("Shark /products/ PDP is official manufacturer product_pdp", () => {
+  const facts = extractBrowserProofVisibleFactsV1({
+    candidateUrl:
+      "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE2FKBAS",
+    finalUrl:
+      "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE2FKBAS",
+    title: "Shark Air Purifier Anti-Allergen Filter",
+    h1: "Anti-Allergen Filter",
+    textSample: "HE2FKBAS $39.99 In Stock Add to Cart",
+    purchaseActions: ["Add to Cart"],
+    expectedToken: "SHARK-HEPA-HP200",
+    forbiddenTokens: [],
+    captureSucceeded: true,
+    navigationError: null,
+  });
+  assert.equal(facts.page_type, "product_pdp");
+  assert.equal(facts.source_class, "official_manufacturer_pdp");
+});
+
+test("search-follow keeps same-host product hrefs, drops search/other hosts, caps at 3", () => {
+  const pageUrl = "https://www.sharkclean.com/search?q=SHARK-HEPA-HP200";
+  const selected = selectFollowOnProductUrlsFromHrefsV1({
+    pageUrl,
+    hrefs: [
+      "/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE2FKBAS",
+      "https://www.sharkclean.com/products/shark-air-purifier-with-true-hepa-zidHP201",
+      "https://www.sharkclean.com/search?q=HP200",
+      "https://www.amazon.com/dp/B0EXAMPLE",
+      "/products/a",
+      "/products/b",
+      "/products/c",
+    ],
+    maxFollow: 3,
+  });
+  assert.equal(selected.length, 3);
+  assert.ok(selected.every((u) => u.includes("sharkclean.com/products/")));
+  assert.ok(selected.every((u) => !u.includes("/search")));
+  assert.ok(!selected.some((u) => u.includes("amazon.com")));
 });

@@ -9,7 +9,7 @@
       "source_decision_packet_id": "ap_model_first_evidence_result_write_grant_v1:recurring-class",
       "decided_at": "2026-08-16T03:43:06.000Z",
       "decision_status": "approved",
-      "owner_note": "Approved by Jared Buckman: recurring bounded write authority for validated model-first evidence result artifacts only, subject to all existing destination, validation, expiry, and prohibited-action constraints.",
+      "owner_note": "Approved by Jared Buckman: recurring bounded write authority for validated model-first evidence result artifacts only, including the existing live-browser destination, subject to all existing destination, validation, expiry, and prohibited-action constraints. Live-browser collection must derive slug/token/URLs from repo truth; Jared-operated HyperAgent is not the recurring path.",
       "allowed_next_scope": "owner_model_first_evidence_result_write_approved",
       "evidence_required_before_mutation": true,
       "expires_at": "2026-11-15T00:00:00.000Z",
@@ -24,10 +24,15 @@
         "Do not treat this row as owner_mutation_approved.",
         "Do not authorize writes by enum presence or deferred status alone.",
         "Do not change dispatch.",
-        "Fail closed unless ap_model_first_evidence_queue_v1.queue_status=READY and a valid top candidate exists.",
+        "Fail closed unless ap_model_first_evidence_queue_v1.queue_status=READY.",
+        "Repo-truth writes fail closed unless a valid top candidate exists.",
+        "Live-browser writes fail closed unless a completed_no_mutation candidate is missing a live-browser artifact.",
         "Fail closed unless validateModelFirstEvidenceResultV1 passes.",
         "Fail closed unless isAllowedModelFirstEvidenceResultRelPathV1 passes for the destination.",
-        "Destination is only data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-<anchor_filter_slug>-v1.results.json."
+        "Fail closed unless live-browser destinations pass isAllowedModelFirstLiveBrowserEvidenceResultRelPathV1.",
+        "Repo-truth destination is only data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-<anchor_filter_slug>-v1.results.json.",
+        "Live-browser destination is only data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-<anchor_filter_slug>-live-browser-v1.results.json.",
+        "Do not require Jared --slug/--token/--url for live-browser collection; derive slug from completed_no_mutation, token from filters.csv, and seed URLs from retailer_links.csv plus batch-v3 candidate_url."
       ]
     }
   ]
