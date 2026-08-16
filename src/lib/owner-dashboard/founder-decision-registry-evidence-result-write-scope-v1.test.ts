@@ -249,7 +249,7 @@ test("Runner halt inference never selects the new decision type", () => {
   );
 });
 
-test("draft founder OAR document validates and stays non-mutation", () => {
+test("ratified founder OAR document validates and stays non-mutation", () => {
   const rel =
     "data/owner-decisions/ap-model-first-evidence-result-write-owner-approval-v1.json";
   const parsed: unknown = JSON.parse(readFileSync(rel, "utf8"));
@@ -262,6 +262,6 @@ test("draft founder OAR document validates and stays non-mutation", () => {
     row.allowed_next_scope,
     FOUNDER_DECISION_REGISTRY_MODEL_FIRST_EVIDENCE_RESULT_WRITE_SCOPE_V1,
   );
-  assert.equal(row.decision_status, "deferred");
+  assert.equal(row.decision_status, "approved");
   assert.equal(isFounderRegistryRowActiveMutationApproval(row, NOW), false);
 });
