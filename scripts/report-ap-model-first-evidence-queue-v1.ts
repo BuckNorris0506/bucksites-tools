@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { buildApModelFirstEvidenceQueueV1Report } from "./lib/ap-model-first-evidence-queue-v1";
+import { writeTopCandidateModelFirstEvidenceResultIfGrantActiveV1 } from "./lib/ap-model-first-evidence-result-write-from-queue-v1";
 import { buildAirPurifierModelFirstProductionLaneV1Report } from "./lib/air-purifier-model-first-production-lane-v1";
 import { buildAirPurifierWeakBuyerPathAuditV1Report } from "./lib/air-purifier-weak-buyer-path-audit-v1";
 
@@ -15,7 +16,12 @@ function main(): void {
     modelFirstLane: lane,
     weakBuyerPathAudit: weak,
   });
+  const resultWrite = writeTopCandidateModelFirstEvidenceResultIfGrantActiveV1({
+    rootDir,
+    queue: report,
+  });
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+  process.stderr.write(`${JSON.stringify({ model_first_evidence_result_write: resultWrite })}\n`);
 }
 
 main();

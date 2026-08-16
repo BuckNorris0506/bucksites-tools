@@ -11,6 +11,7 @@ import test from "node:test";
 import {
   FOUNDER_DECISION_REGISTRY_MODEL_FIRST_EVIDENCE_RESULT_WRITE_SCOPE_V1,
   founderRegistryRowGrantsMutatingRepoAuthority,
+  isFounderRegistryRowActiveModelFirstEvidenceResultWriteApproval,
   isFounderRegistryRowActiveMutationApproval,
   validateFounderDecisionRegistryDocumentV1,
   validateFounderDecisionRegistryRowV1,
@@ -264,4 +265,35 @@ test("ratified founder OAR document validates and stays non-mutation", () => {
   );
   assert.equal(row.decision_status, "approved");
   assert.equal(isFounderRegistryRowActiveMutationApproval(row, NOW), false);
+  assert.equal(isFounderRegistryRowActiveModelFirstEvidenceResultWriteApproval(row, NOW), true);
+  assert.equal(
+    isFounderRegistryRowActiveModelFirstEvidenceResultWriteApproval(row, "2026-11-15T00:00:00.000Z"),
+    false,
+  );
+});
+
+test("evidence-result write predicate fails closed on status, scope, and expiry", () => {
+  assert.equal(
+    isFounderRegistryRowActiveModelFirstEvidenceResultWriteApproval(
+      evidenceWriteRow({ decision_status: "deferred" }),
+      NOW,
+    ),
+    false,
+  );
+  assert.equal(
+    isFounderRegistryRowActiveModelFirstEvidenceResultWriteApproval(
+      evidenceWriteRow({ allowed_next_scope: "owner_mutation_approved" }),
+      NOW,
+    ),
+    false,
+  );
+  assert.equal(
+    isFounderRegistryRowActiveModelFirstEvidenceResultWriteApproval(
+      evidenceWriteRow({ expires_at: "2026-08-15T20:00:00.000Z" }),
+      NOW,
+    ),
+    false,
+  );
+  assert.equal(isFounderRegistryRowActiveModelFirstEvidenceResultWriteApproval(evidenceWriteRow(), NOW), true);
+  assert.equal(isFounderRegistryRowActiveMutationApproval(evidenceWriteRow(), NOW), false);
 });

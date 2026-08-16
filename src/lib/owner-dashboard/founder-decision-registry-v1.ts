@@ -985,6 +985,24 @@ export function founderRegistryRowGrantsMutatingRepoAuthority(
   return isFounderRegistryRowActiveMutationApproval(row, referenceTimeIso);
 }
 
+function founderRegistryRowPassesStandingTimeBoundsV1(
+  row: FounderDecisionRegistryRowV1,
+  referenceTimeIso: string,
+): boolean {
+  const now = Date.parse(referenceTimeIso);
+  if (Number.isNaN(now)) return false;
+  if (row.expires_at == null || String(row.expires_at).trim() === "") {
+    return false;
+  }
+  const exp = Date.parse(row.expires_at);
+  if (Number.isNaN(exp) || now >= exp) return false;
+  if (row.review_after != null && row.review_after !== "") {
+    const rev = Date.parse(row.review_after);
+    if (!Number.isNaN(rev) && now >= rev) return false;
+  }
+  return true;
+}
+
 /** Active “standing approval” for mutation-shaped scope: approved + owner_mutation_approved + not past expires_at/review_after. */
 export function isFounderRegistryRowActiveMutationApproval(
   row: FounderDecisionRegistryRowV1,
@@ -996,16 +1014,24 @@ export function isFounderRegistryRowActiveMutationApproval(
   if (r.decision_status !== "approved" || r.allowed_next_scope !== "owner_mutation_approved") {
     return false;
   }
-  const now = Date.parse(referenceTimeIso);
-  if (Number.isNaN(now)) return false;
-  if (r.expires_at == null || String(r.expires_at).trim() === "") {
+  return founderRegistryRowPassesStandingTimeBoundsV1(r, referenceTimeIso);
+}
+
+/**
+ * Active standing grant for bounded AP model-first evidence *result* writes only.
+ * PROVEN: requires approved + exact `owner_model_first_evidence_result_write_approved` + unexpired.
+ * PROVEN: never satisfies `isFounderRegistryRowActiveMutationApproval`.
+ */
+export function isFounderRegistryRowActiveModelFirstEvidenceResultWriteApproval(
+  row: FounderDecisionRegistryRowV1,
+  referenceTimeIso: string,
+): boolean {
+  const v = validateFounderDecisionRegistryRowV1(row);
+  if (!v.ok) return false;
+  const r = v.row;
+  if (r.decision_status !== "approved") return false;
+  if (r.allowed_next_scope !== FOUNDER_DECISION_REGISTRY_MODEL_FIRST_EVIDENCE_RESULT_WRITE_SCOPE_V1) {
     return false;
   }
-  const exp = Date.parse(r.expires_at);
-  if (Number.isNaN(exp) || now >= exp) return false;
-  if (r.review_after != null && r.review_after !== "") {
-    const rev = Date.parse(r.review_after);
-    if (!Number.isNaN(rev) && now >= rev) return false;
-  }
-  return true;
+  return founderRegistryRowPassesStandingTimeBoundsV1(r, referenceTimeIso);
 }
