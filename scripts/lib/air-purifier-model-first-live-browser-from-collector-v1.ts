@@ -451,7 +451,7 @@ export function mapCollectorCandidateToLiveBrowserBuyerPathV1(args: {
   const wrong_family_risk =
     args.candidate.facts.forbidden_tokens_present.length > 0
       ? `FORBIDDEN tokens present: ${args.candidate.facts.forbidden_tokens_present.join(",")}`
-      : "UNKNOWN: wrong-family risk not proven in this capture";
+      : "UNKNOWN: family-mismatch risk not proven in this capture";
 
   const passDraft: ModelFirstCandidateBuyerPathV1 = {
     url,

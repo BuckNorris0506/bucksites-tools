@@ -273,6 +273,27 @@ test("selector retries PASS=0 empty-path live-browser artifact and skips invalid
   const tmp = makeTempRoot(liveGrantDoc());
   try {
     const hp200Rel = modelFirstLiveBrowserResultRelPathV1("shark-hepa-hp200");
+    const emptyDiscovery = JSON.parse(readFileSync(path.join(REPO_ROOT, hp200Rel), "utf8")) as {
+      candidate_buyer_paths: unknown[];
+    };
+    emptyDiscovery.candidate_buyer_paths = [];
+    writeFileSync(path.join(tmp, hp200Rel), `${JSON.stringify(emptyDiscovery, null, 2)}\n`);
+    const selected = selectCompletedCandidateMissingLiveBrowserFileV1({
+      queue: completedQueue(),
+      rootDir: tmp,
+    });
+    assert.equal(selected?.filter_slug, "shark-hepa-hp200");
+    assert.notEqual(selected?.filter_slug, "holmes-hapf30");
+    assert.notEqual(selected?.filter_slug, "shark-hepa-hp400");
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("selector does not retry PASS=0 live-browser once a PDP buyer path exists", () => {
+  const tmp = makeTempRoot(liveGrantDoc());
+  try {
+    const hp200Rel = modelFirstLiveBrowserResultRelPathV1("shark-hepa-hp200");
     writeFileSync(
       path.join(tmp, hp200Rel),
       readFileSync(path.join(REPO_ROOT, hp200Rel), "utf8"),
@@ -281,9 +302,7 @@ test("selector retries PASS=0 empty-path live-browser artifact and skips invalid
       queue: completedQueue(),
       rootDir: tmp,
     });
-    assert.equal(selected?.filter_slug, "shark-hepa-hp200");
-    assert.notEqual(selected?.filter_slug, "holmes-hapf30");
-    assert.notEqual(selected?.filter_slug, "shark-hepa-hp400");
+    assert.equal(selected, null);
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }
@@ -499,4 +518,6 @@ test("HE2FKBAS PDP without catalog token is not buyer-path PASS or fit proof", (
   assert.equal(facts.exact_expected_token_present, false);
   assert.equal(facts.page_type, "product_pdp");
   assert.equal(facts.source_class, "official_manufacturer_pdp");
+  assert.match(mapped?.wrong_family_risk ?? "", /^UNKNOWN:/);
+  assert.equal((mapped?.wrong_family_risk ?? "").toUpperCase().includes("WRONG-FAMILY"), false);
 });

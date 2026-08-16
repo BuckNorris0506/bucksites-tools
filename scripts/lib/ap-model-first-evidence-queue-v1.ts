@@ -236,7 +236,14 @@ function splitCandidatesByCommittedResults(args: {
   return { active, completed };
 }
 
-function hasModelFilterMappingReviewSignal(args: {
+function isProvenWrongFamilySignalTextV1(text: string): boolean {
+  const u = text.trim().toUpperCase();
+  if (!u || u.startsWith("UNKNOWN")) return false;
+  return u.includes("WRONG-FAMILY") || text.includes("does not match anchor");
+}
+
+/** True only for proven wrong-family live-browser evidence — not UNKNOWN catalog-token mismatch. */
+export function hasModelFilterMappingReviewSignalV1(args: {
   result: Parameters<typeof isModelFirstResultCompletedNoMutationV1>[0];
 }): boolean {
   const result = args.result;
@@ -246,15 +253,13 @@ function hasModelFilterMappingReviewSignal(args: {
   const wrongFamilyByModelRows = result.model_rows.some(
     (row) =>
       row.evidence_status === "FAIL" &&
-      (row.buyer_path_status.includes("WRONG_FAMILY") || row.notes.toUpperCase().includes("WRONG-FAMILY")),
+      (row.buyer_path_status.includes("WRONG_FAMILY") ||
+        isProvenWrongFamilySignalTextV1(row.notes)),
   );
   if (wrongFamilyByModelRows) return true;
 
   const wrongFamilyByBuyerPaths = result.candidate_buyer_paths.some(
-    (path) =>
-      path.status === "FAIL" &&
-      (path.wrong_family_risk.toUpperCase().includes("WRONG-FAMILY") ||
-        path.wrong_family_risk.includes("does not match anchor")),
+    (path) => path.status === "FAIL" && isProvenWrongFamilySignalTextV1(path.wrong_family_risk),
   );
   if (wrongFamilyByBuyerPaths) return true;
 
@@ -282,7 +287,7 @@ export function buildModelFirstEvidenceResultHistoryV1(args: {
   for (const [slug, entry] of Array.from(latestBySlug.entries())) {
     if (isModelFirstResultCompletedNoMutationV1(entry.result)) {
       no_mutation_completed_filter_slugs.push(slug);
-      if (hasModelFilterMappingReviewSignal({ result: entry.result })) {
+      if (hasModelFilterMappingReviewSignalV1({ result: entry.result })) {
         mapping_review_required_filter_slugs.push(slug);
         mappingReviewOpportunities.push({
           filter_slug: slug,
