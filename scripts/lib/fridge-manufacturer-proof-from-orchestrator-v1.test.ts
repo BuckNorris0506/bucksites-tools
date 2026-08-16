@@ -168,7 +168,7 @@ test("orchestrator target_url is preferred manufacturer seed", () => {
   );
 });
 
-test("repo orchestrator keeps fppwfu01 eligible after HTTP2 UNKNOWN collector draft", () => {
+test("repo orchestrator parks fppwfu01 after headed manufacturer not-found capture", () => {
   const report = loadManufacturerBrowserProofRefreshOrchestratorReportV1({ rootDir: REPO_ROOT });
   assert.ok(report);
   const seeds = loadManufacturerSeedUrlsForWorkItemV1({
@@ -184,17 +184,16 @@ test("repo orchestrator keeps fppwfu01 eligible after HTTP2 UNKNOWN collector dr
   assert.equal(slugHasOwnerReviewPacketV1({ rootDir: REPO_ROOT, slug: "wf3cb" }), true);
   assert.equal(slugManufacturerProofRefreshParkedV1({ rootDir: REPO_ROOT, slug: "wf3cb" }), true);
   assert.equal(slugHasCollectorDraftV1({ rootDir: REPO_ROOT, slug: "fppwfu01" }), true);
-  assert.equal(slugCollectorOutcomeParksRefreshV1({ rootDir: REPO_ROOT, slug: "fppwfu01" }), false);
+  assert.equal(slugCollectorOutcomeParksRefreshV1({ rootDir: REPO_ROOT, slug: "fppwfu01" }), true);
   assert.equal(
     slugManufacturerProofRefreshParkedV1({ rootDir: REPO_ROOT, slug: "fppwfu01" }),
-    false,
+    true,
   );
   const selected = selectNextManufacturerProofRefreshWorkItemV1({
     rootDir: REPO_ROOT,
     report: report!,
   });
-  assert.equal(selected?.work_item.filter_slug, "fppwfu01");
-  assert.equal(selected?.follow_search_to_product_links, true);
+  assert.notEqual(selected?.work_item.filter_slug, "fppwfu01");
 });
 
 test("skips slug with NO_EVIDENCE collector draft and selects the next seeded item", () => {
