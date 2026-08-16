@@ -24,6 +24,8 @@ import {
   type BrowserProofCollectorDraftV1,
 } from "./browser-proof-collector-v1";
 import {
+  extractFamilyDiscoveryTokensFromSlugV1,
+  extractFirstPartyDiscoveryTokensFromNotesV1,
   loadApModelFirstLiveBrowserSeedInputsV1,
   mapCollectorCandidateToLiveBrowserBuyerPathV1,
   parseApModelFirstEvidenceQueueReporterArgsV1,
@@ -221,6 +223,36 @@ test("repo seed inputs for shark-hepa-hp200 come from filters.csv + retailer_lin
   assert.ok(seeds.seed_urls.every((u) => typeof u === "string" && u.startsWith("http")));
 });
 
+test("HE2FKBAS from models.csv notes is a discovery query only; catalog token stays SHARK-HEPA-HP200", () => {
+  assert.deepEqual(
+    extractFirstPartyDiscoveryTokensFromNotesV1(
+      "SharkNinja first-party HE2FKBAS compatibility list includes HP200.",
+    ),
+    ["HE2FKBAS"],
+  );
+  assert.deepEqual(extractFamilyDiscoveryTokensFromSlugV1("shark-hepa-hp200"), ["HP200"]);
+  const seeds = loadApModelFirstLiveBrowserSeedInputsV1({
+    rootDir: REPO_ROOT,
+    filterSlug: "shark-hepa-hp200",
+  });
+  assert.equal(seeds.ok, true);
+  if (!seeds.ok) return;
+  assert.equal(seeds.token, "SHARK-HEPA-HP200");
+  assert.ok(seeds.discovery_tokens.includes("HE2FKBAS"));
+  assert.ok(!seeds.discovery_tokens.includes("SHARK-HEPA-HP200"));
+  assert.ok(
+    seeds.seed_urls.some(
+      (u) => u.includes("sharkclean.com") && /[?&]q=HE2FKBAS\b/i.test(u),
+    ),
+  );
+  assert.ok(
+    seeds.seed_urls.some(
+      (u) => u.includes("sharkninja.com") && /[?&]q=HE2FKBAS\b/i.test(u),
+    ),
+  );
+  assert.ok(seeds.seed_urls.every((u) => !u.includes("zidHE2FKBAS")));
+});
+
 test("completed candidate selection skips existing live-browser files and does not pick current top", () => {
   const tmp = makeTempRoot(liveGrantDoc());
   try {
@@ -232,6 +264,26 @@ test("completed candidate selection skips existing live-browser files and does n
     assert.equal(selected?.filter_slug, "shark-hepa-hp200");
     assert.notEqual(selected?.filter_slug, "shark-hepa-hp400");
     assert.notEqual(selected?.filter_slug, "holmes-hapf30");
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("selector retries PASS=0 empty-path live-browser artifact and skips invalid holmes file", () => {
+  const tmp = makeTempRoot(liveGrantDoc());
+  try {
+    const hp200Rel = modelFirstLiveBrowserResultRelPathV1("shark-hepa-hp200");
+    writeFileSync(
+      path.join(tmp, hp200Rel),
+      readFileSync(path.join(REPO_ROOT, hp200Rel), "utf8"),
+    );
+    const selected = selectCompletedCandidateMissingLiveBrowserFileV1({
+      queue: completedQueue(),
+      rootDir: tmp,
+    });
+    assert.equal(selected?.filter_slug, "shark-hepa-hp200");
+    assert.notEqual(selected?.filter_slug, "holmes-hapf30");
+    assert.notEqual(selected?.filter_slug, "shark-hepa-hp400");
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }
@@ -419,4 +471,32 @@ test("PDP with exact token can yield a PASS buyer path without inventing search 
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }
+});
+
+test("HE2FKBAS PDP without catalog token is not buyer-path PASS or fit proof", () => {
+  const facts = extractBrowserProofVisibleFactsV1({
+    candidateUrl: "https://www.sharkninja.com/hp200-hepa-filter/HE2FKBAS.html",
+    finalUrl: "https://www.sharkninja.com/hp200-hepa-filter/HE2FKBAS.html",
+    title: "Shark HE2FKBAS",
+    h1: "HE2FKBAS",
+    textSample: "HE2FKBAS HP200 $39.99 In Stock Add to Cart",
+    purchaseActions: ["Add to Cart"],
+    expectedToken: "SHARK-HEPA-HP200",
+    forbiddenTokens: [],
+    captureSucceeded: true,
+    navigationError: null,
+  });
+  const candidate = buildCandidateResultFromFactsV1({
+    candidateUrl: "https://www.sharkninja.com/hp200-hepa-filter/HE2FKBAS.html",
+    facts,
+  });
+  const mapped = mapCollectorCandidateToLiveBrowserBuyerPathV1({
+    candidate,
+    expectedToken: "SHARK-HEPA-HP200",
+  });
+  assert.ok(mapped);
+  assert.notEqual(mapped?.status, "PASS");
+  assert.equal(facts.exact_expected_token_present, false);
+  assert.equal(facts.page_type, "product_pdp");
+  assert.equal(facts.source_class, "official_manufacturer_pdp");
 });

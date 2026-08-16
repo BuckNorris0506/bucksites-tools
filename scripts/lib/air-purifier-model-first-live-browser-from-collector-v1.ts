@@ -21,6 +21,7 @@ import {
   isAllowedModelFirstLiveBrowserEvidenceResultRelPathV1,
   liveBrowserBuyerPathMayRecommendCsvMutationV1,
   loadAllRepoModelSlugsForAnchorFilterV1,
+  loadModelFirstEvidenceResultV1,
   modelFirstLiveBrowserResultRelPathV1,
   validateModelFirstEvidenceResultV1,
   type AirPurifierModelFirstLiveBrowserEvidenceResultV1,
@@ -55,6 +56,7 @@ export type ModelFirstLiveBrowserWriteOutcomeV1 = {
   packets_written: false;
   data_mutation: false;
   seed_urls: string[];
+  discovery_tokens: string[];
   collector_error: string | null;
   evidence_status_pass_count: number | null;
 };
@@ -64,6 +66,7 @@ type FilterCsvRow = {
   slug: string;
   oem_part_number?: string;
   name?: string;
+  notes?: string;
 };
 
 type RetailerLinkRow = {
@@ -76,6 +79,7 @@ type ModelCsvRow = {
   slug: string;
   model_number?: string;
   title?: string;
+  notes?: string;
 };
 
 type BatchV3FilterRow = {
@@ -130,6 +134,7 @@ function emptyOutcome(
     packets_written: false,
     data_mutation: false,
     seed_urls: [],
+    discovery_tokens: [],
     collector_error: null,
     evidence_status_pass_count: null,
     ...partial,
@@ -158,17 +163,124 @@ function loadBatchV3CandidateUrl(args: {
   }
 }
 
+const MAX_FIRST_PARTY_DISCOVERY_TOKENS_V1 = 2;
+const SHARK_FIRST_PARTY_SEARCH_HOSTS_V1 = ["www.sharkclean.com", "www.sharkninja.com"] as const;
+
+/**
+ * Compact family tokens already in the selected slug (e.g. shark-hepa-hp200 → HP200).
+ * Discovery queries only — never treated as catalog fit/buy proof.
+ */
+export function extractFamilyDiscoveryTokensFromSlugV1(slug: string): string[] {
+  return slug
+    .toUpperCase()
+    .split(/[-_]/)
+    .filter((part) => /^[A-Z]{1,4}\d{2,}$/.test(part));
+}
+
+/**
+ * First-party SKUs recorded in repo notes (e.g. "SharkNinja first-party HE2FKBAS ...").
+ * Discovery queries only — never treated as catalog fit/buy proof.
+ */
+export function extractFirstPartyDiscoveryTokensFromNotesV1(notes: string): string[] {
+  const tokens = new Set<string>();
+  const firstParty = notes.matchAll(/first-party\s+([A-Z0-9][A-Z0-9-]{3,})/gi);
+  for (const match of firstParty) {
+    const token = match[1]?.trim().toUpperCase();
+    if (token) tokens.add(token);
+  }
+  const heSkus = notes.matchAll(/\bHE\d[A-Z0-9]{3,}\b/gi);
+  for (const match of heSkus) {
+    const token = match[0]?.trim().toUpperCase();
+    if (token) tokens.add(token);
+  }
+  return [...tokens];
+}
+
+/** Reuse manufacturer-site /search?q= seeds; add documented sharkclean↔sharkninja host alias. */
+export function buildFirstPartyDiscoverySearchUrlsV1(args: {
+  seedUrls: readonly string[];
+  discoveryTokens: readonly string[];
+}): string[] {
+  const tokens = args.discoveryTokens
+    .map((t) => t.trim())
+    .filter((t) => t.length > 0)
+    .slice(0, MAX_FIRST_PARTY_DISCOVERY_TOKENS_V1);
+  if (tokens.length === 0) return [];
+  const seen = new Set(args.seedUrls.map((u) => u.trim()).filter(Boolean));
+  const extra: string[] = [];
+  const push = (url: string) => {
+    if (!url || seen.has(url)) return;
+    seen.add(url);
+    extra.push(url);
+  };
+
+  for (const seed of args.seedUrls) {
+    let parsed: URL;
+    try {
+      parsed = new URL(seed);
+    } catch {
+      continue;
+    }
+    const isSearch =
+      isManufacturerSiteSearchUrl(seed) || parsed.pathname.toLowerCase().includes("/search");
+    if (!isSearch) continue;
+    for (const token of tokens) {
+      const next = new URL(parsed.toString());
+      next.searchParams.set("q", token);
+      push(next.toString());
+      const host = parsed.hostname.replace(/^www\./i, "").toLowerCase();
+      if (host === "sharkclean.com" || host === "sharkninja.com") {
+        for (const aliasHost of SHARK_FIRST_PARTY_SEARCH_HOSTS_V1) {
+          const aliased = new URL(next.toString());
+          aliased.hostname = aliasHost;
+          if (!aliased.pathname.toLowerCase().includes("/search")) {
+            aliased.pathname = "/search";
+          }
+          push(aliased.toString());
+        }
+      }
+    }
+  }
+  return extra;
+}
+
+function liveBrowserDiscoveryFailedV1(result: {
+  evidence_status_counts: { PASS: number };
+  candidate_buyer_paths?: unknown[];
+}): boolean {
+  if (result.evidence_status_counts.PASS > 0) return false;
+  const paths = result.candidate_buyer_paths;
+  return !Array.isArray(paths) || paths.length === 0;
+}
+
 export function selectCompletedCandidateMissingLiveBrowserFileV1(args: {
   queue: ApModelFirstEvidenceQueueReportV1;
   rootDir: string;
   fileExists?: (absPath: string) => boolean;
+  readText?: (absPath: string) => string;
 }): { filter_slug: string; sample_model_slugs: string[] } | null {
   const fileExists = args.fileExists ?? defaultFileExists;
+  const readText = args.readText ?? defaultReadText;
   for (const candidate of args.queue.completed_no_mutation_candidates) {
     const slug = candidate.filter_slug?.trim();
     if (!slug) continue;
     const rel = modelFirstLiveBrowserResultRelPathV1(slug);
-    if (!fileExists(path.join(args.rootDir, rel))) {
+    const abs = path.join(args.rootDir, rel);
+    if (!fileExists(abs)) {
+      return {
+        filter_slug: slug,
+        sample_model_slugs: candidate.sample_model_slugs ?? [],
+      };
+    }
+    const loaded = loadModelFirstEvidenceResultV1({
+      rootDir: args.rootDir,
+      relPath: rel,
+      readText,
+      fileExists,
+    });
+    if (!loaded) continue;
+    if (loaded.evidence_collection_mode !== "live_browser_model_first_v1") continue;
+    if (liveBrowserDiscoveryFailedV1(loaded)) {
       return {
         filter_slug: slug,
         sample_model_slugs: candidate.sample_model_slugs ?? [],
@@ -184,7 +296,13 @@ export function loadApModelFirstLiveBrowserSeedInputsV1(args: {
   readText?: (absPath: string) => string;
   fileExists?: (absPath: string) => boolean;
 }):
-  | { ok: true; token: string; seed_urls: string[]; filter_name: string | null }
+  | {
+      ok: true;
+      token: string;
+      seed_urls: string[];
+      discovery_tokens: string[];
+      filter_name: string | null;
+    }
   | { ok: false; blocked_reason: "filter_row_missing" | "no_seed_urls" } {
   const readText = args.readText ?? defaultReadText;
   const fileExists = args.fileExists ?? defaultFileExists;
@@ -224,10 +342,47 @@ export function loadApModelFirstLiveBrowserSeedInputsV1(args: {
     }) ?? undefined,
   );
   if (urls.length === 0) return { ok: false, blocked_reason: "no_seed_urls" };
+
+  const mappedModelSlugs = loadAllRepoModelSlugsForAnchorFilterV1(
+    args.rootDir,
+    args.filterSlug,
+    readText,
+    fileExists,
+  );
+  const models = readCsv<ModelCsvRow>(
+    args.rootDir,
+    "data/air-purifier/models.csv",
+    readText,
+    fileExists,
+  );
+  const discoveryTokens = new Set<string>();
+  for (const note of [filterRow.notes ?? ""]) {
+    for (const t of extractFirstPartyDiscoveryTokensFromNotesV1(note)) {
+      if (t !== token.toUpperCase()) discoveryTokens.add(t);
+    }
+  }
+  for (const modelSlug of mappedModelSlugs) {
+    const model = models.find((m) => m.slug === modelSlug);
+    for (const t of extractFirstPartyDiscoveryTokensFromNotesV1(model?.notes ?? "")) {
+      if (t !== token.toUpperCase()) discoveryTokens.add(t);
+    }
+  }
+  for (const t of extractFamilyDiscoveryTokensFromSlugV1(args.filterSlug)) {
+    if (t !== token.toUpperCase()) discoveryTokens.add(t);
+  }
+  const discovery_tokens = [...discoveryTokens].slice(0, MAX_FIRST_PARTY_DISCOVERY_TOKENS_V1);
+  for (const extra of buildFirstPartyDiscoverySearchUrlsV1({
+    seedUrls: urls,
+    discoveryTokens: discovery_tokens,
+  })) {
+    push(extra);
+  }
+
   return {
     ok: true,
     token,
     seed_urls: urls,
+    discovery_tokens,
     filter_name: filterRow.name?.trim() || null,
   };
 }
@@ -337,6 +492,7 @@ export function buildLiveBrowserEvidenceResultFromCollectorDraftV1(args: {
   modelRows: ModelCsvRow[];
   filterName: string | null;
   seedUrls: readonly string[];
+  discoveryTokens?: readonly string[];
   nowIso: string;
 }): AirPurifierModelFirstLiveBrowserEvidenceResultV1 {
   const candidate_buyer_paths: ModelFirstCandidateBuyerPathV1[] = [];
@@ -382,7 +538,7 @@ export function buildLiveBrowserEvidenceResultFromCollectorDraftV1(args: {
         ? `PROVEN: Official captured page(s) mention ${modelNumber ?? modelSlug} and exact token ${args.expectedToken}.`
         : official_source_urls.length > 0
           ? `UNKNOWN: Official captured page(s) mention ${modelNumber ?? modelSlug} but exact catalog token ${args.expectedToken} was not visible. Filter-PDP capture alone does not authorize model-row PASS.`
-          : `UNKNOWN: No captured official/model/support/PDP page in this run mentioned ${modelNumber ?? modelSlug}. Live-browser seed URLs were repo retailer_links/batch-v3 only; search URLs are omitted from candidate_buyer_paths.`;
+          : `UNKNOWN: No captured official/model/support/PDP page in this run mentioned ${modelNumber ?? modelSlug}. Search URLs are omitted from candidate_buyer_paths.`;
 
     return {
       model_slug: modelSlug,
@@ -430,7 +586,12 @@ export function buildLiveBrowserEvidenceResultFromCollectorDraftV1(args: {
     recommended_csv_mutation: null,
     safe_apply_authorized,
     proven_facts: [
-      `PROVEN: Live-browser collector opened ${String(args.seedUrls.length)} repo seed URL(s) for ${args.anchorFilterSlug} (no Jared --slug/--token/--url).`,
+      `PROVEN: Live-browser collector opened ${String(args.seedUrls.length)} first-party URL(s) for ${args.anchorFilterSlug} (no Jared --slug/--token/--url).`,
+      `PROVEN: Discovery tokens used as search queries only (not fit/buy proof): ${
+        (args.discoveryTokens ?? []).length > 0
+          ? (args.discoveryTokens ?? []).join(", ")
+          : "(none)"
+      }. Catalog expected token remains ${args.expectedToken}.`,
       `PROVEN: Collector captured ${String(args.draft.candidates.length)} page(s); search URLs omitted from candidate_buyer_paths.`,
       `PROVEN: ${String(model_rows.length)} model row(s) checked; evidence_status_counts.PASS=${String(evidence_status_counts.PASS)}; safe_apply_authorized=${String(safe_apply_authorized)}.`,
       "PROVEN: recommended_csv_mutation=null; data_mutation=false; no CSV/Supabase/--apply.",
@@ -537,6 +698,7 @@ export async function writeCompletedCandidateLiveBrowserEvidenceIfGrantActiveV1(
       writeDrafts: false,
       collectAll: true,
       followSearchToProductLinks: true,
+      followPreferTokens: seeds.discovery_tokens,
       now,
     });
     draft = collected.draft;
@@ -549,6 +711,7 @@ export async function writeCompletedCandidateLiveBrowserEvidenceIfGrantActiveV1(
       anchor_filter_slug: selected.filter_slug,
       result_rel: resultRel,
       seed_urls: seeds.seed_urls,
+      discovery_tokens: seeds.discovery_tokens,
       collector_error: err instanceof Error ? err.message : String(err),
     });
   }
@@ -575,6 +738,7 @@ export async function writeCompletedCandidateLiveBrowserEvidenceIfGrantActiveV1(
     modelRows,
     filterName: seeds.filter_name,
     seedUrls: seeds.seed_urls,
+    discoveryTokens: seeds.discovery_tokens,
     nowIso,
   });
 
@@ -587,6 +751,7 @@ export async function writeCompletedCandidateLiveBrowserEvidenceIfGrantActiveV1(
       anchor_filter_slug: selected.filter_slug,
       result_rel: resultRel,
       seed_urls: seeds.seed_urls,
+      discovery_tokens: seeds.discovery_tokens,
     });
   }
 
@@ -608,6 +773,7 @@ export async function writeCompletedCandidateLiveBrowserEvidenceIfGrantActiveV1(
     packets_written: false,
     data_mutation: false,
     seed_urls: seeds.seed_urls,
+    discovery_tokens: seeds.discovery_tokens,
     collector_error: null,
     evidence_status_pass_count: result.evidence_status_counts.PASS,
   };

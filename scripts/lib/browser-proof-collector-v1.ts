@@ -236,6 +236,11 @@ export function inferBrowserProofPageTypeV1(args: {
   if (/frigidaire\.com/.test(u) && /\/en\/p\//.test(u) && !/catalogsearch/.test(u)) {
     return "product_pdp";
   }
+  try {
+    if (pathLooksLikeProductPdpV1(new URL(args.finalUrl).pathname)) return "product_pdp";
+  } catch {
+    // ignore unparseable URL
+  }
 
   if (
     /catalogsearch|\/search\b|\/search\?|searchresults|search-results|\/search\//i.test(u) ||
@@ -271,7 +276,7 @@ export function inferBrowserProofSourceClassV1(args: {
   if (u.includes("frigidaire.com") && !u.includes("frigidaireapplianceparts")) {
     return args.pageType === "product_pdp" ? "official_manufacturer_pdp" : "search_or_catalog";
   }
-  if (u.includes("sharkclean.com")) {
+  if (u.includes("sharkclean.com") || u.includes("sharkninja.com")) {
     return args.pageType === "product_pdp" ? "official_manufacturer_pdp" : "search_or_catalog";
   }
   if (u.includes("geapplianceparts.com") && /\/parts\/spec\//i.test(u)) {
@@ -288,6 +293,25 @@ export function inferBrowserProofSourceClassV1(args: {
 
 /** Max same-host product URLs followed from a search/category capture (AP live-browser only). */
 export const BROWSER_PROOF_SEARCH_FOLLOW_MAX_V1 = 3 as const;
+
+/** Follow from search/category captures, including manufacturer search seeds that redirected to a homepage. */
+export function isBrowserProofFollowSourceCaptureV1(args: {
+  pageType: BrowserProofPageTypeV1;
+  candidateUrl: string;
+  finalUrl?: string;
+}): boolean {
+  if (args.pageType === "search_page" || args.pageType === "category_page") return true;
+  for (const raw of [args.candidateUrl, args.finalUrl ?? ""]) {
+    if (!raw) continue;
+    try {
+      const u = new URL(raw);
+      if (pathLooksLikeSearchOrCatalogV1(u.pathname, u.search)) return true;
+    } catch {
+      // ignore
+    }
+  }
+  return false;
+}
 
 function stripWwwHostV1(hostname: string): string {
   return hostname.trim().toLowerCase().replace(/^www\./, "");
@@ -309,18 +333,68 @@ function pathLooksLikeProductPdpV1(pathname: string): boolean {
   if (p.includes("/pd/")) return true;
   if (p.includes("/store/parts/spec/")) return true;
   if (/\/en\/p\//.test(p)) return true;
+  // Repo-proven SharkNinja PDP shape: /hp150-hepa-filter/HE15FKPET.html
+  const parts = pathname.split("/").filter(Boolean);
+  const last = parts[parts.length - 1] ?? "";
+  if (parts.length >= 2 && /[A-Z0-9]*\d[A-Z0-9-]*\.html$/i.test(last)) return true;
   return false;
 }
 
+/** First-party host aliases proven by repo retailer_links / live sharkclean→sharkninja redirects. */
+export function isBrowserProofFirstPartyFollowHostV1(pageHost: string, hrefHost: string): boolean {
+  const a = stripWwwHostV1(pageHost);
+  const b = stripWwwHostV1(hrefHost);
+  if (!a || !b) return false;
+  if (a === b) return true;
+  const sharkFamily = new Set(["sharkclean.com", "sharkninja.com"]);
+  return sharkFamily.has(a) && sharkFamily.has(b);
+}
+
+function compactFollowNeedleV1(raw: string): string {
+  return raw.replace(/[^A-Z0-9]/gi, "").toUpperCase();
+}
+
+/** Search `q=` plus optional extra tokens — used only to rank/filter follow hrefs. */
+export function followPreferNeedlesFromPageUrlV1(
+  pageUrl: string,
+  extraTokens: readonly string[] = [],
+): string[] {
+  const out: string[] = [];
+  const push = (raw: string) => {
+    const trimmed = raw.trim();
+    if (trimmed.length < 4) return;
+    const compact = compactFollowNeedleV1(trimmed);
+    if (compact.length >= 4 && !out.includes(compact)) out.push(compact);
+  };
+  try {
+    const q = new URL(pageUrl).searchParams.get("q") ?? "";
+    for (const part of q.split(/[\s+,]+/)) push(part);
+  } catch {
+    // ignore unparseable page URL
+  }
+  for (const token of extraTokens) push(token);
+  return out;
+}
+
+function hrefMatchesFollowNeedlesV1(href: string, needles: readonly string[]): boolean {
+  if (needles.length === 0) return false;
+  const blob = href.toUpperCase();
+  const compact = compactFollowNeedleV1(href);
+  return needles.some((n) => blob.includes(n) || compact.includes(n));
+}
+
 /**
- * Keep same-host product PDPs discovered on a captured page. Fridge batches must not
+ * Keep first-party product PDPs discovered on a captured page. Fridge batches must not
  * enable follow; this is a URL selector only (no extra navigation by itself).
+ * When the page URL has a search `q=` (or preferTokens), only hrefs mentioning those
+ * needles are followed — do not crawl unrelated homepage merchandising PDPs.
  */
 export function selectFollowOnProductUrlsFromHrefsV1(args: {
   pageUrl: string;
   hrefs: readonly string[];
   alreadyQueued?: ReadonlySet<string>;
   maxFollow?: number;
+  preferTokens?: readonly string[];
 }): string[] {
   const maxFollow = args.maxFollow ?? BROWSER_PROOF_SEARCH_FOLLOW_MAX_V1;
   const already = args.alreadyQueued ?? new Set<string>();
@@ -330,12 +404,11 @@ export function selectFollowOnProductUrlsFromHrefsV1(args: {
   } catch {
     return [];
   }
-  const pageHost = stripWwwHostV1(page.hostname);
-  const selected: string[] = [];
+  const needles = followPreferNeedlesFromPageUrlV1(args.pageUrl, args.preferTokens ?? []);
+  const ranked: { url: string; preferred: boolean }[] = [];
   const seen = new Set<string>(already);
 
   for (const raw of args.hrefs) {
-    if (selected.length >= maxFollow) break;
     let href: URL;
     try {
       href = new URL(raw, page);
@@ -343,15 +416,20 @@ export function selectFollowOnProductUrlsFromHrefsV1(args: {
       continue;
     }
     if (href.protocol !== "http:" && href.protocol !== "https:") continue;
-    if (stripWwwHostV1(href.hostname) !== pageHost) continue;
+    if (!isBrowserProofFirstPartyFollowHostV1(page.hostname, href.hostname)) continue;
     if (pathLooksLikeSearchOrCatalogV1(href.pathname, href.search)) continue;
     if (!pathLooksLikeProductPdpV1(href.pathname)) continue;
     const normalized = href.toString();
     if (seen.has(normalized)) continue;
     seen.add(normalized);
-    selected.push(normalized);
+    ranked.push({
+      url: normalized,
+      preferred: hrefMatchesFollowNeedlesV1(normalized, needles),
+    });
   }
-  return selected;
+
+  const usable = needles.length > 0 ? ranked.filter((r) => r.preferred) : ranked;
+  return usable.slice(0, maxFollow).map((r) => r.url);
 }
 
 export function extractBrowserProofVisibleFactsV1(args: {
@@ -934,6 +1012,7 @@ async function runSingleCaptureAttemptV1(args: {
   rootDir: string;
   screenshotRel: string;
   writeScreenshot: boolean;
+  preferTokens?: readonly string[];
 }): Promise<{
   attempt: BrowserProofCaptureAttemptV1;
   finalUrl: string;
@@ -1020,6 +1099,7 @@ async function runSingleCaptureAttemptV1(args: {
           pageUrl: finalUrl || args.url,
           hrefs: rawHrefs,
           maxFollow: BROWSER_PROOF_SEARCH_FOLLOW_MAX_V1,
+          preferTokens: args.preferTokens,
         });
       }
     } finally {
@@ -1104,6 +1184,7 @@ export async function capturePageSignalsWithFallbacksV1(args: {
   screenshotRel: string;
   writeScreenshot: boolean;
   options?: BrowserProofCaptureOptionsV1;
+  preferTokens?: readonly string[];
 }): Promise<{
   finalUrl: string;
   title: string;
@@ -1125,6 +1206,7 @@ export async function capturePageSignalsWithFallbacksV1(args: {
       rootDir: args.rootDir,
       screenshotRel: args.screenshotRel,
       writeScreenshot: args.writeScreenshot,
+      preferTokens: args.preferTokens,
     });
     attempts.push(result.attempt);
     if (result.captureSucceeded) {
@@ -1216,6 +1298,7 @@ async function captureOneCandidateV1(args: {
   generatedAtIso: string;
   writeDrafts: boolean;
   captureOptions: BrowserProofCaptureOptionsV1;
+  preferTokens?: readonly string[];
 }): Promise<BrowserProofCollectorCandidateResultV1> {
   const screenshotRel = browserProofCollectorScreenshotPathV1({
     slug: args.slug,
@@ -1230,6 +1313,7 @@ async function captureOneCandidateV1(args: {
       screenshotRel,
       writeScreenshot: args.writeDrafts,
       options: args.captureOptions,
+      preferTokens: [args.expectedToken, ...(args.preferTokens ?? [])],
     });
     const facts = extractBrowserProofVisibleFactsV1({
       candidateUrl: args.candidateUrl,
@@ -1298,6 +1382,7 @@ export async function runBrowserProofCollectorBatchV1(args: {
   /** Default false. Fridge batches must leave this off. AP live-browser sets true. */
   followSearchToProductLinks?: boolean;
   maxSearchFollowProductLinks?: number;
+  followPreferTokens?: readonly string[];
   now?: () => Date;
 }): Promise<{ draft: BrowserProofCollectorDraftV1; draft_json_rel: string | null }> {
   const now = args.now ?? (() => new Date());
@@ -1337,6 +1422,7 @@ export async function runBrowserProofCollectorBatchV1(args: {
       generatedAtIso: generatedAt,
       writeDrafts,
       captureOptions,
+      preferTokens: args.followPreferTokens,
     });
 
   for (const url of urls) {
@@ -1358,8 +1444,11 @@ export async function runBrowserProofCollectorBatchV1(args: {
     const follow: string[] = [];
     for (const candidate of candidates) {
       if (
-        candidate.facts.page_type !== "search_page" &&
-        candidate.facts.page_type !== "category_page"
+        !isBrowserProofFollowSourceCaptureV1({
+          pageType: candidate.facts.page_type,
+          candidateUrl: candidate.candidate_url,
+          finalUrl: candidate.facts.final_url,
+        })
       ) {
         continue;
       }
