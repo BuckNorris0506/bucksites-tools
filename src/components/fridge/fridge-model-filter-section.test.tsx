@@ -6,6 +6,9 @@ import { FridgeModelFilterSection } from "@/components/fridge/FridgeModelFilterS
 import { BUCKPARTS_VERIFIED_LINK_PLURAL } from "@/lib/copy/buckparts-verified-link-copy";
 import { VisualReplacementMatchCard } from "@/components/trust/VisualReplacementMatchCard";
 import type { FridgeMappedFilterRow } from "@/lib/data/fridges";
+import { filterRetailerLinksPermittedForFridgeGoContextV1 } from "@/lib/retailers/live-buyer-path-go-decision-v1";
+import { resetLearnedFailureGuardIndexCacheForTestsV1 } from "@/lib/fridge/fridge-learned-failure-customer-guard-v1";
+import { resetSingleFilterFamilyAmbiguityGuardIndexCacheForTestsV1 } from "@/lib/fridge/fridge-single-filter-family-ambiguity-v1";
 
 function baseLink(overrides: Partial<FridgeMappedFilterRow["retailer_links"][0]> = {}) {
   return {
@@ -15,7 +18,7 @@ function baseLink(overrides: Partial<FridgeMappedFilterRow["retailer_links"][0]>
     retailer_key: "amazon",
     browser_truth_classification: "direct_buyable",
     browser_truth_buyable_subtype: "SINGLE_UNIT_DIRECT_BUYABLE",
-    browser_truth_checked_at: "2026-05-05T00:00:00.000Z",
+    browser_truth_checked_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     ...overrides,
   };
 }
@@ -211,5 +214,68 @@ describe("FridgeModelFilterSection", () => {
     assert.ok(!cardHtml.includes("<svg"));
     assert.ok(!quarantineHtml.includes("Numbers to compare"));
     assert.ok(!quarantineHtml.includes('href="/go/'));
+  });
+
+  it("LT800P 12 hidden / 3 displayed does not paint a model-page /go CTA", () => {
+    resetLearnedFailureGuardIndexCacheForTestsV1();
+    resetSingleFilterFamilyAmbiguityGuardIndexCacheForTestsV1();
+    const now = new Date("2026-06-10T12:00:00.000Z");
+    const blocked = [
+      "lg-lfxc22596d",
+      "lg-lfxs30796s",
+      "lg-lrmvc2306d",
+      "lg-lfxs28566b",
+      "lg-lfxc22526d",
+      "lg-lrfxs2503b",
+      "lg-lrfxs3106w",
+      "lg-lupxs3186n",
+      "lg-lfcc25426s",
+      "lg-lfcs23520s",
+      "lg-lsxs27366s",
+      "lg-lfxs29566s",
+    ];
+    const displayed = ["lg-lfxs28596b", "lg-lfxc22596b", "lg-lfcc23596s"];
+    const gatedLink = baseLink({
+      id: "8fb8189c-6c29-46c9-ae95-d3e26be05add",
+      retailer_name: "Waterdrop Filter",
+      affiliate_url: "https://click.linksynergy.com/fs-bin/click?id=example&offerid=1",
+      retailer_key: "waterdrop",
+      browser_truth_buyable_subtype: "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
+      browser_truth_checked_at: "2026-05-01T00:00:00.000Z",
+    });
+    const permitted = filterRetailerLinksPermittedForFridgeGoContextV1(
+      [gatedLink],
+      {
+        fridge_filter_slug: "lt800p",
+        fridge_models_for_filter: [...blocked, ...displayed].map((slug) => ({ slug })),
+      },
+      { now },
+    );
+    assert.equal(permitted.length, 0);
+
+    const html = renderToStaticMarkup(
+      createElement(FridgeModelFilterSection, {
+        filters: [
+          {
+            ...sampleFilter2,
+            compatible_fridge_model_count: 15,
+            retailer_links: permitted,
+            retailer_links_raw_count: 1,
+          },
+        ],
+        telemetryBase: {
+          page_type: "fridge_model",
+          page_slug: "lg-lfxs28596b",
+          model_slug: "lg-lfxs28596b",
+          trust_state: "normal",
+          source_tier_present: false,
+          has_safe_cta: false,
+          is_quarantined: false,
+        },
+      }),
+    );
+    assert.ok(!html.includes('href="/go/'));
+    assert.ok(!html.includes("8fb8189c-6c29-46c9-ae95-d3e26be05add"));
+    assert.ok(!html.includes("Waterdrop Filter"));
   });
 });

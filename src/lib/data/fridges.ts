@@ -12,6 +12,7 @@ import {
   summarizeBuyPathGateSuppression,
   type BuyPathGateSuppressionSummary,
 } from "@/lib/retailers/launch-buy-links";
+import { filterRetailerLinksPermittedForFridgeGoContextV1 } from "@/lib/retailers/live-buyer-path-go-decision-v1";
 
 export type FridgeDetail = FridgeModel & {
   brand: Pick<Brand, "id" | "slug" | "name">;
@@ -138,14 +139,43 @@ export async function getFridgeBySlug(slug: string): Promise<FridgeWithFilters |
     aliasesByFilter.set(fid, list);
   }
 
+  const mappedFridgeIds = Array.from(
+    new Set(
+      [...distinctFridgesPerFilter.values()].flatMap((ids) => [...ids]),
+    ),
+  );
+  const slugByFridgeId = new Map<string, string>();
+  if (mappedFridgeIds.length > 0) {
+    const { data: fridgeSlugRows, error: fridgeSlugErr } = await supabase
+      .from("fridge_models")
+      .select("id, slug")
+      .in("id", mappedFridgeIds);
+    if (fridgeSlugErr) throw fridgeSlugErr;
+    for (const row of fridgeSlugRows ?? []) {
+      const id = String((row as { id: string }).id);
+      const slug = String((row as { slug: string }).slug ?? "").trim();
+      if (id && slug) slugByFridgeId.set(id, slug);
+    }
+  }
+
   const filterList: FridgeMappedFilterRow[] = ((filters ?? []) as Filter[]).map((f) => {
     const raw = byFilter.get(f.id) ?? [];
     const rawAliases = aliasesByFilter.get(f.id) ?? [];
     const also_known_as = uniqueFilterAliasesForPdp(rawAliases, f.oem_part_number ?? "");
+    const gated = filterRealBuyRetailerLinks(raw);
+    const fridgeModelsForFilter = [...(distinctFridgesPerFilter.get(f.id) ?? [])]
+      .map((id) => {
+        const slug = slugByFridgeId.get(id);
+        return slug ? { slug } : null;
+      })
+      .filter((m): m is { slug: string } => m != null);
     return {
       ...f,
       retailer_links_raw_count: raw.length,
-      retailer_links: filterRealBuyRetailerLinks(raw),
+      retailer_links: filterRetailerLinksPermittedForFridgeGoContextV1(gated, {
+        fridge_filter_slug: f.slug,
+        fridge_models_for_filter: fridgeModelsForFilter,
+      }),
       buy_path_gate_suppression: summarizeBuyPathGateSuppression(raw),
       also_known_as,
       compatible_fridge_model_count: distinctFridgesPerFilter.get(f.id)?.size ?? 0,

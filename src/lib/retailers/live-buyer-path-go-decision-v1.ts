@@ -142,3 +142,32 @@ export function isLiveBuyerPathCtaEligibleV1(
 ): boolean {
   return isBuyerPathLinkTrustCurrencyPermittedV1({ link, now: options?.now });
 }
+
+/**
+ * Fridge model-page buy rows after `filterRealBuyRetailerLinks`.
+ * Uses the same LiveGoPathContextV1 permit as `/go` so majority-quarantine /
+ * `force_suppress_buy` cannot paint a Verified Link that `/go` will reject.
+ */
+export function filterRetailerLinksPermittedForFridgeGoContextV1<T extends BuyLinkGateLinkV1>(
+  gatedLinks: T[],
+  context: Pick<LiveGoPathContextV1, "fridge_filter_slug" | "fridge_models_for_filter">,
+  options?: { now?: Date },
+): T[] {
+  const slug = context.fridge_filter_slug?.trim() ?? "";
+  const models = context.fridge_models_for_filter;
+  if (!slug || !models || gatedLinks.length === 0) {
+    return gatedLinks;
+  }
+  const goContext: LiveGoPathContextV1 = {
+    fridge_filter_slug: slug,
+    fridge_models_for_filter: models,
+    gated_retailer_link_count: gatedLinks.length,
+  };
+  return gatedLinks.filter((link) =>
+    isLiveBuyerPathLinkPermittedV1({
+      link,
+      context: goContext,
+      now: options?.now,
+    }),
+  );
+}

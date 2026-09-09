@@ -152,6 +152,11 @@ describe("money-page CTA composition (wedge data vs /go hop)", () => {
     );
     assertNoForeignVerticalDataModules(src, "");
     assert.ok(!src.includes("@/lib/data/filters"), "fridge model page must not import filter hub module");
+    const fridgeDataSrc = readPage("src/lib/data/fridges.ts");
+    assert.ok(
+      fridgeDataSrc.includes("filterRetailerLinksPermittedForFridgeGoContextV1"),
+      "fridge model data must apply the same /go LiveGoPathContextV1 permit before painting CTAs",
+    );
   });
 
   it("legacy fridge /go keeps filter_slug default and honors fridge_model query override", () => {
