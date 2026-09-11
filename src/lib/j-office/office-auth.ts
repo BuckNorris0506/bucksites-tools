@@ -11,6 +11,7 @@ export type OfficeAuthEnv = {
   J_OFFICE_BASIC_USER?: string;
   J_OFFICE_BASIC_PASSWORD?: string;
   OWNER_DASHBOARD_SECRET?: string;
+  [key: string]: string | undefined;
 };
 
 export function resolveOfficeUser(env: OfficeAuthEnv = process.env): string {
