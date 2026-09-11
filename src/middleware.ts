@@ -4,11 +4,19 @@ import {
   authorizeOfficeRequest,
   unauthorizedOfficeResponse,
 } from "@/lib/j-office/office-auth";
+import {
+  hasLocalOfficeRuntime,
+  hostedOfficeUnavailableResponse,
+} from "@/lib/j-office/office-runtime";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (!pathname.startsWith("/office")) {
     return NextResponse.next();
+  }
+
+  if (!hasLocalOfficeRuntime(process.env)) {
+    return hostedOfficeUnavailableResponse();
   }
 
   const requestHeaders = new Headers(request.headers);

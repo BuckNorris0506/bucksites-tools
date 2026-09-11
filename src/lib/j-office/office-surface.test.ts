@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { readFileSync, readdirSync } from "node:fs";
+import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
@@ -8,12 +9,25 @@ import { buildHomepageOnlySitemapFallback } from "@/app/sitemap";
 import {
   isEconValue,
   loadFounderOperatingPicture,
+  refreshFounderOperatingPictureFromJ,
+  resolveOfficeProjectionPath,
   unknownIsNotZero,
 } from "@/lib/j-office/load-projection";
+import {
+  hasLocalOfficeRuntime,
+  hostedOfficeUnavailableResponse,
+  isHostedOfficeRuntime,
+} from "@/lib/j-office/office-runtime";
 import { scopeFounderOperatingPicture } from "@/lib/j-office/scope-projection";
 import { FOUNDER_OPERATING_PICTURE_SCHEMA } from "@/lib/j-office/types";
 
 const root = process.cwd();
+const CHECKED_IN_PROJECTION = join(root, "data/j-office/founder_operating_picture.json");
+delete process.env.J_OFFICE_LIVE_REFRESH;
+delete process.env.J_OFFICE_PROJECTION_PATH;
+delete process.env.NETLIFY;
+delete process.env.CONTEXT;
+process.env.J_OFFICE_HOST_PROJECTION_PATH = CHECKED_IN_PROJECTION;
 
 function read(rel: string): string {
   return readFileSync(join(root, rel), "utf8");
@@ -36,7 +50,7 @@ test("office consumes J Founder Operating Picture rather than duplicating busine
   assert.equal(picture.mutates, false);
   const viewSrc = read("src/app/office/JOfficeView.tsx");
   const loadSrc = read("src/lib/j-office/load-projection.ts");
-  assert.match(loadSrc, /founder_operating_picture\.json/);
+  assert.match(loadSrc, /J_OFFICE_HOST_PROJECTION_PATH/);
   assert.equal(viewSrc.includes("AUTHORIZED_CAPITAL_USD"), true);
   assert.equal(viewSrc.includes("build_founder_operating_picture"), false);
   assert.equal(viewSrc.includes("settled_revenue_usd +"), false);
@@ -181,6 +195,7 @@ test("office is read-only and introduces no mutation route", () => {
     "src/app/office/JOfficeView.tsx",
     "src/middleware.ts",
     "src/lib/j-office/load-projection.ts",
+    "src/lib/j-office/office-runtime.ts",
   ];
   for (const file of files) {
     const src = read(file);
@@ -258,4 +273,109 @@ test("public SiteShell still exposes consumer nav and not J Office", () => {
   const rootLayout = read("src/app/layout.tsx");
   assert.match(rootLayout, /x-j-office/);
   assert.match(rootLayout, /SiteShell/);
+});
+
+test("live projection path is env-absolute, not a BuckParts hardcode of J", () => {
+  const loadSrc = read("src/lib/j-office/load-projection.ts");
+  assert.match(loadSrc, /J_OFFICE_HOST_PROJECTION_PATH/);
+  assert.match(loadSrc, /J_OFFICE_LIVE_REFRESH/);
+  assert.equal(loadSrc.includes("/Users/jaredbuckman/Documents/ChatGPT/J"), false);
+  assert.equal(loadSrc.includes("git commit"), false);
+  assert.equal(loadSrc.includes("data/j-office/founder_operating_picture.json"), false);
+  assert.equal(resolveOfficeProjectionPath(), CHECKED_IN_PROJECTION);
+});
+
+test("absolute J_OFFICE_HOST_PROJECTION_PATH is read without git or the checked-in snapshot", () => {
+  const checkedIn = CHECKED_IN_PROJECTION;
+  const before = readFileSync(checkedIn);
+  const dir = mkdtempSync(join(tmpdir(), "j-office-live-"));
+  const dest = join(dir, "founder_operating_picture.json");
+  const picture = loadFounderOperatingPicture();
+  const mutated = {
+    ...picture,
+    generated_at: "2099-01-01T00:00:00+00:00",
+    now: { ...picture.now, current_work_item: "LIVE_TRUTH_FIXTURE_ONLY" },
+  };
+  writeFileSync(dest, `${JSON.stringify(mutated)}\n`, "utf8");
+  const previous = process.env.J_OFFICE_HOST_PROJECTION_PATH;
+  process.env.J_OFFICE_HOST_PROJECTION_PATH = dest;
+  try {
+    const loaded = loadFounderOperatingPicture();
+    assert.equal(loaded.now.current_work_item, "LIVE_TRUTH_FIXTURE_ONLY");
+    assert.equal(loaded.generated_at, "2099-01-01T00:00:00+00:00");
+    assert.equal(readFileSync(checkedIn).equals(before), true);
+  } finally {
+    if (previous === undefined) delete process.env.J_OFFICE_HOST_PROJECTION_PATH;
+    else process.env.J_OFFICE_HOST_PROJECTION_PATH = previous;
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("live refresh fails closed without J_REPO_ROOT and does not run by default", () => {
+  refreshFounderOperatingPictureFromJ();
+  const previousLive = process.env.J_OFFICE_LIVE_REFRESH;
+  const previousRoot = process.env.J_REPO_ROOT;
+  process.env.J_OFFICE_LIVE_REFRESH = "1";
+  delete process.env.J_REPO_ROOT;
+  try {
+    assert.throws(
+      () => refreshFounderOperatingPictureFromJ(),
+      /J_OFFICE_LIVE_REFRESH=1 requires J_REPO_ROOT/,
+    );
+  } finally {
+    if (previousLive === undefined) delete process.env.J_OFFICE_LIVE_REFRESH;
+    else process.env.J_OFFICE_LIVE_REFRESH = previousLive;
+    if (previousRoot === undefined) delete process.env.J_REPO_ROOT;
+    else process.env.J_REPO_ROOT = previousRoot;
+  }
+});
+
+test("missing local Office runtime contract fails closed and does not use checked-in JSON", () => {
+  const previous = process.env.J_OFFICE_HOST_PROJECTION_PATH;
+  delete process.env.J_OFFICE_HOST_PROJECTION_PATH;
+  delete process.env.NETLIFY;
+  delete process.env.CONTEXT;
+  try {
+    assert.equal(hasLocalOfficeRuntime(), false);
+    assert.throws(
+      () => loadFounderOperatingPicture(),
+      /J Office requires local runtime J_OFFICE_HOST_PROJECTION_PATH/,
+    );
+  } finally {
+    if (previous === undefined) delete process.env.J_OFFICE_HOST_PROJECTION_PATH;
+    else process.env.J_OFFICE_HOST_PROJECTION_PATH = previous;
+  }
+});
+
+test("hosted Netlify runtime fails closed even if a projection path is set", () => {
+  const previousNetlify = process.env.NETLIFY;
+  const previousContext = process.env.CONTEXT;
+  process.env.NETLIFY = "true";
+  process.env.CONTEXT = "deploy-preview";
+  try {
+    assert.equal(isHostedOfficeRuntime(), true);
+    assert.equal(hasLocalOfficeRuntime(), false);
+    assert.throws(
+      () => loadFounderOperatingPicture(),
+      /J Office requires local runtime J_OFFICE_HOST_PROJECTION_PATH/,
+    );
+  } finally {
+    if (previousNetlify === undefined) delete process.env.NETLIFY;
+    else process.env.NETLIFY = previousNetlify;
+    if (previousContext === undefined) delete process.env.CONTEXT;
+    else process.env.CONTEXT = previousContext;
+  }
+});
+
+test("hosted Office unavailable response is 404 without Basic Auth or FOP body", () => {
+  const response = hostedOfficeUnavailableResponse();
+  assert.equal(response.status, 404);
+  assert.equal(response.headers.get("WWW-Authenticate"), null);
+  assert.equal(response.headers.get("X-Robots-Tag"), "noindex, nofollow");
+  const mw = read("src/middleware.ts");
+  assert.match(mw, /hasLocalOfficeRuntime/);
+  assert.match(mw, /hostedOfficeUnavailableResponse/);
+  const runtime = read("src/lib/j-office/office-runtime.ts");
+  assert.equal(runtime.includes("WWW-Authenticate"), false);
+  assert.match(runtime, /Not Found/);
 });
