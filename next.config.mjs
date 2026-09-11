@@ -30,6 +30,7 @@ const nextConfig = {
     outputFileTracingIncludes: {
       "/ownerdashboard/[secret]": COMMAND_CENTER_DATA_TRACE_INCLUDES,
       "/air-purifier/model/[slug]": AIR_PURIFIER_MODEL_DATA_TRACE_INCLUDES,
+      "/office": ["./data/j-office/founder_operating_picture.json"],
     },
   },
 };
