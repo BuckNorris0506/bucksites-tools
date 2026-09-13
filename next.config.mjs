@@ -25,6 +25,10 @@ const AIR_PURIFIER_MODEL_DATA_TRACE_INCLUDES = [
 ];
 
 const nextConfig = {
+  distDir: process.env.J_OFFICE_NEXT_DIST || ".next",
+  ...(process.env.J_OFFICE_NEXT_DIST
+    ? { typescript: { tsconfigPath: "./tsconfig.office.json" } }
+    : {}),
   experimental: {
     instrumentationHook: true,
     outputFileTracingIncludes: {

@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "next-env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "tailwind.config.ts",
+    ".next-office/types/**/*.ts"
+  ],
+  "exclude": ["node_modules", "scripts"]
+}

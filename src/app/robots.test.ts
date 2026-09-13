@@ -17,6 +17,8 @@ test("robots output includes all go-route disallow prefixes", () => {
     assert.ok(disallow.includes("/vacuum/go/"));
     assert.ok(disallow.includes("/humidifier/go/"));
     assert.ok(disallow.includes("/appliance-air/go/"));
+    assert.ok(disallow.includes("/office"));
+    assert.ok(disallow.includes("/office/"));
   } finally {
     if (previousSiteUrl === undefined) {
       delete process.env.NEXT_PUBLIC_SITE_URL;
