@@ -258,8 +258,10 @@ describe("public merchant-priority copy guard", () => {
     assert.ok(!/store shortcut/i.test(src));
     assert.ok(src.includes("Wrong Buck."));
     assert.ok(src.includes("Right Parts"));
+    assert.ok(src.includes("Find the replacement part that fits."));
     assert.ok(src.includes("Find the replacement that fits."));
     assert.ok(searchForm.includes("Look it up"));
+    assert.ok(src.includes('submitLabel="Find my part"'));
     assert.ok(src.includes("Free to use · No account needed."));
     assert.ok(src.includes("Buying is optional and comes after the fit answer."));
     assert.ok(src.includes("Shop only after checks pass"));

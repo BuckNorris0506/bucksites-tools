@@ -23,8 +23,8 @@ test("homepage example chips include a resolved model, not the under-review LFXS
   assert.ok(src.includes("WRX735SDHZ"));
   assert.ok(!src.includes("LFXS26973S"));
   assert.ok(src.includes("DA29-00020B"));
-  assert.ok(src.includes("Need help finding the number?"));
-  assert.ok(src.includes("Find the replacement that fits."));
+  assert.ok(src.includes("Where do I find my model number?"));
+  assert.ok(src.includes("Find the replacement part that fits."));
 });
 
 test("header keeps one Search action and does not duplicate Search in primary text nav", () => {
