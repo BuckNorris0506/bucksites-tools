@@ -20,7 +20,7 @@ import {
   type VerticalSlug,
 } from "@/lib/catalog/vertical-launch-state";
 
-/** Keep aligned with fridge-first homepage browse promo (`src/app/page.tsx`). */
+/** Keep aligned with fridge-first homepage browse promo (`src/components/homepage/HomepageView.tsx`). */
 export const FRIDGE_FIRST_HOMEPAGE_BROWSE_PROMO_VERTICALS: readonly VerticalSlug[] = ["refrigerator"];
 
 const VERTICAL_SLUG_TO_WEDGE: Record<VerticalSlug, HomekeepWedgeCatalog> = {
@@ -48,7 +48,7 @@ const GENERATED_FROM = [
   "src/lib/catalog/catalog-availability.ts",
   "src/lib/sitemap/wedge-indexable-urls.ts",
   "src/lib/catalog/non-live-wedge-robots.ts",
-  "src/app/page.tsx (homepage browse promo; see FRIDGE_FIRST_HOMEPAGE_BROWSE_PROMO_VERTICALS)",
+  "src/components/homepage/HomepageView.tsx (homepage coverage catalog link; see FRIDGE_FIRST_HOMEPAGE_BROWSE_PROMO_VERTICALS)",
 ] as const;
 
 export type OwnerVerticalLaunchPolicyRow = {

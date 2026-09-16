@@ -10,6 +10,8 @@ export const CUSTOMER_UX_DOCTRINE_VERSION = 1;
 /** Public / customer-facing sources enforced in slice-1 doctrine tests. */
 export const CUSTOMER_UX_DOCTRINE_SLICE1_REL_PATHS = [
   "src/app/page.tsx",
+  "src/components/homepage/HomepageView.tsx",
+  "src/lib/copy/homepage-astra-v1.ts",
   "src/components/fridge/FridgeModelFilterSection.tsx",
   "src/components/vertical/VerticalFilterPageContent.tsx",
   "src/components/vertical/VerticalModelPageContent.tsx",
