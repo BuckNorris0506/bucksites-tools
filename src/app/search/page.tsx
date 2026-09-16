@@ -313,7 +313,10 @@ export default async function SearchPage({ searchParams }: Props) {
                 {(() => {
                   const core300Layout =
                     catalog === CATALOG_AIR_PURIFIER_FILTERS
-                      ? layoutCore300SameFilterSearchHitsV1({ models, filters })
+                      ? layoutCore300SameFilterSearchHitsV1({
+                          models: models as SearchHitModel[],
+                          filters,
+                        })
                       : null;
                   if (core300Layout?.groupingApplied) {
                     return (
