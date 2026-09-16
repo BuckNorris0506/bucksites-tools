@@ -3,9 +3,20 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { SearchForm } from "@/components/SearchForm";
 import {
+  Core300IdentityFamilyCard,
+  Core300OriginalFilterAnswerCard,
+  Core300OtherListingsNote,
+} from "@/components/search/Core300SameFilterSearchGroup";
+import {
   enrichAirPurifierModelHitsWithFilters,
   searchAirPurifierCatalog,
+  type AirPurifierSearchHitFilter,
+  type AirPurifierSearchHitModel,
 } from "@/lib/data/air-purifier/search";
+import {
+  layoutCore300SameFilterSearchHitsV1,
+  SAME_FILTER_DISTINCT_MODEL_COPY_V1,
+} from "@/lib/search/same-filter-distinct-model-grouping-v1";
 import { canonicalAlternatesForPath } from "@/lib/seo/canonical";
 
 export const dynamic = "force-dynamic";
@@ -33,6 +44,63 @@ function ResultBadge({ children }: { children: ReactNode }) {
     <span className="inline-flex w-fit rounded-md border border-bp-border bg-bp-trust-soft/40 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-bp-trust">
       {children}
     </span>
+  );
+}
+
+function AirPurifierModelResultCard({ hit }: { hit: AirPurifierSearchHitModel }) {
+  return (
+    <Link href={`/air-purifier/model/${hit.slug}`} className={searchResultCardClass}>
+      <ResultBadge>Unit model</ResultBadge>
+      <p className="bp-code mt-2 text-base font-semibold text-bp-text">
+        {hit.model_number}
+      </p>
+      <p className="mt-1 text-sm text-bp-muted">
+        <span className="font-medium text-bp-text/90">Brand:</span> {hit.brand_name}
+      </p>
+      {hit.compatible_filters && hit.compatible_filters.length > 0 && (
+        <p className="mt-2 text-sm text-bp-muted">
+          <span className="font-medium text-bp-text/90">
+            Compatible filter{hit.compatible_filters.length > 1 ? "s" : ""}:
+          </span>{" "}
+          {hit.compatible_filters.map((f, i) => (
+            <span key={f.slug}>
+              {i > 0 && ", "}
+              <span className="bp-code text-sm font-medium text-bp-text">
+                {f.oem_part_number}
+              </span>
+            </span>
+          ))}
+        </p>
+      )}
+      {hit.via === "alias" && hit.matchedAlias && (
+        <p className="mt-2 text-xs text-bp-muted">
+          Matched alternate: {hit.matchedAlias}
+        </p>
+      )}
+    </Link>
+  );
+}
+
+function AirPurifierFilterResultCard({ hit }: { hit: AirPurifierSearchHitFilter }) {
+  return (
+    <Link href={`/air-purifier/filter/${hit.slug}`} className={searchResultCardClass}>
+      <ResultBadge>Filter number</ResultBadge>
+      <p className="mt-2 text-xs font-medium uppercase tracking-wide text-bp-muted">
+        Part number
+      </p>
+      <p className="bp-code text-base font-semibold text-bp-text">
+        {hit.oem_part_number}
+      </p>
+      {hit.name && <p className="mt-1 text-sm text-bp-muted">{hit.name}</p>}
+      <p className="mt-2 text-sm text-bp-muted">
+        <span className="font-medium text-bp-text/90">Brand:</span> {hit.brand_name}
+      </p>
+      {hit.via === "alias" && hit.matchedAlias && (
+        <p className="mt-2 text-xs text-bp-muted">
+          Matched alternate: {hit.matchedAlias}
+        </p>
+      )}
+    </Link>
   );
 }
 
@@ -85,97 +153,120 @@ export default async function AirPurifierSearchPage({ searchParams }: Props) {
 
       {query.length >= 2 && !error && (
         <div className="space-y-10">
-          {models.length > 0 && (
-            <section className="space-y-3">
-              <h2 className="text-sm font-semibold text-bp-text">
-                Air purifier models
-                <span className="ml-2 font-normal text-bp-muted">
-                  ({models.length})
-                </span>
-              </h2>
-              <ul className="space-y-2">
-                {models.map((hit) => (
-                  <li key={hit.slug}>
-                    <Link href={`/air-purifier/model/${hit.slug}`} className={searchResultCardClass}>
-                      <ResultBadge>Unit model</ResultBadge>
-                      <p className="bp-code mt-2 text-base font-semibold text-bp-text">
-                        {hit.model_number}
-                      </p>
-                      <p className="mt-1 text-sm text-bp-muted">
-                        <span className="font-medium text-bp-text/90">
-                          Brand:
-                        </span>{" "}
-                        {hit.brand_name}
-                      </p>
-                      {hit.compatible_filters && hit.compatible_filters.length > 0 && (
-                        <p className="mt-2 text-sm text-bp-muted">
-                          <span className="font-medium text-bp-text/90">
-                            Compatible filter
-                            {hit.compatible_filters.length > 1 ? "s" : ""}:
-                          </span>{" "}
-                          {hit.compatible_filters.map((f, i) => (
-                            <span key={f.slug}>
-                              {i > 0 && ", "}
-                              <span className="bp-code text-sm font-medium text-bp-text">
-                                {f.oem_part_number}
-                              </span>
-                            </span>
-                          ))}
-                        </p>
-                      )}
-                      {hit.via === "alias" && hit.matchedAlias && (
-                        <p className="mt-2 text-xs text-bp-muted">
-                          Matched alternate: {hit.matchedAlias}
-                        </p>
-                      )}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+          {(() => {
+            const core300Layout = layoutCore300SameFilterSearchHitsV1({
+              models,
+              filters,
+            });
+            if (core300Layout.groupingApplied) {
+              return (
+                <>
+                  <section className="space-y-3">
+                    <h2 className="text-sm font-semibold text-bp-text">
+                      {SAME_FILTER_DISTINCT_MODEL_COPY_V1.originalReplacementLabel}
+                    </h2>
+                    <Core300OriginalFilterAnswerCard
+                      filter={core300Layout.sharedFilter}
+                      href={
+                        core300Layout.sharedFilter
+                          ? `/air-purifier/filter/${core300Layout.sharedFilter.slug}`
+                          : core300Layout.sharedFilterFromModels
+                            ? `/air-purifier/filter/${core300Layout.sharedFilterFromModels.slug}`
+                            : null
+                      }
+                      oemFromModels={core300Layout.sharedFilterFromModels}
+                    />
+                  </section>
+                  {core300Layout.families.length > 0 && (
+                    <section className="space-y-3">
+                      <h2 className="text-sm font-semibold text-bp-text">
+                        {SAME_FILTER_DISTINCT_MODEL_COPY_V1.identityCheckLabel}
+                      </h2>
+                      <ul className="space-y-2">
+                        {core300Layout.families.map((family) => (
+                          <li key={family.familyKey}>
+                            <Core300IdentityFamilyCard
+                              family={family}
+                              modelHref={(slug) => `/air-purifier/model/${slug}`}
+                            />
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+                  {core300Layout.ungroupedModels.length > 0 && (
+                    <section className="space-y-3">
+                      <h2 className="text-sm font-semibold text-bp-text">
+                        {SAME_FILTER_DISTINCT_MODEL_COPY_V1.otherListingsLabel}
+                      </h2>
+                      <Core300OtherListingsNote />
+                      <ul className="space-y-2">
+                        {core300Layout.ungroupedModels.map((hit) => (
+                          <li key={hit.slug}>
+                            <AirPurifierModelResultCard hit={hit} />
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+                  {core300Layout.remainingFilters.length > 0 && (
+                    <section className="space-y-3">
+                      <h2 className="text-sm font-semibold text-bp-text">
+                        Replacement filters
+                      </h2>
+                      <ul className="space-y-2">
+                        {core300Layout.remainingFilters.map((hit) => (
+                          <li key={hit.slug}>
+                            <AirPurifierFilterResultCard hit={hit} />
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+                </>
+              );
+            }
 
-          {filters.length > 0 && (
-            <section className="space-y-3">
-              <h2 className="text-sm font-semibold text-bp-text">
-                Replacement filters
-                <span className="ml-2 font-normal text-bp-muted">
-                  ({filters.length})
-                </span>
-              </h2>
-              <ul className="space-y-2">
-                {filters.map((hit) => (
-                  <li key={hit.slug}>
-                    <Link href={`/air-purifier/filter/${hit.slug}`} className={searchResultCardClass}>
-                      <ResultBadge>Filter number</ResultBadge>
-                      <p className="mt-2 text-xs font-medium uppercase tracking-wide text-bp-muted">
-                        Part number
-                      </p>
-                      <p className="bp-code text-base font-semibold text-bp-text">
-                        {hit.oem_part_number}
-                      </p>
-                      {hit.name && (
-                        <p className="mt-1 text-sm text-bp-muted">
-                          {hit.name}
-                        </p>
-                      )}
-                      <p className="mt-2 text-sm text-bp-muted">
-                        <span className="font-medium text-bp-text/90">
-                          Brand:
-                        </span>{" "}
-                        {hit.brand_name}
-                      </p>
-                      {hit.via === "alias" && hit.matchedAlias && (
-                        <p className="mt-2 text-xs text-bp-muted">
-                          Matched alternate: {hit.matchedAlias}
-                        </p>
-                      )}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+            return (
+              <>
+                {models.length > 0 && (
+                  <section className="space-y-3">
+                    <h2 className="text-sm font-semibold text-bp-text">
+                      Air purifier models
+                      <span className="ml-2 font-normal text-bp-muted">
+                        ({models.length})
+                      </span>
+                    </h2>
+                    <ul className="space-y-2">
+                      {models.map((hit) => (
+                        <li key={hit.slug}>
+                          <AirPurifierModelResultCard hit={hit} />
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+
+                {filters.length > 0 && (
+                  <section className="space-y-3">
+                    <h2 className="text-sm font-semibold text-bp-text">
+                      Replacement filters
+                      <span className="ml-2 font-normal text-bp-muted">
+                        ({filters.length})
+                      </span>
+                    </h2>
+                    <ul className="space-y-2">
+                      {filters.map((hit) => (
+                        <li key={hit.slug}>
+                          <AirPurifierFilterResultCard hit={hit} />
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+              </>
+            );
+          })()}
 
           {models.length === 0 && filters.length === 0 && (
             <p className="text-sm leading-relaxed text-bp-muted">

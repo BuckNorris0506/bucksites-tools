@@ -4,6 +4,12 @@ import { RecentSearches } from "@/components/RecentSearches";
 import { RevealOnScroll } from "@/components/RevealOnScroll";
 import { SearchForm } from "@/components/SearchForm";
 import {
+  Core300IdentityFamilyCard,
+  Core300OriginalFilterAnswerCard,
+  Core300OtherListingsNote,
+} from "@/components/search/Core300SameFilterSearchGroup";
+import {
+  CATALOG_AIR_PURIFIER_FILTERS,
   CATALOG_LABELS,
   CATALOG_REFRIGERATOR_WATER_FILTER,
   CATALOG_WHOLE_HOUSE_WATER_FILTERS,
@@ -20,6 +26,10 @@ import {
   type SearchHitModel,
 } from "@/lib/data/search";
 import { resolveFridgeSearchModelHitDisplayV1 } from "@/lib/fridge/fridge-filter-pdp-customer-safety-v1";
+import {
+  layoutCore300SameFilterSearchHitsV1,
+  SAME_FILTER_DISTINCT_MODEL_COPY_V1,
+} from "@/lib/search/same-filter-distinct-model-grouping-v1";
 import { canonicalAlternatesForPath } from "@/lib/seo/canonical";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
 
@@ -300,51 +310,154 @@ export default async function SearchPage({ searchParams }: Props) {
                   </span>
                 </h2>
 
-                {models.length > 0 && (
-                  <div className="space-y-3">
-                    <h3 className="text-sm font-medium text-bp-text">
-                      Models & units
-                    </h3>
-                    <ul className="space-y-2">
-                      {models.map((hit, i) => (
-                        <RevealOnScroll
-                          as="li"
-                          key={`${hit.catalog}-${hit.kind}-${hit.slug}`}
-                          delayMs={25 + i * 35}
-                        >
-                          <ModelHitCard
-                            hit={hit}
-                            href={globalSearchModelHref(catalog, hit)}
-                            catalogLabel={label}
+                {(() => {
+                  const core300Layout =
+                    catalog === CATALOG_AIR_PURIFIER_FILTERS
+                      ? layoutCore300SameFilterSearchHitsV1({
+                          models: models as SearchHitModel[],
+                          filters,
+                        })
+                      : null;
+                  if (core300Layout?.groupingApplied) {
+                    return (
+                      <>
+                        <div className="space-y-3">
+                          <h3 className="text-sm font-medium text-bp-text">
+                            {SAME_FILTER_DISTINCT_MODEL_COPY_V1.originalReplacementLabel}
+                          </h3>
+                          <Core300OriginalFilterAnswerCard
+                            filter={core300Layout.sharedFilter}
+                            href={
+                              core300Layout.sharedFilter
+                                ? globalSearchFilterHref(catalog, core300Layout.sharedFilter)
+                                : core300Layout.sharedFilterFromModels
+                                  ? catalogFilterPath(
+                                      catalog,
+                                      core300Layout.sharedFilterFromModels.slug,
+                                    )
+                                  : null
+                            }
+                            oemFromModels={core300Layout.sharedFilterFromModels}
                           />
-                        </RevealOnScroll>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                        </div>
+                        {core300Layout.families.length > 0 && (
+                          <div className="space-y-3">
+                            <h3 className="text-sm font-medium text-bp-text">
+                              {SAME_FILTER_DISTINCT_MODEL_COPY_V1.identityCheckLabel}
+                            </h3>
+                            <ul className="space-y-2">
+                              {core300Layout.families.map((family) => (
+                                <li key={family.familyKey}>
+                                  <Core300IdentityFamilyCard
+                                    family={family}
+                                    modelHref={(slug) =>
+                                      catalogModelPath(catalog, slug)
+                                    }
+                                  />
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {core300Layout.ungroupedModels.length > 0 && (
+                          <div className="space-y-3">
+                            <h3 className="text-sm font-medium text-bp-text">
+                              {SAME_FILTER_DISTINCT_MODEL_COPY_V1.otherListingsLabel}
+                            </h3>
+                            <Core300OtherListingsNote />
+                            <ul className="space-y-2">
+                              {core300Layout.ungroupedModels.map((hit, i) => (
+                                <RevealOnScroll
+                                  as="li"
+                                  key={`${hit.catalog}-${hit.kind}-${hit.slug}`}
+                                  delayMs={25 + i * 35}
+                                >
+                                  <ModelHitCard
+                                    hit={hit}
+                                    href={globalSearchModelHref(catalog, hit)}
+                                    catalogLabel={label}
+                                  />
+                                </RevealOnScroll>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {core300Layout.remainingFilters.length > 0 && (
+                          <div className="space-y-3">
+                            <h3 className="text-sm font-medium text-bp-text">
+                              Parts & filter numbers
+                            </h3>
+                            <ul className="space-y-2">
+                              {core300Layout.remainingFilters.map((hit, i) => (
+                                <RevealOnScroll
+                                  as="li"
+                                  key={`${hit.catalog}-${hit.kind}-${hit.slug}`}
+                                  delayMs={25 + i * 35}
+                                >
+                                  <FilterHitCard
+                                    hit={hit}
+                                    href={globalSearchFilterHref(catalog, hit)}
+                                    catalogLabel={label}
+                                  />
+                                </RevealOnScroll>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </>
+                    );
+                  }
 
-                {filters.length > 0 && (
-                  <div className="space-y-3">
-                    <h3 className="text-sm font-medium text-bp-text">
-                      Parts & filter numbers
-                    </h3>
-                    <ul className="space-y-2">
-                      {filters.map((hit, i) => (
-                        <RevealOnScroll
-                          as="li"
-                          key={`${hit.catalog}-${hit.kind}-${hit.slug}`}
-                          delayMs={25 + i * 35}
-                        >
-                          <FilterHitCard
-                            hit={hit}
-                            href={globalSearchFilterHref(catalog, hit)}
-                            catalogLabel={label}
-                          />
-                        </RevealOnScroll>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                  return (
+                    <>
+                      {models.length > 0 && (
+                        <div className="space-y-3">
+                          <h3 className="text-sm font-medium text-bp-text">
+                            Models & units
+                          </h3>
+                          <ul className="space-y-2">
+                            {models.map((hit, i) => (
+                              <RevealOnScroll
+                                as="li"
+                                key={`${hit.catalog}-${hit.kind}-${hit.slug}`}
+                                delayMs={25 + i * 35}
+                              >
+                                <ModelHitCard
+                                  hit={hit}
+                                  href={globalSearchModelHref(catalog, hit)}
+                                  catalogLabel={label}
+                                />
+                              </RevealOnScroll>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {filters.length > 0 && (
+                        <div className="space-y-3">
+                          <h3 className="text-sm font-medium text-bp-text">
+                            Parts & filter numbers
+                          </h3>
+                          <ul className="space-y-2">
+                            {filters.map((hit, i) => (
+                              <RevealOnScroll
+                                as="li"
+                                key={`${hit.catalog}-${hit.kind}-${hit.slug}`}
+                                delayMs={25 + i * 35}
+                              >
+                                <FilterHitCard
+                                  hit={hit}
+                                  href={globalSearchFilterHref(catalog, hit)}
+                                  catalogLabel={label}
+                                />
+                              </RevealOnScroll>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </RevealOnScroll>
             );
           })}
