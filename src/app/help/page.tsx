@@ -23,9 +23,32 @@ export default async function HelpIndexPage() {
         Help
       </h1>
       {pages.length === 0 ? (
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          Help articles will appear here once added in Supabase.
-        </p>
+        <div className="max-w-xl space-y-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+          <p>
+            Start with the model number on the appliance sticker or the part
+            number on the old filter. Search accepts either.
+          </p>
+          <p>
+            If you cannot find a number, look inside the refrigerator, on the
+            filter housing, or in the owner’s manual. Do not guess from a photo
+            or a “fits most” listing.
+          </p>
+          <p>
+            <Link
+              href="/search"
+              className="font-medium text-neutral-900 underline underline-offset-2 dark:text-neutral-100"
+            >
+              Search a model or part number
+            </Link>
+            <span aria-hidden> · </span>
+            <Link
+              href="/wrong-part-prevention"
+              className="font-medium text-neutral-900 underline underline-offset-2 dark:text-neutral-100"
+            >
+              How BuckParts avoids the wrong part
+            </Link>
+          </p>
+        </div>
       ) : (
         <ul className="space-y-2">
           {pages.map((p) => (

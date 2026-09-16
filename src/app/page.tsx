@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 const EXAMPLE_CHIPS = [
   { label: "DA29-00020B", q: "DA29-00020B" },
   { label: "GE MWF", q: "GE MWF" },
-  { label: "LFXS26973S", q: "LFXS26973S" },
+  { label: "WRX735SDHZ", q: "WRX735SDHZ" },
 ] as const;
 
 export default async function HomePage() {
@@ -58,7 +58,7 @@ export default async function HomePage() {
                   <span className="bp-hook-resolve">Right Parts<span className="text-bp-action">.</span></span>
                 </h1>
                 <p className="max-w-2xl text-pretty text-base leading-relaxed text-bp-muted sm:text-lg">
-                  BuckParts checks replacement-filter links before it points you anywhere.
+                  Find the replacement that fits. We say when fit is not established, and we only show a place to buy after that answer is honest.
                 </p>
               </div>
 
@@ -74,10 +74,17 @@ export default async function HomePage() {
                 ))}
               </div>
 
+              <p className="max-w-2xl text-sm leading-relaxed text-bp-muted sm:text-[15px]">
+                <Link href="/help" className="font-medium text-bp-text underline-offset-2 hover:underline">
+                  Need help finding the number?
+                </Link>
+                <span className="text-bp-muted"> Look on the appliance sticker, the old filter, or the manual.</span>
+              </p>
+
               <StatusLegend />
 
               <p className="max-w-2xl text-sm leading-relaxed text-bp-muted sm:text-[15px]">
-                <span className="font-medium text-bp-text/90">Free to use · No account needed.</span> We only show a place to buy once the checks clear.
+                <span className="font-medium text-bp-text/90">Free to use · No account needed.</span> Buying is optional and comes after the fit answer.
               </p>
             </div>
 

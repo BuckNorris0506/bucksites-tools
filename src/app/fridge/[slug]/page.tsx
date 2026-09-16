@@ -13,6 +13,7 @@ import { resolveFridgeCustomerSafetyV1 } from "@/lib/fridge/fridge-learned-failu
 import { resolveFridgeModelPdpCustomerSafetyV1 } from "@/lib/fridge/fridge-model-pdp-customer-safety-v1";
 import { loadRefrigeratorManualEvidenceForModel } from "@/lib/manuals/refrigerator-manual-evidence-loader";
 import { canonicalAlternatesForIndexablePath } from "@/lib/seo/canonical";
+import { fridgeModelMetadataDescriptionV1 } from "@/lib/seo/fridge-model-metadata";
 import { classifyPageState } from "@/lib/page-state/page-state";
 import { getRobotsFromPageState } from "@/lib/page-state/page-state-meta";
 
@@ -56,9 +57,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     hasDemandSignal: null,
   });
   const title = `${fridge.model_number} water filter`;
+  const underReview = customerSafety.quarantine;
   return {
     title,
-    description: `Compatible water filters and replacement schedule for ${fridge.brand.name} model ${fridge.model_number}.`,
+    description: fridgeModelMetadataDescriptionV1({
+      brandName: fridge.brand.name,
+      modelNumber: fridge.model_number,
+      underReview,
+    }),
     openGraph: { title: `${fridge.model_number} · ${fridge.brand.name}` },
     robots: getRobotsFromPageState(pageState),
     ...canonicalAlternatesForIndexablePath(`/fridge/${params.slug}`, pageState),

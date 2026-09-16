@@ -52,9 +52,6 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
             </div>
 
             <nav aria-label="Primary" className="flex flex-wrap items-center gap-x-5 gap-y-1.5 sm:gap-x-7">
-              <Link href="/search" className={primaryNavClass}>
-                Search
-              </Link>
               <Link href="/catalog" className={primaryNavClass}>
                 Browse filters
               </Link>

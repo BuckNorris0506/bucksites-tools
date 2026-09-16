@@ -1,8 +1,8 @@
 const ITEMS = [
-  { label: "Verified Link", dot: "bg-bp-success", help: "A place to buy we've checked against the part, listing, and evidence." },
-  { label: "No link yet", dot: "bg-bp-caution", help: "We haven't found a buying path we'd vouch for yet — still checking." },
   { label: "Wrong-part risk", dot: "bg-bp-block", help: "A look-alike that doesn't actually fit your unit." },
   { label: "Evidence checked", dot: "bg-bp-text", help: "What we checked, and when." },
+  { label: "No link yet", dot: "bg-bp-caution", help: "We haven't found a buying path we'd vouch for yet — still checking." },
+  { label: "Verified Link", dot: "bg-bp-success", help: "A place to buy we've checked against the part, listing, and evidence." },
 ] as const;
 
 export function StatusLegend() {
