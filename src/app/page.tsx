@@ -7,6 +7,7 @@ import { StatusLegend } from "@/components/StatusLegend";
 import { VerifiedLinkCard } from "@/components/marketing/VerifiedLinkCard";
 import { NoVerifiedLinkCard } from "@/components/marketing/NoVerifiedLinkCard";
 import { listBrowseFilters } from "@/lib/catalog/browse";
+import { listFridgeHomepageStartingPointsV1 } from "@/lib/catalog/fridge-homepage-starting-points-v1";
 import {
   SITE_SOCIAL_OG_DESCRIPTION,
   SITE_SOCIAL_OG_TITLE,
@@ -41,7 +42,7 @@ export default async function HomePage() {
     // DB unavailable — page still renders with search only.
   }
 
-  const popularFilters = browseFilters.slice(0, 6);
+  const popularFilters = await listFridgeHomepageStartingPointsV1(browseFilters);
 
   return (
     <>
@@ -144,8 +145,8 @@ export default async function HomePage() {
               Refrigerator water filter starting points
             </h2>
             <p className="max-w-3xl text-sm leading-relaxed text-bp-muted sm:text-[15px]">
-              A short browse sample from refrigerator water filter data—not a popularity ranking,
-              sales chart, or bestseller list.
+              A short browse sample of refrigerator water filter pages that currently have a
+              BuckParts Verified Link—not a popularity ranking, sales chart, or bestseller list.
             </p>
             <ul className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
               {popularFilters.map((f, i) => (

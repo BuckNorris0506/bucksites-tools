@@ -112,8 +112,7 @@ export type HelpPage = {
   id: string;
   slug: string;
   title: string;
-  body: string | null;
-  meta_description: string | null;
+  body_markdown: string | null;
 };
 
 export type ResetInstruction = {

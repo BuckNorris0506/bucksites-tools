@@ -5,7 +5,7 @@ export async function getHelpPageBySlug(slug: string): Promise<HelpPage | null> 
   const supabase = getSupabaseServerClient();
   const { data, error } = await supabase
     .from("help_pages")
-    .select("id, slug, title, body, meta_description")
+    .select("id, slug, title, body_markdown")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -13,17 +13,15 @@ export async function getHelpPageBySlug(slug: string): Promise<HelpPage | null> 
   return data as HelpPage | null;
 }
 
-export async function listHelpPages(): Promise<
-  Pick<HelpPage, "slug" | "title" | "meta_description">[]
-> {
+export async function listHelpPages(): Promise<Pick<HelpPage, "slug" | "title">[]> {
   const supabase = getSupabaseServerClient();
   const { data, error } = await supabase
     .from("help_pages")
-    .select("slug, title, meta_description")
+    .select("slug, title")
     .order("title", { ascending: true });
 
   if (error) throw error;
-  return (data ?? []) as Pick<HelpPage, "slug" | "title" | "meta_description">[];
+  return (data ?? []) as Pick<HelpPage, "slug" | "title">[];
 }
 
 export async function getResetInstructionsForBrandSlug(brandSlug: string) {

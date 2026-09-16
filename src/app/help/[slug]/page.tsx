@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   return {
     title: page.title,
-    description: page.meta_description ?? page.title,
+    description: page.title,
     openGraph: { title: page.title },
   };
 }
@@ -28,7 +28,7 @@ export default async function HelpArticlePage({ params }: Props) {
       <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
         {page.title}
       </h1>
-      <Prose>{page.body}</Prose>
+      <Prose>{page.body_markdown}</Prose>
     </article>
   );
 }

@@ -27,11 +27,10 @@ select id, 'Dispenser reset',
   E'1) Press and hold the WATER pad for 3 seconds.\n2) Release when the indicator turns blue.'
 from public.brands where slug = 'northstar-cooling';
 
-insert into public.help_pages (slug, title, body, meta_description)
+insert into public.help_pages (slug, title, body_markdown)
 values (
   'how-often-replace',
   'How often should I replace my refrigerator water filter?',
-  'Most manufacturers recommend every 6 months or when flow slows. Follow your model''s interval if it differs.',
-  'General guidance on refrigerator filter replacement timing.'
+  'Most manufacturers recommend every 6 months or when flow slows. Follow your model''s interval if it differs.'
 )
 on conflict (slug) do nothing;

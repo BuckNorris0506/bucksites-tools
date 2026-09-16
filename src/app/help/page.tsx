@@ -59,9 +59,6 @@ export default async function HelpIndexPage() {
               >
                 {p.title}
               </Link>
-              {p.meta_description && (
-                <p className="text-sm text-neutral-500">{p.meta_description}</p>
-              )}
             </li>
           ))}
         </ul>
