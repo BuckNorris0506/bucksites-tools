@@ -18,13 +18,12 @@ test("help empty state uses homeowner copy, not a technical placeholder", () => 
   assert.ok(src.includes("owner’s manual") || src.includes("owner's manual"));
 });
 
-test("homepage example chips include a resolved model, not the under-review LFXS26973S", () => {
-  const src = read("src/app/page.tsx");
-  assert.ok(src.includes("WRX735SDHZ"));
-  assert.ok(!src.includes("LFXS26973S"));
+test("homepage example is a resolved public filter number, not the under-review LFXS26973S", () => {
+  const src = read("src/lib/copy/homepage-astra-v1.ts");
   assert.ok(src.includes("DA29-00020B"));
-  assert.ok(src.includes("Need help finding the number?"));
-  assert.ok(src.includes("Find the replacement that fits."));
+  assert.ok(!src.includes("LFXS26973S"));
+  assert.ok(src.includes("Where do I find the number?"));
+  assert.ok(src.includes("Find the filter"));
 });
 
 test("header keeps one Search action and does not duplicate Search in primary text nav", () => {
