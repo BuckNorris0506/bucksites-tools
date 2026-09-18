@@ -32,9 +32,9 @@ export function NumberHelpDisclosure({
 
   function closeAndRestoreFocus() {
     setOpen(false);
-    window.requestAnimationFrame(() => {
+    window.setTimeout(() => {
       document.getElementById(lookupInputId)?.focus();
-    });
+    }, 0);
   }
 
   function openHelp() {

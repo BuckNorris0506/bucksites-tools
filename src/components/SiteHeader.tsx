@@ -70,7 +70,13 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
                 : "flex flex-col gap-2.5 py-3 sm:py-3.5 lg:gap-3 lg:py-4"
             }
           >
-            <div className="flex items-center justify-between gap-4">
+            <div
+              className={
+                isHome
+                  ? "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+                  : "flex items-center justify-between gap-4"
+              }
+            >
               <BrandMark />
               {isHome ? (
                 <nav aria-label="Primary" className="flex flex-wrap items-center gap-x-5 gap-y-1">
