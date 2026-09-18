@@ -66,14 +66,14 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
           <div
             className={
               isHome
-                ? "flex items-center justify-between gap-4 py-2 sm:py-2.5"
+                ? "flex flex-col gap-2 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
                 : "flex flex-col gap-2.5 py-3 sm:py-3.5 lg:gap-3 lg:py-4"
             }
           >
             <div className="flex items-center justify-between gap-4">
               <BrandMark />
               {isHome ? (
-                <nav aria-label="Primary" className="flex flex-wrap items-center justify-end gap-x-5 gap-y-1">
+                <nav aria-label="Primary" className="flex flex-wrap items-center gap-x-5 gap-y-1">
                   <Link href={HOME_HOW_WE_CHECK_FIT_HREF} className={primaryNavClass}>
                     {HOME_HOW_WE_CHECK_FIT}
                   </Link>

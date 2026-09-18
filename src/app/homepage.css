@@ -2,6 +2,12 @@
  * audience: homeowners replacing a filter · use: lookup a number then see a real fit answer
  * tone: utilitarian · homepage visual system (spec-locked colours; existing Geist)
  */
+html:has(.bp-home-shell),
+html:has(.bp-home-shell) body {
+  background: #f6f8fb;
+  color-scheme: light;
+}
+
 .bp-home-shell {
   color-scheme: light;
   --bp-bg: #f6f8fb;
