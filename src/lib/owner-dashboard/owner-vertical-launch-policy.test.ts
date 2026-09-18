@@ -72,6 +72,8 @@ describe("owner vertical launch / crawler policy (read-only)", () => {
     const home = readFileSync(join(process.cwd(), "src/app/page.tsx"), "utf8");
     assert.equal(home.includes('href="/air-purifier"'), false);
     assert.equal(home.includes('href="/whole-house-water"'), false);
-    assert.ok(home.includes('href="/catalog"'));
+    assert.ok(home.includes("HOME_BROWSE_FILTERS_HREF"));
+    const copy = readFileSync(join(process.cwd(), "src/lib/homepage/homepage-copy.ts"), "utf8");
+    assert.ok(copy.includes('"/catalog"'));
   });
 });
