@@ -1,0 +1,120 @@
+{
+  "contract": "air_purifier_model_first_evidence_result_v1",
+  "report_name": "air_purifier_model_first_evidence_result_v1",
+  "packet_id": "ap-model-first-shark-hepa-hp400-live-browser-v1",
+  "run_id": "ap-model-first-shark-hepa-hp400-live-browser-2026-08-16",
+  "queue_contract": "ap_model_first_evidence_queue_v1",
+  "anchor_filter_slug": "shark-hepa-hp400",
+  "filter_slug": "shark-hepa-hp400",
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-08-16T16:49:25.308Z",
+  "checked_at": "2026-08-16T16:49:25.308Z",
+  "source_status": "PARTIAL",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "evidence_mode": "live_browser_model_first_v1",
+  "model_slugs_checked": [
+    "shark-hp401",
+    "shark-hp402",
+    "shark-hp452",
+    "shark-hp462",
+    "shark-hp602",
+    "shark-hp652"
+  ],
+  "model_rows": [
+    {
+      "model_slug": "shark-hp401",
+      "model_number": "Shark HP401",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "SHARK-HEPA-HP400"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_OFFICIAL_UNIT_OR_FILTER_PAGE_MATCH",
+      "notes": "UNKNOWN: No captured official/model/support/PDP page in this run mentioned Shark HP401. Search URLs are omitted from candidate_buyer_paths."
+    },
+    {
+      "model_slug": "shark-hp402",
+      "model_number": "Shark HP402",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "SHARK-HEPA-HP400"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_OFFICIAL_UNIT_OR_FILTER_PAGE_MATCH",
+      "notes": "UNKNOWN: No captured official/model/support/PDP page in this run mentioned Shark HP402. Search URLs are omitted from candidate_buyer_paths."
+    },
+    {
+      "model_slug": "shark-hp452",
+      "model_number": "Shark HP452",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "SHARK-HEPA-HP400"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_OFFICIAL_UNIT_OR_FILTER_PAGE_MATCH",
+      "notes": "UNKNOWN: No captured official/model/support/PDP page in this run mentioned Shark HP452. Search URLs are omitted from candidate_buyer_paths."
+    },
+    {
+      "model_slug": "shark-hp462",
+      "model_number": "Shark HP462",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "SHARK-HEPA-HP400"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_OFFICIAL_UNIT_OR_FILTER_PAGE_MATCH",
+      "notes": "UNKNOWN: No captured official/model/support/PDP page in this run mentioned Shark HP462. Search URLs are omitted from candidate_buyer_paths."
+    },
+    {
+      "model_slug": "shark-hp602",
+      "model_number": "Shark HP602",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "SHARK-HEPA-HP400"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_OFFICIAL_UNIT_OR_FILTER_PAGE_MATCH",
+      "notes": "UNKNOWN: No captured official/model/support/PDP page in this run mentioned Shark HP602. Search URLs are omitted from candidate_buyer_paths."
+    },
+    {
+      "model_slug": "shark-hp652",
+      "model_number": "Shark HP652",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "SHARK-HEPA-HP400"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_OFFICIAL_UNIT_OR_FILTER_PAGE_MATCH",
+      "notes": "UNKNOWN: No captured official/model/support/PDP page in this run mentioned Shark HP652. Search URLs are omitted from candidate_buyer_paths."
+    }
+  ],
+  "candidate_buyer_paths": [],
+  "filter_first_cross_reference": null,
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 0,
+    "UNKNOWN": 6,
+    "BLOCKED": 0
+  },
+  "recommended_csv_mutation": null,
+  "safe_apply_authorized": false,
+  "proven_facts": [
+    "PROVEN: Live-browser collector opened 3 first-party URL(s) for shark-hepa-hp400 (no Jared --slug/--token/--url).",
+    "PROVEN: Discovery tokens used as search queries only (not fit/buy proof): HP400. Catalog expected token remains SHARK-HEPA-HP400.",
+    "PROVEN: Collector captured 3 page(s); search URLs omitted from candidate_buyer_paths.",
+    "PROVEN: 6 model row(s) checked; evidence_status_counts.PASS=0; safe_apply_authorized=false.",
+    "PROVEN: recommended_csv_mutation=null; data_mutation=false; no CSV/Supabase/--apply."
+  ],
+  "inferred_facts": [],
+  "unknown_facts": [
+    "UNKNOWN: Whether official pages document HEPA filter for large Shark purifiers as the catalog token SHARK-HEPA-HP400 on each checked model.",
+    "UNKNOWN: Live purchase availability beyond signals captured on opened pages."
+  ]
+}

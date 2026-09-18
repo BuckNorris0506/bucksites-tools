@@ -3,7 +3,7 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "generated_at": "2026-07-15T05:23:33.230Z",
+  "generated_at": "2026-08-16T04:10:18.295Z",
   "source_command": "npm run buckparts:execution-ledger",
   "entry_count": 16,
   "entries": [
@@ -835,6 +835,7 @@
     "data/command-center/dispatch-runs/dispatch-run-2026-07-15T045046470Z.json",
     "data/command-center/dispatch-runs/dispatch-run-2026-07-15T050241861Z.json",
     "data/command-center/dispatch-runs/dispatch-run-2026-07-15T052332675Z.json",
+    "data/command-center/dispatch-runs/dispatch-run-b473565b908ef3410d27b8d489db028d.json",
     "data/fridge/batch-production/closeout/fridge-buyer-path-batch-closeout-learning-packet-v1-0fec4a7b623a.json",
     "data/fridge/batch-production/drafts/manufacturer-browser-proof-execution-factory-v1.json",
     "data/fridge/batch-production/drafts/manufacturer-browser-proof-factory-v1.json",
@@ -856,7 +857,7 @@
   },
   "proven_facts": [
     "PROVEN: Execution ledger is read-only and indexes committed dispatch runs, run-registry closeouts, and closeout learning packets only.",
-    "PROVEN: entry_count=16 from 22 source artifact path(s)."
+    "PROVEN: entry_count=16 from 23 source artifact path(s)."
   ],
   "unknown_facts": [
     "UNKNOWN: pushed_to_origin unless closeout commits_involved explicitly mention push.",
@@ -864,9 +865,9 @@
     "UNKNOWN: live git remote parity for entries without committed push attestations."
   ],
   "freshness": {
-    "last_generated_at": "2026-07-15T05:23:33.230Z",
-    "source_artifact_count": 22,
-    "stale_after": "2026-07-16T05:23:33.230Z",
+    "last_generated_at": "2026-08-16T04:10:18.295Z",
+    "source_artifact_count": 23,
+    "stale_after": "2026-08-17T04:10:18.295Z",
     "freshness_status": "FRESH",
     "last_refresh_trigger_source": "npm run buckparts:command-center:run-dispatch"
   }

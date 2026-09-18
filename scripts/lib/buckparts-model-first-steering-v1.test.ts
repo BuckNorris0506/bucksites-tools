@@ -87,3 +87,54 @@ test("command center next_best_action prefers refrigerator model-first over AP w
     }
   }
 });
+
+test("Work Queue executable activation can enable existing model_first source without changing command", async () => {
+  const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+  const queue = buildApModelFirstEvidenceQueueV1Report({
+    rootDir: REPO_ROOT,
+    modelFirstLane: lane,
+    weakBuyerPathAudit: weak,
+  });
+  const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
+  const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+  const instantiation = await buildApBatchV3RunInstantiationV1Report({
+    rootDir: REPO_ROOT,
+    demandToCoverageNextLane: demand,
+    checklist,
+  });
+  const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
+    ap_batch_v3_run_instantiation: instantiation,
+  });
+
+  const ineligibleQueue = { ...queue, steering_primary_eligible: false };
+  const withoutWorkQueue = resolveModelFirstSteeringOverrideV1({
+    queue: ineligibleQueue,
+    weakBuyerPathAudit: weak,
+    dispatch,
+    brainStopTheLine: false,
+    activateFromWorkQueue: false,
+  });
+  assert.equal(withoutWorkQueue, null);
+
+  if (queue.candidate_count === 0) return;
+
+  const withWorkQueue = resolveModelFirstSteeringOverrideV1({
+    queue: ineligibleQueue,
+    weakBuyerPathAudit: weak,
+    dispatch,
+    brainStopTheLine: false,
+    activateFromWorkQueue: true,
+  });
+  assert.ok(withWorkQueue);
+  assert.ok(withWorkQueue!.next_move_command.includes("report-ap-model-first-evidence-queue-v1"));
+
+  const stopped = resolveModelFirstSteeringOverrideV1({
+    queue: ineligibleQueue,
+    weakBuyerPathAudit: weak,
+    dispatch,
+    brainStopTheLine: true,
+    activateFromWorkQueue: true,
+  });
+  assert.equal(stopped, null);
+});
