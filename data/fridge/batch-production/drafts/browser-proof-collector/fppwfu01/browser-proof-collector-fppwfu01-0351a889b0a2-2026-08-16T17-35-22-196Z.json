@@ -1,0 +1,249 @@
+{
+  "contract": "browser_proof_collector_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "production_go_click_authorized": false,
+  "apply_plan_proposal_justified": false,
+  "promotes_to_owner_browser_proof_result": false,
+  "founder_approval_authorized": false,
+  "generated_at": "2026-08-16T17:38:15.113Z",
+  "capture_method": "playwright_headless",
+  "capture_options": {
+    "headed": false,
+    "wait_ms": 2000,
+    "timeout_ms": 48000,
+    "user_agent_mode": "desktop_chrome"
+  },
+  "capture_attempts": [
+    {
+      "attempt_id": "a1_domcontentloaded_collector_ua",
+      "wait_until": "domcontentloaded",
+      "user_agent_mode": "collector",
+      "user_agent": "BuckPartsBrowserProofCollector/1.0 (+https://buckparts.com; read-only evidence collection)",
+      "headed": false,
+      "wait_ms": 2000,
+      "timeout_ms": 48000,
+      "launch_args": [],
+      "success": false,
+      "error": "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"domcontentloaded\"\n",
+      "final_url": "about:blank"
+    },
+    {
+      "attempt_id": "a2_load_collector_ua",
+      "wait_until": "load",
+      "user_agent_mode": "collector",
+      "user_agent": "BuckPartsBrowserProofCollector/1.0 (+https://buckparts.com; read-only evidence collection)",
+      "headed": false,
+      "wait_ms": 2000,
+      "timeout_ms": 48000,
+      "launch_args": [],
+      "success": false,
+      "error": "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"load\"\n",
+      "final_url": "about:blank"
+    },
+    {
+      "attempt_id": "a3_load_desktop_chrome_ua",
+      "wait_until": "load",
+      "user_agent_mode": "desktop_chrome",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+      "headed": false,
+      "wait_ms": 2000,
+      "timeout_ms": 48000,
+      "launch_args": [],
+      "success": false,
+      "error": "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"load\"\n",
+      "final_url": "about:blank"
+    },
+    {
+      "attempt_id": "a4_load_desktop_chrome_ua_disable_http2",
+      "wait_until": "load",
+      "user_agent_mode": "desktop_chrome",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+      "headed": false,
+      "wait_ms": 2000,
+      "timeout_ms": 48000,
+      "launch_args": [
+        "--disable-http2",
+        "--disable-features=UseChromeOSDirectVideoDecoder"
+      ],
+      "success": false,
+      "error": "page.goto: Timeout 48000ms exceeded.\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"load\"\n",
+      "final_url": "about:blank"
+    },
+    {
+      "attempt_id": "a5_networkidle_desktop_chrome_ua_disable_http2",
+      "wait_until": "networkidle",
+      "user_agent_mode": "desktop_chrome",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+      "headed": false,
+      "wait_ms": 2000,
+      "timeout_ms": 20000,
+      "launch_args": [
+        "--disable-http2",
+        "--disable-features=UseChromeOSDirectVideoDecoder"
+      ],
+      "success": false,
+      "error": "page.goto: Timeout 20000ms exceeded.\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"networkidle\"\n",
+      "final_url": "about:blank"
+    }
+  ],
+  "batch_mode": false,
+  "collect_all": false,
+  "early_stop": {
+    "stopped": false,
+    "reason": null,
+    "stopped_after_candidate_url": null
+  },
+  "best_candidate_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01",
+  "best_candidate_rank": 50,
+  "slug": "fppwfu01",
+  "expected_token": "FPPWFU01",
+  "forbidden_tokens": [
+    "FPPWFU02"
+  ],
+  "confusion_family_owner_review_required": true,
+  "owner_review_required": true,
+  "candidates": [
+    {
+      "candidate_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01",
+      "verdict": "UNKNOWN",
+      "blockers": [
+        "browser_capture_not_completed",
+        "extraction_uncertain",
+        "navigation_error:page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\nCall log:\n  -",
+        "page_blocked",
+        "exact_expected_token_missing"
+      ],
+      "facts": {
+        "final_url": "about:blank",
+        "title": "",
+        "h1": "",
+        "visible_text_snippet": "",
+        "exact_expected_token_present": false,
+        "forbidden_tokens_present": [],
+        "price_like_text_present": false,
+        "stock_or_buyability_signal_present": false,
+        "add_to_cart_or_subscription_signals": [],
+        "unavailable_signal_present": false,
+        "page_type": "blocked",
+        "source_class": "unknown",
+        "capture_succeeded": false,
+        "navigation_error": "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"domcontentloaded\"\n || page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"load\"\n || page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"load\"\n || page.goto: Timeout 48000ms exceeded.\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"load\"\n || page.goto: Timeout 20000ms exceeded.\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"networkidle\"\n",
+        "extraction_uncertain": true
+      },
+      "screenshot_rel_path": null,
+      "assessment": "UNKNOWN: capture, page type, or buyability is ambiguous.",
+      "capture_attempts": [
+        {
+          "attempt_id": "a1_domcontentloaded_collector_ua",
+          "wait_until": "domcontentloaded",
+          "user_agent_mode": "collector",
+          "user_agent": "BuckPartsBrowserProofCollector/1.0 (+https://buckparts.com; read-only evidence collection)",
+          "headed": false,
+          "wait_ms": 2000,
+          "timeout_ms": 48000,
+          "launch_args": [],
+          "success": false,
+          "error": "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"domcontentloaded\"\n",
+          "final_url": "about:blank"
+        },
+        {
+          "attempt_id": "a2_load_collector_ua",
+          "wait_until": "load",
+          "user_agent_mode": "collector",
+          "user_agent": "BuckPartsBrowserProofCollector/1.0 (+https://buckparts.com; read-only evidence collection)",
+          "headed": false,
+          "wait_ms": 2000,
+          "timeout_ms": 48000,
+          "launch_args": [],
+          "success": false,
+          "error": "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"load\"\n",
+          "final_url": "about:blank"
+        },
+        {
+          "attempt_id": "a3_load_desktop_chrome_ua",
+          "wait_until": "load",
+          "user_agent_mode": "desktop_chrome",
+          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+          "headed": false,
+          "wait_ms": 2000,
+          "timeout_ms": 48000,
+          "launch_args": [],
+          "success": false,
+          "error": "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"load\"\n",
+          "final_url": "about:blank"
+        },
+        {
+          "attempt_id": "a4_load_desktop_chrome_ua_disable_http2",
+          "wait_until": "load",
+          "user_agent_mode": "desktop_chrome",
+          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+          "headed": false,
+          "wait_ms": 2000,
+          "timeout_ms": 48000,
+          "launch_args": [
+            "--disable-http2",
+            "--disable-features=UseChromeOSDirectVideoDecoder"
+          ],
+          "success": false,
+          "error": "page.goto: Timeout 48000ms exceeded.\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"load\"\n",
+          "final_url": "about:blank"
+        },
+        {
+          "attempt_id": "a5_networkidle_desktop_chrome_ua_disable_http2",
+          "wait_until": "networkidle",
+          "user_agent_mode": "desktop_chrome",
+          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+          "headed": false,
+          "wait_ms": 2000,
+          "timeout_ms": 20000,
+          "launch_args": [
+            "--disable-http2",
+            "--disable-features=UseChromeOSDirectVideoDecoder"
+          ],
+          "success": false,
+          "error": "page.goto: Timeout 20000ms exceeded.\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"networkidle\"\n",
+          "final_url": "about:blank"
+        }
+      ],
+      "discovered_same_origin_product_urls": []
+    }
+  ],
+  "overall_verdict": "UNKNOWN",
+  "capture_outcome": "TRANSIENT_NETWORK_FAILURE",
+  "capture_outcome_reason": "no_page_capture",
+  "recommended_next_action": "Manufacturer site was temporarily unreachable (no_page_capture). Slug remains eligible for a later collector refresh. Do not treat as missing manufacturer evidence. Attempts: a1_domcontentloaded_collector_ua: page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"domcontentloaded\"\n | a2_load_collector_ua: page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"load\"\n | a3_load_desktop_chrome_ua: page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"load\"\n | a4_load_desktop_chrome_ua_disable_http2: page.goto: Timeout 48000ms exceeded.\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"load\"\n | a5_networkidle_desktop_chrome_ua_disable_http2: page.goto: Timeout 20000ms exceeded.\nCall log:\n  - navigating to \"https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01\", waiting until \"networkidle\"\n.",
+  "proven_facts": [
+    "PROVEN: browser_proof_collector_v1 is draft-only; all mutation and approval flags false.",
+    "PROVEN: collector does not write owner-browser-proof-result or founder approvals.",
+    "PROVEN: capture failure can never produce PASS.",
+    "PROVEN: overall_verdict=UNKNOWN.",
+    "PROVEN: capture_outcome=TRANSIENT_NETWORK_FAILURE reason=no_page_capture.",
+    "PROVEN: candidate_count=1 batch_mode=false.",
+    "PROVEN: capture_attempts=5 success=false.",
+    "PROVEN: best_candidate_rank=50 source_class=unknown verdict=UNKNOWN.",
+    "PROVEN: confusion-family slug — owner review remains required even on collector PASS."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: owner acceptance of this draft as committed browser proof.",
+    "UNKNOWN: readiness-gate eligibility until owner-browser-proof-result is authored separately.",
+    "UNKNOWN: whether manufacturer evidence exists — the manufacturer page was not captured.",
+    "UNKNOWN: all capture attempts failed (5)."
+  ],
+  "not_authorized": [
+    "retailer_links_csv_mutation",
+    "supabase_mutation",
+    "data/evidence_mutation",
+    "owner_browser_proof_result_auto_write",
+    "founder_approval_auto_create",
+    "apply_plan_auto_create",
+    "readiness_gate_auto_pass",
+    "VALIDATION_PASS",
+    "live_link_mutation"
+  ]
+}

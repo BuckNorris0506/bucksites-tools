@@ -38,6 +38,13 @@ export const GE_OWNER_REVIEW_EXACT_COMMAND_V1 =
 export const AP_OWNER_REVIEW_EXACT_COMMAND_V1 =
   "npx tsx scripts/report-air-purifier-demand-selected-batch-owner-review-v1.ts" as const;
 
+/**
+ * Proven fridge manufacturer-proof collector (flagless orchestrator refresh).
+ * Read-only capture + owner-review bridge; never apply / never PASS_BROWSER_PROOF.
+ */
+export const BROWSER_PROOF_COLLECTOR_ALLOWLIST_COMMAND_V1 =
+  "npm run buckparts:browser-proof-collector" as const;
+
 /** Guarded mutation executor. It must never be dispatch-allowlisted. */
 export const BUCKPARTS_RETAILER_LINK_PARITY_GUARDED_APPLY_WRITE_COMMAND_V1 =
   "BUCKPARTS_IO_CAPABILITY=MUTATION npx tsx scripts/lib/buckparts-retailer-link-parity-guarded-apply-v1.ts --write --plan-file <plan.json>" as const;
@@ -133,6 +140,15 @@ export const DISPATCH_ALLOWLIST_ENTRIES_V1: readonly DispatchAllowlistEntryV1[] 
     owner_review_required: true,
     artifact_write_behavior: "required",
     no_artifact_allowed: false,
+    mutation_posture: MUTATION_POSTURE,
+  },
+  {
+    exact_command: BROWSER_PROOF_COLLECTOR_ALLOWLIST_COMMAND_V1,
+    selected_subsystem: "report:browser_proof_collector",
+    command_kind: "read_only_report",
+    owner_review_required: false,
+    artifact_write_behavior: "optional",
+    no_artifact_allowed: true,
     mutation_posture: MUTATION_POSTURE,
   },
   {
