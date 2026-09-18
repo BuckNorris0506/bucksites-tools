@@ -23,7 +23,7 @@ export function FeaturedFitExample() {
       <p className="bp-home__eyebrow">{FEATURED_FIT_TITLE}</p>
       <p className="bp-home__meta mt-2">{FEATURED_FIT_QUALIFIER}</p>
 
-      <dl className="mt-4 space-y-3 text-base">
+      <dl className="mt-3 space-y-2 text-base">
         <div>
           <dt className="bp-home__label">Appliance model</dt>
           <dd className="bp-code mt-1 inline-block">{FEATURED_FIT_MODEL_NUMBER}</dd>
@@ -67,7 +67,7 @@ export function FeaturedFitExample() {
         </div>
       </dl>
 
-      <p className="mt-4">
+      <p className="mt-3">
         <Link
           href={FEATURED_FIT_HREF}
           className="text-base font-semibold text-[var(--home-navy)] underline underline-offset-2"

@@ -2,6 +2,26 @@
  * audience: homeowners replacing a filter · use: lookup a number then see a real fit answer
  * tone: utilitarian · homepage visual system (spec-locked colours; existing Geist)
  */
+.bp-home-shell {
+  color-scheme: light;
+  --bp-bg: #f6f8fb;
+  --bp-surface: #ffffff;
+  --bp-border: #e2e8f0;
+  --bp-text: #0f172a;
+  --bp-muted: #475569;
+  --bp-trust: #172554;
+  --bp-trust-soft: #e8eef8;
+  --bp-code-bg: #eef2f7;
+  --bp-code-border: #d5dde7;
+  --bp-action: #c44d24;
+  --bp-action-press: #b8421c;
+  --bp-logo: #172554;
+  --background: #f6f8fb;
+  --foreground: #0f172a;
+  background: #f6f8fb;
+  color: #0f172a;
+}
+
 .bp-home {
   --home-navy: #172554;
   --home-ink: #0f172a;
@@ -159,7 +179,13 @@
   border-radius: var(--home-radius-result);
   background: #fff;
   box-shadow: 0 10px 24px rgb(15 23 42 / 0.06);
-  padding: 20px;
+  padding: 16px;
+}
+
+@media (min-width: 1024px) {
+  .bp-home__result {
+    padding: 16px 18px;
+  }
 }
 
 .bp-home__verdict {

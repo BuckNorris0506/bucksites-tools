@@ -238,7 +238,7 @@ describe("public merchant-priority copy guard", () => {
   });
 
   it("global shell footer uses BuckParts Verified Link wording", () => {
-    const src = readFileSync(rooted("src/components/SiteShell.tsx"), "utf8");
+    const src = readFileSync(rooted("src/components/SiteHeader.tsx"), "utf8");
     assert.ok(!/store links/i.test(src));
     assert.ok(!/store buttons/i.test(src));
     assert.ok(src.includes("BuckParts Verified Link"));
@@ -267,7 +267,7 @@ describe("public merchant-priority copy guard", () => {
   });
 
   it("global shell footer links to grant trust pages", () => {
-    const src = readFileSync(rooted("src/components/SiteShell.tsx"), "utf8");
+    const src = readFileSync(rooted("src/components/SiteHeader.tsx"), "utf8");
     assert.ok(src.includes('href="/truth-policy"'));
     assert.ok(src.includes('href="/wrong-part-prevention"'));
   });
