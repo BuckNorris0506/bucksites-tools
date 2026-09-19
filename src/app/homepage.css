@@ -25,6 +25,11 @@ html:has(.bp-home-shell) body {
   color: #14283b;
 }
 
+.bp-home-shell .bp-home-brand__img {
+  object-fit: contain;
+  object-position: left center;
+}
+
 .bp-home-shell .bp-home-site-header {
   background: #fff;
   border-bottom: 1px solid #e7ebeb;

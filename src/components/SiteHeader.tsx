@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
@@ -21,7 +22,31 @@ const primaryNavClass =
 const footerLinkClass =
   "font-medium text-bp-trust underline-offset-2 transition-colors hover:underline";
 
-function BrandMark() {
+/** Review-preview raster from founder-approved horizontal lockup; not the production vector master. */
+const HOME_APPROVED_LOGO_SRC = "/brand/buckparts-horizontal-lockup-review.jpg";
+const HOME_APPROVED_LOGO_WIDTH = 1024;
+const HOME_APPROVED_LOGO_HEIGHT = 341;
+
+function BrandMark({ useApprovedHorizontalLogo = false }: { useApprovedHorizontalLogo?: boolean }) {
+  if (useApprovedHorizontalLogo) {
+    return (
+      <Link
+        href="/"
+        className="bp-home-brand inline-flex max-w-[210px] shrink-0 items-center sm:max-w-[220px] lg:max-w-[240px]"
+        aria-label={`${SITE_DISPLAY_NAME} home`}
+      >
+        <Image
+          src={HOME_APPROVED_LOGO_SRC}
+          alt=""
+          width={HOME_APPROVED_LOGO_WIDTH}
+          height={HOME_APPROVED_LOGO_HEIGHT}
+          priority
+          className="bp-home-brand__img h-[46px] w-auto max-w-full sm:h-[50px] lg:h-[54px]"
+        />
+      </Link>
+    );
+  }
+
   return (
     <Link href="/" className="flex items-center gap-2.5 sm:gap-3">
       <span aria-hidden className="grid h-8 w-8 shrink-0 place-items-center sm:h-9 sm:w-9">
@@ -71,7 +96,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
         <div className={`mx-auto w-full ${isHome ? "max-w-[1184px] px-5 sm:px-6 lg:px-8" : `${shellMax} ${shellPad}`}`}>
           {isHome ? (
             <div className="bp-home-site-header__inner">
-              <BrandMark />
+              <BrandMark useApprovedHorizontalLogo />
               <nav aria-label="Main navigation" className="bp-home-header-nav">
                 <Link href={HOME_HEADER_HOW_WE_WORK_HREF}>{HOME_HEADER_HOW_WE_WORK}</Link>
                 <Link
