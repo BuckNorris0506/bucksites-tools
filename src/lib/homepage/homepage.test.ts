@@ -97,8 +97,11 @@ describe("homepage exact copy", () => {
   it("homepage markup uses the prototype hero composition and omits banned shelves", () => {
     const page = readFileSync(root("src", "app", "page.tsx"), "utf8");
     const css = readFileSync(root("src", "app", "homepage.css"), "utf8");
+    const header = readFileSync(root("src", "components", "SiteHeader.tsx"), "utf8");
     assert.ok(css.includes("grid-template-columns: minmax(0, 1.11fr) minmax(0, 1fr)"));
     assert.ok(css.includes("bp-home__product-scene"));
+    assert.ok(header.includes("/brand/buckparts-horizontal-lockup-review.png"));
+    assert.ok(header.includes("useApprovedHorizontalLogo"));
     assert.ok(page.includes("RealLookupExample"));
     assert.ok(!page.includes("StatusLegend"));
     assert.ok(!page.includes("VerifiedLinkCard"));

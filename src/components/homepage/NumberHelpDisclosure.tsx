@@ -41,14 +41,11 @@ export function NumberHelpDisclosure({
   }
 
   useEffect(() => {
+    if (!open) return;
     const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (open && !dialog.open) {
+    if (dialog && !dialog.open) {
       dialog.showModal();
       window.setTimeout(() => closeRef.current?.focus(), 0);
-    }
-    if (!open && dialog.open) {
-      dialog.close();
     }
   }, [open]);
 
@@ -86,6 +83,7 @@ export function NumberHelpDisclosure({
         {HOME_SECOND_DOOR}
       </button>
 
+      {open ? (
       <dialog
         ref={dialogRef}
         className="bp-home-dialog"
@@ -170,6 +168,7 @@ export function NumberHelpDisclosure({
           </button>
         </div>
       </dialog>
+      ) : null}
     </>
   );
 }

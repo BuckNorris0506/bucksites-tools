@@ -22,17 +22,17 @@ const primaryNavClass =
 const footerLinkClass =
   "font-medium text-bp-trust underline-offset-2 transition-colors hover:underline";
 
-/** Review-preview raster from founder-approved horizontal lockup; not the production vector master. */
-const HOME_APPROVED_LOGO_SRC = "/brand/buckparts-horizontal-lockup-review.jpg";
-const HOME_APPROVED_LOGO_WIDTH = 1024;
-const HOME_APPROVED_LOGO_HEIGHT = 341;
+/** Review raster from Astra prototype embed (transparent PNG); not the production vector master. */
+const HOME_APPROVED_LOGO_SRC = "/brand/buckparts-horizontal-lockup-review.png";
+const HOME_APPROVED_LOGO_WIDTH = 1895;
+const HOME_APPROVED_LOGO_HEIGHT = 472;
 
 function BrandMark({ useApprovedHorizontalLogo = false }: { useApprovedHorizontalLogo?: boolean }) {
   if (useApprovedHorizontalLogo) {
     return (
       <Link
         href="/"
-        className="bp-home-brand inline-flex max-w-[210px] shrink-0 items-center sm:max-w-[220px] lg:max-w-[240px]"
+        className="bp-home-brand"
         aria-label={`${SITE_DISPLAY_NAME} home`}
       >
         <Image
@@ -41,7 +41,7 @@ function BrandMark({ useApprovedHorizontalLogo = false }: { useApprovedHorizonta
           width={HOME_APPROVED_LOGO_WIDTH}
           height={HOME_APPROVED_LOGO_HEIGHT}
           priority
-          className="bp-home-brand__img h-[46px] w-auto max-w-full sm:h-[50px] lg:h-[54px]"
+          className="bp-home-brand__img"
         />
       </Link>
     );

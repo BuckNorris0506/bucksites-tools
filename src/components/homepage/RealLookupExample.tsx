@@ -79,7 +79,7 @@ export function RealLookupExample() {
           </div>
         </article>
       </div>
-      <WhyThisMatchDialog open={whyOpen} onClose={() => setWhyOpen(false)} />
+      {whyOpen ? <WhyThisMatchDialog open={whyOpen} onClose={() => setWhyOpen(false)} /> : null}
     </>
   );
 }
