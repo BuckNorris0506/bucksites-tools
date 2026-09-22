@@ -4435,7 +4435,7 @@ test("command center next_best_action prefers demand-selected batch when refrige
   assert.doesNotMatch(report.next_best_action, /BATCH RUN-REGISTRY \[ACTIVE_PLANNING\]:.*refrigerator_water/i);
   assert.equal(
     report.execution_guidance.next_move_command,
-    "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+    "node --import tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
   );
   assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
   assert.equal(

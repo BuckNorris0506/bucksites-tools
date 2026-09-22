@@ -689,7 +689,7 @@ test("dispatch --no-artifact successful stdout-only path leaves isolated temp-re
           batch_production_operating_dispatch_v1: {
             dispatch_status: "READY",
             exact_command:
-              "npx tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts",
+              "node --import tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts",
             command_surface: "terminal",
             mutation_allowed: false,
             selected_subsystem: "proof:ap_closeout_readiness",

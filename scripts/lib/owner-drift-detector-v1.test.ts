@@ -32,7 +32,7 @@ function openFridgeContext(
   partial: Partial<OwnerDriftExecutionContextV1> = {},
 ): OwnerDriftExecutionContextV1 {
   return {
-    next_best_action: "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+    next_best_action: "node --import tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
     fridge_batch_proposal_open: true,
     fridge_proposed_row_count: 14,
     fridge_owner_approval_required: true,

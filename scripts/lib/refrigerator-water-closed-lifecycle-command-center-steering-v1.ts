@@ -15,7 +15,7 @@ export const DEMAND_TO_COVERAGE_AFTER_FRIDGE_CLOSEOUT_STEERING_STATUS_V1 =
   "START_NEW_DEMAND_SELECTED_BATCH" as const;
 
 export const DEMAND_TO_COVERAGE_NEXT_LANE_SOURCE_COMMAND_V1 =
-  "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts" as const;
+  "node --import tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts" as const;
 
 export type DemandToCoverageAfterFridgeCloseoutSteeringOverrideV1 = {
   next_best_action: string;

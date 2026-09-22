@@ -21,7 +21,7 @@ export const AP_DEMAND_SELECTED_BATCH_CLOSEOUT_READINESS_PROOF_CONTRACT_V1 =
   "ap_demand_selected_batch_closeout_readiness_proof_v1" as const;
 
 export const AP_DEMAND_SELECTED_BATCH_CLOSEOUT_READINESS_PROOF_EXACT_COMMAND_V1 =
-  "npx tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts" as const;
+  "node --import tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts" as const;
 
 export type ApDemandSelectedEvidenceCompletenessStatusV1 =
   | "COMPLETE"

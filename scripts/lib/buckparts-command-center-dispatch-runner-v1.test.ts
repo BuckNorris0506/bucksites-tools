@@ -8,9 +8,58 @@ import {
   COMMAND_CENTER_DISPATCH_RUNS_DIR_REL_V1,
   runBuckpartsCommandCenterDispatchRunnerV1,
 } from "./buckparts-command-center-dispatch-runner-v1";
-import { lookupDispatchAllowlistEntryV1 } from "./buckparts-command-center-dispatch-allowlist-v1";
+import {
+  DISPATCH_ALLOWLIST_ENTRIES_V1,
+  lookupDispatchAllowlistEntryV1,
+} from "./buckparts-command-center-dispatch-allowlist-v1";
 
 const REPO_ROOT = process.cwd();
+
+test("dispatch npm entrypoint avoids tsx CLI IPC socket", () => {
+  const pkg = JSON.parse(readFileSync(path.join(REPO_ROOT, "package.json"), "utf8"));
+  assert.equal(
+    pkg.scripts["buckparts:command-center:run-dispatch"],
+    "node --import tsx scripts/run-buckparts-command-center-dispatch-v1.ts",
+  );
+});
+
+test("every executable zero-cost no-artifact command avoids the tsx CLI", () => {
+  const pkg = JSON.parse(readFileSync(path.join(REPO_ROOT, "package.json"), "utf8")) as {
+    scripts: Record<string, string>;
+  };
+  const reachable = DISPATCH_ALLOWLIST_ENTRIES_V1.filter(
+    (entry) =>
+      entry.no_artifact_allowed &&
+      !entry.owner_review_required &&
+      !entry.mutation_posture.mutation_allowed,
+  );
+  assert.equal(reachable.length, 4);
+  const expectedKinds = new Map([
+    ["retailer_link_parity:detect", "read_only_report"],
+    ["retailer_link_parity:plan_dry_run", "parity_plan"],
+    ["steering:demand_to_coverage", "read_only_report"],
+    ["proof:ap_closeout_readiness", "read_only_report"],
+  ]);
+
+  const tsxCli = /^(?:npx\s+tsx(?:\s|$)|tsx(?:\s|$)|npm\s+exec(?:\s+--)?\s+tsx(?:\s|$))/;
+  for (const entry of reachable) {
+    assert.equal(entry.mutation_posture.read_only, true);
+    assert.equal(entry.mutation_posture.data_mutation, false);
+    assert.equal(entry.owner_review_required, false);
+    assert.equal(entry.no_artifact_allowed, true);
+    assert.equal(entry.command_kind, expectedKinds.get(entry.selected_subsystem));
+    assert.doesNotMatch(entry.exact_command, tsxCli);
+
+    const npmScript = entry.exact_command.match(/^npm run ([^\s]+)/)?.[1];
+    if (npmScript) {
+      assert.ok(pkg.scripts[npmScript], `missing package script ${npmScript}`);
+      assert.doesNotMatch(pkg.scripts[npmScript]!, tsxCli);
+      assert.match(pkg.scripts[npmScript]!, /^node --import tsx /);
+    } else {
+      assert.match(entry.exact_command, /^node --import tsx /);
+    }
+  }
+});
 
 const BOUND_PROVENANCE = {
   provenance_status: "BOUND_TO_SOURCE_COMMIT" as const,
@@ -351,7 +400,7 @@ test("runner does not mutate product CSV", async () => {
 test("runner executes allowlisted demand_to_coverage_next_lane when command_surface=terminal", async () => {
   const dispatchRunsDir = tempDispatchRunsDir();
   const fixedNow = new Date("2026-07-15T04:00:00.000Z");
-  const demandCmd = "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts";
+  const demandCmd = "node --import tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts";
   let executed: string | null = null;
   try {
     const res = await runBuckpartsCommandCenterDispatchRunnerV1({
@@ -397,7 +446,7 @@ test("runner refuses missing command_surface", async () => {
       now: () => new Date("2026-07-15T04:00:01.000Z"),
       reportBuilder: async () =>
         fakeReportWithDispatch({
-          exact_command: "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+          exact_command: "node --import tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
           command_surface: undefined,
         }),
       exec: async () => {
@@ -421,7 +470,7 @@ test("runner refuses non-terminal unsafe command_surface", async () => {
       now: () => new Date("2026-07-15T04:00:02.000Z"),
       reportBuilder: async () =>
         fakeReportWithDispatch({
-          exact_command: "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+          exact_command: "node --import tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
           command_surface: "cursor_agent",
         }),
       exec: async () => {
@@ -469,7 +518,7 @@ test("runner refuses mutation_allowed=true even when allowlisted terminal", asyn
       now: () => new Date("2026-07-15T04:00:04.000Z"),
       reportBuilder: async () =>
         fakeReportWithDispatch({
-          exact_command: "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+          exact_command: "node --import tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
           command_surface: "terminal",
           mutation_allowed: true,
         }),
@@ -518,7 +567,7 @@ test("runner refuses AP demand-selected owner-review (subprocess_calls=0)", asyn
 
 test("runner does not prefer GE sync when NOT_NEEDED; demand_to_coverage terminal executes", async () => {
   const dispatchRunsDir = tempDispatchRunsDir();
-  const demandCmd = "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts";
+  const demandCmd = "node --import tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts";
   let executed: string | null = null;
   try {
     const base = fakeReportWithDispatch({
@@ -564,7 +613,7 @@ test("runner does not prefer GE sync when NOT_NEEDED; demand_to_coverage termina
 test("runner executes allowlisted AP closeout/readiness proof when command_surface=terminal", async () => {
   const dispatchRunsDir = tempDispatchRunsDir();
   const cmd =
-    "npx tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts";
+    "node --import tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts";
   let executed: string | null = null;
   try {
     const base = fakeReportWithDispatch({

@@ -207,7 +207,7 @@ export const BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1 =
 export const BATCH_PRODUCTION_DISPATCH_RUNS_DIR_REL_V1 = "data/command-center/dispatch-runs" as const;
 
 export const BATCH_PRODUCTION_DEMAND_TO_COVERAGE_NEXT_LANE_COMMAND_V1 =
-  "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts" as const;
+  "node --import tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts" as const;
 
 export const BATCH_PRODUCTION_CLOSED_RUN_NOTE_SPENT_PLAN_V1 =
   "Closed batch: plan spent because it already applied." as const;

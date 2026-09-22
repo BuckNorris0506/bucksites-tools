@@ -90,7 +90,7 @@ export const DISPATCH_ALLOWLIST_ENTRIES_V1: readonly DispatchAllowlistEntryV1[] 
     mutation_posture: MUTATION_POSTURE,
   },
   {
-    exact_command: "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+    exact_command: "node --import tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
     selected_subsystem: "steering:demand_to_coverage",
     command_kind: "read_only_report",
     owner_review_required: false,
@@ -109,7 +109,7 @@ export const DISPATCH_ALLOWLIST_ENTRIES_V1: readonly DispatchAllowlistEntryV1[] 
   },
   {
     exact_command:
-      "npx tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts",
+      "node --import tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts",
     selected_subsystem: "proof:ap_closeout_readiness",
     command_kind: "read_only_report",
     owner_review_required: false,

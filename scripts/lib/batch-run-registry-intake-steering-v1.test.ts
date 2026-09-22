@@ -18,7 +18,7 @@ function dispatchFixture(): BatchProductionOperatingDispatchV1 {
     current_stage_id: null,
     next_stage_id: "lane_selected",
     selected_subsystem: "demand_to_coverage_next_lane",
-    exact_command: "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+    exact_command: "node --import tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
     command_surface: "cursor_agent",
     allowed_mutations: ["batch_planning_read_only"],
     forbidden_mutations: ["csv_apply"],

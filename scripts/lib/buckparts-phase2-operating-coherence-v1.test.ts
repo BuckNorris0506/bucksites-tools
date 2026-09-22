@@ -42,9 +42,9 @@ import {
 import { BUCKPARTS_FRIDGE_MODEL_PDP_GE_MWFP_XWFE_RETAILER_LINKS_SUPABASE_SYNC_OWNER_APPROVAL_JSON_REL_V1 } from "./buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-owner-approval-v1";
 import { parseBuckpartsCommandCenterDispatchArgvV1 } from "../run-buckparts-command-center-dispatch-v1";
 
-const DEMAND_CMD = "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts";
+const DEMAND_CMD = "node --import tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts";
 const CLOSEOUT_CMD =
-  "npx tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts";
+  "node --import tsx scripts/report-air-purifier-demand-selected-batch-closeout-readiness-proof-v1.ts";
 const ROOT = process.cwd();
 const PARITY_REL =
   "data/fridge/batch-production/drafts/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-parity-v1.json";
@@ -1472,8 +1472,9 @@ test("AP owner-review metadata present", () => {
 
 test("CLI rejects resume+no-artifact", () => {
   const res = spawnSync(
-    "npx",
+    "node",
     [
+      "--import",
       "tsx",
       "scripts/run-buckparts-command-center-dispatch-v1.ts",
       "--no-artifact",
