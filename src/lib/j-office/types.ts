@@ -54,12 +54,55 @@ export type FunnelRecord = {
 
 export type FounderAction = {
   action: string;
+  title?: string | null;
+  exact_action?: string | null;
   recommendation?: string | null;
   evidence?: string | null;
   deadline?: string | null;
+  deadline_display?: string | null;
+  why_only_jared?: string | null;
   economic_consequence?: string | null;
   consequence_of_doing_nothing?: string | null;
   what_j_resumes_afterward?: string | null;
+  j_has_done_everything_else?: boolean;
+  interrupt_id?: string | null;
+  business_id?: string | null;
+};
+
+export type OfficeChangedItem = {
+  happened?: string | null;
+  why_it_matters?: string | null;
+  next?: string | null;
+  when?: string | null;
+  kind?: string | null;
+  business_id?: string | null;
+};
+
+export type OfficeBrief = {
+  primary_status?: string | null;
+  needs_jared_count?: number;
+  needs_jared?: FounderAction[];
+  active_projects?: Array<Record<string, unknown>>;
+  j_is_working?: Record<string, unknown>;
+  what_changed?: OfficeChangedItem[];
+  money?: Record<string, unknown> & {
+    settled?: EconValue;
+    pending?: EconValue;
+    spend?: EconValue;
+    business_spend?: EconValue;
+    model_cost?: EconValue;
+    model_cost_today?: EconValue;
+    model_cost_provenance?: Record<string, unknown>;
+    amazon_line?: string | null;
+    gsc_line?: string | null;
+    amazon_stale_note?: string | null;
+    clicks_are_not_revenue?: boolean;
+  };
+  learning?: Array<Record<string, unknown>>;
+  autonomy?: Record<string, unknown>;
+  system?: Record<string, unknown>;
+  named_freshness?: string[];
+  gsc_settled_note?: string | null;
 };
 
 export type Obligation = {
@@ -136,6 +179,7 @@ export type FounderOperatingPicture = {
   open_obligations: Obligation[];
   needs_jared: FounderAction[];
   needs_jared_empty?: boolean;
+  office_brief?: OfficeBrief;
   what_changed: ChangedItem[];
   results_learning: LearningItem[];
   if_jared_disappears_24h: Record<string, unknown>;

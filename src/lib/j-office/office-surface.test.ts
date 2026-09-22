@@ -72,11 +72,13 @@ test("UNKNOWN is not coerced to zero", () => {
   assert.equal(amazon.amazon.earnings_shown_usd.is_zero, true);
 });
 
-test("stale and conflict states are visible in the projection and UI", () => {
+test("stale facts are named near the relevant data, not as a global badge", () => {
   const picture = loadFounderOperatingPicture();
   const viewSrc = read("src/app/office/JOfficeView.tsx");
-  assert.match(viewSrc, /STALE \/ UNSETTLED/);
-  assert.match(viewSrc, /CONFLICT/);
+  assert.equal(viewSrc.includes("STALE / UNSETTLED"), false);
+  assert.equal(viewSrc.includes("NO CONFLICT"), false);
+  assert.match(viewSrc, /amazon_stale_note/);
+  assert.match(viewSrc, /deskcrew_stale_note/);
   assert.ok(picture.freshness?.gsc_unsettled_warning);
   assert.ok(Array.isArray(picture.economic_outlook.conflicts));
 });
@@ -108,14 +110,42 @@ test("queue order is the J projection order", () => {
   assert.match(viewSrc, /next_queue/);
 });
 
-test("NEEDS JARED contains only genuine founder actions", () => {
+test("NEEDS JARED omits an empty card and only shows genuine founder actions", () => {
   const picture = loadFounderOperatingPicture();
   for (const item of picture.needs_jared) {
     assert.ok(item.action);
     assert.notEqual(item.action, "NONE");
   }
   const viewSrc = read("src/app/office/JOfficeView.tsx");
-  assert.match(viewSrc, /NEEDS JARED Nothing/);
+  assert.match(viewSrc, /needs\.length > 0/);
+  assert.equal(viewSrc.includes("NEEDS JARED Nothing"), false);
+  assert.match(viewSrc, /NEEDS YOU/);
+});
+
+test("CALL-E waiting-external stays in Details when NEEDS YOU already has it", () => {
+  const viewSrc = read("src/app/office/JOfficeView.tsx");
+  assert.match(viewSrc, /waitingExternalDuplicatesNeed/);
+  assert.match(viewSrc, /hideWaitingPrimary/);
+  assert.match(viewSrc, /Heartbeat observation/);
+});
+
+test("primary founder status is not J IS WORKING and RUNNING is not treated as success", () => {
+  const viewSrc = read("src/app/office/JOfficeView.tsx");
+  assert.equal(viewSrc.includes(">J IS WORKING<"), false);
+  assert.match(viewSrc, /primary_status/);
+  assert.match(viewSrc, /ACTIVE PROJECTS/);
+  assert.match(viewSrc, /Configured cadence/);
+  assert.match(viewSrc, /Effective runtime/);
+  assert.match(viewSrc, /J autonomous model spend/);
+  assert.match(viewSrc, /model_cost_provenance/);
+  assert.equal(viewSrc.includes("/running|ok/i"), false);
+});
+
+test("WHAT CHANGED does not dump duplicate Learned copies", () => {
+  const viewSrc = read("src/app/office/JOfficeView.tsx");
+  assert.equal(viewSrc.includes("className=\"jo-learn\""), false);
+  assert.equal(viewSrc.includes("Learned: {text(row.text)}"), false);
+  assert.match(viewSrc, /WHAT CHANGED/);
 });
 
 test("business isolation hides BuckParts channel facts outside BuckParts scope", () => {
@@ -129,6 +159,8 @@ test("business isolation hides BuckParts channel facts outside BuckParts scope",
   );
   const deskcrewBlob = JSON.stringify(deskcrew.economic_outlook);
   assert.equal(deskcrewBlob.includes("449"), false);
+  assert.equal(deskcrew.office_brief?.money?.gsc_line, undefined);
+  assert.equal(deskcrew.office_brief?.money?.amazon_line, undefined);
   assert.equal(deskcrew.economic_outlook.outlook_truth?.proven?.length ?? 0, 0);
   assert.equal(
     (deskcrew.results_learning ?? []).some((row) =>
@@ -169,7 +201,8 @@ test("Mac desktop CSS uses a grid and does not collapse core sections", () => {
   const css = read("src/app/office/office.css");
   assert.match(css, /@media \(min-width: 1024px\)/);
   assert.match(css, /grid-template-areas:/);
-  assert.match(css, /outlook needs/);
+  assert.match(css, /needs needs/);
+  assert.match(css, /now money/);
   const viewSrc = read("src/app/office/JOfficeView.tsx");
   assert.match(viewSrc, /className="jo-panel jo-outlook"/);
   assert.match(viewSrc, /className="jo-panel jo-now"/);
@@ -179,11 +212,12 @@ test("Mac desktop CSS uses a grid and does not collapse core sections", () => {
   assert.equal(viewSrc.includes("<details className=\"jo-panel jo-needs\""), false);
 });
 
-test("narrow viewport stacks outlook, now, needs first without horizontal scroll", () => {
+test("narrow viewport stacks needs, now, changed, money first without horizontal scroll", () => {
   const css = read("src/app/office/office.css");
-  assert.match(css, /\.jo-outlook \{ order: 1; \}/);
+  assert.match(css, /\.jo-needs \{ order: 1; \}/);
   assert.match(css, /\.jo-now \{ order: 2; \}/);
-  assert.match(css, /\.jo-needs \{ order: 3; \}/);
+  assert.match(css, /\.jo-changed \{ order: 3; \}/);
+  assert.match(css, /\.jo-outlook \{ order: 4; \}/);
   assert.match(css, /overflow-x: hidden/);
   assert.match(css, /flex-direction: column/);
 });

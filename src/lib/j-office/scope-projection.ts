@@ -70,13 +70,47 @@ export function scopeFounderOperatingPicture(
   }
 
   const nowBusiness = String(picture.now.business ?? "").toLowerCase();
+  const liveIsJWide = nowBusiness.includes("j-wide") || nowBusiness === "";
   const nowInScope =
+    liveIsJWide ||
     nowBusiness.includes(scopeId) ||
     (scopeId === "buckparts" && nowBusiness.includes("buckparts"));
+
+  const sourceBrief = picture.office_brief;
+  const officeBrief = sourceBrief
+    ? {
+        ...sourceBrief,
+        needs_jared: (sourceBrief.needs_jared ?? []).filter((row) => {
+          const bid = (row as { business_id?: string | null }).business_id;
+          return bid ? belongsToScope(bid, scopeId) : true;
+        }),
+        what_changed: (sourceBrief.what_changed ?? []).filter(
+          (row) => !row.business_id || belongsToScope(row.business_id, scopeId),
+        ),
+        gsc_settled_note: scopeId === "buckparts" ? sourceBrief.gsc_settled_note : undefined,
+        named_freshness: (sourceBrief.named_freshness ?? []).filter((note) =>
+          scopeId === "buckparts" ? true : !/amazon|gsc|google/i.test(note),
+        ),
+        money:
+          scopeId === "buckparts"
+            ? sourceBrief.money
+            : {
+                ...sourceBrief.money,
+                amazon_line: undefined,
+                gsc_line: undefined,
+                amazon_stale_note: undefined,
+              },
+        active_projects: (sourceBrief.active_projects ?? []).filter((row) => {
+          const bid = (row as { business_id?: string | null }).business_id;
+          return bid ? belongsToScope(bid, scopeId) : true;
+        }),
+      }
+    : sourceBrief;
 
   return {
     ...picture,
     economic_outlook: outlook,
+    office_brief: officeBrief,
     now: nowInScope
       ? picture.now
       : {

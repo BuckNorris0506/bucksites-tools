@@ -5,7 +5,9 @@ import { useMemo, useState } from "react";
 import { scopeFounderOperatingPicture } from "@/lib/j-office/scope-projection";
 import type {
   EconValue,
+  FounderAction,
   FounderOperatingPicture,
+  OfficeBrief,
 } from "@/lib/j-office/types";
 
 function asEcon(value: unknown): EconValue | null {
@@ -40,17 +42,49 @@ function text(value: unknown, fallback = "UNKNOWN"): string {
   return String(value);
 }
 
-function Chip({ value }: { value: unknown }) {
+function formatUpdated(value: unknown): string {
+  const raw = text(value, "");
+  if (!raw) return "UNKNOWN";
+  const parsed = new Date(raw);
+  if (Number.isNaN(parsed.getTime())) return raw;
+  return parsed.toLocaleString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function Chip({ value, tone }: { value: unknown; tone?: "need" | "ok" | "warn" }) {
   const label = text(value, "");
   if (!label) return null;
-  const tone = label.toLowerCase();
   const cls =
-    tone.includes("need") || tone === "blocked"
+    tone === "need" || /need|blocked/i.test(label)
       ? "jo-chip jo-chip-need"
-      : tone.includes("stale") || tone.includes("conflict")
-        ? "jo-chip jo-chip-warn"
-        : "jo-chip";
+      : tone === "ok"
+        ? "jo-chip jo-chip-ok"
+        : tone === "warn"
+          ? "jo-chip jo-chip-warn"
+          : "jo-chip";
   return <span className={cls}>{label}</span>;
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" ? (value as Record<string, unknown>) : {};
+}
+
+function waitingExternalDuplicatesNeed(
+  needs: FounderAction[],
+  waiting: Record<string, unknown>,
+): boolean {
+  const waitBlob = `${text(waiting.label, "")} ${text(waiting.detail, "")}`.toLowerCase();
+  if (!waitBlob.trim()) return false;
+  return needs.some((item) => {
+    const hay = `${item.title ?? ""} ${item.action ?? ""} ${item.exact_action ?? ""}`.toLowerCase();
+    const needIsCalle = /call-e|calle|recording/.test(hay);
+    const waitIsCalle = /call-e|calle|recording|not a founder interrupt|quiet observation/.test(
+      waitBlob,
+    );
+    return needIsCalle && waitIsCalle;
+  });
 }
 
 export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
@@ -63,7 +97,25 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
     [picture, scopeId],
   );
 
+  const brief: OfficeBrief = view.office_brief ?? {};
   const outlook = view.economic_outlook;
+  const working = asRecord(brief.j_is_working ?? view.now);
+  const needs: FounderAction[] = (brief.needs_jared ?? view.needs_jared ?? []).filter(
+    (item) => item.action && item.action !== "NONE",
+  );
+  const changed = (brief.what_changed ?? []).length
+    ? brief.what_changed ?? []
+    : (view.what_changed ?? []).slice(0, 5).map((row) => ({
+        happened: row.title,
+        why_it_matters: row.detail,
+        next: "Preserved as history.",
+        when: row.when,
+        kind: row.kind,
+      }));
+  const money = asRecord(brief.money);
+  const autonomy = asRecord(brief.autonomy);
+  const system = asRecord(brief.system);
+  const running = text(system.running_label ?? view.now.operating_state, "UNKNOWN");
   const amazon =
     outlook.buckparts && typeof outlook.buckparts === "object"
       ? (outlook.buckparts as { amazon?: Record<string, unknown>; gsc?: Record<string, unknown> })
@@ -74,35 +126,38 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
       ? (outlook.buckparts as { amazon?: Record<string, unknown>; gsc?: Record<string, unknown> })
           .gsc
       : undefined;
-  const freshness = view.freshness ?? {};
-  const conflicts = Array.isArray(outlook.conflicts) ? outlook.conflicts : [];
-  const stale =
-    Boolean(freshness.amazon_stale) ||
-    Boolean(freshness.gsc_stale) ||
-    Boolean(freshness.gsc_unsettled_warning);
-  const needs = view.needs_jared ?? [];
-  const now = view.now;
-  const disappear = view.if_jared_disappears_24h ?? {};
-  const counts = view.funnel.counts ?? {};
   const truth = outlook.outlook_truth ?? {};
+  const waitingExternal = asRecord(working.waiting_external);
+  const hideWaitingPrimary = waitingExternalDuplicatesNeed(needs, waitingExternal);
+  const details = asRecord(working.details);
+  const conflicts = Array.isArray(outlook.conflicts) ? outlook.conflicts : [];
+  const projects = Array.isArray(brief.active_projects)
+    ? (brief.active_projects as Array<Record<string, unknown>>)
+    : [];
+  const provenance = asRecord(money.model_cost_provenance);
+  const primary = text(
+    brief.primary_status ?? system.primary_status,
+    needs.length > 0 ? "FOUNDER DECISION NEEDED" : "UNKNOWN",
+  );
+  const primaryTone: "need" | "ok" | "warn" | undefined = /FOUNDER DECISION|SYSTEM PROBLEM|BLOCKED/.test(
+    primary,
+  )
+    ? "need"
+    : /PAUSED/.test(primary)
+      ? "warn"
+      : /ALL GOOD/.test(primary)
+        ? "ok"
+        : undefined;
 
   return (
     <div className="j-office">
       <header className="jo-strip">
-        <div className="jo-brand">J Office</div>
-        <div className="jo-meta">generated_at {text(view.generated_at)}</div>
-        <span className={stale ? "jo-chip jo-chip-warn" : "jo-chip jo-chip-ok"}>
-          {stale ? "STALE / UNSETTLED" : "CURRENT"}
-        </span>
-        {conflicts.length > 0 ? (
-          <span className="jo-chip jo-chip-warn">CONFLICT</span>
-        ) : (
-          <span className="jo-chip">NO CONFLICT</span>
-        )}
-        <Chip value={now.operating_state ?? outlook.envelope_state} />
-        <span className={needs.length ? "jo-chip jo-chip-need" : "jo-chip jo-chip-ok"}>
-          {needs.length ? `NEEDS JARED · ${needs.length}` : "NEEDS JARED · Nothing"}
-        </span>
+        <div className="jo-brand">J OFFICE</div>
+        <Chip value={primary} tone={primaryTone} />
+        <div className="jo-meta">updated {formatUpdated(system.updated_at ?? view.generated_at)}</div>
+        {needs.length > 0 ? (
+          <span className="jo-chip jo-chip-need">NEEDS JARED · {needs.length}</span>
+        ) : null}
       </header>
 
       {scopes.length > 1 ? (
@@ -121,98 +176,163 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
       ) : null}
 
       <div className="jo-grid">
+        <section className="jo-panel jo-now">
+          <h2>{primary}</h2>
+          <p className="jo-kicker">{text(working.current_action ?? view.now.current_action)}</p>
+          <p className="jo-next">Next: {text(working.next ?? view.now.next_action)}</p>
+        </section>
+
+        {needs.length > 0 ? (
+          <section className="jo-panel jo-needs">
+            <h2>NEEDS YOU · {needs.length}</h2>
+            {needs.map((item) => (
+              <article className="jo-hero" key={item.interrupt_id ?? item.action}>
+                <h3>{text(item.title ?? item.action)}</h3>
+                {item.deadline_display ? (
+                  <p className="jo-deadline">{item.deadline_display}</p>
+                ) : null}
+                {item.j_has_done_everything_else ? (
+                  <p className="jo-kicker">J has completed everything else it can do.</p>
+                ) : null}
+                <p className="jo-action">{text(item.exact_action ?? item.action)}</p>
+                <details className="jo-secondary">
+                  <summary>Why this needs you</summary>
+                  <p className="jo-note">{text(item.why_only_jared)}</p>
+                  <p className="jo-note">
+                    If nothing: {text(item.consequence_of_doing_nothing)}
+                  </p>
+                </details>
+                <details className="jo-secondary">
+                  <summary>What J resumes afterward</summary>
+                  <p className="jo-note">{text(item.what_j_resumes_afterward)}</p>
+                  <p className="jo-note">Evidence ref: {text(item.evidence)}</p>
+                  <p className="jo-note">Deadline: {text(item.deadline)}</p>
+                </details>
+              </article>
+            ))}
+          </section>
+        ) : null}
+
+        {projects.length > 0 ? (
+          <section className="jo-panel jo-projects">
+            <h2>ACTIVE PROJECTS</h2>
+            {projects.map((row) => (
+              <article className="jo-row" key={text(row.id ?? row.name)}>
+                <h3>{text(row.name)}</h3>
+                <p className="jo-status">{text(row.status)}</p>
+                <p className="jo-next">Next: {text(row.next)}</p>
+              </article>
+            ))}
+          </section>
+        ) : null}
+
+        {changed.length > 0 ? (
+          <section className="jo-panel jo-changed">
+            <h2>WHAT CHANGED</h2>
+            {changed.map((row) => (
+              <article className="jo-row" key={`${row.happened}-${row.when}`}>
+                <h3>{text(row.happened)}</h3>
+                <p className="jo-note">{text(row.why_it_matters)}</p>
+                <p className="jo-next">Next: {text(row.next)}</p>
+              </article>
+            ))}
+          </section>
+        ) : null}
+
         <section className="jo-panel jo-outlook">
-          <h2>Economic Outlook</h2>
+          <h2>MONEY</h2>
           <dl className="jo-facts">
             <div>
-              <dt>AUTHORIZED_CAPITAL_USD</dt>
+              <dt>Settled revenue</dt>
               <dd>
-                <Econ value={outlook.AUTHORIZED_CAPITAL_USD} />
+                <Econ value={money.settled ?? outlook.SETTLED_REVENUE_USD} />
               </dd>
             </div>
             <div>
-              <dt>CASH_AVAILABLE_USD</dt>
+              <dt>Proven pending revenue</dt>
               <dd>
-                <Econ value={outlook.CASH_AVAILABLE_USD} />
+                <Econ value={money.pending ?? outlook.PENDING_REVENUE_USD} />
               </dd>
             </div>
             <div>
-              <dt>CASH_COMMITTED_USD</dt>
+              <dt>Business spend</dt>
               <dd>
-                <Econ value={outlook.CASH_COMMITTED_USD} />
+                <Econ value={money.business_spend ?? money.spend ?? outlook.CASH_SPENT_USD} />
               </dd>
             </div>
             <div>
-              <dt>CASH_SPENT_USD</dt>
+              <dt>J autonomous model spend</dt>
               <dd>
-                <Econ value={outlook.CASH_SPENT_USD} />
-              </dd>
-            </div>
-            <div>
-              <dt>SETTLED_REVENUE_USD</dt>
-              <dd>
-                <Econ value={outlook.SETTLED_REVENUE_USD} />
-              </dd>
-            </div>
-            <div>
-              <dt>PENDING_REVENUE_USD</dt>
-              <dd>
-                <Econ value={outlook.PENDING_REVENUE_USD} />
-              </dd>
-            </div>
-            <div>
-              <dt>SETTLED_PROFIT_USD</dt>
-              <dd>
-                <Econ value={outlook.SETTLED_PROFIT_USD} />
-              </dd>
-            </div>
-            <div>
-              <dt>Envelope</dt>
-              <dd>{text(outlook.envelope_state)}</dd>
-            </div>
-            <div>
-              <dt>Model cost</dt>
-              <dd>
-                <Econ value={outlook.model_research_cost_usd} />
+                <Econ value={money.model_cost ?? outlook.model_research_cost_usd} />
               </dd>
             </div>
           </dl>
-          {amazon ? (
+          {text(provenance.note, "") ? (
             <p className="jo-note">
-              BuckParts Amazon: <Econ value={amazon.clicks} /> clicks,{" "}
-              <Econ value={amazon.ordered_items} /> ordered,{" "}
-              <Econ value={amazon.shipped_items} /> shipped,{" "}
-              <Econ value={amazon.earnings_shown_usd} /> earnings shown,
-              settlement <Econ value={amazon.settlement_status} />. Dashboard last
-              updated {text(amazon.dashboard_last_updated)}. Clicks are not revenue.
-              Not attributed to Google ({text(amazon.google_search_attribution)}).
+              Model-cost provenance: {text(provenance.cost_type)} · {text(provenance.kind)}.{" "}
+              {text(provenance.note)}
             </p>
           ) : null}
-          {gsc ? (
-            <p className="jo-note">
-              BuckParts GSC {text(gsc.property)}: <Econ value={gsc.clicks} /> clicks,{" "}
-              <Econ value={gsc.impressions} /> impressions, settled through{" "}
-              {text(gsc.settled_through)}. Impressions/clicks are not revenue.
-            </p>
+          {text(money.amazon_line, "") ? <p className="jo-note">{text(money.amazon_line)}</p> : null}
+          {text(money.amazon_stale_note, "") ? (
+            <p className="jo-note jo-stale">{text(money.amazon_stale_note)}</p>
           ) : null}
-          <p className="jo-note">{text(outlook.next_event_that_could_change_economics)}</p>
-          {stale ? (
-            <p className="jo-note jo-unknown">{text(freshness.gsc_unsettled_warning, "Stale evidence.")}</p>
-          ) : null}
-          {conflicts.length > 0 ? (
-            <p className="jo-note jo-unknown">CONFLICT: {conflicts.join(" | ")}</p>
+          {text(money.gsc_line, "") ? <p className="jo-note">{text(money.gsc_line)}</p> : null}
+          {typeof money.verified_failure_count === "number" ? (
+            <p className="jo-note">Verified economic failures: {text(money.verified_failure_count)}</p>
           ) : null}
           <details className="jo-secondary">
-            <summary>Proven / inferred / UNKNOWN</summary>
+            <summary>Channel and envelope details</summary>
+            <dl className="jo-facts">
+              <div>
+                <dt>AUTHORIZED_CAPITAL_USD</dt>
+                <dd>
+                  <Econ value={outlook.AUTHORIZED_CAPITAL_USD} />
+                </dd>
+              </div>
+              <div>
+                <dt>CASH_AVAILABLE_USD</dt>
+                <dd>
+                  <Econ value={outlook.CASH_AVAILABLE_USD} />
+                </dd>
+              </div>
+              <div>
+                <dt>CASH_COMMITTED_USD</dt>
+                <dd>
+                  <Econ value={outlook.CASH_COMMITTED_USD} />
+                </dd>
+              </div>
+              <div>
+                <dt>SETTLED_PROFIT_USD</dt>
+                <dd>
+                  <Econ value={outlook.SETTLED_PROFIT_USD} />
+                </dd>
+              </div>
+              <div>
+                <dt>Model spend today</dt>
+                <dd>
+                  <Econ value={money.model_cost_today} />
+                </dd>
+              </div>
+            </dl>
+            {amazon ? (
+              <p className="jo-note">
+                BuckParts Amazon settlement {text(amazon.settlement_status)}. Clicks are not
+                revenue. Not attributed to Google ({text(amazon.google_search_attribution)}).
+              </p>
+            ) : null}
+            {gsc ? (
+              <p className="jo-note">
+                GSC {text(gsc.property)} unsettled from {text(gsc.unsettled_from)}. Impressions
+                and clicks are not revenue.
+              </p>
+            ) : null}
+            {conflicts.length > 0 ? (
+              <p className="jo-note">Conflict: {conflicts.join(" | ")}</p>
+            ) : null}
             <p className="jo-note">Proven</p>
             <ul className="jo-list">
               {(truth.proven ?? []).map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-            <p className="jo-note">Inferred</p>
-            <ul className="jo-list">
-              {(truth.inferred ?? []).map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
@@ -225,81 +345,66 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
           </details>
         </section>
 
-        <section className="jo-panel jo-now">
-          <h2>J is working on</h2>
-          <h3>{text(now.identity, "None.")}</h3>
-          {now.empty_slot ? <p className="jo-note">{text(now.empty_slot_response)}</p> : null}
-          <dl className="jo-facts">
-            <div>
-              <dt>Business</dt>
-              <dd>{text(now.business)}</dd>
-            </div>
-            <div>
-              <dt>Why selected</dt>
-              <dd>{text(now.why_selected)}</dd>
-            </div>
-            <div>
-              <dt>State</dt>
-              <dd>{text(now.state)}</dd>
-            </div>
-            <div>
-              <dt>Constraint</dt>
-              <dd>
-                {text(
-                  now.constraint && typeof now.constraint === "object"
-                    ? (now.constraint as { objective_constraint?: string }).objective_constraint
-                    : null,
-                )}
-              </dd>
-            </div>
-            <div>
-              <dt>Next action</dt>
-              <dd>{text(now.next_action)}</dd>
-            </div>
-            <div>
-              <dt>Next external milestone</dt>
-              <dd>{text(now.next_external_milestone)}</dd>
-            </div>
-            <div>
-              <dt>Economic relevance</dt>
-              <dd>{text(now.economic_relevance)}</dd>
-            </div>
-            <div>
-              <dt>Jared required</dt>
-              <dd>{now.founder_action_required ? "YES" : "NO"}</dd>
-            </div>
-            <div>
-              <dt>Without Jared</dt>
-              <dd>{text(now.what_j_can_do_without_jared)}</dd>
-            </div>
-          </dl>
+        <section className="jo-panel jo-system">
+          <h2>SYSTEM</h2>
+          <p className="jo-note">
+            Configured cadence: {text(autonomy.heartbeat_configured_cadence, "hourly")}
+          </p>
+          <p className="jo-note">
+            Effective runtime:{" "}
+            {text(autonomy.heartbeat_effective_runtime ?? autonomy.heartbeat, "UNKNOWN")}
+          </p>
+          <p className="jo-note">DeskCrew: {text(autonomy.deskcrew, "UNKNOWN")}</p>
+          <p className="jo-note">
+            Spend authority: <Econ value={autonomy.spend_authority ?? outlook.AUTHORIZED_CAPITAL_USD} />
+          </p>
+          <p className="jo-quiet">
+            {autonomy.will_keep_deciding_while_away
+              ? "J can keep deciding while you are away."
+              : "Autonomous wake will not fire while the LaunchAgent is paused or disabled."}
+          </p>
+          <details className="jo-secondary">
+            <summary>Details</summary>
+            <p className="jo-note">Emergency stop: {text(running)}</p>
+            <p className="jo-note">Current autonomous lane: {text(autonomy.current_lane)}</p>
+            <p className="jo-note">
+              Configured scheduler_enabled: {text(autonomy.heartbeat_configured_scheduler_enabled)}
+            </p>
+            <p className="jo-note">Loaded: {text(autonomy.heartbeat_loaded)}</p>
+            <p className="jo-note">Disabled: {text(autonomy.heartbeat_disabled)}</p>
+            {text(autonomy.deskcrew_stale_note, "") ? (
+              <p className="jo-note jo-stale">{text(autonomy.deskcrew_stale_note)}</p>
+            ) : null}
+            <p className="jo-note">Objective: {text(working.objective ?? view.now.why_selected)}</p>
+            <p className="jo-note">Capacity: {text(details.capacity_state ?? view.now.concurrency)}</p>
+            <p className="jo-note">Last GET-only: {text(details.last_get_only_result)}</p>
+            <p className="jo-note">Packet: {text(details.get_only_packet_id)}</p>
+            <p className="jo-note">Closure: {text(details.terminal_closure)}</p>
+            <p className="jo-note">Heartbeat: {text(details.heartbeat_run_id)}</p>
+            <p className="jo-note">Heartbeat outcome: {text(details.heartbeat_outcome)}</p>
+            <p className="jo-note">Unattended: {text(details.unattended_outcome)}</p>
+            {working.conflict_with_recorded_work_item ? (
+              <p className="jo-note">
+                Recorded work item (not live primary): {text(working.recorded_work_item)}{" "}
+                ({text(working.recorded_work_item_set_at)})
+              </p>
+            ) : null}
+            {hideWaitingPrimary && waitingExternal.label ? (
+              <p className="jo-note">
+                Heartbeat observation: {text(waitingExternal.label)} —{" "}
+                {text(waitingExternal.detail)}
+              </p>
+            ) : null}
+            {waitingExternal.label && !hideWaitingPrimary ? (
+              <p className="jo-note">
+                {text(waitingExternal.label)} — {text(waitingExternal.detail)}
+              </p>
+            ) : null}
+          </details>
         </section>
 
-        <section className="jo-panel jo-needs">
-          <h2>Needs Jared</h2>
-          {needs.length === 0 ? (
-            <p className="jo-empty">NEEDS JARED Nothing.</p>
-          ) : (
-            needs.map((item) => (
-              <article className="jo-row" key={item.action}>
-                <h3>{item.action}</h3>
-                <p className="jo-note">J recommendation: {text(item.recommendation)}</p>
-                <p className="jo-note">Evidence: {text(item.evidence)}</p>
-                <p className="jo-note">Deadline: {text(item.deadline)}</p>
-                <p className="jo-note">
-                  Economic consequence: {text(item.economic_consequence)}
-                </p>
-                <p className="jo-note">
-                  If nothing: {text(item.consequence_of_doing_nothing)}
-                </p>
-                <p className="jo-note">Then J resumes: {text(item.what_j_resumes_afterward)}</p>
-              </article>
-            ))
-          )}
-        </section>
-
-        <section className="jo-panel jo-queue">
-          <h2>Next / Queue</h2>
+        <details className="jo-panel jo-queue">
+          <summary>Next / Queue</summary>
           {(view.next_queue ?? []).slice(0, 5).map((row) => (
             <article className="jo-row" key={row.id ?? row.item}>
               <h3>
@@ -310,16 +415,12 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
               </p>
               <p className="jo-note">Why behind NOW: {text(row.why_behind_now)}</p>
               <p className="jo-note">Blocker: {text(row.blocker)}</p>
-              <p className="jo-note">
-                Promote: {text(row.promote)} · Kill: {text(row.kill)} · Defer:{" "}
-                {text(row.defer)}
-              </p>
             </article>
           ))}
-        </section>
+        </details>
 
-        <section className="jo-panel jo-obligations">
-          <h2>Open obligations / risks</h2>
+        <details className="jo-panel jo-obligations">
+          <summary>Open obligations / risks</summary>
           {(view.open_obligations ?? []).length === 0 ? (
             <p className="jo-note">None recorded.</p>
           ) : (
@@ -332,106 +433,53 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
               ))}
             </ul>
           )}
-        </section>
+        </details>
 
-        <section className="jo-panel jo-disappear">
-          <h2>If Jared disappears 24h</h2>
-          <p className="jo-note">J WILL</p>
+        <details className="jo-panel jo-disappear">
+          <summary>If Jared disappears 24h</summary>
           <ul className="jo-list">
-            {((disappear.what_j_will_continue_doing as string[]) ?? []).map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-          <p className="jo-note">J WILL MONITOR</p>
-          <ul className="jo-list">
-            {((disappear.what_j_will_monitor as string[]) ?? []).map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-          <p className="jo-note">J WILL NOT</p>
-          <ul className="jo-list">
-            {(
-              (disappear.what_j_will_not_do_for_missing_authority as string[]) ?? []
-            ).map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-          <p className="jo-note">WILL WAIT</p>
-          <ul className="jo-list">
-            {((disappear.what_will_wait as string[]) ?? []).map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-          <p className="jo-note">TIME-SENSITIVE</p>
-          <ul className="jo-list">
-            {((disappear.what_could_become_time_sensitive as Array<Record<string, unknown>>) ?? []).map(
+            {((view.if_jared_disappears_24h?.what_j_will_continue_doing as string[]) ?? []).map(
               (item) => (
-                <li key={String(item.item)}>
-                  {text(item.item)} · {text(item.at)}
-                </li>
+                <li key={item}>{item}</li>
               ),
             )}
           </ul>
-        </section>
+        </details>
 
-        <section className="jo-panel jo-funnel">
-          <h2>Opportunity funnel</h2>
+        <details className="jo-panel jo-funnel">
+          <summary>Opportunity funnel</summary>
           <dl className="jo-facts">
-            {Object.entries(counts).map(([key, value]) => (
+            {Object.entries(view.funnel.counts ?? {}).map(([key, value]) => (
               <div key={key}>
                 <dt>{key}</dt>
                 <dd>{value}</dd>
               </div>
             ))}
           </dl>
-          <p className="jo-note">{text(view.funnel.semantics, "")}</p>
-        </section>
+        </details>
 
-        <section className="jo-panel jo-stuck">
-          <h2>Passed early / stuck later</h2>
+        <details className="jo-panel jo-stuck">
+          <summary>Passed early / stuck later</summary>
           {(view.funnel.stuck_after_first_filter ?? []).map((row) => (
             <article className="jo-row" key={row.id ?? row.name}>
               <h3>{row.name}</h3>
               <p className="jo-note">Highest stage: {text(row.stage_reached)}</p>
               <p className="jo-note">Why stopped: {text(row.blocker)}</p>
-              <p className="jo-note">Permanent vs revisitable: {text(row.permanence)}</p>
-              <p className="jo-note">
-                New evidence to reopen: {text(row.evidence_missing, "None recorded.")}
-              </p>
             </article>
           ))}
-        </section>
+        </details>
 
-        <section className="jo-panel jo-changed">
-          <h2>What changed</h2>
-          {(view.what_changed ?? []).map((row) => (
-            <article className="jo-row" key={`${row.title}-${row.when}`}>
-              <h3>{text(row.title)}</h3>
-              <p className="jo-note">
-                {text(row.when)} · {text(row.kind, "")}
-              </p>
-              <p className="jo-note">{text(row.detail)}</p>
-            </article>
-          ))}
-        </section>
-
-        <section className="jo-panel jo-learning">
-          <h2>Results / learning</h2>
+        <details className="jo-panel jo-learning">
+          <summary>Historical results / learning</summary>
           {(view.results_learning ?? []).map((row) => (
             <details className="jo-secondary jo-row" key={row.id ?? row.learning}>
               <summary>{text(row.id)}</summary>
               <p className="jo-note">EXPECTED: {text(row.expected)}</p>
               <p className="jo-note">OBSERVED: {text(row.observed)}</p>
-              <p className="jo-note">
-                ECONOMIC CONSEQUENCE: {text(row.economic_consequence)}
-              </p>
               <p className="jo-note">LEARNING: {text(row.learning)}</p>
-              <p className="jo-note">
-                RESULTING DECISION CHANGE: {text(row.resulting_decision_change)}
-              </p>
             </details>
           ))}
-        </section>
+        </details>
       </div>
     </div>
   );
