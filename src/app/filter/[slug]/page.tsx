@@ -71,8 +71,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         : "show_buy",
     hasDemandSignal: null,
   });
-  const title = `${filter.oem_part_number} refrigerator filter`;
-  const description = refrigeratorFilterMetadataDescription(filter.oem_part_number);
+  let title = `${filter.oem_part_number} refrigerator filter`;
+  let description = refrigeratorFilterMetadataDescription(filter.oem_part_number);
+  if (params.slug === "4396710") {
+    title = "Whirlpool 4396710 / 4396710P refrigerator water filter";
+    description =
+      "Whirlpool 4396710 refrigerator water filter (4396710P). Compare this number with your old cartridge, then review compatible models and replacement timing on this page.";
+  }
   const ogTitle = `${filter.oem_part_number} · ${SITE_DISPLAY_NAME}`;
   return {
     title,

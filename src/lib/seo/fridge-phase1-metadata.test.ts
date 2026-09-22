@@ -19,6 +19,25 @@ const PROTECTED_PATHS = [
   "src/app/whole-house-water/page.tsx",
 ];
 
+test("4396710 has a slug-specific metadata override; other fridge filters keep the global title template", () => {
+  const filter = read("src/app/filter/[slug]/page.tsx");
+  const generateMetadata = filter.slice(
+    filter.indexOf("export async function generateMetadata"),
+    filter.indexOf("export default async function FilterPage"),
+  );
+
+  assert.ok(generateMetadata.includes("`${filter.oem_part_number} refrigerator filter`"));
+  assert.ok(generateMetadata.includes("refrigeratorFilterMetadataDescription(filter.oem_part_number)"));
+  assert.ok(generateMetadata.includes('params.slug === "4396710"'));
+  assert.ok(
+    generateMetadata.includes("Whirlpool 4396710 / 4396710P refrigerator water filter"),
+  );
+  assert.ok(generateMetadata.includes("refrigerator water filter (4396710P)"));
+  assert.ok(!/4396508/.test(generateMetadata));
+  assert.ok(!/\b(official|genuine)\b/i.test(generateMetadata));
+  assert.ok(!/\b(asin|amazon)\b/i.test(generateMetadata));
+});
+
 test("fridge Phase 1 pages wire canonical helpers", () => {
   const fridge = read("src/app/fridge/[slug]/page.tsx");
   assert.ok(fridge.includes("canonicalAlternatesForIndexablePath"));
