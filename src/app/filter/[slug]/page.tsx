@@ -43,10 +43,15 @@ import {
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
 import { intervalLabel } from "@/lib/vertical/interval";
+import { DirectPartFitPrompt } from "@/components/search/customer/SearchCustomerExperience";
+import "@/app/search-customer.css";
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: { slug: string } };
+type Props = {
+  params: { slug: string };
+  searchParams: { fromSearch?: string; model?: string };
+};
 
 const FRIDGE_FILTER_BUY_SUPPRESS = BUCKPARTS_VERIFIED_LINK_NONE_YET;
 
@@ -93,9 +98,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function FilterPage({ params }: Props) {
+export default async function FilterPage({ params, searchParams }: Props) {
   const filter = await getFilterBySlug(params.slug);
   if (!filter) notFound();
+
+  const showDirectPartFitPrompt =
+    searchParams.fromSearch === "1" && !searchParams.model?.trim();
 
   const interval = intervalLabel(filter.replacement_interval_months);
   const buyPathSortContext = buyPathSortContextForFilter(
@@ -189,6 +197,12 @@ export default async function FilterPage({ params }: Props) {
           }}
         />
         <FridgeWinnerFamilyRail currentSlug={filter.slug} />
+
+        {showDirectPartFitPrompt ? (
+          <div className="bp-search-customer">
+            <DirectPartFitPrompt partNumber={filter.oem_part_number} />
+          </div>
+        ) : null}
 
         {pdpSafety.filter_page_caution_note ? (
           <div className="rounded-2xl border border-bp-caution/40 bg-bp-caution-soft p-6 text-[15px] leading-relaxed text-bp-caution">

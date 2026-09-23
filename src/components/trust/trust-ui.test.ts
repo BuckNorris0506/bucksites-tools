@@ -217,10 +217,10 @@ describe("public merchant-priority copy guard", () => {
       {
         path: "src/app/search/page.tsx",
         required: [
-          /models, filter numbers, alternates, or pages to compare/i,
-          /check what BuckParts found/i,
-          /compare the part number with your old filter\s+or manual/i,
-          /Parts & filter numbers/i,
+          /resolveCustomerSearchRouteV1/,
+          /SearchResolutionExperience/,
+          /SearchRecoveryExperience/,
+          /fridge model/i,
         ],
       },
     ];
