@@ -8,8 +8,8 @@ import {
   FEATURED_FIT_MODEL_NUMBER,
   FEATURED_FIT_PART_NAME,
   FEATURED_FIT_PART_NUMBER,
-  FEATURED_FIT_PRODUCT_IMAGE_ALT,
-  FEATURED_FIT_PRODUCT_IMAGE_PATH,
+  FEATURED_FIT_ILLUSTRATION_ALT,
+  FEATURED_FIT_ILLUSTRATION_PATH,
 } from "@/lib/homepage/featured-fit-example";
 import {
   HOME_EXAMPLE_QUALIFIER,
@@ -30,11 +30,11 @@ export function RealLookupExample() {
         <div className="bp-home__scene-mat" aria-hidden="true" />
         <p className="bp-home__scene-label">{HOME_SCENE_LABEL}</p>
         <Image
-          className="bp-home__product-photo"
-          src={FEATURED_FIT_PRODUCT_IMAGE_PATH}
-          alt={FEATURED_FIT_PRODUCT_IMAGE_ALT}
-          width={451}
-          height={870}
+          className="bp-home__product-illustration"
+          src={FEATURED_FIT_ILLUSTRATION_PATH}
+          alt={FEATURED_FIT_ILLUSTRATION_ALT}
+          width={200}
+          height={320}
           priority
         />
         <div className="bp-home__model-ticket">

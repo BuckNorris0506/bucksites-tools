@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 320" role="img" aria-labelledby="filterIllustrationTitle">
+  <title id="filterIllustrationTitle">Stylized refrigerator water filter cartridge</title>
+  <!-- Original BuckParts illustration  generic replacement cartridge concept, not a specific OEM product -->
+  <defs>
+    <linearGradient id="filterBody" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e8eef3" />
+      <stop offset="50%" stop-color="#f7f9fc" />
+      <stop offset="100%" stop-color="#d8e2ea" />
+    </linearGradient>
+  </defs>
+  <rect x="52" y="24" width="96" height="272" rx="18" fill="url(#filterBody)" stroke="#142d49" stroke-width="2.5" />
+  <rect x="62" y="34" width="76" height="18" rx="4" fill="#142d49" opacity="0.12" />
+  <rect x="62" y="68" width="76" height="12" rx="3" fill="#142d49" opacity="0.08" />
+  <rect x="62" y="92" width="76" height="12" rx="3" fill="#142d49" opacity="0.08" />
+  <rect x="62" y="116" width="76" height="12" rx="3" fill="#142d49" opacity="0.08" />
+  <rect x="58" y="8" width="84" height="28" rx="10" fill="#f7f9fc" stroke="#142d49" stroke-width="2.5" />
+  <path d="M70 20 h60" stroke="#b94a23" stroke-width="3" stroke-linecap="round" />
+  <ellipse cx="100" cy="268" rx="34" ry="10" fill="#c5d4de" stroke="#142d49" stroke-width="2" />
+  <path d="M66 248 h68" stroke="#142d49" stroke-width="2" stroke-linecap="round" opacity="0.35" />
+</svg>

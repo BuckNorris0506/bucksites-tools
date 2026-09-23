@@ -22,10 +22,10 @@ const primaryNavClass =
 const footerLinkClass =
   "font-medium text-bp-trust underline-offset-2 transition-colors hover:underline";
 
-/** Review raster from Astra prototype embed (transparent PNG); not the production vector master. */
-const HOME_APPROVED_LOGO_SRC = "/brand/buckparts-horizontal-lockup-review.png";
-const HOME_APPROVED_LOGO_WIDTH = 1895;
-const HOME_APPROVED_LOGO_HEIGHT = 472;
+/** Production vector master — see public/brand/PROVENANCE.md */
+const HOME_PRODUCTION_LOGO_SRC = "/brand/buckparts-horizontal-lockup-v1.svg";
+const HOME_PRODUCTION_LOGO_WIDTH = 420;
+const HOME_PRODUCTION_LOGO_HEIGHT = 96;
 
 function BrandMark({ useApprovedHorizontalLogo = false }: { useApprovedHorizontalLogo?: boolean }) {
   if (useApprovedHorizontalLogo) {
@@ -36,10 +36,10 @@ function BrandMark({ useApprovedHorizontalLogo = false }: { useApprovedHorizonta
         aria-label={`${SITE_DISPLAY_NAME} home`}
       >
         <Image
-          src={HOME_APPROVED_LOGO_SRC}
+          src={HOME_PRODUCTION_LOGO_SRC}
           alt=""
-          width={HOME_APPROVED_LOGO_WIDTH}
-          height={HOME_APPROVED_LOGO_HEIGHT}
+          width={HOME_PRODUCTION_LOGO_WIDTH}
+          height={HOME_PRODUCTION_LOGO_HEIGHT}
           priority
           className="bp-home-brand__img"
         />

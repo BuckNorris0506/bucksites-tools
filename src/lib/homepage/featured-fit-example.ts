@@ -13,14 +13,14 @@ export const FEATURED_FIT_ANSWER_KICKER = "Listed by Whirlpool";
 export const FEATURED_FIT_HREF = `/fridge/${FEATURED_FIT_FRIDGE_SLUG}`;
 export const FEATURED_FIT_SEARCH_HREF = `/search?q=${encodeURIComponent(FEATURED_FIT_MODEL_NUMBER)}`;
 
-export const FEATURED_FIT_PRODUCT_IMAGE_PATH =
-  "/homepage/everydrop-filter-4-review-preview.png";
-export const FEATURED_FIT_PRODUCT_IMAGE_ALT =
-  "Actual manufacturer product image of an everydrop Filter 4 cartridge and its package";
+export const FEATURED_FIT_ILLUSTRATION_PATH =
+  "/homepage/refrigerator-water-filter-cartridge-v1.svg";
+export const FEATURED_FIT_ILLUSTRATION_ALT =
+  "Stylized illustration of a refrigerator water filter cartridge—not a photo of a specific product";
 
-/** Review-preview asset extracted from approved HTML prototype; not cleared for production. */
-export const FEATURED_FIT_PRODUCT_IMAGE_PROVENANCE =
-  "Prototype HTML embed; manual evidence marks copied_image_allowed: false.";
+/** Original in-repo vector; see public/homepage/PROVENANCE.md */
+export const FEATURED_FIT_ILLUSTRATION_PROVENANCE =
+  "Original BuckParts SVG illustration; replaces uncleared review product photo.";
 
 export const FEATURED_FIT_WHY_TITLE = "Why Filter 4?";
 export const FEATURED_FIT_WHY_BODY =

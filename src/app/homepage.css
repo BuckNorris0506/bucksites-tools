@@ -479,7 +479,8 @@ html:has(.bp-home-shell) body {
   }
 }
 
-.bp-home__product-photo {
+.bp-home__product-photo,
+.bp-home__product-illustration {
   position: absolute;
   right: 21px;
   top: 30px;
@@ -487,12 +488,16 @@ html:has(.bp-home-shell) body {
   width: auto;
   z-index: 2;
   object-fit: contain;
-  mix-blend-mode: multiply;
   filter: drop-shadow(0 13px 8px rgb(33 61 73 / 0.13));
 }
 
+.bp-home__product-photo {
+  mix-blend-mode: multiply;
+}
+
 @media (min-width: 1041px) {
-  .bp-home__product-photo {
+  .bp-home__product-photo,
+  .bp-home__product-illustration {
     right: 47px;
     top: 49px;
     height: 298px;
