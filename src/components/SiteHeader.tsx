@@ -41,6 +41,7 @@ function BrandMark({ useApprovedHorizontalLogo = false }: { useApprovedHorizonta
           width={HOME_PRODUCTION_LOGO_WIDTH}
           height={HOME_PRODUCTION_LOGO_HEIGHT}
           priority
+          unoptimized
           className="bp-home-brand__img"
         />
       </Link>

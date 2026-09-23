@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import {
   FEATURED_FIT_ANSWER_KICKER,
@@ -29,13 +28,14 @@ export function RealLookupExample() {
       >
         <div className="bp-home__scene-mat" aria-hidden="true" />
         <p className="bp-home__scene-label">{HOME_SCENE_LABEL}</p>
-        <Image
+        {/* Plain img for production SVG — next/image SVG sizing was failing in hero layout */}
+        <img
           className="bp-home__product-illustration"
           src={FEATURED_FIT_ILLUSTRATION_PATH}
           alt={FEATURED_FIT_ILLUSTRATION_ALT}
           width={200}
           height={320}
-          priority
+          decoding="async"
         />
         <div className="bp-home__model-ticket">
           <span className="bp-home__ticket-label">A refrigerator model</span>
