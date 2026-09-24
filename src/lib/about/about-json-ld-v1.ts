@@ -7,7 +7,9 @@ import {
 } from "@/lib/about/about-content-v1";
 import { type JsonLdObject } from "@/lib/seo/structured-data";
 
-const PRODUCTION_LOGO_PATH = "/brand/buckparts-horizontal-lockup-v1.svg";
+import {
+  BUCKPARTS_HORIZONTAL_LOGO_PATH,
+} from "@/lib/brand/buckparts-brand-assets-v1";
 
 function absoluteUrl(path: string, siteUrl: string): string {
   const base = siteUrl.replace(/\/$/, "");
@@ -39,7 +41,7 @@ export function buildAboutPageJsonLdGraphV1(siteUrl?: string): JsonLdObject[] {
     "@id": orgId,
     name: SITE_DISPLAY_NAME,
     url,
-    logo: absoluteUrl(PRODUCTION_LOGO_PATH, url),
+    logo: absoluteUrl(BUCKPARTS_HORIZONTAL_LOGO_PATH, url),
     description: ABOUT_ORG_DESCRIPTION,
     email: ABOUT_GENERAL_EMAIL,
     founder: { "@id": personId },

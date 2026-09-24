@@ -1,12 +1,21 @@
-# BuckParts production brand assets (homepage header)
+# BuckParts production brand assets
 
-## Horizontal lockup — `buckparts-horizontal-lockup-v1.svg`
+## Horizontal lockup — `buckparts-horizontal.png`
 
-- **What it is:** Production vector master for the approved BuckParts horizontal logo (geometric frontal buck, six antler tips, navy wordmark, restrained orange neck accent).
-- **Origin:** Original vector work in-repo, traced from the approved BuckParts visual review artifact (`buckparts-horizontal-lockup-review.png` on the review branch) for geometry and proportions only—not an embed of that raster.
-- **Ownership:** BuckParts brand asset created for this repository; no embedded raster, no external image URLs, no third-party logo artwork copied into the file.
-- **Limits:** This note documents repo intent and provenance; it is not a legal clearance certificate.
+- **What it is:** Founder-approved raster horizontal logo (BuckParts-final-brand-header-PDP-design package).
+- **Origin:** Copied from approved design package asset `assets/buckparts-horizontal.png`; no in-repo redraw, trace, or recolor.
+- **Usage:** Shared site header via `BuckPartsBrandLogo` / `BuckPartsBrandHomeLink` only.
+- **Limits:** Raster production asset for this release; no claim of a separate vector master in repo.
 
-## Homepage scene illustration — `../homepage/refrigerator-water-filter-cartridge-v1.svg`
+## Icon — `buckparts-icon.png`
+
+- **What it is:** Founder-approved square icon from the same design package.
+- **Usage:** Icon-only treatments when required; not a substitute for the horizontal header lockup.
+
+## Legacy — `buckparts-horizontal-lockup-v1.svg`
+
+- **Status:** Superseded by founder-approved PNG for public header. Retained in repo only until removal is explicitly authorized; not referenced by production header components.
+
+## Homepage scene illustration
 
 Documented in `public/homepage/PROVENANCE.md`.

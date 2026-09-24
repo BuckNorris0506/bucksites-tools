@@ -94,15 +94,17 @@ describe("homepage exact copy", () => {
     assert.equal(HOME_TRUST_LINE, "We’re not a parts store.");
   });
 
-  it("homepage markup uses the prototype hero composition and omits banned shelves", () => {
+  it("homepage markup uses lookup hero, worked example, trust, scope, and where-to-buy", () => {
     const page = readFileSync(root("src", "app", "page.tsx"), "utf8");
-    const css = readFileSync(root("src", "app", "homepage.css"), "utf8");
+    const lookup = readFileSync(root("src", "components", "homepage", "HomeLookup.tsx"), "utf8");
     const header = readFileSync(root("src", "components", "SiteHeader.tsx"), "utf8");
-    assert.ok(css.includes("grid-template-columns: minmax(0, 1.11fr) minmax(0, 1fr)"));
-    assert.ok(css.includes("bp-home__product-scene"));
-    assert.ok(header.includes("/brand/buckparts-horizontal-lockup-v1.svg"));
-    assert.ok(header.includes("useApprovedHorizontalLogo"));
+    const brand = readFileSync(root("src", "components", "brand", "BuckPartsBrandLogo.tsx"), "utf8");
+    assert.ok(brand.includes("BUCKPARTS_HORIZONTAL_LOGO_PATH"));
+    assert.ok(header.includes("BuckPartsBrandHomeLink"));
     assert.ok(page.includes("RealLookupExample"));
+    assert.ok(page.includes("HomeTrustEvidenceSection"));
+    assert.ok(page.includes("HomeWhereToBuySection"));
+    assert.ok(!lookup.includes("We’re not a parts store"));
     assert.ok(!page.includes("StatusLegend"));
     assert.ok(!page.includes("VerifiedLinkCard"));
     assert.ok(!page.includes("Wrong Buck."));

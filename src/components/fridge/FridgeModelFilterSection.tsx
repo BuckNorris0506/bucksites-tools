@@ -33,12 +33,16 @@ export function FridgeModelFilterSection({
   quarantineMessage,
   modelPageCautionNote,
   preferCautionBuy = false,
+  omitAliasesOnModelPage = false,
+  omitBuyWhenProminentShown = false,
   telemetryBase,
 }: {
   filters: FridgeMappedFilterRow[];
   quarantineMessage?: string | null;
   modelPageCautionNote?: string | null;
   preferCautionBuy?: boolean;
+  omitAliasesOnModelPage?: boolean;
+  omitBuyWhenProminentShown?: boolean;
   telemetryBase?: Omit<FridgeTrustFunnelPayload, "event_name" | "filter_slug">;
 }) {
   if (quarantineMessage) {
@@ -141,7 +145,7 @@ export function FridgeModelFilterSection({
                     {f.name?.trim() ? (
                       <p className="text-sm text-bp-text/90">{f.name.trim()}</p>
                     ) : null}
-                    {aliases.length > 0 ? (
+                    {!omitAliasesOnModelPage && aliases.length > 0 ? (
                       <p className="text-sm text-bp-muted">
                         <span className="font-medium text-bp-text">Also listed as:</span>{" "}
                         <span className="bp-code font-semibold text-bp-text">
@@ -149,9 +153,11 @@ export function FridgeModelFilterSection({
                         </span>
                       </p>
                     ) : null}
-                    <p className="text-sm font-medium text-bp-text">
-                      Compare this number to the text on your existing cartridge before you buy.
-                    </p>
+                    {!omitAliasesOnModelPage ? (
+                      <p className="text-sm font-medium text-bp-text">
+                        Compare this number to the text on your existing cartridge before you buy.
+                      </p>
+                    ) : null}
                     {fInterval ? (
                       <p className="text-xs text-bp-muted">
                         Typical replacement timing on file: {fInterval}
@@ -166,24 +172,26 @@ export function FridgeModelFilterSection({
                   </div>
                 ) : null}
 
-                <div className="mt-6 rounded-2xl border border-bp-border bg-bp-trust-soft/35 p-5">
-                  <BuckPartsVerifiedLinksSection>
-                    <TrustAwareBuySection
-                      trust={trustSummary}
-                      links={f.retailer_links}
-                      goBase="/go"
-                      primaryCtaLabel={BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX}
-                      suppressMessage={FRIDGE_MODEL_FILTER_BUY_SUPPRESS}
-                      gateSuppressionSummary={f.buy_path_gate_suppression}
-                      buyPathSortContext={buyPathSortContext}
-                      goAttribution={
-                        telemetryBase?.page_slug
-                          ? buildFridgeModelGoAttribution(telemetryBase.page_slug)
-                          : null
-                      }
-                    />
-                  </BuckPartsVerifiedLinksSection>
-                </div>
+                {!omitBuyWhenProminentShown ? (
+                  <div className="mt-6 rounded-2xl border border-bp-border bg-bp-trust-soft/35 p-5">
+                    <BuckPartsVerifiedLinksSection>
+                      <TrustAwareBuySection
+                        trust={trustSummary}
+                        links={f.retailer_links}
+                        goBase="/go"
+                        primaryCtaLabel={BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX}
+                        suppressMessage={FRIDGE_MODEL_FILTER_BUY_SUPPRESS}
+                        gateSuppressionSummary={f.buy_path_gate_suppression}
+                        buyPathSortContext={buyPathSortContext}
+                        goAttribution={
+                          telemetryBase?.page_slug
+                            ? buildFridgeModelGoAttribution(telemetryBase.page_slug)
+                            : null
+                        }
+                      />
+                    </BuckPartsVerifiedLinksSection>
+                  </div>
+                ) : null}
               </li>
             );
           })}

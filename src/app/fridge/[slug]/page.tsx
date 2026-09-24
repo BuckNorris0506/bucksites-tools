@@ -2,11 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FridgeModelFilterSection } from "@/components/fridge/FridgeModelFilterSection";
+import { FridgeModelPdpProminentBuySection } from "@/components/fridge/FridgeModelPdpProminentBuySection";
 import { FridgeModelPdpVisibleProofBlock } from "@/components/fridge/FridgeModelPdpVisibleProofBlock";
 import { FridgeTrustFunnelViewTracker } from "@/components/analytics/FridgeTrustFunnelViewTracker";
 import { Prose } from "@/components/Prose";
 import { ManualEvidenceCallout } from "@/components/trust/ManualEvidenceCallout";
-import { VisualReplacementMatchCard } from "@/components/trust/VisualReplacementMatchCard";
+import {
+  FridgeHomeownerHelpCollapsible,
+  VisualReplacementMatchCard,
+} from "@/components/trust/VisualReplacementMatchCard";
 import { getFridgeBySlug } from "@/lib/data/fridges";
 import { loadFridgeFormFactorEvidenceForModel } from "@/lib/fridge/fridge-form-factor-evidence";
 import { resolveFridgeCustomerSafetyV1 } from "@/lib/fridge/fridge-learned-failure-customer-guard-v1";
@@ -142,6 +146,28 @@ export default async function FridgePage({ params }: Props) {
           filters={reviewOverride ? [] : fridge.filters}
         />
 
+        {!reviewOverride && fridge.filters.length > 0 ? (
+          <FridgeModelPdpProminentBuySection
+            filters={fridge.filters}
+            preferCautionBuy={modelPdpSafety.prefer_caution_buy}
+            telemetryBase={{
+              ...modelTelemetryBase,
+            }}
+          />
+        ) : null}
+
+        <FridgeModelFilterSection
+          filters={fridge.filters}
+          quarantineMessage={reviewOverride?.public_message ?? null}
+          modelPageCautionNote={reviewOverride ? null : modelPdpSafety.model_page_caution_note}
+          preferCautionBuy={!reviewOverride && modelPdpSafety.prefer_caution_buy}
+          omitAliasesOnModelPage
+          omitBuyWhenProminentShown={!reviewOverride && fridge.filters.length > 0}
+          telemetryBase={{
+            ...modelTelemetryBase,
+          }}
+        />
+
         <p className="text-base">
           <Link
             href={`/help/reset-water-filter-light/${fridge.brand.slug}`}
@@ -151,15 +177,7 @@ export default async function FridgePage({ params }: Props) {
           </Link>
         </p>
 
-        <FridgeModelFilterSection
-          filters={fridge.filters}
-          quarantineMessage={reviewOverride?.public_message ?? null}
-          modelPageCautionNote={reviewOverride ? null : modelPdpSafety.model_page_caution_note}
-          preferCautionBuy={!reviewOverride && modelPdpSafety.prefer_caution_buy}
-          telemetryBase={{
-            ...modelTelemetryBase,
-          }}
-        />
+        <FridgeHomeownerHelpCollapsible telemetryBase={modelTelemetryBase} />
 
         {fridge.reset_instructions.length > 0 && (
           <section className="space-y-4">

@@ -9,8 +9,6 @@ import {
   HOME_LOOKUP_INPUT_ID,
   HOME_PLACEHOLDER,
   HOME_PRIMARY_CTA,
-  HOME_TRUST_LINE,
-  HOME_TRUST_LINE_STRONG,
   HOME_VALIDATION_MESSAGE,
 } from "@/lib/homepage/homepage-copy";
 
@@ -38,14 +36,6 @@ export function HomeLookup() {
         For example, <code>{HOME_EXAMPLE_MODEL}</code> or <code>{HOME_EXAMPLE_PART}</code>.
       </p>
       <NumberHelpDisclosure lookupInputId={HOME_LOOKUP_INPUT_ID} />
-      <div className="bp-home__purpose-note">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-          <path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h5" />
-        </svg>
-        <p>
-          <strong>{HOME_TRUST_LINE_STRONG}</strong> {HOME_TRUST_LINE}
-        </p>
-      </div>
     </div>
   );
 }

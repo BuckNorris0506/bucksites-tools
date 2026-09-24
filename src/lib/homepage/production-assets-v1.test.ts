@@ -14,14 +14,15 @@ import type { SearchHit } from "@/lib/data/search";
 const root = (...parts: string[]) => join(process.cwd(), ...parts);
 
 describe("production homepage assets v1", () => {
-  it("header uses production SVG logo, not review raster", () => {
+  it("header uses founder-approved PNG logo, not review raster or legacy inline mark", () => {
     const header = readFileSync(root("src", "components", "SiteHeader.tsx"), "utf8");
-    assert.ok(header.includes("/brand/buckparts-horizontal-lockup-v1.svg"));
+    const logo = readFileSync(root("src", "components", "brand", "BuckPartsBrandLogo.tsx"), "utf8");
+    assert.ok(logo.includes("BUCKPARTS_HORIZONTAL_LOGO_PATH"));
+    assert.ok(header.includes("BuckPartsBrandHomeLink"));
     assert.ok(!header.includes("buckparts-horizontal-lockup-review.png"));
+    assert.ok(!header.includes("BrandMark"));
     assert.ok(!/review raster/i.test(header));
-    const svg = readFileSync(root("public", "brand", "buckparts-horizontal-lockup-v1.svg"), "utf8");
-    assert.ok(!/<image\b/i.test(svg));
-    assert.ok(!/href\s*=\s*["']http/i.test(svg));
+    assert.ok(readFileSync(root("public", "brand", "buckparts-horizontal.png")).byteLength > 1000);
   });
 
   it("homepage example uses original illustration, not EveryDrop review PNG", () => {
@@ -31,6 +32,7 @@ describe("production homepage assets v1", () => {
     const example = readFileSync(root("src", "components", "homepage", "RealLookupExample.tsx"), "utf8");
     assert.ok(example.includes("FEATURED_FIT_ILLUSTRATION_PATH"));
     assert.ok(!example.includes("everydrop-filter-4-review-preview.png"));
+    assert.ok(!example.includes("everydrop-filter4-photo"));
     const svg = readFileSync(root("public", "homepage", "refrigerator-water-filter-cartridge-v1.svg"), "utf8");
     assert.ok(!/<image\b/i.test(svg));
     assert.ok(!/everydrop|whirlpool/i.test(svg));

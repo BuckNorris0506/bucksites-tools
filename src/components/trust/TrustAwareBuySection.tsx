@@ -52,6 +52,7 @@ export function TrustAwareBuySection({
   gateSuppressionSummary,
   buyPathSortContext,
   goAttribution,
+  visiblePrimaryPrefix,
 }: {
   trust: PartTrustSummary;
   links: BuyLinkRow[];
@@ -63,6 +64,7 @@ export function TrustAwareBuySection({
   buyPathSortContext?: BuyPathSortContext;
   /** When set, forwarded to TieredBuyLinks for `/go` href attribution (AP or fridge model PDP). */
   goAttribution?: { page_type: string; page_slug: string } | null;
+  visiblePrimaryPrefix?: string;
 }) {
   if (trust.buyer_path_state === "suppress_buy") {
     return (
@@ -88,6 +90,7 @@ export function TrustAwareBuySection({
         primaryCtaLabel={primaryCtaLabel}
         buyPathSortContext={buyPathSortContext}
         goAttribution={goAttribution}
+        visiblePrimaryPrefix={visiblePrimaryPrefix}
       />
     </div>
   );

@@ -1,24 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { HomeLookup } from "@/components/homepage/HomeLookup";
+import {
+  HomeTrustEvidenceSection,
+  HomeWhereToBuySection,
+} from "@/components/homepage/HomeTrustAndBuyingSections";
 import { RealLookupExample } from "@/components/homepage/RealLookupExample";
 import {
-  HOME_APPROACH_EYEBROW,
   HOME_BROWSE_FILTERS,
   HOME_BROWSE_FILTERS_HREF,
   HOME_EYEBROW,
   HOME_H1_LINE_1,
   HOME_H1_LINE_2,
-  HOME_HOW_WE_CHECK_FIT,
-  HOME_HOW_WE_CHECK_FIT_HREF,
-  HOME_PHILOSOPHY_BODY_1,
-  HOME_PHILOSOPHY_BODY_2,
-  HOME_PHILOSOPHY_HEADING,
   HOME_SCOPE_BODY,
   HOME_SCOPE_HEADING,
-  HOME_STEP_1,
-  HOME_STEP_2,
-  HOME_STEP_3,
   HOME_SUBHEADLINE,
 } from "@/lib/homepage/homepage-copy";
 import {
@@ -48,7 +43,7 @@ export default function HomePage() {
       </a>
 
       <section aria-labelledby="hero-title" className="bp-home__hero-stage">
-        <div className="bp-home__hero-inner">
+        <div className="bp-home__hero-inner bp-home__hero-inner--lookup-only">
           <div className="bp-home__task">
             <p className="bp-home__eyebrow">{HOME_EYEBROW}</p>
             <h1 id="hero-title" className="bp-home__h1">
@@ -60,67 +55,14 @@ export default function HomePage() {
               <HomeLookup />
             </div>
           </div>
-          <RealLookupExample />
         </div>
       </section>
 
-      <div className="bp-home__sequence-band">
-        <ol className="bp-home__sequence" aria-label="The BuckParts sequence">
-          <li>
-            <span className="bp-home__sequence-number" aria-hidden="true">
-              1
-            </span>
-            <span>{HOME_STEP_1}</span>
-          </li>
-          <li className="bp-home__sequence-arrow" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M3 12h17m-6-6 6 6-6 6" />
-            </svg>
-          </li>
-          <li>
-            <span className="bp-home__sequence-number" aria-hidden="true">
-              2
-            </span>
-            <span>{HOME_STEP_2}</span>
-          </li>
-          <li className="bp-home__sequence-arrow" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M3 12h17m-6-6 6 6-6 6" />
-            </svg>
-          </li>
-          <li>
-            <span className="bp-home__sequence-number" aria-hidden="true">
-              3
-            </span>
-            <span>{HOME_STEP_3}</span>
-          </li>
-        </ol>
-      </div>
-
-      <section
-        id="how-we-work"
-        className="bp-home__philosophy"
-        aria-labelledby="philosophy-title"
-      >
-        <div className="bp-home__philosophy-grid">
-          <div>
-            <p className="bp-home__section-eyebrow">{HOME_APPROACH_EYEBROW}</p>
-            <h2 id="philosophy-title" className="bp-home__philosophy-title">
-              {HOME_PHILOSOPHY_HEADING}
-            </h2>
-          </div>
-          <div className="bp-home__philosophy-copy">
-            <p>{HOME_PHILOSOPHY_BODY_1}</p>
-            <p>{HOME_PHILOSOPHY_BODY_2}</p>
-            <Link href={HOME_HOW_WE_CHECK_FIT_HREF} className="bp-home__text-link">
-              {HOME_HOW_WE_CHECK_FIT}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-                <path d="M6 18 18 6M7 6h11v11" />
-              </svg>
-            </Link>
-          </div>
-        </div>
+      <section className="bp-home__worked-example-band" aria-label="Worked lookup example">
+        <RealLookupExample />
       </section>
+
+      <HomeTrustEvidenceSection />
 
       <section className="bp-home__scope" aria-labelledby="scope-title">
         <div className="bp-home__scope-inner">
@@ -138,6 +80,8 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
+
+      <HomeWhereToBuySection />
     </div>
   );
 }

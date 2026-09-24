@@ -14,6 +14,17 @@ export const HOME_SECOND_DOOR = "I don’t know my number";
 export const HOME_TRUST_LINE_STRONG = "Fit answers first.";
 export const HOME_TRUST_LINE = "We’re not a parts store.";
 
+export const HOME_TRUST_EVIDENCE_EYEBROW = "Trust & evidence";
+export const HOME_TRUST_OEM_LABEL = "What the OEM docs establish";
+export const HOME_TRUST_VERIFIED_LABEL = "What BuckParts verified";
+export const HOME_TRUST_UNKNOWN_LABEL = "What’s still unknown";
+export const HOME_TRUST_UNKNOWN_MEANS = "UNKNOWN means UNKNOWN";
+
+export const HOME_WHERE_TO_BUY_EYEBROW = "Where to buy";
+export const HOME_WHERE_TO_BUY_HEADING = "Buying comes after the fit check";
+export const HOME_WHERE_TO_BUY_BODY =
+  "When a BuckParts Verified Link appears, we checked that retailer product page against the part number on that page—not every result includes a way to buy.";
+
 export const HOME_SCENE_LABEL = "REAL LOOKUP EXAMPLE";
 export const HOME_WHY_MATCH = "Why this match?";
 export const HOME_EXAMPLE_QUALIFIER = "Match your full model.";
