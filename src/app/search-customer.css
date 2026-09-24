@@ -1,0 +1,112 @@
+@import "./homepage.css";
+
+.bp-search-customer {
+  --home-navy: #142d49;
+  --home-ink: #14283b;
+  --home-muted: #4c5d6b;
+  --home-orange: #b94a23;
+  --home-paper: #f7f9fc;
+  color: var(--home-ink);
+}
+
+.bp-search-customer__hero {
+  background: var(--home-paper);
+  border: 1px solid #e1e5e2;
+  border-radius: 12px;
+  padding: 24px 20px;
+}
+
+.bp-search-customer__eyebrow {
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--home-muted);
+  margin-bottom: 8px;
+}
+
+.bp-search-customer__title {
+  font-size: 1.75rem;
+  line-height: 1.15;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  color: var(--home-navy);
+}
+
+.bp-search-customer__query {
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-weight: 600;
+}
+
+.bp-search-customer__body {
+  margin-top: 12px;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--home-muted);
+}
+
+.bp-search-customer__card {
+  display: block;
+  border: 1px solid #d4dddf;
+  border-radius: 10px;
+  background: #fff;
+  padding: 16px 18px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.bp-search-customer__card:hover {
+  border-color: #8e9daa;
+  background: #f8fafd;
+}
+
+.bp-search-customer__card-label {
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--home-muted);
+}
+
+.bp-search-customer__card-title {
+  margin-top: 8px;
+  font-size: 1.125rem;
+  font-weight: 650;
+  color: var(--home-navy);
+}
+
+.bp-search-customer__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 16px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--home-orange);
+  background: var(--home-orange);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.bp-search-customer__fit-prompt {
+  border-left: 3px solid var(--home-orange);
+  padding: 12px 14px;
+  background: #f4f7fb;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 20px;
+}
+
+.bp-search-customer__fit-prompt h2 {
+  font-size: 1.125rem;
+  font-weight: 650;
+  color: var(--home-navy);
+}
+
+.bp-search-customer__fit-prompt p {
+  margin-top: 8px;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--home-muted);
+}

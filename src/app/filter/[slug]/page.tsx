@@ -5,6 +5,7 @@ import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import { BuckPartsVerifiedLinksSection } from "@/components/trust/BuckPartsVerifiedLinksSection";
 import {
   deriveFridgeFilterStorePlainStatus,
+  FridgeHomeownerHelpCollapsible,
   VisualReplacementMatchCard,
 } from "@/components/trust/VisualReplacementMatchCard";
 import { FridgeWinnerFamilyRail } from "@/components/fridge/FridgeWinnerFamilyRail";
@@ -32,8 +33,9 @@ import {
 } from "@/lib/site-social-metadata";
 import { publicFacingRefrigeratorFilterNotes } from "@/lib/copy/fridge-filter-notes-public";
 import {
-  BUCKPARTS_VERIFIED_LINK_NONE_YET,
   BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX,
+  BUCKPARTS_VERIFIED_LINK_PROMINENT_NONE_YET,
+  BUCKPARTS_VERIFIED_LINK_VIEW_AT_PREFIX,
 } from "@/lib/copy/buckparts-verified-link-copy";
 import { resolveFridgeFilterPdpCustomerSafetyV1 } from "@/lib/fridge/fridge-filter-pdp-customer-safety-v1";
 import {
@@ -43,12 +45,17 @@ import {
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
 import { intervalLabel } from "@/lib/vertical/interval";
+import { DirectPartFitPrompt } from "@/components/search/customer/SearchCustomerExperience";
+import "@/app/search-customer.css";
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: { slug: string } };
+type Props = {
+  params: { slug: string };
+  searchParams: { fromSearch?: string; model?: string };
+};
 
-const FRIDGE_FILTER_BUY_SUPPRESS = BUCKPARTS_VERIFIED_LINK_NONE_YET;
+const FRIDGE_FILTER_BUY_SUPPRESS = BUCKPARTS_VERIFIED_LINK_PROMINENT_NONE_YET;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const filter = await getFilterBySlug(params.slug);
@@ -93,9 +100,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function FilterPage({ params }: Props) {
+export default async function FilterPage({ params, searchParams }: Props) {
   const filter = await getFilterBySlug(params.slug);
   if (!filter) notFound();
+
+  const showDirectPartFitPrompt =
+    searchParams.fromSearch === "1" && !searchParams.model?.trim();
 
   const interval = intervalLabel(filter.replacement_interval_months);
   const buyPathSortContext = buyPathSortContextForFilter(
@@ -188,13 +198,6 @@ export default async function FilterPage({ params }: Props) {
             filter_slug: filter.slug,
           }}
         />
-        <FridgeWinnerFamilyRail currentSlug={filter.slug} />
-
-        {pdpSafety.filter_page_caution_note ? (
-          <div className="rounded-2xl border border-bp-caution/40 bg-bp-caution-soft p-6 text-[15px] leading-relaxed text-bp-caution">
-            {pdpSafety.filter_page_caution_note}
-          </div>
-        ) : null}
 
         <VisualReplacementMatchCard
           variant="fridge_filter"
@@ -210,6 +213,20 @@ export default async function FilterPage({ params }: Props) {
             ...filterTelemetryBase,
           }}
         />
+
+        <FridgeWinnerFamilyRail currentSlug={filter.slug} />
+
+        {showDirectPartFitPrompt ? (
+          <div className="bp-search-customer">
+            <DirectPartFitPrompt partNumber={filter.oem_part_number} />
+          </div>
+        ) : null}
+
+        {pdpSafety.filter_page_caution_note ? (
+          <div className="rounded-2xl border border-bp-caution/40 bg-bp-caution-soft p-6 text-[15px] leading-relaxed text-bp-caution">
+            {pdpSafety.filter_page_caution_note}
+          </div>
+        ) : null}
 
         <div className="overflow-hidden rounded-2xl border border-bp-border bg-bp-surface p-6 sm:p-7">
           {publicNotes ? (
@@ -228,6 +245,7 @@ export default async function FilterPage({ params }: Props) {
                 suppressMessage={FRIDGE_FILTER_BUY_SUPPRESS}
                 gateSuppressionSummary={filter.buy_path_gate_suppression}
                 buyPathSortContext={buyPathSortContext}
+                visiblePrimaryPrefix={BUCKPARTS_VERIFIED_LINK_VIEW_AT_PREFIX}
               />
             </BuckPartsVerifiedLinksSection>
           </div>
@@ -256,6 +274,8 @@ export default async function FilterPage({ params }: Props) {
             brand_name: m.brand.name,
           }))}
         />
+
+        <FridgeHomeownerHelpCollapsible telemetryBase={filterTelemetryBase} />
       </article>
       {filterProductJsonLd ? <JsonLdScript data={filterProductJsonLd} /> : null}
     </section>
