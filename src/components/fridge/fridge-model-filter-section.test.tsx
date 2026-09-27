@@ -181,7 +181,7 @@ describe("FridgeModelFilterSection", () => {
       }),
     );
     const html = `${cardHtml}\n${quarantineHtml}`;
-    assert.ok(cardHtml.includes("Next steps"));
+    assert.ok(cardHtml.includes("Your model"));
     assert.ok(!cardHtml.includes("data-form-factor-visual="));
     assert.ok(!cardHtml.includes("<svg"));
     const banned = [/\bPDP\b/i, /\bbrowser truth\b/i, /\bdirect_buyable\b/i, /\bcanonical slug\b/i, /\btoken\b/i];
