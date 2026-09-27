@@ -35,6 +35,7 @@ describe("production homepage assets v1", () => {
     assert.ok(!example.includes("everydrop-filter4-photo"));
     const svg = readFileSync(root("public", "homepage", "refrigerator-water-filter-cartridge-v1.svg"), "utf8");
     assert.ok(!/<image\b/i.test(svg));
+    assert.ok(!/[\x00-\x08\x0b\x0c\x0e-\x1f]/.test(svg), "homepage illustration SVG must be valid XML (no control chars)");
     assert.ok(!/everydrop|whirlpool/i.test(svg));
   });
 

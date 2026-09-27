@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 320" role="img" aria-labelledby="filterIllustrationTitle">
   <title id="filterIllustrationTitle">Stylized refrigerator water filter cartridge</title>
-  <!-- Original BuckParts illustration  generic replacement cartridge concept, not a specific OEM product -->
+  <!-- Original BuckParts illustration - generic replacement cartridge concept, not a specific OEM product -->
   <defs>
     <linearGradient id="filterBody" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#e8eef3" />
