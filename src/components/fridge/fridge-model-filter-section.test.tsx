@@ -76,7 +76,7 @@ describe("FridgeModelFilterSection", () => {
       }),
     );
     assert.ok(html.includes("Full detail for each number"));
-    assert.ok(html.includes("chips above"));
+    assert.ok(html.includes("shown above"));
     assert.ok(html.includes("Not a ranked list"));
     assert.equal(/\bOption\s*1\b/i.test(html), false);
     assert.equal(/\bOption\s*2\b/i.test(html), false);
