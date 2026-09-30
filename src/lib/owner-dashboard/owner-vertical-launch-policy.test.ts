@@ -69,7 +69,7 @@ describe("owner vertical launch / crawler policy (read-only)", () => {
 
   it("homepage browse promo constant stays aligned with fridge-first src/app/page.tsx", () => {
     assert.deepEqual([...FRIDGE_FIRST_HOMEPAGE_BROWSE_PROMO_VERTICALS], ["refrigerator"]);
-    const home = readFileSync(join(process.cwd(), "src/app/page.tsx"), "utf8");
+    const home = readFileSync(join(process.cwd(), "src/components/homepage/HomepageView.tsx"), "utf8");
     assert.equal(home.includes('href="/air-purifier"'), false);
     assert.equal(home.includes('href="/whole-house-water"'), false);
     assert.ok(home.includes('href="/catalog"'));

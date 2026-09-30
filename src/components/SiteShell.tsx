@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
 
 const shellMax = "max-w-7xl";
@@ -11,7 +14,12 @@ const primaryNavClass =
 const footerLinkClass =
   "font-medium text-bp-trust underline-offset-2 transition-colors hover:underline";
 
-export async function SiteShell({ children }: { children: React.ReactNode }) {
+export function SiteShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  if (pathname === "/") {
+    return <>{children}</>;
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-bp-bg text-bp-text">
       <header className="border-b border-bp-border border-t-[3px] border-t-bp-trust bg-bp-surface">
