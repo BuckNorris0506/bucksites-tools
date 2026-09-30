@@ -122,6 +122,8 @@ function passDraftFixture(): BrowserProofCollectorDraftV1 {
       },
     ],
     overall_verdict: "PASS",
+    capture_outcome: "SUCCESS",
+    capture_outcome_reason: "overall_verdict=PASS",
     recommended_next_action: "Owner review",
     proven_facts: [],
     unknown_facts: [],
