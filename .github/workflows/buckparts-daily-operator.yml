@@ -45,3 +45,35 @@ jobs:
             printf '%s\n' "$daily_output"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+
+  gsc-measurement:
+    name: Collect GSC measurement artifact
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
+      GSC_PROPERTY_SITE_URL: sc-domain:buckparts.com
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Collect local-only GSC artifact
+        run: npm run buckparts:gsc:fetch -- --local-only
+
+      - name: Upload GSC measurement artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: buckparts-gsc-search-analytics
+          path: data/reports/buckparts-gsc-search-analytics.json
+          if-no-files-found: error
+          retention-days: 90
