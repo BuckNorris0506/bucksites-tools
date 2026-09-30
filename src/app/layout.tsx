@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { headers } from "next/headers";
 import "./globals.css";
 import { AnalyticsScripts } from "@/components/AnalyticsScripts";
 import { GrowScripts } from "@/components/GrowScripts";
@@ -46,23 +47,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isOffice = headers().get("x-j-office") === "1";
   return (
     <html lang="en">
       <head>
+        {isOffice ? <meta name="robots" content="noindex, nofollow" /> : null}
         {/* Impact requires the verification token in the meta `value` attribute. */}
         {/* @ts-expect-error Impact verification uses non-standard meta attribute `value`. */}
         <meta name="impact-site-verification" value={impactVerificationValue} />
         {deployCommitRef ? (
           <meta name="buckparts-deploy-commit" content={deployCommitRef} />
         ) : null}
-        <JsonLdScript data={siteWideJsonLd} />
-        <GrowScripts />
+        {isOffice ? null : <JsonLdScript data={siteWideJsonLd} />}
+        {isOffice ? null : <GrowScripts />}
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
-        <AnalyticsScripts />
-        <SiteShell>{children}</SiteShell>
+        {isOffice ? null : <AnalyticsScripts />}
+        {isOffice ? children : <SiteShell>{children}</SiteShell>}
       </body>
     </html>
   );
