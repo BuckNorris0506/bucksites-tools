@@ -301,3 +301,54 @@
   .jo-stuck { grid-area: stuck; order: unset; }
   .jo-learning { grid-area: learning; order: unset; }
 }
+
+.jo-operating {
+  margin: 1rem 1.35rem 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--jo-line);
+  background: var(--jo-panel);
+}
+
+.jo-operating h2 {
+  margin: 0 0 0.65rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+
+.jo-operating-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.jo-operating-actions button {
+  border: 1px solid var(--jo-line);
+  background: var(--jo-panel-2);
+  color: var(--jo-text);
+  padding: 0.45rem 0.8rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.jo-operating-actions button[aria-pressed="true"] {
+  border-color: var(--jo-text);
+}
+
+.jo-operating-green { color: var(--jo-ok); }
+.jo-operating-yellow { color: var(--jo-warn); }
+.jo-operating-red { color: var(--jo-need); }
+
+.jo-operating dl {
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  color: var(--jo-muted);
+  font-size: 0.92rem;
+}
+
+.jo-operating dd {
+  margin: 0;
+  color: var(--jo-text);
+}

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { OperatingStateControl } from "@/app/office/OperatingStateControl";
 import { scopeFounderOperatingPicture } from "@/lib/j-office/scope-projection";
 import type {
   EconValue,
@@ -174,6 +175,8 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
           ))}
         </nav>
       ) : null}
+
+      <OperatingStateControl />
 
       <div className="jo-grid">
         <section className="jo-panel jo-now">
