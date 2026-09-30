@@ -7,12 +7,15 @@ import {
   deriveFridgeFilterStorePlainStatus,
   VisualReplacementMatchCard,
 } from "@/components/trust/VisualReplacementMatchCard";
+import { FRIDGE_MODEL_PDP_CARTRIDGE_CONFIRMATION } from "@/lib/copy/buckparts-verified-link-copy";
 import type { FridgeMappedFilterRow } from "@/lib/data/fridges";
 
 const connectedRow = {
   id: "f1",
   slug: "lt1000p",
   oem_part_number: "LT1000P",
+  name: "Example filter",
+  also_known_as: ["ALT-A"],
 } as unknown as FridgeMappedFilterRow;
 
 function forbidHomeownerJargon(html: string) {
@@ -61,7 +64,7 @@ function forbidUnsupportedHealthOrGuarantee(html: string) {
 }
 
 describe("VisualReplacementMatchCard", () => {
-  it("fridge_filter renders aliases and checklist without clipart visuals or jargon", () => {
+  it("fridge_filter renders identity and aliases once without inline help or buy copy", () => {
     const html = renderToStaticMarkup(
       createElement(VisualReplacementMatchCard, {
         variant: "fridge_filter",
@@ -75,40 +78,19 @@ describe("VisualReplacementMatchCard", () => {
         storePlainStatus: "options_after_checks",
       }),
     );
-    assert.ok(html.includes("We found this filter"));
+    assert.ok(html.includes("This part"));
     assert.ok(html.includes("EDR1RXD1"));
     assert.ok(html.includes("FILTER-A"));
-    assert.ok(html.includes("Next steps"));
-    assert.ok(html.includes("Compare this number to the one printed on your old filter."));
-    assert.ok(
-      html.includes(
-        "When a BuckParts Verified Link appears below, we checked that retailer product page against this part number. Compare it with your old filter before ordering.",
-      ),
-    );
+    assert.ok(html.includes("Also listed as"));
+    assert.ok(!html.includes("Next steps"));
+    assert.ok(!html.includes("Need help finding the filter?"));
     assert.ok(!html.includes("data-filter-visual="));
     assert.ok(!html.includes("<svg"));
-    assert.ok(html.includes("Need help finding the filter?"));
-    assert.ok(html.includes("<details"));
-    assert.ok(html.includes("Where to look"));
-    assert.ok(html.includes("How replacement usually works"));
-    assert.ok(html.includes("Why replacement matters"));
-    assert.ok(html.includes("What to compare before buying"));
-    assert.ok(html.includes("Compare the part number"));
-    assert.ok(
-      html.includes("owner’s manual is the best guide") ||
-        html.includes("owner's manual is the best guide"),
-    );
-    assert.ok(html.includes("Many refrigerator water filters are inside the fridge"));
-    assert.ok(html.includes("near the lower grille"));
-    assert.ok(html.includes("Do not force it."));
-    const idxNext = html.indexOf("Next steps");
-    const idxLong = html.indexOf("How replacement usually works");
-    assert.ok(idxNext >= 0 && idxLong > idxNext, "long homeowner help should follow next steps");
     forbidHomeownerJargon(html);
     forbidUnsupportedHealthOrGuarantee(html);
   });
 
-  it("fridge_model renders next steps and collapsible long help without clipart visuals or jargon", () => {
+  it("fridge_model renders replacement answer and single confirmation without help block", () => {
     const html = renderToStaticMarkup(
       createElement(VisualReplacementMatchCard, {
         variant: "fridge_model",
@@ -121,39 +103,24 @@ describe("VisualReplacementMatchCard", () => {
         replacementIntervalHint: "Suggested replacement timing: About every 6 months",
       }),
     );
-    assert.ok(html.includes("We found your refrigerator"));
+    assert.ok(html.includes("Your model"));
+    assert.ok(html.includes("Your replacement filter"));
+    assert.ok(html.includes("WRS325SDHZ"));
+    assert.ok(html.includes("LT1000P"));
+    assert.ok(html.includes("Also listed as"));
+    assert.ok(html.includes("ALT-A"));
+    assert.ok(html.includes(FRIDGE_MODEL_PDP_CARTRIDGE_CONFIRMATION));
+    assert.ok(!html.includes("Next steps"));
+    assert.ok(!html.includes("Numbers to compare"));
+    assert.ok(!html.includes("Need help finding the filter?"));
     assert.ok(!html.includes("data-form-factor-visual="));
     assert.ok(!html.includes("<svg"));
-    assert.ok(html.includes("WRS325SDHZ"));
-    assert.ok(html.includes("Next steps"));
-    assert.ok(html.includes("Numbers to compare"));
-    assert.ok(html.includes("LT1000P"));
-    assert.ok(html.includes("Find the number on your old filter."));
-    assert.ok(html.includes("See the same number below? Select it."));
-    assert.ok(html.includes("Not sure? Check your owner’s manual first."));
-    assert.ok(html.includes("Need help finding the filter?"));
-    assert.ok(html.includes("<details"));
-    assert.ok(html.includes("Where to look"));
-    assert.ok(html.includes("How replacement usually works"));
-    assert.ok(html.includes("Why replacement matters"));
-    assert.ok(html.includes("What to compare before buying"));
-    assert.ok(
-      html.includes("owner’s manual is the best guide") ||
-        html.includes("owner's manual is the best guide"),
-    );
-    assert.ok(html.includes("Many refrigerator water filters are inside the fridge"));
-    assert.ok(html.includes("Do not force it."));
     assert.equal(/\bFrench Door\b/i.test(html), false);
-    assert.equal(/\btop freezer\b/i.test(html), false);
-    assert.equal(/\bside-by-side\b/i.test(html), false);
-    const idxNext = html.indexOf("Next steps");
-    const idxLong = html.indexOf("How replacement usually works");
-    assert.ok(idxNext >= 0 && idxLong > idxNext, "long homeowner help should follow next steps");
     forbidHomeownerJargon(html);
     forbidUnsupportedHealthOrGuarantee(html);
   });
 
-  it("fridge_model with no mapped filters uses neutral second-step copy", () => {
+  it("fridge_model with no mapped filters uses neutral copy", () => {
     const html = renderToStaticMarkup(
       createElement(VisualReplacementMatchCard, {
         variant: "fridge_model",
@@ -166,13 +133,11 @@ describe("VisualReplacementMatchCard", () => {
         replacementIntervalHint: null,
       }),
     );
-    assert.ok(html.includes("When your number appears on this page, select it."));
-    assert.ok(!html.includes("See the same number below? Select it."));
-    assert.ok(!html.includes("Numbers to compare"));
+    assert.ok(html.includes("do not have mapped filter numbers"));
+    assert.ok(!html.includes(FRIDGE_MODEL_PDP_CARTRIDGE_CONFIRMATION));
     assert.ok(!html.includes("data-form-factor-visual="));
     assert.ok(!html.includes("<svg"));
     assert.ok(!html.includes("<img"));
-    assert.ok(!/https?:\/\/(www\.)?(lg|lowes|amazon)\./i.test(html));
     forbidHomeownerJargon(html);
   });
 

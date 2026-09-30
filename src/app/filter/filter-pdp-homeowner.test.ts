@@ -55,7 +55,7 @@ function baseTrust(over: Partial<PartTrustSummary>): PartTrustSummary {
 }
 
 describe("refrigerator filter PDP homeowner trust copy", () => {
-  it("hero renders next steps, no clipart visual block, and no internal jargon", () => {
+  it("identity card renders part header and aliases without next-step clutter", () => {
     const html = renderToStaticMarkup(
       createElement(VisualReplacementMatchCard, {
         variant: "fridge_filter",
@@ -69,16 +69,11 @@ describe("refrigerator filter PDP homeowner trust copy", () => {
         storePlainStatus: "options_after_checks",
       }),
     );
-    assert.ok(html.includes("We found this filter"));
-    assert.ok(html.includes("Next steps"));
-    assert.ok(html.includes("Compare this number to the one printed on your old filter."));
-    assert.ok(html.includes("If it matches, use this page."));
-    assert.ok(html.includes("If you’re not sure, check your owner’s manual or a refrigerator model page below."));
-    assert.ok(
-      html.includes(
-        "When a BuckParts Verified Link appears below, we checked that retailer product page against this part number. Compare it with your old filter before ordering.",
-      ),
-    );
+    assert.ok(html.includes("This part"));
+    assert.ok(html.includes("LT1000P"));
+    assert.ok(html.includes("Also listed as"));
+    assert.ok(!html.includes("Next steps"));
+    assert.ok(!html.includes("Need help finding the filter?"));
     assert.ok(!html.includes("data-filter-visual="));
     assert.ok(!html.includes("<svg"));
     for (const rx of bannedInPublicFilterHtml) {
