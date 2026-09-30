@@ -1,17 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-type OperatingStatus = {
-  mode?: string;
-  changed_at?: string | null;
-  session_elapsed_seconds?: number | null;
-  heartbeat_active?: boolean;
-  activity?: string;
-  error?: string;
-};
+import {
+  IgnoredOperatingPoll,
+  OPERATING_STATE_POLL_INTERVAL_MS,
+  reduceOperatingPoll,
+  startOperatingPoll,
+  type OperatingPollView,
+  type OperatingStatus,
+} from "@/app/office/operating-state-poll";
 
 const MODES = ["GREEN", "YELLOW", "RED"] as const;
+
+function flagLabel(value: boolean | undefined): string {
+  if (value == null) return "UNKNOWN";
+  return value ? "active" : "not active";
+}
 
 function formatElapsed(seconds: number | null | undefined): string {
   if (seconds == null) return "—";
@@ -24,91 +29,117 @@ function formatElapsed(seconds: number | null | undefined): string {
   return `${rest}s`;
 }
 
-export function OperatingStateControl() {
-  const [status, setStatus] = useState<OperatingStatus | null>(null);
-  const [pending, setPending] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+async function readOperatingStatus(response: Response): Promise<OperatingStatus> {
+  const body = (await response.json()) as OperatingStatus;
+  if (!response.ok) {
+    throw new Error(body.error || "operating state unavailable");
+  }
+  return body;
+}
 
-  const refresh = useCallback(async () => {
-    const response = await fetch("/office/api/operating-state", { cache: "no-store" });
-    const body = (await response.json()) as OperatingStatus;
-    if (!response.ok) {
-      throw new Error(body.error || "operating state unavailable");
-    }
-    setStatus(body);
+export function OperatingStateControl() {
+  const [view, setView] = useState<OperatingPollView>({ status: null, error: null });
+  const [pending, setPending] = useState<string | null>(null);
+  const viewRef = useRef(view);
+  const requestGen = useRef(0);
+  viewRef.current = view;
+
+  const apply = useCallback((next: OperatingPollView) => {
+    viewRef.current = next;
+    setView(next);
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
-    refresh().catch((exc: unknown) => {
-      if (!cancelled) setError(exc instanceof Error ? exc.message : "operating state unavailable");
+    const stop = startOperatingPoll({
+      intervalMs: OPERATING_STATE_POLL_INTERVAL_MS,
+      load: async () => {
+        const mine = ++requestGen.current;
+        const response = await fetch("/office/api/operating-state", { cache: "no-store" });
+        const status = await readOperatingStatus(response);
+        if (mine !== requestGen.current) throw new IgnoredOperatingPoll();
+        return status;
+      },
+      onView: apply,
     });
-    return () => {
-      cancelled = true;
-    };
-  }, [refresh]);
+    return stop;
+  }, [apply]);
 
   async function setMode(mode: (typeof MODES)[number]) {
+    const mine = ++requestGen.current;
     setPending(mode);
-    setError(null);
     try {
       const response = await fetch("/office/api/operating-state", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ mode }),
       });
-      const body = (await response.json()) as OperatingStatus;
-      if (!response.ok) {
-        throw new Error(body.error || "operating state rejected");
-      }
-      setStatus(body);
+      const status = await readOperatingStatus(response);
+      if (mine !== requestGen.current) return;
+      apply({ status, error: null });
     } catch (exc: unknown) {
-      setError(exc instanceof Error ? exc.message : "operating state rejected");
+      if (mine !== requestGen.current) return;
+      apply(
+        reduceOperatingPoll(viewRef.current, {
+          ok: false,
+          error: exc instanceof Error ? exc.message : "operating state rejected",
+        }),
+      );
     } finally {
-      setPending(null);
+      if (mine === requestGen.current) setPending(null);
     }
   }
 
+  const status = view.status;
+  const error = view.error;
   const mode = status?.mode ?? "UNKNOWN";
-  const modeClass =
-    mode === "GREEN"
-      ? "jo-operating-green"
-      : mode === "YELLOW"
-        ? "jo-operating-yellow"
-        : mode === "RED"
-          ? "jo-operating-red"
-          : "";
+  const tone =
+    mode === "GREEN" || mode === "YELLOW" || mode === "RED" ? mode.toLowerCase() : "unknown";
 
   return (
     <section className="jo-operating" aria-label="J operating state">
       <h2>J OPERATING STATE</h2>
-      <div className="jo-operating-actions">
+      <div className="jo-operating-actions" role="group" aria-label="Set operating mode">
         {MODES.map((item) => (
           <button
             key={item}
             type="button"
-            className={item === "GREEN" ? "jo-operating-green" : item === "YELLOW" ? "jo-operating-yellow" : "jo-operating-red"}
+            className={`jo-stoplight jo-stoplight-${item.toLowerCase()}`}
             aria-pressed={mode === item}
             disabled={pending !== null}
             onClick={() => setMode(item)}
           >
-            {pending === item ? "…" : item}
+            <span className="jo-stoplight-lamp" aria-hidden="true" />
+            <span>{pending === item ? "…" : item}</span>
           </button>
         ))}
       </div>
       <dl>
         <dt>Current mode</dt>
-        <dd className={modeClass}>{mode}</dd>
+        <dd>
+          <span className={`jo-operating-pill jo-operating-pill-${tone}`}>
+            <span className="jo-operating-lamp" aria-hidden="true" />
+            <span>{mode}</span>
+          </span>
+        </dd>
         <dt>Session elapsed</dt>
         <dd>{mode === "GREEN" ? formatElapsed(status?.session_elapsed_seconds) : "—"}</dd>
+        <dt>Session runner</dt>
+        <dd>{flagLabel(status?.session_runner_alive)}</dd>
         <dt>Heartbeat</dt>
-        <dd>{status?.heartbeat_active ? "active" : "not active"}</dd>
+        <dd>{flagLabel(status?.heartbeat_active)}</dd>
         <dt>Activity</dt>
         <dd>{status?.activity ?? "UNKNOWN"}</dd>
+        <dt>Cadence</dt>
+        <dd>{typeof status?.cadence_seconds === "number" ? `${status.cadence_seconds}s` : "UNKNOWN"}</dd>
         <dt>Last transition</dt>
         <dd>{status?.changed_at ?? "not set"}</dd>
       </dl>
-      {error ? <p className="jo-operating-red">{error}</p> : null}
+      {error ? (
+        <p className="jo-operating-error" role="status">
+          {status ? "Status stale. " : ""}
+          {error}
+        </p>
+      ) : null}
     </section>
   );
 }

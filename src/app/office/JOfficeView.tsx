@@ -176,7 +176,9 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
         </nav>
       ) : null}
 
-      <OperatingStateControl />
+      <div className="jo-operating-slot">
+        <OperatingStateControl />
+      </div>
 
       <div className="jo-grid">
         <section className="jo-panel jo-now">

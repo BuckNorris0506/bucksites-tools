@@ -133,7 +133,7 @@
   margin: 0;
   font-size: 1.55rem;
   line-height: 1.2;
-  font-weight: 750;
+  font-weight: 700;
 }
 
 .jo-hero {
@@ -302,8 +302,11 @@
   .jo-learning { grid-area: learning; order: unset; }
 }
 
-.jo-operating {
+.jo-operating-slot {
   margin: 1rem 1.35rem 0;
+}
+
+.jo-operating {
   padding: 0.9rem 1rem;
   border: 1px solid var(--jo-line);
   background: var(--jo-panel);
@@ -322,22 +325,124 @@
   margin-bottom: 0.75rem;
 }
 
-.jo-operating-actions button {
-  border: 1px solid var(--jo-line);
-  background: var(--jo-panel-2);
-  color: var(--jo-text);
-  padding: 0.45rem 0.8rem;
-  font-weight: 650;
+.jo-stoplight {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-width: 7.25rem;
+  border: 2px solid var(--jo-line);
+  background: transparent;
+  color: var(--jo-muted);
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   cursor: pointer;
 }
 
-.jo-operating-actions button[aria-pressed="true"] {
-  border-color: var(--jo-text);
+.jo-stoplight-lamp,
+.jo-operating-lamp {
+  width: 0.72rem;
+  height: 0.72rem;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  background: transparent;
+  flex: 0 0 auto;
 }
 
-.jo-operating-green { color: var(--jo-ok); }
-.jo-operating-yellow { color: var(--jo-warn); }
-.jo-operating-red { color: var(--jo-need); }
+.jo-stoplight-green {
+  border-color: #1f6b45;
+  color: #86efac;
+}
+
+.jo-stoplight-yellow {
+  border-color: #92650a;
+  color: #fcd34d;
+}
+
+.jo-stoplight-red {
+  border-color: #9f1239;
+  color: #fda4af;
+}
+
+.jo-stoplight[aria-pressed="true"] {
+  color: #07110c;
+}
+
+.jo-stoplight-green[aria-pressed="true"] {
+  background: #34d399;
+  border-color: #34d399;
+}
+
+.jo-stoplight-yellow[aria-pressed="true"] {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #1c1403;
+}
+
+.jo-stoplight-red[aria-pressed="true"] {
+  background: #fb7185;
+  border-color: #fb7185;
+  color: #2a0610;
+}
+
+.jo-stoplight[aria-pressed="true"] .jo-stoplight-lamp {
+  background: currentColor;
+  border-color: currentColor;
+}
+
+.jo-stoplight:focus-visible {
+  outline: 2px solid var(--jo-text);
+  outline-offset: 3px;
+}
+
+.jo-stoplight:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.jo-operating-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 2px solid var(--jo-line);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem 0.2rem 0.4rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--jo-muted);
+}
+
+.jo-operating-pill-green {
+  background: #34d399;
+  border-color: #34d399;
+  color: #052e16;
+}
+
+.jo-operating-pill-yellow {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #1c1403;
+}
+
+.jo-operating-pill-red {
+  background: #fb7185;
+  border-color: #fb7185;
+  color: #2a0610;
+}
+
+.jo-operating-pill-green .jo-operating-lamp,
+.jo-operating-pill-yellow .jo-operating-lamp,
+.jo-operating-pill-red .jo-operating-lamp {
+  background: currentColor;
+  border-color: currentColor;
+}
+
+.jo-operating-error {
+  margin: 0.65rem 0 0;
+  color: #fda4af;
+}
 
 .jo-operating dl {
   display: grid;
