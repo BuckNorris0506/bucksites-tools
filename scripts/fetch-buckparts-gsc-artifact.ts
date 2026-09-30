@@ -2,6 +2,8 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { atomicWriteJsonV1 } from "./lib/buckparts-command-center-dispatch-recovery-v1";
+
 import { loadEnv } from "./lib/load-env";
 import {
   collectLogSafeFactsFromUnknown,
@@ -14,12 +16,33 @@ import {
   buildQueryFailedTrackedPageSlice,
   buildTrackedPageSliceFromFilteredRows,
 } from "./lib/gsc-tracked-page-slices-v1";
-import type {
-  GscArtifactTopEntry,
-  GscSearchAnalyticsArtifact,
-  GscTrackedPageSliceV1,
+import {
+  parseGscSearchAnalyticsArtifact,
+  type GscArtifactTopEntry,
+  type GscSearchAnalyticsArtifact,
+  type GscTrackedPageSliceV1,
 } from "@/lib/owner-dashboard/gsc-api-artifact";
 import { writeGscArtifactToSupabase } from "@/lib/owner-dashboard/gsc-durable-artifact-store";
+
+export const GSC_LOCAL_ARTIFACT_RELATIVE_PATH = "data/reports/buckparts-gsc-search-analytics.json";
+
+export function gscFetchRequestsLocalOnly(argv: readonly string[]): boolean {
+  return argv.includes("--local-only");
+}
+
+export class GscLocalOnlyCollectionError extends Error {
+  readonly failure_status: string;
+
+  constructor(message: string, failure_status: string) {
+    super(message);
+    this.name = "GscLocalOnlyCollectionError";
+    this.failure_status = failure_status;
+  }
+}
+
+export function gscLocalArtifactPath(rootDir: string): string {
+  return path.resolve(rootDir, GSC_LOCAL_ARTIFACT_RELATIVE_PATH);
+}
 
 type SearchConsoleApiRow = {
   keys?: string[];
@@ -37,6 +60,7 @@ async function querySearchAnalytics(args: {
   rowLimit?: number;
   startRow?: number;
   pageUrlEquals?: string;
+  fetchImpl?: typeof fetch;
 }): Promise<SearchConsoleApiRow[]> {
   const body: Record<string, unknown> = {
     startDate: args.startDate,
@@ -59,7 +83,7 @@ async function querySearchAnalytics(args: {
       },
     ];
   }
-  const response = await fetch(
+  const response = await (args.fetchImpl ?? fetch)(
     `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(args.property)}/searchAnalytics/query`,
     {
       method: "POST",
@@ -74,6 +98,12 @@ async function querySearchAnalytics(args: {
     await throwGoogleApiLogSafeError(response, "gsc/searchAnalytics/query");
   }
   const parsed = (await response.json()) as { rows?: SearchConsoleApiRow[] };
+  if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error("gsc/searchAnalytics/query malformed response");
+  }
+  if ("rows" in parsed && parsed.rows != null && !Array.isArray(parsed.rows)) {
+    throw new Error("gsc/searchAnalytics/query malformed response");
+  }
   return parsed.rows ?? [];
 }
 
@@ -106,6 +136,7 @@ async function queryDimension(args: {
   property: string;
   dateRange: { start_date: string; end_date: string };
   dimension: "query" | "page";
+  fetchImpl?: typeof fetch;
 }): Promise<SearchAnalyticsRow[]> {
   const rows = await querySearchAnalytics({
     accessToken: args.accessToken,
@@ -114,6 +145,7 @@ async function queryDimension(args: {
     endDate: args.dateRange.end_date,
     dimensions: [args.dimension],
     rowLimit: 250,
+    fetchImpl: args.fetchImpl,
     startRow: 0,
   });
   return rows
@@ -169,6 +201,7 @@ async function queryTotals(args: {
   accessToken: string;
   property: string;
   dateRange: { start_date: string; end_date: string };
+  fetchImpl?: typeof fetch;
 }): Promise<{ total_clicks: number; total_impressions: number; average_position: number | "UNKNOWN" }> {
   const rows = await querySearchAnalytics({
     accessToken: args.accessToken,
@@ -177,6 +210,7 @@ async function queryTotals(args: {
     endDate: args.dateRange.end_date,
     rowLimit: 1,
     startRow: 0,
+    fetchImpl: args.fetchImpl,
   });
   const row = rows[0];
   const total_clicks = asFiniteNumber(row?.clicks);
@@ -194,6 +228,7 @@ async function fetchTrackedPageSlicesV1(args: {
   property: string;
   dateRange: { start_date: string; end_date: string };
   env?: Record<string, string | undefined>;
+  fetchImpl?: typeof fetch;
 }): Promise<GscTrackedPageSliceV1[]> {
   const targets = apHomeownerPilotTrackedPageTargets(args.env, { gscProperty: args.property });
   const slices: GscTrackedPageSliceV1[] = [];
@@ -209,6 +244,7 @@ async function fetchTrackedPageSlicesV1(args: {
         rowLimit: 1,
         startRow: 0,
         pageUrlEquals: target.page_url,
+        fetchImpl: args.fetchImpl,
       });
       slices.push(
         buildTrackedPageSliceFromFilteredRows({
@@ -262,9 +298,13 @@ function buildUnknownArtifact(args: {
 export async function buildGscSearchAnalyticsArtifact(args?: {
   now?: Date;
   env?: Record<string, string | undefined>;
+  fetchImpl?: typeof fetch;
 }): Promise<GscSearchAnalyticsArtifact> {
   const dateRange = buildDateRange(args?.now);
-  const client = createSearchConsoleClientFromEnv({ env: args?.env });
+  const client = createSearchConsoleClientFromEnv({
+    env: args?.env,
+    fetchImpl: args?.fetchImpl,
+  });
   if (!client.ok) {
     return buildUnknownArtifact({
       status: "UNKNOWN_CONFIG",
@@ -283,24 +323,28 @@ export async function buildGscSearchAnalyticsArtifact(args?: {
         accessToken,
         property: client.property,
         dateRange,
+        fetchImpl: args?.fetchImpl,
       }),
       queryDimension({
         accessToken,
         property: client.property,
         dateRange,
         dimension: "query",
+        fetchImpl: args?.fetchImpl,
       }),
       queryDimension({
         accessToken,
         property: client.property,
         dateRange,
         dimension: "page",
+        fetchImpl: args?.fetchImpl,
       }),
       fetchTrackedPageSlicesV1({
         accessToken,
         property: client.property,
         dateRange,
         env,
+        fetchImpl: args?.fetchImpl,
       }),
     ]);
     const averageCtr =
@@ -358,19 +402,80 @@ export async function buildGscSearchAnalyticsArtifact(args?: {
   }
 }
 
-export async function runGscFetchJob(rootDir = process.cwd()): Promise<{
+type GscDurableWriteReport =
+  | { status: "OK"; sink: "SUPABASE"; details: string[] }
+  | { status: "UNKNOWN_SUPABASE_WRITE"; details: string[] }
+  | { status: "NOT_ATTEMPTED_LOCAL_ONLY"; details: string[] };
+
+export async function runGscFetchJob(
+  rootDir = process.cwd(),
+  options?: {
+    localOnly?: boolean;
+    env?: Record<string, string | undefined>;
+    now?: Date;
+    fetchImpl?: typeof fetch;
+    writeArtifact?: typeof writeGscArtifactToSupabase;
+    writeText?: (absPath: string, contents: string) => void;
+    rename?: (from: string, to: string) => void;
+  },
+): Promise<{
   output_path: string;
   artifact: GscSearchAnalyticsArtifact;
-  durable_write:
-    | { status: "OK"; sink: "SUPABASE"; details: string[] }
-    | { status: "UNKNOWN_SUPABASE_WRITE"; details: string[] };
+  durable_write: GscDurableWriteReport;
 }> {
-  loadEnv(rootDir);
-  const artifact = await buildGscSearchAnalyticsArtifact();
-  const outputPath = path.resolve(rootDir, "data/reports/buckparts-gsc-search-analytics.json");
+  const localOnly = options?.localOnly === true;
+  if (!options?.env) {
+    loadEnv(rootDir);
+  }
+  const artifact = await buildGscSearchAnalyticsArtifact({
+    now: options?.now,
+    env: options?.env,
+    fetchImpl: options?.fetchImpl,
+  });
+  const outputPath = gscLocalArtifactPath(rootDir);
+  if (localOnly) {
+    if (artifact.status !== "OK") {
+      const detail = artifact.unknown_facts.join(" ");
+      throw new GscLocalOnlyCollectionError(
+        detail || `GSC local-only collection failed: ${artifact.status}`,
+        artifact.status,
+      );
+    }
+    const parsed = parseGscSearchAnalyticsArtifact(JSON.stringify(artifact));
+    if (!parsed.ok || parsed.artifact.status !== "OK") {
+      throw new GscLocalOnlyCollectionError(
+        parsed.ok ? "GSC local-only artifact is not a successful observation." : parsed.reason,
+        "MALFORMED_RESPONSE",
+      );
+    }
+    if (parsed.artifact.date_range === "UNKNOWN") {
+      throw new GscLocalOnlyCollectionError(
+        "GSC local-only artifact is missing a measurement window.",
+        "MALFORMED_RESPONSE",
+      );
+    }
+    mkdirSync(path.dirname(outputPath), { recursive: true });
+    atomicWriteJsonV1({
+      absPath: outputPath,
+      value: parsed.artifact,
+      writeText: options?.writeText,
+      rename: options?.rename,
+    });
+    return {
+      output_path: outputPath,
+      artifact: parsed.artifact,
+      durable_write: {
+        status: "NOT_ATTEMPTED_LOCAL_ONLY",
+        details: ["Supabase upsert was not attempted."],
+      },
+    };
+  }
   mkdirSync(path.dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, `${JSON.stringify(artifact, null, 2)}\n`, "utf8");
-  const durableWrite = await writeGscArtifactToSupabase(artifact);
+  const durableWrite = await (options?.writeArtifact ?? writeGscArtifactToSupabase)(
+    artifact,
+    options?.env ? { env: options.env } : undefined,
+  );
   return {
     output_path: outputPath,
     artifact,
@@ -380,29 +485,43 @@ export async function runGscFetchJob(rootDir = process.cwd()): Promise<{
   };
 }
 
-export async function main(): Promise<void> {
-  const result = await runGscFetchJob();
-  process.stdout.write(
-    `${JSON.stringify(
-      {
-        output_path: result.output_path,
-        status: result.artifact.status,
-        fetched_at: result.artifact.fetched_at,
-        property: result.artifact.property,
-        durable_write: result.durable_write,
-        tracked_page_slices_v1: result.artifact.tracked_page_slices_v1 ?? [],
-        ...(result.artifact.status !== "OK" ? { unknown_facts: result.artifact.unknown_facts } : {}),
-      },
-      null,
-      2,
-    )}\n`,
-  );
+export async function main(argv: readonly string[] = process.argv, rootDir = process.cwd()): Promise<number> {
+  const localOnly = gscFetchRequestsLocalOnly(argv);
+  try {
+    const result = await runGscFetchJob(rootDir, { localOnly });
+    process.stdout.write(
+      `${JSON.stringify(
+        {
+          output_path: result.output_path,
+          status: result.artifact.status,
+          fetched_at: result.artifact.fetched_at,
+          property: result.artifact.property,
+          durable_write: result.durable_write,
+          tracked_page_slices_v1: result.artifact.tracked_page_slices_v1 ?? [],
+          ...(result.artifact.status !== "OK" ? { unknown_facts: result.artifact.unknown_facts } : {}),
+        },
+        null,
+        2,
+      )}\n`,
+    );
+    return 0;
+  } catch (error) {
+    if (error instanceof GscLocalOnlyCollectionError) {
+      console.error(`[fetch-buckparts-gsc-artifact] ${error.message}`);
+      return 1;
+    }
+    throw error;
+  }
 }
 
 const THIS_FILE = fileURLToPath(import.meta.url);
 if (process.argv[1] && path.resolve(process.argv[1]) === THIS_FILE) {
-  main().catch(() => {
-    console.error("[fetch-buckparts-gsc-artifact] failed");
-    process.exit(1);
-  });
+  main()
+    .then((code) => {
+      if (code !== 0) process.exit(code);
+    })
+    .catch(() => {
+      console.error("[fetch-buckparts-gsc-artifact] failed");
+      process.exit(1);
+    });
 }

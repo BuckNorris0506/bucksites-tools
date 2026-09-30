@@ -1,9 +1,17 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 
 import {
+  GscLocalOnlyCollectionError,
   buildGscSearchAnalyticsArtifact,
   buildHighImpressionLowClickOpportunities,
+  gscFetchRequestsLocalOnly,
+  gscLocalArtifactPath,
+  main,
+  runGscFetchJob,
 } from "./fetch-buckparts-gsc-artifact";
 import {
   buildNotFetchedTrackedPageSlice,
@@ -317,5 +325,295 @@ test("successful GSC fetch includes tracked_page_slices_v1 from exact-page filte
     assert.equal(medify.match_status, "ZERO_IN_RANGE");
   } finally {
     globalThis.fetch = originalFetch;
+  }
+});
+
+const LOCAL_ONLY_GSC_ENV = {
+  GSC_PROPERTY_SITE_URL: "sc-domain:buckparts.com",
+  GSC_OAUTH_CLIENT_ID: "client-id",
+  GSC_OAUTH_CLIENT_SECRET: "super-secret",
+  GSC_OAUTH_REFRESH_TOKEN: "refresh-secret",
+  NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+  SUPABASE_SERVICE_ROLE_KEY: "service-role-not-real",
+};
+
+function tokenResponse(): Response {
+  return {
+    ok: true,
+    status: 200,
+    json: async () => ({ access_token: "test-access-token-value" }),
+    text: async () => "",
+  } as Response;
+}
+
+function analyticsFetch(rowsBody: unknown): typeof fetch {
+  return (async (input: RequestInfo | URL) => {
+    const url = String(input);
+    if (url.includes("oauth2.googleapis.com/token")) return tokenResponse();
+    if (!url.includes("searchAnalytics/query")) {
+      throw new Error(`unexpected host ${url}`);
+    }
+    return {
+      ok: true,
+      status: 200,
+      json: async () => rowsBody,
+      text: async () => "",
+    } as Response;
+  }) as typeof fetch;
+}
+
+function withLastGoodArtifact(): { root: string; artifactPath: string; cleanup: () => void } {
+  const root = mkdtempSync(path.join(tmpdir(), "gsc-local-only-"));
+  const artifactPath = gscLocalArtifactPath(root);
+  mkdirSync(path.dirname(artifactPath), { recursive: true });
+  writeFileSync(artifactPath, "LAST_GOOD\n", "utf8");
+  return {
+    root,
+    artifactPath,
+    cleanup: () => rmSync(root, { recursive: true, force: true }),
+  };
+}
+
+test("local-only flag is the explicit bounded mode", () => {
+  assert.equal(gscFetchRequestsLocalOnly(["node", "fetch-buckparts-gsc-artifact.ts", "--local-only"]), true);
+  assert.equal(gscFetchRequestsLocalOnly(["node", "fetch-buckparts-gsc-artifact.ts"]), false);
+});
+
+test("local-only successful GSC response writes only the local artifact and does not call Supabase", async () => {
+  const fixture = withLastGoodArtifact();
+  const written: string[] = [];
+  const renamed: Array<[string, string]> = [];
+  let supabaseCalls = 0;
+  const googleReads: string[] = [];
+  try {
+    const result = await runGscFetchJob(fixture.root, {
+      localOnly: true,
+      now: new Date("2026-09-29T18:00:00.000Z"),
+      env: LOCAL_ONLY_GSC_ENV,
+      fetchImpl: (async (input: RequestInfo | URL) => {
+        const url = String(input);
+        googleReads.push(url);
+        if (url.includes("oauth2.googleapis.com/token")) return tokenResponse();
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            rows: [{ keys: ["filter"], clicks: 2, impressions: 20, ctr: 0.1, position: 8 }],
+          }),
+          text: async () => "",
+        } as Response;
+      }) as typeof fetch,
+      writeArtifact: async () => {
+        supabaseCalls += 1;
+        return { ok: true, sink: "SUPABASE", details: [] };
+      },
+      writeText: (absPath, contents) => {
+        written.push(absPath);
+        writeFileSync(absPath, contents, "utf8");
+      },
+      rename: (from, to) => {
+        renamed.push([from, to]);
+        writeFileSync(to, readFileSync(from, "utf8"), "utf8");
+      },
+    });
+    assert.equal(supabaseCalls, 0);
+    assert.equal(result.durable_write.status, "NOT_ATTEMPTED_LOCAL_ONLY");
+    assert.equal(result.artifact.status, "OK");
+    assert.ok(googleReads.some((url) => url.includes("oauth2.googleapis.com/token")));
+    assert.ok(googleReads.some((url) => url.includes("searchAnalytics/query")));
+    assert.equal(renamed.length, 1);
+    assert.equal(renamed[0]?.[1], fixture.artifactPath);
+    assert.ok(written.length === 1 && written[0]?.startsWith(`${fixture.artifactPath}.`));
+    assert.ok(written[0]?.endsWith(".tmp"));
+    const saved = JSON.parse(readFileSync(fixture.artifactPath, "utf8"));
+    assert.equal(saved.status, "OK");
+    assert.equal(saved.total_clicks, 2);
+    assert.equal(JSON.stringify(saved).includes("super-secret"), false);
+    assert.equal(JSON.stringify(saved).includes("service-role-not-real"), false);
+  } finally {
+    fixture.cleanup();
+  }
+});
+
+test("normal mode still calls the Supabase writer", async () => {
+  const fixture = withLastGoodArtifact();
+  let supabaseCalls = 0;
+  try {
+    const result = await runGscFetchJob(fixture.root, {
+      now: new Date("2026-09-29T18:00:00.000Z"),
+      env: LOCAL_ONLY_GSC_ENV,
+      fetchImpl: analyticsFetch({
+        rows: [{ keys: ["filter"], clicks: 1, impressions: 4, position: 3 }],
+      }),
+      writeArtifact: async () => {
+        supabaseCalls += 1;
+        return { ok: true, sink: "SUPABASE", details: ["upserted"] };
+      },
+    });
+    assert.equal(supabaseCalls, 1);
+    assert.equal(result.durable_write.status, "OK");
+    if (result.durable_write.status === "OK") {
+      assert.equal(result.durable_write.sink, "SUPABASE");
+    }
+  } finally {
+    fixture.cleanup();
+  }
+});
+
+test("local-only missing config fails without Supabase and without replacing the artifact", async () => {
+  const fixture = withLastGoodArtifact();
+  let supabaseCalls = 0;
+  try {
+    await assert.rejects(
+      () =>
+        runGscFetchJob(fixture.root, {
+          localOnly: true,
+          env: {
+            GSC_PROPERTY_SITE_URL: "",
+            GSC_SERVICE_ACCOUNT_JSON: "",
+            GSC_SERVICE_ACCOUNT_KEY_PATH: "",
+            NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+            SUPABASE_SERVICE_ROLE_KEY: "service-role-not-real",
+          },
+          writeArtifact: async () => {
+            supabaseCalls += 1;
+            return { ok: true, sink: "SUPABASE", details: [] };
+          },
+        }),
+      (error: unknown) => {
+        assert.ok(error instanceof GscLocalOnlyCollectionError);
+        assert.equal(error.failure_status, "UNKNOWN_CONFIG");
+        assert.equal(String(error.message).includes("service-role-not-real"), false);
+        return true;
+      },
+    );
+    assert.equal(supabaseCalls, 0);
+    assert.equal(readFileSync(fixture.artifactPath, "utf8"), "LAST_GOOD\n");
+    const liveCredentialNames = [
+      "GSC_PROPERTY_SITE_URL",
+      "GSC_OAUTH_CLIENT_ID",
+      "GSC_SERVICE_ACCOUNT_JSON",
+      "GSC_SERVICE_ACCOUNT_KEY_PATH",
+    ];
+    assert.equal(
+      liveCredentialNames.some((name) => Boolean(process.env[name]?.trim())),
+      false,
+    );
+    const code = await main(["node", "fetch-buckparts-gsc-artifact.ts", "--local-only"], fixture.root);
+    assert.equal(code, 1);
+    assert.equal(readFileSync(fixture.artifactPath, "utf8"), "LAST_GOOD\n");
+  } finally {
+    fixture.cleanup();
+  }
+});
+
+test("local-only OAuth failure does not replace the artifact", async () => {
+  const fixture = withLastGoodArtifact();
+  try {
+    await assert.rejects(
+      () =>
+        runGscFetchJob(fixture.root, {
+          localOnly: true,
+          env: LOCAL_ONLY_GSC_ENV,
+          fetchImpl: (async () =>
+            ({
+              ok: false,
+              status: 400,
+              json: async () => ({ error: "invalid_grant" }),
+              text: async () => JSON.stringify({ error: "invalid_grant" }),
+            }) as Response) as typeof fetch,
+          writeArtifact: async () => {
+            throw new Error("supabase must not be called");
+          },
+        }),
+      (error: unknown) => error instanceof GscLocalOnlyCollectionError && error.failure_status === "UNKNOWN_API_ERROR",
+    );
+    assert.equal(readFileSync(fixture.artifactPath, "utf8"), "LAST_GOOD\n");
+  } finally {
+    fixture.cleanup();
+  }
+});
+
+test("local-only Search Console API failure does not replace the artifact", async () => {
+  const fixture = withLastGoodArtifact();
+  try {
+    await assert.rejects(
+      () =>
+        runGscFetchJob(fixture.root, {
+          localOnly: true,
+          env: LOCAL_ONLY_GSC_ENV,
+          fetchImpl: (async (input: RequestInfo | URL) => {
+            const url = String(input);
+            if (url.includes("oauth2.googleapis.com/token")) return tokenResponse();
+            return {
+              ok: false,
+              status: 403,
+              json: async () => ({ error: { code: 403, status: "PERMISSION_DENIED" } }),
+              text: async () => JSON.stringify({ error: { code: 403, status: "PERMISSION_DENIED" } }),
+            } as Response;
+          }) as typeof fetch,
+          writeArtifact: async () => {
+            throw new Error("supabase must not be called");
+          },
+        }),
+      (error: unknown) => error instanceof GscLocalOnlyCollectionError,
+    );
+    assert.equal(readFileSync(fixture.artifactPath, "utf8"), "LAST_GOOD\n");
+  } finally {
+    fixture.cleanup();
+  }
+});
+
+test("local-only malformed Search Console response does not replace the artifact", async () => {
+  const fixture = withLastGoodArtifact();
+  try {
+    await assert.rejects(
+      () =>
+        runGscFetchJob(fixture.root, {
+          localOnly: true,
+          env: LOCAL_ONLY_GSC_ENV,
+          fetchImpl: analyticsFetch({ rows: "not-an-array" }),
+          writeArtifact: async () => {
+            throw new Error("supabase must not be called");
+          },
+        }),
+      (error: unknown) => error instanceof GscLocalOnlyCollectionError,
+    );
+    assert.equal(readFileSync(fixture.artifactPath, "utf8"), "LAST_GOOD\n");
+  } finally {
+    fixture.cleanup();
+  }
+});
+
+test("local-only zero-row Search Console response is a successful observation", async () => {
+  const fixture = withLastGoodArtifact();
+  let supabaseCalls = 0;
+  try {
+    const result = await runGscFetchJob(fixture.root, {
+      localOnly: true,
+      now: new Date("2026-09-29T18:00:00.000Z"),
+      env: LOCAL_ONLY_GSC_ENV,
+      fetchImpl: analyticsFetch({ rows: [] }),
+      writeArtifact: async () => {
+        supabaseCalls += 1;
+        return { ok: true, sink: "SUPABASE", details: [] };
+      },
+    });
+    assert.equal(supabaseCalls, 0);
+    assert.equal(result.artifact.status, "OK");
+    assert.equal(result.artifact.total_clicks, 0);
+    assert.equal(result.artifact.total_impressions, 0);
+    assert.equal(typeof result.artifact.fetched_at, "string");
+    assert.notEqual(result.artifact.date_range, "UNKNOWN");
+    if (result.artifact.date_range !== "UNKNOWN") {
+      assert.equal(result.artifact.date_range.start_date, "2026-08-28");
+      assert.equal(result.artifact.date_range.end_date, "2026-09-26");
+    }
+    const saved = JSON.parse(readFileSync(fixture.artifactPath, "utf8"));
+    assert.equal(saved.status, "OK");
+    assert.equal(saved.fetched_at, result.artifact.fetched_at);
+    assert.deepEqual(saved.date_range, result.artifact.date_range);
+  } finally {
+    fixture.cleanup();
   }
 });
