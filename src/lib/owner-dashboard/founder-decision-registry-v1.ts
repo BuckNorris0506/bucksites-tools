@@ -23,11 +23,15 @@ export type FounderDecisionRegistryDecisionStatusV1 =
   | "deferred"
   | "needs_more_evidence";
 
+export const FOUNDER_DECISION_REGISTRY_MODEL_FIRST_EVIDENCE_RESULT_WRITE_SCOPE_V1 =
+  "owner_model_first_evidence_result_write_approved" as const;
+
 export type FounderDecisionRegistryAllowedNextScopeV1 =
   | "none"
   | "read_only_agent"
   | "human_external"
-  | "owner_mutation_approved";
+  | "owner_mutation_approved"
+  | typeof FOUNDER_DECISION_REGISTRY_MODEL_FIRST_EVIDENCE_RESULT_WRITE_SCOPE_V1;
 
 /** Mirrors `codex_output_review_packet_v1` founder option ids — kept here to avoid circular imports. */
 export const CODEX_OUTPUT_REVIEW_REGISTRY_FOUNDER_OPTION_IDS_V1 = [
@@ -167,6 +171,7 @@ const SCOPE_LIST: FounderDecisionRegistryAllowedNextScopeV1[] = [
   "read_only_agent",
   "human_external",
   "owner_mutation_approved",
+  FOUNDER_DECISION_REGISTRY_MODEL_FIRST_EVIDENCE_RESULT_WRITE_SCOPE_V1,
 ];
 const SCOPES = new Set(SCOPE_LIST);
 
@@ -722,6 +727,14 @@ export function validateFounderDecisionRegistryRowV1(
   if (scope === "owner_mutation_approved" && owner_note.trim().length === 0) {
     errors.push("owner_mutation_approved requires a non-empty owner_note (explicit founder text)");
   }
+  if (
+    scope === FOUNDER_DECISION_REGISTRY_MODEL_FIRST_EVIDENCE_RESULT_WRITE_SCOPE_V1 &&
+    owner_note.trim().length === 0
+  ) {
+    errors.push(
+      "owner_model_first_evidence_result_write_approved requires a non-empty owner_note (explicit founder text)",
+    );
+  }
 
   const ev = o.evidence_required_before_mutation;
   if (typeof ev !== "boolean") {
@@ -729,6 +742,13 @@ export function validateFounderDecisionRegistryRowV1(
   } else if (scope === "owner_mutation_approved" && ev !== true) {
     errors.push(
       "owner_mutation_approved requires evidence_required_before_mutation === true (explicit evidence gate before mutation)",
+    );
+  } else if (
+    scope === FOUNDER_DECISION_REGISTRY_MODEL_FIRST_EVIDENCE_RESULT_WRITE_SCOPE_V1 &&
+    ev !== true
+  ) {
+    errors.push(
+      "owner_model_first_evidence_result_write_approved requires evidence_required_before_mutation === true (queue READY + validator + path guard before write)",
     );
   }
 
@@ -867,6 +887,22 @@ export function validateFounderDecisionRegistryRowV1(
     }
   }
 
+  if (allowed_next_scope === FOUNDER_DECISION_REGISTRY_MODEL_FIRST_EVIDENCE_RESULT_WRITE_SCOPE_V1) {
+    if (expires_at == null || expires_at === undefined || expires_at.trim() === "") {
+      errors.push(
+        "owner_model_first_evidence_result_write_approved requires expires_at (non-null ISO 8601 instant)",
+      );
+    } else {
+      const decidedAtMs = Date.parse((o.decided_at as string).trim());
+      const expiresAtMs = Date.parse(expires_at);
+      if (!Number.isNaN(decidedAtMs) && !Number.isNaN(expiresAtMs) && expiresAtMs <= decidedAtMs) {
+        errors.push(
+          "owner_model_first_evidence_result_write_approved expires_at must be after decided_at",
+        );
+      }
+    }
+  }
+
   if (errors.length > 0) {
     return { ok: false, errors };
   }
@@ -935,6 +971,8 @@ export function validateFounderDecisionRegistryDocumentV1(
 
 /**
  * PROVEN: `read_only_agent` never authorizes mutating repo scripts or production mutation.
+ * PROVEN: `owner_model_first_evidence_result_write_approved` is not mutation-shaped and never
+ * satisfies `isFounderRegistryRowActiveMutationApproval`.
  * INFERRED: Only `owner_mutation_approved` can surface as a mutation-shaped scope label — still subject to time bounds.
  *
  * INFORMATIONAL ONLY: does not verify `bound_artifacts_v1`. Mutation paths MUST use
@@ -945,6 +983,24 @@ export function founderRegistryRowGrantsMutatingRepoAuthority(
   referenceTimeIso: string,
 ): boolean {
   return isFounderRegistryRowActiveMutationApproval(row, referenceTimeIso);
+}
+
+function founderRegistryRowPassesStandingTimeBoundsV1(
+  row: FounderDecisionRegistryRowV1,
+  referenceTimeIso: string,
+): boolean {
+  const now = Date.parse(referenceTimeIso);
+  if (Number.isNaN(now)) return false;
+  if (row.expires_at == null || String(row.expires_at).trim() === "") {
+    return false;
+  }
+  const exp = Date.parse(row.expires_at);
+  if (Number.isNaN(exp) || now >= exp) return false;
+  if (row.review_after != null && row.review_after !== "") {
+    const rev = Date.parse(row.review_after);
+    if (!Number.isNaN(rev) && now >= rev) return false;
+  }
+  return true;
 }
 
 /** Active “standing approval” for mutation-shaped scope: approved + owner_mutation_approved + not past expires_at/review_after. */
@@ -958,16 +1014,24 @@ export function isFounderRegistryRowActiveMutationApproval(
   if (r.decision_status !== "approved" || r.allowed_next_scope !== "owner_mutation_approved") {
     return false;
   }
-  const now = Date.parse(referenceTimeIso);
-  if (Number.isNaN(now)) return false;
-  if (r.expires_at == null || String(r.expires_at).trim() === "") {
+  return founderRegistryRowPassesStandingTimeBoundsV1(r, referenceTimeIso);
+}
+
+/**
+ * Active standing grant for bounded AP model-first evidence *result* writes only.
+ * PROVEN: requires approved + exact `owner_model_first_evidence_result_write_approved` + unexpired.
+ * PROVEN: never satisfies `isFounderRegistryRowActiveMutationApproval`.
+ */
+export function isFounderRegistryRowActiveModelFirstEvidenceResultWriteApproval(
+  row: FounderDecisionRegistryRowV1,
+  referenceTimeIso: string,
+): boolean {
+  const v = validateFounderDecisionRegistryRowV1(row);
+  if (!v.ok) return false;
+  const r = v.row;
+  if (r.decision_status !== "approved") return false;
+  if (r.allowed_next_scope !== FOUNDER_DECISION_REGISTRY_MODEL_FIRST_EVIDENCE_RESULT_WRITE_SCOPE_V1) {
     return false;
   }
-  const exp = Date.parse(r.expires_at);
-  if (Number.isNaN(exp) || now >= exp) return false;
-  if (r.review_after != null && r.review_after !== "") {
-    const rev = Date.parse(r.review_after);
-    if (!Number.isNaN(rev) && now >= rev) return false;
-  }
-  return true;
+  return founderRegistryRowPassesStandingTimeBoundsV1(r, referenceTimeIso);
 }

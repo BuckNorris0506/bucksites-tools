@@ -277,7 +277,7 @@ function loadFounderDecisionRows(rootDir: string): FounderDecisionRegistryRowV1[
   return rows;
 }
 
-function findActiveFounderDecisionForSlug(args: {
+export function findActiveFounderDecisionForManufacturerRescueSlugV1(args: {
   slug: string;
   applyPlanRel: string | null;
   founderRows: FounderDecisionRegistryRowV1[];
@@ -415,7 +415,7 @@ export function assessManufacturerRescueGuardedApplyBridgePreconditionsV1(args: 
   }
 
   const founderRow = ready_slug
-    ? findActiveFounderDecisionForSlug({
+    ? findActiveFounderDecisionForManufacturerRescueSlugV1({
         slug: ready_slug,
         applyPlanRel: applyPlanLoad.rel,
         founderRows: loadFounderDecisionRows(args.rootDir),
