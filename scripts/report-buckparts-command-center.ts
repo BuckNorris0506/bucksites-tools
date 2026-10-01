@@ -97,8 +97,11 @@ import {
 import {
   buildCanonicalFinalOperatingDecisionV1,
   demoteAdvisoryBrainV1,
+  existingCanonicalSourceForWorkQueueItemV1,
+  workQueueItemMayBecomeCanonicalCandidateV1,
   type SteeringCandidateInputV1,
 } from "./lib/buckparts-canonical-final-operating-decision-v1";
+import { discoverExecutiveWorkQueueV1 } from "./lib/buckparts-executive-work-queue-v1";
 import { ALLOWLIST_EXACT_COMMANDS_V1 } from "./lib/buckparts-command-center-dispatch-allowlist-v1";
 import { buildCustomerClosureReportV1 } from "./lib/customer-closure-report-v1";
 import { buildCustomerAuthorityScoreV1 } from "./lib/customer-authority-score-v1";
@@ -2761,11 +2764,28 @@ export async function buildBuckpartsCommandCenterReport(
     brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
   });
 
+  let workQueueActivatesModelFirst = false;
+  try {
+    const workQueue = await discoverExecutiveWorkQueueV1({ rootDir });
+    workQueueActivatesModelFirst = workQueue.executable_work.some(
+      (item) =>
+        existingCanonicalSourceForWorkQueueItemV1(item.work_id) === "model_first" &&
+        workQueueItemMayBecomeCanonicalCandidateV1({
+          work_id: item.work_id,
+          executable: true,
+          exact_command: item.exact_command,
+        }),
+    );
+  } catch {
+    workQueueActivatesModelFirst = false;
+  }
+
   const modelFirstSteeringOverride = resolveModelFirstSteeringOverrideV1({
     queue: ap_model_first_evidence_queue_v1,
     weakBuyerPathAudit: air_purifier_weak_buyer_path_audit_v1,
     dispatch: batch_production_operating_dispatch_v1,
     brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
+    activateFromWorkQueue: workQueueActivatesModelFirst,
   });
 
   const batchDispatchOverride = resolveBatchProductionDispatchDirectorOverrideV1({

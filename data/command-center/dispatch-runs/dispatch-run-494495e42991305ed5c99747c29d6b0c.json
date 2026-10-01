@@ -1,0 +1,379 @@
+{
+  "report_name": "buckparts_command_center_dispatch_run_v1",
+  "generated_at": "2026-08-15T21:04:00.446Z",
+  "source_commit": "a76759b",
+  "provenance_status": "BOUND_TO_SOURCE_COMMIT",
+  "worktree_clean": true,
+  "run_id": "494495e42991305ed5c99747c29d6b0c",
+  "attempt_count": 1,
+  "dispatch_status_before": "READY",
+  "selected_subsystem": "report:ap_model_first_evidence_queue",
+  "exact_command": "npx tsx scripts/report-ap-model-first-evidence-queue-v1.ts",
+  "steering_override_source": "model_first",
+  "owner_review_required": "BOOLEAN_FALSE",
+  "mutation_allowed": "BOOLEAN_FALSE",
+  "mutation_posture_classification": "mutation_allowed=BOOLEAN_FALSE|read_only=BOOLEAN_TRUE|data_mutation=BOOLEAN_FALSE",
+  "command_kind": "read_only_report",
+  "artifact_write_behavior": "optional",
+  "no_artifact_allowed": "BOOLEAN_TRUE",
+  "canonical_decision_snapshot": {
+    "next_best_action": "MODEL-FIRST STEERING [READY]: Collect read-only model-first evidence for holmes-hapf30 (holmes, 31 models) — start from holmes-hap412bcs, holmes-hap412bns, holmes-hap422b official support pages, then map to filter SKU and verified buyer path. Demoted: ap_batch_v3_aggregation_review (filter-first batch-v3 aggregation is deprecated for new product addition — legacy read-only triage only).",
+    "steering_override_source": "model_first",
+    "exact_command": "npx tsx scripts/report-ap-model-first-evidence-queue-v1.ts",
+    "dispatch_status": "READY",
+    "command_executable": true,
+    "owner_review_required": false,
+    "selected_subsystem": "report:ap_model_first_evidence_queue",
+    "command_kind": "read_only_report",
+    "artifact_write_behavior": "optional",
+    "no_artifact_allowed": true,
+    "mutation_posture": {
+      "read_only": true,
+      "data_mutation": false,
+      "mutation_allowed": false
+    }
+  },
+  "execution_allowed": false,
+  "execution_status": "EXECUTED",
+  "execution_lifecycle": "EXECUTED",
+  "stdout_excerpt": "{\n  \"contract\": \"ap_model_first_evidence_queue_v1\",\n  \"read_only\": true,\n  \"data_mutation\": false,\n  \"generated_at\": \"2026-08-15T21:04:00.886Z\",\n  \"source_status\": \"PROVEN\",\n  \"queue_status\": \"READY\",\n  \"candidate_count\": 10,\n  \"merged_candidate_count\": 10,\n  \"top_candidates\": [\n    {\n      \"filter_slug\": \"holmes-hapf30\",\n      \"brand_slug\": \"holmes\",\n      \"model_count_using_filter\": 31,\n      \"buyer_path_weakness_class\": \"SEARCH_PLACEHOLDER_PRIMARY\",\n      \"evidence_priority_score\": 333,\n      \"sample_model_slugs\": [\n        \"holmes-hap412bcs\",\n        \"holmes-hap412bns\",\n        \"holmes-hap422b\",\n        \"holmes-hap424-u\",\n        \"holmes-hap424-u8\"\n      ],\n      \"sample_model_numbers\": [\n        \"HAP412BCS\",\n        \"HAP412BNS\",\n        \"HAP422B\",\n        \"HAP424-U\",\n        \"HAP424-U8\"\n      ],\n      \"intended_evidence_path\": \"official model/support/manual page → documented replacement filter/part → verified safe buyer path (read-only browser proof; no CSV apply)\",\n      \"do_not_claim_unavailable\": true\n    },\n    {\n      \"filter_slug\": \"shark-hepa-hp200\",\n      \"brand_slug\": \"shark\",\n      \"model_count_using_filter\": 6,\n      \"buyer_path_weakness_class\": \"SEARCH_PLACEHOLDER_PRIMARY\",\n      \"evidence_priority_score\": 83,\n      \"sample_model_slugs\": [\n        \"shark-hp201\",\n        \"shark-hp202\",\n        \"shark-hp232\",\n        \"shark-hp200\",\n        \"shark-hp230\"\n      ],\n      \"sample_model_numbers\": [\n        \"Shark HP201\",\n        \"Shark HP202\",\n        \"Shark HP232\",\n        \"Shark HP200\",\n        \"Shark HP230\"\n      ],\n      \"intended_evidence_path\": \"official model/support/manual page → documented replacement filter/part → verified safe buyer path (read-only browser proof; no CSV apply)\",\n      \"do_not_claim_unavailable\": true\n    },\n    {\n      \"filter_slug\"\n…(truncated)",
+  "stderr_excerpt": "",
+  "parsed_json_summary": {
+    "contract": "ap_model_first_evidence_queue_v1",
+    "read_only": true,
+    "data_mutation": false,
+    "generated_at": "2026-08-15T21:04:00.886Z",
+    "source_status": "PROVEN",
+    "queue_status": "READY",
+    "candidate_count": 10,
+    "merged_candidate_count": 10,
+    "top_candidates": [
+      {
+        "filter_slug": "holmes-hapf30",
+        "brand_slug": "holmes",
+        "model_count_using_filter": 31,
+        "buyer_path_weakness_class": "SEARCH_PLACEHOLDER_PRIMARY",
+        "evidence_priority_score": 333,
+        "sample_model_slugs": [
+          "holmes-hap412bcs",
+          "holmes-hap412bns",
+          "holmes-hap422b",
+          "holmes-hap424-u",
+          "holmes-hap424-u8"
+        ],
+        "sample_model_numbers": [
+          "HAP412BCS",
+          "HAP412BNS",
+          "HAP422B",
+          "HAP424-U",
+          "HAP424-U8"
+        ],
+        "intended_evidence_path": "official model/support/manual page → documented replacement filter/part → verified safe buyer path (read-only browser proof; no CSV apply)",
+        "do_not_claim_unavailable": true
+      },
+      {
+        "filter_slug": "shark-hepa-hp200",
+        "brand_slug": "shark",
+        "model_count_using_filter": 6,
+        "buyer_path_weakness_class": "SEARCH_PLACEHOLDER_PRIMARY",
+        "evidence_priority_score": 83,
+        "sample_model_slugs": [
+          "shark-hp201",
+          "shark-hp202",
+          "shark-hp232",
+          "shark-hp200",
+          "shark-hp230"
+        ],
+        "sample_model_numbers": [
+          "Shark HP201",
+          "Shark HP202",
+          "Shark HP232",
+          "Shark HP200",
+          "Shark HP230"
+        ],
+        "intended_evidence_path": "official model/support/manual page → documented replacement filter/part → verified safe buyer path (read-only browser proof; no CSV apply)",
+        "do_not_claim_unavailable": true
+      },
+      {
+        "filter_slug": "shark-hepa-hp400",
+        "brand_slug": "shark",
+        "model_count_using_filter": 6,
+        "buyer_path_weakness_class": "SEARCH_PLACEHOLDER_PRIMARY",
+        "evidence_priority_score": 83,
+        "sample_model_slugs": [
+          "shark-hp401",
+          "shark-hp402",
+          "shark-hp452",
+          "shark-hp462",
+          "shark-hp602"
+        ],
+        "sample_model_numbers": [
+          "Shark HP401",
+          "Shark HP402",
+          "Shark HP452",
+          "Shark HP462",
+          "Shark HP602"
+        ],
+        "intended_evidence_path": "official model/support/manual page → documented replacement filter/part → verified safe buyer path (read-only browser proof; no CSV apply)",
+        "do_not_claim_unavailable": true
+      },
+      {
+        "filter_slug": "shark-hepa-he1fkbas",
+        "brand_slug": "shark",
+        "model_count_using_filter": 6,
+        "buyer_path_weakness_class": "DISCONTINUED_OR_UNKNOWN",
+        "evidence_priority_score": 63,
+        "sample_model_slugs": [
+          "shark-hp102",
+          "shark-hp132",
+          "shark-hp100",
+          "shark-hp105",
+          "shark-hp130"
+        ],
+        "sample_model_numbers": [
+          "Shark HP102",
+          "Shark HP132",
+          "Shark HP100",
+          "Shark HP105",
+          "Shark HP130"
+        ],
+        "intended_evidence_path": "official model/support/manual page → documented replacement filter/part → verified safe buyer path (read-only browser proof; no CSV apply)",
+        "do_not_claim_unavailable": true
+      },
+      {
+        "filter_slug": "levoit-rf-meta-air",
+        "brand_slug": "levoit",
+        "model_count_using_filter": 3,
+        "buyer_path_weakness_class": "SEARCH_PLACEHOLDER_PRIMARY",
+        "evidence_priority_score": 53,
+        "sample_model_slugs": [
+          "levoit-meta-air-s",
+          "levoit-meta-air",
+          "levoit-lap-ma101s-wus"
+        ],
+        "sample_model_numbers": [
+          "Meta Air S",
+          "Meta Air",
+          "LAP-MA101S-WUS"
+        ],
+        "intended_evidence_path": "official model/support/manual page → documented replacement filter/part → verified safe buyer path (read-only browser proof; no CSV apply)",
+        "do_not_claim_unavailable": true
+      },
+      {
+        "filter_slug": "levoit-vital200-rf",
+        "brand_slug": "levoit",
+        "model_count_using_filter": 3,
+        "buyer_path_weakness_class": "SEARCH_PLACEHOLDER_PRIMARY",
+        "evidence_priority_score": 53,
+        "sample_model_slugs": [
+          "levoit-vital-200",
+          "levoit-vital-200-rf",
+          "levoit-lap-v201s-wus"
+        ],
+        "sample_model_numbers": [
+          "Vital 200",
+          "Vital 200-RF",
+          "LAP-V201S-WUS"
+        ],
+        "intended_evidence_path": "official model/support/manual page → documented replacement filter/part → verified safe buyer path (read-only browser proof; no CSV apply)",
+        "do_not_claim_unavailable": true
+      },
+      {
+        "filter_slug": "shark-hepa-hp100",
+        "brand_slug": "shark",
+        "model_count_using_filter": 3,
+        "buyer_path_weakness_class": "SEARCH_PLACEHOLDER_PRIMARY",
+        "evidence_priority_score": 53,
+        "sample_model_slugs": [
+          "shark-hp102pet",
+          "shark-hp102petnc",
+          "shark-hp141"
+        ],
+        "sample_model_numbers": [
+          "Shark HP102PET",
+          "Shark HP102PETNC",
+          "Shark HP141"
+        ],
+        "intended_evidence_path": "official model/support/manual page → documented replacement filter/part → verified safe buyer path (read-only browser proof; no CSV apply)",
+        "do_not_claim_unavailable": true
+      },
+      {
+        "filter_slug": "alen-fl40",
+        "brand_slug": "alen",
+        "model_count_using_filter": 4,
+        "buyer_path_weakness_class": "SEARCH_PLACEHOLDER_PRIMARY",
+        "evidence_priority_score": 48,
+        "sample_model_slugs": [
+          "alen-45i",
+          "alen-flex",
+          "alen-breathesmart-45i-pet",
+          "alen-breathesmart-flex-pet"
+        ],
+        "sample_model_numbers": [
+          "BreatheSmart 45i",
+          "BreatheSmart Flex",
+          "BreatheSmart 45i (Pet)",
+          "BreatheSmart Flex (Pet)"
+        ],
+        "intended_evidence_path": "official model/support/manual page → documented replacement filter/part → verified safe buyer path (read-only browser proof; no CSV apply)",
+        "do_not_claim_unavailable": true
+      },
+      {
+        "filter_slug": "shark-hepa-he15fkp",
+        "brand_slug": "shark",
+        "model_count_using_filter": 4,
+        "buyer_path_weakness_class": "DISCONTINUED_OR_UNKNOWN",
+        "evidence_priority_score": 43,
+        "sample_model_slugs": [
+          "shark-hp150",
+          "shark-hp151",
+          "shark-hp152",
+          "shark-hp155"
+        ],
+        "sample_model_numbers": [
+          "Shark HP150",
+          "Shark HP151",
+          "Shark HP152",
+          "Shark HP155"
+        ],
+        "intended_evidence_path": "official model/support/manual page → documented replacement filter/part → verified safe buyer path (read-only browser proof; no CSV apply)",
+        "do_not_claim_unavailable": true
+      },
+      {
+        "filter_slug": "shark-hepa-he3fkp",
+        "brand_slug": "shark",
+        "model_count_using_filter": 4,
+        "buyer_path_weakness_class": "DISCONTINUED_OR_UNKNOWN",
+        "evidence_priority_score": 43,
+        "sample_model_slugs": [
+          "shark-hp300",
+          "shark-hp301",
+          "shark-hp302",
+          "shark-hp305"
+        ],
+        "sample_model_numbers": [
+          "Shark HP300",
+          "Shark HP301",
+          "Shark HP302",
+          "Shark HP305"
+        ],
+        "intended_evidence_path": "official model/support/manual page → documented replacement filter/part → verified safe buyer path (read-only browser proof; no CSV apply)",
+        "do_not_claim_unavailable": true
+      }
+    ],
+    "completed_no_mutation_candidates": [],
+    "mapping_review_opportunities": [
+      {
+        "filter_slug": "levoit-rf-rar029",
+        "classification": "MODEL_FILTER_MAPPING_REVIEW_REQUIRED",
+        "result_artifact_rel": "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-levoit-rf-rar029-live-browser-v1.results.json",
+        "reason": "Official model/manual evidence in committed live-browser artifact maps sampled models to filter tokens that do not match anchor filter slug."
+      },
+      {
+        "filter_slug": "shark-carbon-foam",
+        "classification": "MODEL_FILTER_MAPPING_REVIEW_REQUIRED",
+        "result_artifact_rel": "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-shark-carbon-foam-live-browser-v1.results.json",
+        "reason": "Official model/manual evidence in committed live-browser artifact maps sampled models to filter tokens that do not match anchor filter slug."
+      },
+      {
+        "filter_slug": "winix-carbon-116131",
+        "classification": "MODEL_FILTER_MAPPING_REVIEW_REQUIRED",
+        "result_artifact_rel": "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-winix-carbon-116131-live-browser-v1.results.json",
+        "reason": "Official model/manual evidence in committed live-browser artifact maps sampled models to filter tokens that do not match anchor filter slug."
+      }
+    ],
+    "result_history": {
+      "completed_result_count": 9,
+      "completed_filter_slugs": [
+        "coway-airmega250-rf",
+        "gg-flt4100",
+        "levoit-rf-rar029",
+        "levoit-rf-rar040",
+        "levoit-rf-rar060",
+        "rabbit-carbon-minusa2",
+        "shark-carbon-foam",
+        "vornado-carbon-pad",
+        "winix-carbon-116131"
+      ],
+      "no_mutation_completed_filter_slugs": [
+        "coway-airmega250-rf",
+        "gg-flt4100",
+        "levoit-rf-rar029",
+        "levoit-rf-rar040",
+        "levoit-rf-rar060",
+        "rabbit-carbon-minusa2",
+        "shark-carbon-foam",
+        "vornado-carbon-pad",
+        "winix-carbon-116131"
+      ],
+      "mapping_review_required_filter_slugs": [
+        "levoit-rf-rar029",
+        "shark-carbon-foam",
+        "winix-carbon-116131"
+      ],
+      "invalid_result_files": [
+        "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-alen-b75-mp-live-browser-v1.results.json",
+        "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-blueair-f2-211-live-browser-v1.results.json",
+        "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-blueair-particle-411-live-browser-v1.results.json",
+        "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-coway-airmega400-rf-live-browser-v1.results.json",
+        "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-gg-flt4100-live-browser-v1.results.json",
+        "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-gg-flt4825-live-browser-v1.results.json",
+        "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-hb-trueair-04384-live-browser-v1.results.json",
+        "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-holmes-hapf30-live-browser-v1.results.json",
+        "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-renpho-rp-ap003-live-browser-v1.results.json",
+        "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-vornado-carbon-pad-live-browser-v1.results.json"
+      ]
+    },
+    "recommended_packet": {
+      "packet_id": "ap-model-first-evidence-proposed-v1",
+      "read_only": true,
+      "anchor_filter_slug": "holmes-hapf30",
+      "anchor_brand_slug": "holmes",
+      "anchor_model_slugs": [
+        "holmes-hap412bcs",
+        "holmes-hap412bns",
+        "holmes-hap422b",
+        "holmes-hap424-u",
+        "holmes-hap424-u8"
+      ],
+      "evidence_path": "official model/support/manual page → documented replacement filter/part → verified safe buyer path (read-only browser proof; no CSV apply)",
+      "artifacts_not_written_yet": true
+    },
+    "why_model_first": "Homeowners discover replacement filters from owned appliance model; repo maps 287 models to filters but 41 linked filters lack verified safe direct-buyable primaries — collect official model/support evidence before filter-SKU search rescue.",
+    "old_filter_first_drift_risk": "INFERRED: 19 of 22 weak filters use OEM search-placeholder primaries; ap-batch-v3 filter-first produced 0 safe CSV mutations — continuing aggregation-first steering retries low-yield search rescue.",
+    "forbidden_mutations": [
+      "product_csv_write",
+      "retailer_links_csv_write",
+      "models_csv_write",
+      "supabase_apply",
+      "dispatch_run_registry_write",
+      "batch_review_artifact_mutation",
+      "filter_first_csv_apply_without_browser_proof"
+    ],
+    "steering_primary_eligible": false,
+    "demoted_batch_subsystem": null,
+    "proven_facts": [
+      "PROVEN: Queue built from air_purifier_model_first_production_lane_v1 + air_purifier_weak_buyer_path_audit_v1.",
+      "PROVEN: 10 active top queue candidate(s); top filter holmes-hapf30.",
+      "PROVEN: 10 merged weak-lane candidate(s); 0 completed no-mutation excluded.",
+      "PROVEN: Committed model-first results loaded: 9 valid; no_mutation_completed=coway-airmega250-rf,gg-flt4100,levoit-rf-rar029,levoit-rf-rar040,levoit-rf-rar060,rabbit-carbon-minusa2,shark-carbon-foam,vornado-carbon-pad,winix-carbon-116131.",
+      "PROVEN: mapping_review_required=levoit-rf-rar029,shark-carbon-foam,winix-carbon-116131.",
+      "PROVEN: Weak audit search_placeholder_primary_count=19.",
+      "PROVEN: AP batch-v3 safe_csv_mutations=0.",
+      "PROVEN: Model-first steering is not primary-eligible in this snapshot."
+    ],
+    "unknown_facts": [
+      "UNKNOWN: Whether a different evidence strategy will yield PASS>0 for filters already completed with no mutation.",
+      "UNKNOWN: Whether official model/support pages will yield higher-yield OEM PDPs than filter-first search rescue — requires a model-first evidence packet run."
+    ]
+  },
+  "blocked_reasons": [],
+  "next_expected_state": "Re-run Command Center; dispatch should transition.",
+  "subprocess_exit_code": 0,
+  "artifact_write_error": null,
+  "ledger_refresh_error": null,
+  "resume_command": "npm run buckparts:command-center:run-dispatch -- --resume-run-id=494495e42991305ed5c99747c29d6b0c",
+  "resume_from_stage": "complete",
+  "read_only": true,
+  "data_mutation": false
+}
