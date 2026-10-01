@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { CaptainLog } from "@/app/office/CaptainLog";
 import { OperatingStateControl } from "@/app/office/OperatingStateControl";
 import { scopeFounderOperatingPicture } from "@/lib/j-office/scope-projection";
 import type {
@@ -179,6 +180,8 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
       <div className="jo-operating-slot">
         <OperatingStateControl />
       </div>
+
+      <CaptainLog />
 
       <div className="jo-grid">
         <section className="jo-panel jo-now">
