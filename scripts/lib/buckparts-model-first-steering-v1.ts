@@ -26,9 +26,15 @@ export function resolveModelFirstSteeringOverrideV1(args: {
   weakBuyerPathAudit: AirPurifierWeakBuyerPathAuditReportV1;
   dispatch: BatchProductionOperatingDispatchV1;
   brainStopTheLine: boolean;
+  /**
+   * When true, existing `model_first` source may activate because Work Queue
+   * marked AP model-first work executable. Does not add a source or change rank.
+   */
+  activateFromWorkQueue?: boolean;
 }): ModelFirstSteeringOverrideV1 | null {
   if (args.brainStopTheLine) return null;
-  if (!args.queue.steering_primary_eligible) return null;
+  const workQueueActivates = args.activateFromWorkQueue === true;
+  if (!args.queue.steering_primary_eligible && !workQueueActivates) return null;
   if (args.queue.candidate_count === 0) return null;
 
   const top = args.queue.top_candidates[0];
