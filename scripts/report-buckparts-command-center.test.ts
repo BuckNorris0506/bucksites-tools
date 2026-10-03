@@ -4415,6 +4415,18 @@ test("command center next_best_action prefers demand-selected batch when refrige
     assert.match(report.why_this_action, /re-audit|RE_AUDIT/i);
     return;
   }
+  if (report.next_best_action.startsWith("MODEL-FIRST STEERING [READY]:")) {
+    assert.equal(
+      report.execution_guidance.next_move_command,
+      "npx tsx scripts/report-ap-model-first-evidence-queue-v1.ts",
+    );
+    assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
+    assert.equal(
+      report.command_center_v2.canonical_final_operating_decision_v1?.steering_override_source,
+      "model_first",
+    );
+    return;
+  }
 
   const correctness = report.command_center_v2.air_purifier_demand_selected_correctness_risks_v1;
   const ownerReview = report.command_center_v2.air_purifier_demand_selected_batch_owner_review_v1;
