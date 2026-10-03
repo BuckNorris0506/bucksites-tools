@@ -149,6 +149,7 @@
     "buckparts:page-factory-batch-qa-director": "tsx scripts/report-buckparts-page-factory-batch-qa-director-v1.ts",
     "buckparts:model-filter-correctness-audit": "tsx scripts/report-model-filter-correctness-audit-v1.ts",
     "buckparts:proven-cohort-page-factory-manifest": "tsx scripts/report-proven-cohort-page-factory-manifest-v1.ts",
+    "buckparts:fridge-expansion-worker": "tsx scripts/run-buckparts-fridge-expansion-worker-v1.ts",
     "buckparts:evidence-leverage-prioritization": "tsx scripts/report-evidence-leverage-prioritization-v1.ts",
     "buckparts:dangerous-mapping-remediation-plan": "tsx scripts/report-dangerous-mapping-remediation-plan-v1.ts",
     "buckparts:bad-mapping-correction-batch-runner": "tsx scripts/report-bad-mapping-correction-batch-runner-v1.ts",
