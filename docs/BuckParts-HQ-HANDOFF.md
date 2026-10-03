@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (Executive OS execution — Outcome Join / First Sensory Path at `9944e32`):** Branch **`cursor/phase4-outcome-join-v0-89d5`** (PR `#3`); commit **`9944e32`** (`Add Phase 4 outcome join for confident-BUY /go handoffs`). **Mode: execution, not research.** Outcome Join is the First Sensory Path inside `.command_center_v2.phase4_outcome_capture_v1` — human-likely `/go` `click_events` joined to Decision-Capture pages by `page_slug` ↔ `model_slug`; emits `handoff_from_confident_buy_count` + `handoff_join_by_decision_class`. Validated: focused tests **10/10 PASS**; `npm run buckparts:phase4-outcome-capture` → **`PHASE4_OUTCOME_CAPTURE_PASS`**. Posture unchanged: **`read_only=true`**, **`data_mutation=false`**, **`mutation_authorized=false`**, **`steering_authority=false`**, **`nba_authority=false`**. Join stays **UNKNOWN** when click rows are missing or `page_slug` does not intersect the decision universe (no false zero). **Current NBA:** feed this sensory path with real customer activity (qualifiable `/go` attribution on decision pages) — do **not** invent NBA/Dispatch/Daily consumers or new metrics. **Execution loop:** build one permanent capability → expose it to reality → measure → correct → repeat. Prior Outcome-Capture shell at **`5640078`**, Demand-Capture **`45ec7c7`**, Decision-Capture **`16b79d1`**, P4-ENTRY **`4642bb2`** remain below. Do **not** claim Phase 4 complete, revenue/SEO, autonomous apply, or HyperAgent eligibility. Never reward raw clicks. **Root `AGENTS.md` remains the agent operating contract**.
+> **Current operational stopping point (Executive Runtime v0 at `cbaa153`):** Repo HEAD at pickup **`cbaa153`** (`Add Executive Runtime Reduction Audit v1`). Runtime v0 implementation **`3bec942`**. **Canonical wake:** `node --import tsx scripts/run-buckparts-executive-runtime-wake-observe-v0.ts` (`npm run buckparts:executive-runtime:wake-observe`). Slice: **WAKE → OBSERVE → EMIT → STOP**. **No** selection, dispatch, scheduling, mutation, or steering (`selected_work=null`, `dispatch_invoked=false`, `nba_authority=false`, `steering_authority=false`, `dispatch_authority=false`). **Operational NBA:** `.command_center_v2.canonical_final_operating_decision_v1` only — HQ stopping-point prose is historical context, not a competing selector. Outcome Join remains non-steering. Reduction Audit (`docs/BuckParts-EXECUTIVE-RUNTIME-REDUCTION-AUDIT-V1.md`) is recommendations-only; nothing applied. **Next implementation:** Runtime Contract Stage **4.2** World-model construction (Understand, not Dispatch). Root `AGENTS.md` remains the agent operating contract.
 
 ## Execution Stack
 
@@ -54,9 +54,63 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — Executive OS execution (Outcome Join / First Sensory Path) (`9944e32`)
+## Current stopping point — Executive Runtime v0 (`cbaa153`)
 
-**Read this section first.** BuckParts has transitioned from Executive OS **research** to Executive OS **execution**. Operate from this section; prior Phase 4 chronology below is historical.
+**Read this section first.** Operate from this section. Outcome Join, Phase 4 siblings, and earlier HQ stopping-point prose below are **historical context**, not a competing NBA/selector.
+
+### Operating posture (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Mode | **Execution** (not research / not architecture expansion / not artifact deletion) |
+| Repo HEAD at pickup | **`cbaa153`** — Add Executive Runtime Reduction Audit v1 |
+| Runtime v0 | **`3bec942`** — Add Executive Runtime v0 wake-and-observe slice |
+| Runtime contract | **`286305a`** — `docs/BuckParts-EXECUTIVE-RUNTIME-CONTRACT-V1.md` (sequencing only; permission = none) |
+| Reduction audit | **`cbaa153`** — `docs/BuckParts-EXECUTIVE-RUNTIME-REDUCTION-AUDIT-V1.md` (recommendations only; **not** applied) |
+| Canonical wake | `node --import tsx scripts/run-buckparts-executive-runtime-wake-observe-v0.ts` |
+| npm alias | `npm run buckparts:executive-runtime:wake-observe` |
+| Impl | `scripts/lib/buckparts-executive-runtime-wake-observe-v0.ts` |
+| Slice | **WAKE → OBSERVE → EMIT → STOP** (`runtime_slice=WAKE_OBSERVE_STOP`) |
+| Live v0 emit (at `3bec942`) | **`cycle_status=OBSERVED_STOP`**; **`selected_work=null`**; **`dispatch_invoked=false`** |
+| Authority | **`read_only=true`**; **`data_mutation=false`**; **`mutation_authorized=false`**; **`steering_authority=false`**; **`nba_authority=false`**; **`dispatch_authority=false`** |
+| Operational NBA | **`.command_center_v2.canonical_final_operating_decision_v1` only** |
+| HQ role | Stopping-point prose is **historical context**, not HEAD/truth and not a competing selector |
+| Outcome Join | Remains First Sensory Path; **`steering_authority=false`**; **`nba_authority=false`**; do **not** wire into NBA/Dispatch |
+
+### Reduction Audit findings (operational — not applied)
+
+Source: `docs/BuckParts-EXECUTIVE-RUNTIME-REDUCTION-AUDIT-V1.md`. Classifications are **recommendations**. This HQ update does **not** merge, delete, or archive artifacts.
+
+| Class | Operational takeaway |
+|-------|----------------------|
+| **KEEP** | Constitution, AGENTS, Evolution Gate, Outcome Join, OAR, ODQ, canonical NBA, Command Center builder, Runtime v0, Runtime Contract, dispatch allowlist |
+| **MERGE (not done)** | Daily Operator as a second world-model; FAQ as a second selector; decision/execution packet zoo as extra queues |
+| **ARCHIVE (not done)** | HQ-as-NBA; Customer Reality 6-pack as steering; opportunity registries; unimplemented ops-agent; control-loop new CC lane |
+| **Do not implement** | `command_center_control_loop_summary_v1`; a second owner-facing NBA |
+
+### Current NBA (operational)
+
+**Read** `.command_center_v2.canonical_final_operating_decision_v1`. That is the only owner-facing NBA + dispatch binding.
+
+Do **not** treat this HQ section, Daily Operator, founder digest, control-graph rollup, wedge director, or Outcome Join as a competing selector.
+
+Runtime v0 **observes** that canonical field. It does **not** select work, mint NBA, dispatch, schedule, mutate, or steer.
+
+### Next implementation (operational)
+
+**Runtime Contract Stage 4.2 — World-model construction (Understand, not Dispatch).**
+
+Command Center v2 **is** the world model for the cycle. Do **not** write a second model. Do **not** implement stages 4.3–4.9. Do **not** add Command Center lanes. Do **not** wire Outcome Join to NBA. Do **not** merge or delete artifacts in that lane.
+
+### Not claimed
+
+Autonomous operation, scheduling, selection, dispatch, mutation, steering, artifact reduction applied, Phase 4 complete, revenue/SEO, HyperAgent eligibility — **not claimed**. Runtime v0 stop after observe is **PROVEN**; stages 4.2+ are **not** implemented.
+
+---
+
+## Prior completed lane — Executive OS execution (Outcome Join / First Sensory Path) (`9944e32`)
+
+**Historical reference** for Outcome Join / First Sensory Path execution posture. Outcome Join remains in force as a non-steering sensory path (`phase4_outcome_capture_v1`). Superseded for operational pickup by **§ Current stopping point — Executive Runtime v0 (`cbaa153`)** above.
 
 ### Operating posture (PROVEN)
 
