@@ -44,6 +44,8 @@ export function CaptainLog() {
   }, [windowId]);
 
   const needed = log?.founder_needed ?? [];
+  const blocked = log?.blocked ?? [];
+  const waiting = log == null;
 
   async function recordDecision(item: CaptainNeeded, choice: "APPROVE" | "DECLINE") {
     const body = founderDecisionBody(item, choice);
@@ -80,7 +82,9 @@ export function CaptainLog() {
 
       <h3 className={needed.length > 0 ? "jo-captain-hot" : undefined}>Founder needed</h3>
       <ul>
-        {needed.length === 0 ? (
+        {waiting ? (
+          <li>Loading.</li>
+        ) : needed.length === 0 ? (
           <li>None.</li>
         ) : (
           needed.map((item) => (
@@ -127,9 +131,32 @@ export function CaptainLog() {
         )}
       </ul>
 
+      <h3>Blocked</h3>
+      <ul>
+        {waiting ? (
+          <li>Loading.</li>
+        ) : blocked.length === 0 ? (
+          <li>None.</li>
+        ) : (
+          blocked.map((item) => (
+            <li key={`blocked:${item.business}:${item.text}`}>
+              <strong>{item.business}:</strong> {item.text}
+              <div>
+                <p>Blocker: {item.blocker ?? item.task_type ?? "held"}.</p>
+                <p>Prevents: {item.prevents ?? item.text}</p>
+                <p>Next: {item.next_work ?? item.text}</p>
+                <p>Founder action: {item.founder_action ?? "NONE"}.</p>
+              </div>
+            </li>
+          ))
+        )}
+      </ul>
+
       <h3>Not waiting on you</h3>
       <ul>
-        {(log?.deferred ?? []).length === 0 ? (
+        {waiting ? (
+          <li>Loading.</li>
+        ) : (log?.deferred ?? []).length === 0 ? (
           <li>None.</li>
         ) : (
           (log?.deferred ?? []).map((item) => (

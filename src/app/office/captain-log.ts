@@ -28,6 +28,11 @@ export type CaptainNeeded = {
   channel?: string;
   account?: string;
   post_text?: string;
+  blocker?: string;
+  prevents?: string;
+  next_work?: string;
+  task_type?: string;
+  founder_action?: string;
   approval_state?: string;
   publication_state?: string;
   execution_state?: string;
@@ -48,6 +53,8 @@ export type CaptainLogPayload = {
   title: string;
   founder_needed: CaptainNeeded[];
   founder_needed_count?: number;
+  blocked?: CaptainNeeded[];
+  blocked_count?: number;
   deferred?: CaptainNeeded[];
   summary: CaptainSummary[];
   entries: CaptainEntry[];

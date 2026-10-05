@@ -80,6 +80,13 @@ export type OfficeChangedItem = {
 
 export type OfficeBrief = {
   primary_status?: string | null;
+  founder_action?: string | null;
+  operating_progress?: string | null;
+  founder_needed_count?: number;
+  blocked?: Array<Record<string, unknown>>;
+  blocked_count?: number;
+  current_work?: string | null;
+  next_work?: string | null;
   needs_jared_count?: number;
   needs_jared?: FounderAction[];
   active_projects?: Array<Record<string, unknown>>;

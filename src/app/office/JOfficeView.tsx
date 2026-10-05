@@ -137,15 +137,24 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
     ? (brief.active_projects as Array<Record<string, unknown>>)
     : [];
   const provenance = asRecord(money.model_cost_provenance);
-  const primary = text(
+  const founderNeededCount = Number(brief.founder_needed_count ?? 0);
+  const primaryFromBrief = text(
     brief.primary_status ?? system.primary_status,
     needs.length > 0 ? "FOUNDER DECISION NEEDED" : "UNKNOWN",
   );
-  const primaryTone: "need" | "ok" | "warn" | undefined = /FOUNDER DECISION|SYSTEM PROBLEM|BLOCKED/.test(
+  const primary = brief.primary_status
+    ? primaryFromBrief
+    : founderNeededCount > 0
+      ? `FOUNDER NEEDED — ${founderNeededCount} ${founderNeededCount === 1 ? "ITEM" : "ITEMS"}`
+      : primaryFromBrief;
+  const blocked = Array.isArray(brief.blocked)
+    ? (brief.blocked as Array<Record<string, unknown>>)
+    : [];
+  const primaryTone: "need" | "ok" | "warn" | undefined = /FOUNDER|SYSTEM PROBLEM|BLOCKED|DEGRADED/.test(
     primary,
   )
     ? "need"
-    : /PAUSED/.test(primary)
+    : /PAUSED|WAITING/.test(primary)
       ? "warn"
       : /ALL GOOD/.test(primary)
         ? "ok"
@@ -186,8 +195,26 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
       <div className="jo-grid">
         <section className="jo-panel jo-now">
           <h2>{primary}</h2>
-          <p className="jo-kicker">{text(working.current_action ?? view.now.current_action)}</p>
-          <p className="jo-next">Next: {text(working.next ?? view.now.next_action)}</p>
+          <p className="jo-kicker">
+            Current work: {text(brief.current_work ?? working.current_action ?? view.now.current_action)}
+          </p>
+          <p className="jo-next">
+            Next work: {text(brief.next_work ?? working.next ?? view.now.next_action)}
+          </p>
+          {blocked.length > 0 ? (
+            <div>
+              {blocked.map((item) => (
+                <article key={text(item.disposition_id, text(item.blocker, "blocked"))}>
+                  <p>
+                    <strong>Blocked.</strong> {text(item.business)} — {text(item.blocker)}
+                  </p>
+                  <p>Prevents: {text(item.prevents)}</p>
+                  <p>J will try next: {text(item.next_work)}</p>
+                  <p>Founder action: {text(item.founder_action, "NONE")}.</p>
+                </article>
+              ))}
+            </div>
+          ) : null}
         </section>
 
         {needs.length > 0 ? (
