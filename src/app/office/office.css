@@ -505,6 +505,37 @@
   font-weight: 700;
 }
 
+.jo-decisions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 0.65rem 0 0.4rem;
+}
+
+.jo-decision {
+  appearance: none;
+  cursor: pointer;
+  border-radius: 0.4rem;
+  border: 2px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.jo-decision-approve {
+  background: #15803d;
+  color: #ffffff;
+  border-color: #14532d;
+}
+
+.jo-decision-decline {
+  background: #ffffff;
+  color: #9f1239;
+  border-color: #9f1239;
+}
+
 .jo-captain-error {
   margin: 0.35rem 0 0;
   color: #fda4af;

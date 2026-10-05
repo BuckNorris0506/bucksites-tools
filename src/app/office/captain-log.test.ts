@@ -125,6 +125,10 @@ test("captain log render does not post a founder decision", () => {
   const source = readFileSync(new URL("./CaptainLog.tsx", import.meta.url), "utf8");
   assert.match(source, /onClick=\{\(\) => void recordDecision\(item, "APPROVE"\)\}/);
   assert.match(source, /onClick=\{\(\) => void recordDecision\(item, "DECLINE"\)\}/);
+  assert.match(source, /className="jo-decision jo-decision-approve"/);
+  assert.match(source, /className="jo-decision jo-decision-decline"/);
+  assert.match(source, />\s*APPROVE\s*</);
+  assert.match(source, />\s*DECLINE\s*</);
   assert.equal(source.includes("useEffect(() => {\n    void recordDecision"), false);
   const route = readFileSync(new URL("./api/captain-log/route.ts", import.meta.url), "utf8");
   const getFn = route.split("export async function POST")[0];

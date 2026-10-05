@@ -48,11 +48,18 @@ export function CaptainLog() {
   async function recordDecision(item: CaptainNeeded, choice: "APPROVE" | "DECLINE") {
     const body = founderDecisionBody(item, choice);
     if (!body) return;
-    await fetch("/office/api/captain-log", {
+    const response = await fetch("/office/api/captain-log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
+    if (!response.ok) return;
+    const refresh = await fetch(`/office/api/captain-log?window=${windowId}`, {
+      cache: "no-store",
+    });
+    if (!refresh.ok) return;
+    setLog((await refresh.json()) as CaptainLogPayload);
+    setError(null);
   }
 
   return (
@@ -92,14 +99,22 @@ export function CaptainLog() {
                   </p>
                   <p>What needs you: {item.choices ?? "Approve or decline"}.</p>
                   {founderDecisionBody(item, "APPROVE") ? (
-                    <p>
-                      <button type="button" onClick={() => void recordDecision(item, "APPROVE")}>
-                        Approve
+                    <div className="jo-decisions">
+                      <button
+                        type="button"
+                        className="jo-decision jo-decision-approve"
+                        onClick={() => void recordDecision(item, "APPROVE")}
+                      >
+                        APPROVE
                       </button>
-                      <button type="button" onClick={() => void recordDecision(item, "DECLINE")}>
-                        Decline
+                      <button
+                        type="button"
+                        className="jo-decision jo-decision-decline"
+                        onClick={() => void recordDecision(item, "DECLINE")}
+                      >
+                        DECLINE
                       </button>
-                    </p>
+                    </div>
                   ) : null}
                   <p>Why: {item.why}</p>
                   <p>If approved: {item.if_approved}</p>
