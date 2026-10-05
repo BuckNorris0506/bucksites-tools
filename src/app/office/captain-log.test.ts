@@ -6,6 +6,7 @@ import {
   CAPTAIN_LOG_POLL_INTERVAL_MS,
   DEFAULT_CAPTAIN_WINDOW,
   captainVisibleLines,
+  founderDecisionBody,
   reduceCaptainLogPoll,
   startCaptainLogPoll,
   type CaptainLogPayload,
@@ -97,4 +98,35 @@ test("the poll updates on an interval without a full page reload", async () => {
 test("operating state still polls every three seconds", () => {
   const source = readFileSync(new URL("./operating-state-poll.ts", import.meta.url), "utf8");
   assert.match(source, /OPERATING_STATE_POLL_INTERVAL_MS = 3000/);
+});
+
+test("founder decision body is absent unless the card is still awaiting", () => {
+  assert.equal(founderDecisionBody({ business: "BuckParts", text: "x" }, "APPROVE"), null);
+  const body = founderDecisionBody(
+    {
+      business: "BuckParts",
+      text: "Approve or decline",
+      execution_state: "AWAITING_FOUNDER_APPROVAL",
+      approval_state: "REQUIRED",
+      duplicate_key: "c289ea15d616bc96",
+      post_text: "Exact post",
+      post_digest: "ab".repeat(32),
+    },
+    "DECLINE",
+  );
+  assert.deepEqual(body, {
+    choice: "DECLINE",
+    duplicate_key: "c289ea15d616bc96",
+    post_digest: "ab".repeat(32),
+  });
+});
+
+test("captain log render does not post a founder decision", () => {
+  const source = readFileSync(new URL("./CaptainLog.tsx", import.meta.url), "utf8");
+  assert.match(source, /onClick=\{\(\) => void recordDecision\(item, "APPROVE"\)\}/);
+  assert.match(source, /onClick=\{\(\) => void recordDecision\(item, "DECLINE"\)\}/);
+  assert.equal(source.includes("useEffect(() => {\n    void recordDecision"), false);
+  const route = readFileSync(new URL("./api/captain-log/route.ts", import.meta.url), "utf8");
+  const getFn = route.split("export async function POST")[0];
+  assert.equal(getFn.includes("decide"), false);
 });

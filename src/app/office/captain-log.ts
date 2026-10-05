@@ -25,12 +25,30 @@ export type CaptainSummary = {
 export type CaptainNeeded = {
   business: string;
   text: string;
+  channel?: string;
+  account?: string;
+  post_text?: string;
+  approval_state?: string;
+  publication_state?: string;
+  execution_state?: string;
+  duplicate_key?: string;
+  post_digest?: string;
+  why?: string;
+  if_approved?: string;
+  if_declined?: string;
+  choices?: string;
+  handler?: string;
+  handler_note?: string;
+  classification?: string;
+  immediate_founder_action?: string;
 };
 
 export type CaptainLogPayload = {
   window: CaptainWindow;
   title: string;
   founder_needed: CaptainNeeded[];
+  founder_needed_count?: number;
+  deferred?: CaptainNeeded[];
   summary: CaptainSummary[];
   entries: CaptainEntry[];
 };
@@ -96,6 +114,21 @@ export function startCaptainLogPoll(options: {
   return () => {
     stopped = true;
     cancel(timer);
+  };
+}
+
+export function founderDecisionBody(
+  item: CaptainNeeded,
+  choice: "APPROVE" | "DECLINE",
+): { choice: "APPROVE" | "DECLINE"; duplicate_key: string; post_digest: string } | null {
+  if (item.execution_state !== "AWAITING_FOUNDER_APPROVAL") return null;
+  if (item.approval_state && item.approval_state !== "REQUIRED") return null;
+  if (!item.duplicate_key || !item.post_digest || !item.post_text) return null;
+  if (choice !== "APPROVE" && choice !== "DECLINE") return null;
+  return {
+    choice,
+    duplicate_key: item.duplicate_key,
+    post_digest: item.post_digest,
   };
 }
 

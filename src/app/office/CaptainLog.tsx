@@ -6,8 +6,10 @@ import {
   CAPTAIN_LOG_POLL_INTERVAL_MS,
   CAPTAIN_LOG_WINDOWS,
   DEFAULT_CAPTAIN_WINDOW,
+  founderDecisionBody,
   startCaptainLogPoll,
   type CaptainLogPayload,
+  type CaptainNeeded,
   type CaptainWindow,
 } from "@/app/office/captain-log";
 
@@ -43,6 +45,16 @@ export function CaptainLog() {
 
   const needed = log?.founder_needed ?? [];
 
+  async function recordDecision(item: CaptainNeeded, choice: "APPROVE" | "DECLINE") {
+    const body = founderDecisionBody(item, choice);
+    if (!body) return;
+    await fetch("/office/api/captain-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  }
+
   return (
     <section className="jo-captain" aria-label="Captain's log">
       <h2>CAPTAIN&apos;S LOG</h2>
@@ -67,6 +79,48 @@ export function CaptainLog() {
           needed.map((item) => (
             <li key={`${item.business}:${item.text}`} className="jo-captain-hot">
               <strong>{item.business}:</strong> {item.text}
+              {item.post_text ? (
+                <div>
+                  <p>
+                    {item.channel ? `${item.channel} ` : ""}
+                    {item.account ?? ""}
+                  </p>
+                  <p>Post: {item.post_text}</p>
+                  <p>
+                    State: {item.approval_state ?? "UNKNOWN"} / publication{" "}
+                    {item.publication_state ?? "UNKNOWN"}
+                  </p>
+                  <p>What needs you: {item.choices ?? "Approve or decline"}.</p>
+                  {founderDecisionBody(item, "APPROVE") ? (
+                    <p>
+                      <button type="button" onClick={() => void recordDecision(item, "APPROVE")}>
+                        Approve
+                      </button>
+                      <button type="button" onClick={() => void recordDecision(item, "DECLINE")}>
+                        Decline
+                      </button>
+                    </p>
+                  ) : null}
+                  <p>Why: {item.why}</p>
+                  <p>If approved: {item.if_approved}</p>
+                  <p>If declined: {item.if_declined}</p>
+                  <p>{item.handler_note}</p>
+                </div>
+              ) : null}
+            </li>
+          ))
+        )}
+      </ul>
+
+      <h3>Not waiting on you</h3>
+      <ul>
+        {(log?.deferred ?? []).length === 0 ? (
+          <li>None.</li>
+        ) : (
+          (log?.deferred ?? []).map((item) => (
+            <li key={`deferred:${item.business}:${item.text}`}>
+              <strong>{item.business}:</strong> {item.text} No immediate founder action.
+              The workflow is not blocked on you.
             </li>
           ))
         )}
