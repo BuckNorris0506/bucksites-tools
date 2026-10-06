@@ -11,6 +11,8 @@ import {
   type OperatingStatus,
 } from "@/app/office/operating-state-poll";
 
+import { useRouter } from "next/navigation";
+
 const MODES = ["GREEN", "YELLOW", "RED"] as const;
 
 function flagLabel(value: boolean | undefined): string {
@@ -37,7 +39,8 @@ async function readOperatingStatus(response: Response): Promise<OperatingStatus>
   return body;
 }
 
-export function OperatingStateControl() {
+export function OperatingStateControl({ compact = false }: { compact?: boolean }) {
+  const router = useRouter();
   const [view, setView] = useState<OperatingPollView>({ status: null, error: null });
   const [pending, setPending] = useState<string | null>(null);
   const viewRef = useRef(view);
@@ -76,6 +79,7 @@ export function OperatingStateControl() {
       const status = await readOperatingStatus(response);
       if (mine !== requestGen.current) return;
       apply({ status, error: null });
+      router.refresh();
     } catch (exc: unknown) {
       if (mine !== requestGen.current) return;
       apply(
@@ -96,8 +100,9 @@ export function OperatingStateControl() {
     mode === "GREEN" || mode === "YELLOW" || mode === "RED" ? mode.toLowerCase() : "unknown";
 
   return (
-    <section className="jo-operating" aria-label="J operating state">
-      <h2>J OPERATING STATE</h2>
+    <section className={compact ? "jo-operating jo-operating-compact" : "jo-operating"} aria-label="J operating state">
+      <details className="jo-mode-menu" open={!compact}><summary>Mode <span className={`jo-mode-value jo-mode-${tone}`}>{mode}</span> <span aria-hidden="true">▾</span></summary>
+      <div className="jo-mode-content"><h2>J OPERATING STATE</h2>
       <div className="jo-operating-actions" role="group" aria-label="Set operating mode">
         {MODES.map((item) => (
           <button
@@ -113,6 +118,7 @@ export function OperatingStateControl() {
           </button>
         ))}
       </div>
+      <details open={!compact}><summary>Runtime details · current mode {mode}</summary>
       <dl>
         <dt>Current mode</dt>
         <dd>
@@ -134,6 +140,8 @@ export function OperatingStateControl() {
         <dt>Last transition</dt>
         <dd>{status?.changed_at ?? "not set"}</dd>
       </dl>
+      </details>
+      </div></details>
       {error ? (
         <p className="jo-operating-error" role="status">
           {status ? "Status stale. " : ""}

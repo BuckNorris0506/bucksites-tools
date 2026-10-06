@@ -1,7 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
+import { useRouter } from "next/navigation";
+import { ExecutiveBrief } from "./ExecutiveBrief";
 import { CaptainLog } from "@/app/office/CaptainLog";
 import { OperatingStateControl } from "@/app/office/OperatingStateControl";
 import { scopeFounderOperatingPicture } from "@/lib/j-office/scope-projection";
@@ -90,6 +92,11 @@ function waitingExternalDuplicatesNeed(
 }
 
 export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
+  const router = useRouter();
+  useEffect(() => {
+    const timer = setInterval(() => { if (!document.hidden) router.refresh(); }, 30000);
+    return () => clearInterval(timer);
+  }, [router]);
   const scopes = picture.business_scopes?.length
     ? picture.business_scopes
     : [{ id: "all", label: "ALL" }];
@@ -164,13 +171,17 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
     <div className="j-office">
       <header className="jo-strip">
         <div className="jo-brand">J OFFICE</div>
-        <Chip value={primary} tone={primaryTone} />
+        <span className="jo-header-subtitle">Executive Brief</span>
+        <OperatingStateControl compact />
+        <a className="jo-system-link" href="#office-system">System ▾</a>
         <div className="jo-meta">updated {formatUpdated(system.updated_at ?? view.generated_at)}</div>
         {needs.length > 0 ? (
           <span className="jo-chip jo-chip-need">NEEDS JARED · {needs.length}</span>
         ) : null}
       </header>
 
+      <ExecutiveBrief value={(picture.office_brief as OfficeBrief & { executive?: unknown })?.executive} />
+      <details className="jo-technical" id="office-system"><summary>System / technical details</summary>
       {scopes.length > 1 ? (
         <nav className="jo-scopes" aria-label="Business scope">
           {scopes.map((scope) => (
@@ -186,15 +197,13 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
         </nav>
       ) : null}
 
-      <div className="jo-operating-slot">
-        <OperatingStateControl />
-      </div>
+
 
       <CaptainLog />
 
       <div className="jo-grid">
         <section className="jo-panel jo-now">
-          <h2>{primary}</h2>
+          <h2><Chip value={primary} tone={primaryTone} /></h2>
           <p className="jo-kicker">
             Current work: {text(brief.current_work ?? working.current_action ?? view.now.current_action)}
           </p>
@@ -516,6 +525,7 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
           ))}
         </details>
       </div>
+      </details>
     </div>
   );
 }
