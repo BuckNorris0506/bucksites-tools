@@ -18,7 +18,7 @@ Conflicts remain visible in safety decisions and can quarantine a refrigerator b
 
 The evidence contracts reject guessed compatibility, unsupported model-family extrapolation, and retailer-only fit proof. Compatible products must not be presented as manufacturer-specified parts. A detected part-family conflict can suppress commerce instead of being silently resolved.
 
-Buying paths governed by the trust gate are blocked when required verification is missing, expired, or degraded. **Uncertainty removes commerce instead of creating a guess.** This describes the evidence standard and implemented gates, not a claim that every catalog row is verified. BuckParts does not guarantee fit: homeowners should compare their exact model label, manual, and existing part before buying.
+Buying paths governed by the trust gate are blocked when required verification is missing, expired, or degraded. **Uncertainty removes commerce instead of creating a guess.** BuckParts does not guarantee fit: homeowners should compare their exact model label, manual, and existing part before buying.
 
 ## Current state
 
