@@ -27,7 +27,7 @@ Add to `.cursor/mcp.json` (adjust `cwd` to your clone):
     "buckparts-truth": {
       "command": "npm",
       "args": ["run", "mcp:buckparts-truth"],
-      "cwd": "/Users/jaredbuckman/bucksites-tools"
+      "cwd": "/absolute/path/to/bucksites-tools"
     }
   }
 }
@@ -43,7 +43,7 @@ In `~/.codex/config.toml` (or project `.codex/config.toml`):
 [mcp_servers.buckparts-truth]
 command = "npm"
 args = ["run", "mcp:buckparts-truth"]
-cwd = "/Users/jaredbuckman/bucksites-tools"
+cwd = "/absolute/path/to/bucksites-tools"
 ```
 
 Or with `tsx` directly:
@@ -52,7 +52,7 @@ Or with `tsx` directly:
 [mcp_servers.buckparts-truth]
 command = "npx"
 args = ["tsx", "mcp/buckparts-truth/server.ts"]
-cwd = "/Users/jaredbuckman/bucksites-tools"
+cwd = "/absolute/path/to/bucksites-tools"
 ```
 
 ### ChatGPT Desktop
@@ -65,7 +65,7 @@ Add to `~/Library/Application Support/com.openai.chatgpt/mcp.json` (macOS):
     "buckparts-truth": {
       "command": "npm",
       "args": ["run", "mcp:buckparts-truth"],
-      "cwd": "/Users/jaredbuckman/bucksites-tools"
+      "cwd": "/absolute/path/to/bucksites-tools"
     }
   }
 }
