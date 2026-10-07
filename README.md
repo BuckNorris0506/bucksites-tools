@@ -1,14 +1,51 @@
-# BuckSites Tools — Refrigerator water filter finder
+# BuckParts
 
-Production-oriented Next.js 14 (App Router) app backed by Supabase. Users search by fridge model or filter part number, open SEO-friendly detail pages, and leave through tracked affiliate links.
+BuckParts helps homeowners identify replacement filters and parts for supported appliances using evidence rather than plausible matching.
 
-## Stack
+## The problem
 
-- Next.js 14, TypeScript, Tailwind CSS
+Finding a part listing is easy; proving that it belongs to an exact appliance model is harder. Similar model numbers, unproven family relationships, and retailer cross-references can produce convincing but incorrect matches. Coverage is useful only if adding more models preserves the evidence standard.
+
+## How BuckParts decides what it can say
+
+The evidence and admission pipeline separates discovering a candidate from admitting a relationship. Manufacturer evidence must support the exact model or a documented model family; a similar name or sibling model does not establish fit. Retailer results can help discovery, but cannot independently establish model-to-part compatibility.
+
+Manufacturer-specified relationships and compatible replacements are separate truth classes. Fit evidence, retailer listing evidence, and product quality or warranty claims are separate questions. A valid listing does not prove fit.
+
+Conflicts remain visible in safety decisions and can quarantine a refrigerator buying path. The shared buying-link decision checks verification timestamps and trust status: expired, degraded, or unknown trust fails closed. Re-verification must restore the required evidence before those buying paths become eligible again; the redirect also applies the gate when a link is clicked.
+
+## What BuckParts refuses to do
+
+The evidence contracts reject guessed compatibility, unsupported model-family extrapolation, and retailer-only fit proof. Compatible products must not be presented as manufacturer-specified parts. A detected part-family conflict can suppress commerce instead of being silently resolved.
+
+Buying paths governed by the trust gate are blocked when required verification is missing, expired, or degraded. **Uncertainty removes commerce instead of creating a guess.** This describes the evidence standard and implemented gates, not a claim that every catalog row is verified. BuckParts does not guarantee fit: homeowners should compare their exact model label, manual, and existing part before buying.
+
+## Current state
+
+This repository contains a working Next.js application with model/part search, detail pages, a Supabase catalog, evidence and admission tooling, and gated outbound affiliate links. The documented product address is [buckparts.com](https://buckparts.com); checkout happens at the retailer.
+
+Coverage is early and incomplete. The repository includes refrigerator water-filter and other appliance-filter routes. It does not establish universal catalog verification, continuous rechecking of every page, or the exact commit currently deployed in production.
+
+## Technical architecture
+
+- Next.js 14 (App Router), TypeScript, Tailwind CSS
 - Supabase (Postgres + Row Level Security)
 - Netlify (`@netlify/plugin-nextjs`)
 
-## Local setup
+| Path | Role |
+|------|------|
+| `src/lib/supabase/server-client.ts` | Server Supabase client |
+| `src/lib/types/database.ts` | Table-aligned TypeScript types |
+| `src/lib/data/*` | Queries (brands, fridges, filters, help, search, retailers) |
+| `src/app/go/[linkId]/route.ts` | Click logging + redirect |
+| `src/app/api/search/route.ts` | JSON search API |
+| `supabase/schema.sql` | DDL + RLS policies |
+| `data/*.sample.csv` | CSV templates for seed import |
+| `scripts/import-seed.ts` | CSV → Supabase importer |
+
+Affiliate links in the UI point at `/go/{retailer_link.id}` where the redirect gate checks eligibility before logging an allowed outbound click in `click_events`. Invalid or blocked links redirect to `/go-unavailable`.
+
+## Local development
 
 1. **Dependencies**
 
@@ -43,7 +80,13 @@ Production-oriented Next.js 14 (App Router) app backed by Supabase. Users search
 
    Open [http://localhost:3000](http://localhost:3000).
 
-## CSV seed import
+## Data / admission / safety
+
+Importing a row is not proof of compatibility. Review evidence and admission requirements in [the BuckParts constitution](docs/BuckParts-CONSTITUTION.md) before changing public mappings or buying paths. Discovery output is a candidate, not publication authority.
+
+The refrigerator mapping report is available with `npm run buckparts:guardrails:refrigerator`. Run repository tests with `npm test`. The shared buying-path decision lives in `src/lib/retailers/live-buyer-path-go-decision-v1.ts`; refrigerator conflict handling lives in `src/lib/fridge/fridge-model-pdp-customer-safety-v1.ts`.
+
+### CSV seed import
 
 Bulk-load catalog data from `./data/*.csv` using the [service role](https://supabase.com/docs/guides/api/api-keys) key (bypasses RLS). Do not ship this key to Netlify or the browser.
 
@@ -68,43 +111,21 @@ Import order is fixed: **brands → filters → fridge_models → compatibility_
 | Orchestrator | `scripts/import-seed.ts` |
 | CSV helpers | `scripts/lib/csv.ts`, `scripts/lib/supabase-admin.ts` |
 
-## Deploying on Netlify
+### Security notes
 
-1. Connect the repo and set the same environment variables in **Site settings → Environment variables**.
-2. Build command: `npm run build` (default from `netlify.toml`).
+- Use the **anon** key in the app; RLS allows catalog reads and event inserts under the applicable policies (see `supabase/migrations/20260610120000_security_advisor_rls_reconcile_v1.sql`).
+- Do **not** expose the service role key in the app, browser, or Netlify deployment environment. It is for controlled import scripts only.
+
+## Deployment
+
+1. Connect the repo to Netlify and set the public application environment variables described above. Keep the scripts-only service role key out of the deployed app.
+2. The build command in `netlify.toml` is `npm run buckparts:deploy:preflight && npm run build`.
 3. The Next.js runtime plugin handles SSR and routing.
 
-### Branch/Deploy Integrity Closure (BuckParts)
+The deploy preflight runs the Supabase exposure audit, enforced repository/runtime convergence check, and enforced ship guard. A successful build alone does not establish evidence readiness.
 
-- Canonical branch: `main`
-- Production deploy branch: `main`
-- Integrity lane status: resolved
-- Post-switch production validation: passed
-  - `https://buckparts.com/` -> `200`
-  - `https://buckparts.com/filter/mwf` -> `200`
-  - `https://buckparts.com/air-purifier/filter/honeywell-hrf-r1` -> `200`
-  - Valid real `/go/{linkId}` -> `302` to expected retailer
-  - Invalid `/go/{uuid}` -> `302` fallback behavior
-- UNKNOWN: exact live Netlify production deploy SHA was not proven in this lane.
-- Daily Operator live-site smoke checks the primary target from `LIVE_SITE_SMOKE_TARGET_URL`, then `BUCKPARTS_PUBLIC_SITE_URL`, then legacy `NEXT_PUBLIC_SITE_URL`. Route health never proves deploy commit sync.
+### Branch and deployment verification
 
-## Project layout
+The documented canonical and production deploy branch is `main`. Earlier recorded post-switch checks passed for the homepage, `/filter/mwf`, `/air-purifier/filter/honeywell-hrf-r1`, and valid and invalid `/go/{linkId}` redirects. These are historical checks, not fresh live verification by this README edit. The exact live Netlify production deploy SHA remains unproven here.
 
-| Path | Role |
-|------|------|
-| `src/lib/supabase/server-client.ts` | Server Supabase client |
-| `src/lib/types/database.ts` | Table-aligned TypeScript types |
-| `src/lib/data/*` | Queries (brands, fridges, filters, help, search, retailers) |
-| `src/app/go/[linkId]/route.ts` | Click logging + redirect |
-| `src/app/api/search/route.ts` | JSON search API |
-| `supabase/schema.sql` | DDL + RLS policies |
-| `data/*.sample.csv` | CSV templates for seed import |
-| `scripts/import-seed.ts` | CSV → Supabase importer |
-
-Affiliate links in the UI point at `/go/{retailer_link.id}` so each outbound click records a row in `click_events` before redirecting.
-
-## Security notes
-
-- Use the **anon** key only; RLS allows `SELECT` on catalog tables and `INSERT` on `click_events` / `search_events` (see `supabase/migrations/20260610120000_security_advisor_rls_reconcile_v1.sql`).
-- Do **not** expose the service role key in this app.
-- **Deploy preflight (PROVEN):** `npm run buckparts:deploy:preflight` runs MCP Supabase exposure audit (`--enforce`) before repo runtime convergence check. See `docs/BuckParts-HQ-HANDOFF.md` § Current stopping point.
+Live-site smoke checks select `LIVE_SITE_SMOKE_TARGET_URL`, then `BUCKPARTS_PUBLIC_SITE_URL`, then legacy `NEXT_PUBLIC_SITE_URL`. Route health does not prove that the deployed commit matches the repository.
