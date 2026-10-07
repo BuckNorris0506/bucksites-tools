@@ -45,3 +45,27 @@ test("four executive cards form the primary operating picture and do not fabrica
   assert.doesNotMatch(html, /Recorded reviews|Reviews needing you|Recorded paid model calls|Cash spent/);
   assert.doesNotMatch(html, /SINCE YOU LEFT/);
 });
+
+
+test("factory render uses projected counts, cost and continuation; unknown debit stays explicit", () => {
+  const html = render({ ...base, next_card: { title: "Zero-cost source reconciliation", detail: "Reconcile the current source receipts.", verified_at: "2026-10-07T04:00:00Z", freshness: "FRESH" },
+    factory_card: { valid: true, objective: "Refrigerator Coverage Factory", continuation: "Reconcile the current source receipts.", stage: "BATCH_COMPLETE", verified_at: "2026-10-07T04:00:00Z", freshness: "FRESH",
+      score: { TERMINAL_CLASSIFIED: 2, TOTAL_UNIVERSE: 7, PERCENT_COMPLETE: 28.5714, ACTIVE_RESEARCH: 1, HELD: 4 } },
+    latest_event: { title: "Research independently validated", why: "Results remain held.", metered_usage: 1.17, promotional_debit: "UNKNOWN", freshness: "FRESH", state: "HELD" },
+    authority_card: { remaining_creates: 0, publication_allowed: false, paid_create_allowed: false } });
+  assert.match(html, /REFRIGERATOR FACTORY SCOREBOARD/);
+  assert.match(html, /\/ 7/);
+  assert.match(html, /\$1.17/);
+  assert.match(html, /Promotional debit: UNKNOWN/);
+  assert.match(html, /Zero-cost source reconciliation/);
+  assert.doesNotMatch(html, /Await qualifying evidence|4,294|4294|\$3.26/);
+  assert.match(html, /publication No/);
+});
+
+test("unknown factory fields are not rendered as fabricated zeros", () => {
+  const html = render({ ...base, factory_card: { valid: false, problem: "Batch identity mismatch" } });
+  assert.match(html, /terminally classified/);
+  assert.match(html, /Batch identity mismatch/);
+  assert.match(html, /percent UNKNOWN/);
+  assert.match(html, /Checkpoint UNKNOWN/);
+});

@@ -20,6 +20,11 @@ function Icon({ kind }: { kind: string }) {
   return <span className="jo-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d={paths[kind] ?? paths.judgment} /></svg></span>;
 }
 
+function Checkpoint({ value, state }: { value: Row; state?: string }) {
+  return <div className="jo-checkpoint"><span className={`jo-truth-badge jo-truth-${copy(value.freshness).toLowerCase()}`}>{state ?? (value.freshness === "UNKNOWN" || !value.freshness ? "UNKNOWN" : "VERIFIED")} · {copy(value.freshness)}</span><span>Checkpoint {value.verified_at ? date(value.verified_at) : "UNKNOWN"}</span></div>;
+}
+const permission = (value: unknown) => value === true ? "Yes" : value === false ? "No" : "UNKNOWN";
+
 export function ExecutiveBrief({ value }: { value: unknown }) {
   const brief = row(value);
   const owns = row(brief.owns);
@@ -45,6 +50,10 @@ export function ExecutiveBrief({ value }: { value: unknown }) {
   const next = row(brief.next_card);
   const window = row(brief.window_card);
   const autonomy = row(brief.autonomy_card);
+  const factory = row(brief.factory_card);
+  const score = row(factory.score);
+  const authority = row(brief.authority_card);
+  const latest = row(brief.latest_event);
   const decisions = rows(brief.decisions ?? brief.trace).slice(0, 5);
   const firstNeed = handovers[0];
   const money = (value: unknown) => typeof value === "number" && Number.isFinite(value) ? `$${value.toFixed(2)}` : "UNKNOWN";
@@ -75,7 +84,7 @@ export function ExecutiveBrief({ value }: { value: unknown }) {
         <h1 id="situation-title">{copy(brief.handoff_headline ?? brief.founder_status)}</h1>
         <p className="jo-assurance">{copy(brief.handoff_assurance ?? brief.stewardship)}</p>
         {firstNeed ? handovers.map(packet) : <>
-          <p className="jo-current-situation">{copy(brief.headline)}</p>
+          <p className="jo-current-situation">{copy(brief.headline)}{brief.current_stage ? <span className="jo-stage-badge">{copy(brief.current_stage).replaceAll("_", " ")}</span> : null}</p>
           <p className="jo-situation-explanation">{copy(brief.handoff_support ?? brief.detail)}</p>
         </>}
         {brief.situation_stale ? <p className="jo-stale">Situation evidence is stale; current conditions unconfirmed.</p> : null}
@@ -96,37 +105,44 @@ export function ExecutiveBrief({ value }: { value: unknown }) {
         <h3>{outcome.earnings != null ? "Amazon earnings" : "No verified outcome available"}</h3>
         <div className="jo-outcome-facts"><span>{money(outcome.shipped_revenue)} shipped revenue</span><span>{count(outcome.shipped_items)} shipped item{outcome.shipped_items === 1 ? "" : "s"}</span></div>
         <p className="jo-card-note">Attribution unknown.</p>
-        <p className="jo-card-meta">Observed {date(outcome.observed_at)}<br />Verified {date(outcome.verified_at)}</p>
+        <p className="jo-card-meta">Observed {date(outcome.observed_at)}</p><Checkpoint value={outcome} />
       </article>
       <article className="jo-executive-card jo-blocker-card" aria-labelledby="blocker-title">
         <Icon kind="blocker" />
         <h2 id="blocker-title">CURRENT BLOCKER</h2><h3>{copy(blocker.title)}</h3><p>{copy(blocker.detail)}</p>
         {blocker.dangerous_count != null || blocker.snapshot != null ? <dl className="jo-count-pair"><div><dt>Dangerous count</dt><dd>{count(blocker.dangerous_count)}</dd></div><div><dt>Safety snapshot</dt><dd>{count(blocker.snapshot)}</dd></div></dl> : null}
-        {blocker.restraint ? <p className="jo-card-note">{copy(blocker.restraint)}</p> : null}
+        {blocker.restraint ? <p className="jo-card-note">{copy(blocker.restraint)}</p> : null}<Checkpoint value={blocker} state="HELD" />
       </article>
       <article className="jo-executive-card jo-next-card" aria-labelledby="next-title">
         <Icon kind="next" />
         <h2 id="next-title">J OWNS NEXT</h2><h3>{copy(next.title)}</h3><p>{copy(next.detail)}</p>
-        <p className="jo-trigger-label">Reconsider when</p><ul className="jo-trigger-list">{(Array.isArray(next.display_triggers) ? next.display_triggers : Array.isArray(next.triggers) ? next.triggers : [owns.trigger]).map((item, index) => <li key={index}>{copy(item)}</li>)}</ul>
-        <p className="jo-card-meta">{next.review_at ? `Recorded review · ${date(next.review_at)}` : "Checkpoint UNKNOWN"}</p>
+        {Array.isArray(next.display_triggers) && next.display_triggers.length ? <p className="jo-trigger-label">Reconsider when</p> : null}<ul className="jo-trigger-list">{(Array.isArray(next.display_triggers) ? next.display_triggers : Array.isArray(next.triggers) ? next.triggers : [owns.trigger]).map((item, index) => <li key={index}>{copy(item)}</li>)}</ul>
+        <p className="jo-card-meta">{next.review_at ? `Recorded review · ${date(next.review_at)}` : "Next scheduled execution time UNKNOWN"}</p><Checkpoint value={next} state={copy(next.state) === "UNKNOWN" ? undefined : copy(next.state)} />
         {next.scope_note ? <p className="jo-card-note">{copy(next.scope_note)}</p> : null}
       </article>
       <article className="jo-executive-card jo-window-card" aria-labelledby="autonomy-title">
         <Icon kind="autonomy" /><h2 id="autonomy-title">CURRENT AUTONOMY</h2><h3>{copy(autonomy.title)}</h3>
         <dl className="jo-autonomy-facts"><div><dt>Founder required</dt><dd>{copy(autonomy.founder_required)}</dd></div><div><dt>Authority effect</dt><dd>None from this view</dd></div><div><dt>Host dependency</dt><dd>Mac awake</dd></div></dl>
-        <p className="jo-card-meta">{copy(autonomy.note)}</p>
+        <p className="jo-card-meta">{copy(autonomy.note)}</p><Checkpoint value={autonomy} state={copy(autonomy.runtime_status)} />
       </article>
     </section>
-    <section className="jo-decisions-strip" aria-label="J's recent decisions"><div className="jo-section-heading"><h2>J’S RECENT DECISIONS</h2></div>
+    {brief.factory_card ? <section className="jo-factory-panel" aria-label="Refrigerator factory scoreboard">
+      <div className="jo-factory-score"><Icon kind="next" /><h2>REFRIGERATOR FACTORY SCOREBOARD</h2><p className="jo-factory-number">{count(score.TERMINAL_CLASSIFIED)} <span>/ {count(score.TOTAL_UNIVERSE)}</span></p><p>terminally classified · {typeof score.PERCENT_COMPLETE === "number" ? `${score.PERCENT_COMPLETE}% complete` : "percent UNKNOWN"}</p><Checkpoint value={factory} state={factory.valid ? "VERIFIED" : "UNKNOWN"} /></div>
+      <div className="jo-factory-detail"><h3>{copy(factory.objective)}</h3><dl className="jo-factory-counts"><div><dt>Researching</dt><dd>{count(score.ACTIVE_RESEARCH)}</dd></div><div><dt>Awaiting validation</dt><dd>{count(score.RETURNED_AWAITING_VALIDATION)}</dd></div><div><dt>Held / nonterminal</dt><dd>{count(score.HELD)}</dd></div></dl><p>{copy(factory.continuation ?? factory.problem)}</p>
+      <details><summary>Terminal classes & source scope</summary><p>Filter relationship {count(score.PROVEN_FILTER_RELATIONSHIP)} · No filter {count(score.PROVEN_NO_FILTER)} · Variant / duplicate {count(score.CANONICAL_VARIANT_OR_DUPLICATE)} · Source exhausted {count(score.UNRESOLVED_SOURCE_EXHAUSTED)}</p><p>The denominator is the recorded authoritative certification snapshot, not every refrigerator ever manufactured.</p></details></div>
+      <div className="jo-factory-event"><h2>LATEST FACTORY EVENT</h2><h3>{copy(latest.title)}</h3><p>{copy(latest.why)}</p><p className="jo-metered-cost">{money(latest.metered_usage)} <span>provider metered usage</span></p><p className="jo-card-note">Promotional debit: {copy(latest.promotional_debit)}. Metered usage is not proof of cash paid.</p><Checkpoint value={latest} state={copy(latest.state)} /></div>
+      <details className="jo-authority-detail"><summary>Current authority · creates remaining {count(authority.remaining_creates)} · publication {permission(authority.publication_allowed)}</summary><p>Scoped local work: {permission(authority.local_allowed)} · Network reads: {permission(authority.network_reads_allowed)} · New paid create: {permission(authority.paid_create_allowed)} · Create consumed: {permission(authority.create_consumed)}</p><Checkpoint value={authority} state="AUTHORITY SNAPSHOT" /><p>Source: {copy(authority.source)}. Authority is read at projection refresh; no grant is added by Office.</p></details>
+    </section> : null}
+    <section className="jo-decisions-strip" aria-label="J's recent decisions"><div className="jo-section-heading"><h2>RECENT EXECUTIVE EVENTS / DECISIONS</h2></div>
       <div className="jo-decision-rows">{decisions.length ? decisions.map((item, index) => <article className="jo-judgment-item" key={index}>
-        <Icon kind="judgment" /><span className={`jo-judgment-label jo-label-${copy(item.label).toLowerCase()}`}>{copy(item.label)}</span><div><h3>{copy(item.title)}</h3><p>{copy(item.why)}</p>{item.observed_at ? <time className="jo-card-meta">{date(item.observed_at)}</time> : null}</div>
+        <Icon kind="judgment" /><span className={`jo-judgment-label jo-label-${copy(item.label).toLowerCase()}`}>{copy(item.label)}</span><div><h3>{copy(item.title)}</h3><p>{copy(item.why)}</p>{typeof item.metered_usage === "number" ? <p className="jo-card-note">{money(item.metered_usage)} metered · debit {copy(item.promotional_debit)}</p> : null}{item.observed_at ? <time className="jo-card-meta">{date(item.observed_at)}</time> : null}</div>
       </article>) : <p>No consequential decision is established.</p>}</div>
     </section>
     {rows(brief.business_view).length ? <section className="jo-business-view" aria-label="J's current business view"><h2>J’S CURRENT BUSINESS VIEW</h2><div>{rows(brief.business_view).map((item, index) => <article key={index}><h3>{copy(item.title)}</h3><span>{copy(item.status)}</span><p>{copy(item.detail)}</p></article>)}</div></section> : null}
     <details className="jo-brief-evidence"><summary>Brief sources & freshness</summary>
       <p>Situation observed {date(brief.situation_observed_at)}. Brief updated {date(brief.updated_at)}.</p>
       <p>{copy(brief.evidence_warning)}</p><p>Latest outcome evidence: {copy(outcome.evidence)}</p><p>Hold evidence: {copy(blocker.evidence)}</p><p>Next assessment: {copy(next.evidence)}</p>
-      <p>{copy(window.note)}</p><p>Exact outcome attribution and profit are not established.</p><p>Priority: {copy(owns.priority)}</p><p>Fallback: {copy(owns.fallback)}</p>
+      <p>{copy(window.note)}</p><p>Exact outcome attribution and profit are not established.</p><p>Factory sources: {(Array.isArray(factory.sources) ? factory.sources : []).map(copy).join(" · ")}</p><p>Priority: {copy(owns.priority)}</p><p>Fallback: {copy(owns.fallback)}</p>
       {decisions.map((item, index) => <p key={index}>{copy(item.label)} · {date(item.observed_at)} · {copy(item.evidence)} · {copy(item.unknown)}</p>)}
     </details>
   </main>;
