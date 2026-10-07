@@ -46,57 +46,89 @@ export default async function HomePage() {
 
   return (
     <>
-      <div className="mx-auto w-full max-w-7xl px-0 pb-16 pt-2 text-bp-text sm:pb-20 sm:pt-3 lg:pb-24 lg:pt-5">
-        {/* Hero polish: search high in viewport, signature evidence card right */}
-        <section aria-label="Home hero">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-x-10 lg:gap-y-10">
-            <div className="flex flex-col gap-5 lg:col-span-7 lg:gap-6">
-              <div className="space-y-3 sm:space-y-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-bp-muted sm:text-xs sm:tracking-[0.2em]">Replacement fit check</p>
-                <h1 className="text-balance text-5xl font-extrabold tracking-tight sm:text-6xl sm:leading-[1.02] lg:text-[3.4rem] lg:leading-[1.0]">
-                  <span className="text-bp-muted">Wrong Buck.</span>{" "}
-                  <span className="bp-hook-resolve">Right Parts<span className="text-bp-action">.</span></span>
-                </h1>
-                <p className="max-w-2xl text-pretty text-base leading-relaxed text-bp-muted sm:text-lg">
-                  Find the replacement that fits. We say when fit is not established, and we only show a place to buy after that answer is honest.
+      <div className="mx-auto w-full max-w-7xl px-0 pb-16 pt-0 text-bp-text sm:pb-20 lg:pb-24">
+        <section aria-label="Home hero" className="max-w-2xl space-y-4 sm:space-y-5">
+          <h1 className="text-balance text-3xl font-extrabold tracking-tight text-bp-text sm:text-4xl sm:leading-tight lg:text-[2.5rem] lg:leading-tight">
+            Find the replacement part that fits.
+          </h1>
+
+          <SearchForm
+            showInputLabel
+            inputLabel="Enter appliance model or part number"
+            placeholder="Appliance model or part number"
+            submitLabel="Find my part"
+          />
+
+          <p className="text-sm leading-relaxed sm:text-[15px]">
+            <Link
+              href="/help"
+              className="font-medium text-bp-trust underline decoration-bp-trust/30 underline-offset-2 hover:decoration-bp-trust/55"
+            >
+              Where do I find my model number?
+            </Link>
+          </p>
+
+          <p className="text-sm leading-relaxed text-bp-muted sm:text-[15px]">
+            Free. No account. We’ll tell you when we’re not sure.
+          </p>
+        </section>
+
+        <RevealOnScroll className="mt-16 border-t border-bp-border pt-14 sm:mt-20 sm:pt-16 lg:mt-24 lg:pt-20">
+          <section aria-labelledby="why-buckparts-heading">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-x-10">
+              <div className="flex flex-col gap-5 lg:col-span-7 lg:gap-6">
+                <div className="space-y-3">
+                  <h2
+                    id="why-buckparts-heading"
+                    className="text-balance text-3xl font-extrabold tracking-tight sm:text-4xl"
+                  >
+                    <span className="text-bp-muted">Wrong Buck.</span>{" "}
+                    <span className="bp-hook-resolve">
+                      Right Parts<span className="text-bp-action">.</span>
+                    </span>
+                  </h2>
+                  <p className="max-w-2xl text-pretty text-base leading-relaxed text-bp-muted sm:text-lg">
+                    Find the replacement that fits. We say when fit is not established, and we only show a place to buy after that answer is honest.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-2" aria-label="Example codes to try in search">
+                  {EXAMPLE_CHIPS.map((c) => (
+                    <Link
+                      key={c.q}
+                      href={`/search?q=${encodeURIComponent(c.q)}`}
+                      className="bp-code inline-flex items-center rounded-full border border-bp-border bg-bp-bg px-3 py-1.5 text-sm font-semibold text-bp-text transition-colors hover:border-bp-trust/40 hover:bg-bp-trust-soft/50"
+                    >
+                      {c.label}
+                    </Link>
+                  ))}
+                </div>
+
+                <RecentSearches actionPath="/search" />
+
+                <StatusLegend />
+
+                <p className="max-w-2xl text-sm leading-relaxed text-bp-muted sm:text-[15px]">
+                  <span className="font-medium text-bp-text/90">Free to use · No account needed.</span> Buying is optional and comes after the fit answer.
                 </p>
               </div>
 
-              <div className="max-w-2xl rounded-2xl border border-bp-border bg-bp-surface p-4 sm:p-5">
-                <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-bp-muted">Look up a code</p>
-                <SearchForm />
-                <RecentSearches actionPath="/search" />
-              </div>
-
-              <div className="flex flex-wrap gap-2" aria-label="Example codes to try in search">
-                {EXAMPLE_CHIPS.map((c) => (
-                  <Link key={c.q} href={`/search?q=${encodeURIComponent(c.q)}`} className="bp-code inline-flex items-center rounded-full border border-bp-border bg-bp-bg px-3 py-1.5 text-sm font-semibold text-bp-text transition-colors hover:border-bp-trust/40 hover:bg-bp-trust-soft/50">{c.label}</Link>
-                ))}
-              </div>
-
-              <p className="max-w-2xl text-sm leading-relaxed text-bp-muted sm:text-[15px]">
-                <Link href="/help" className="font-medium text-bp-text underline-offset-2 hover:underline">
-                  Need help finding the number?
-                </Link>
-                <span className="text-bp-muted"> Look on the appliance sticker, the old filter, or the manual.</span>
-              </p>
-
-              <StatusLegend />
-
-              <p className="max-w-2xl text-sm leading-relaxed text-bp-muted sm:text-[15px]">
-                <span className="font-medium text-bp-text/90">Free to use · No account needed.</span> Buying is optional and comes after the fit answer.
-              </p>
+              <RevealOnScroll as="aside" className="lg:col-span-5" delayMs={50}>
+                <div className="space-y-4 lg:sticky lg:top-20">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-bp-muted">
+                    Illustrative — not your appliance
+                  </p>
+                  <VerifiedLinkCard
+                    illustrative
+                    destinationLabel="Official manufacturer path"
+                    checkedDate="2026-06-02"
+                  />
+                  <NoVerifiedLinkCard illustrative />
+                </div>
+              </RevealOnScroll>
             </div>
-
-            <RevealOnScroll as="aside" className="lg:col-span-5" delayMs={50}>
-              <div className="space-y-4 lg:sticky lg:top-20">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-bp-muted">Illustrative — not your appliance</p>
-                <VerifiedLinkCard illustrative destinationLabel="Official manufacturer path" checkedDate="2026-06-02" />
-                <NoVerifiedLinkCard illustrative />
-              </div>
-            </RevealOnScroll>
-          </div>
-        </section>
+          </section>
+        </RevealOnScroll>
 
         <RevealOnScroll className="mt-16 border-t border-bp-border pt-14 sm:mt-20 sm:pt-16 lg:mt-24 lg:pt-20">
         <section aria-labelledby="how-heading">
