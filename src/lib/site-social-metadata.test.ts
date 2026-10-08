@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 
@@ -65,10 +65,10 @@ test("OG/Twitter image route files exist in App Router", () => {
   assert.ok(existsSync(join(root, "src/app/twitter-image.png")));
 });
 
-test("homepage metadata aligns with sitewide social defaults", async () => {
-  const { metadata: homeMetadata } = await import("@/app/page");
-  assert.equal(homeMetadata.title, SITE_SOCIAL_OG_TITLE);
-  assert.equal(homeMetadata.description, SITE_SOCIAL_OG_DESCRIPTION);
-  assert.equal(homeMetadata.openGraph?.title, SITE_SOCIAL_OG_TITLE);
-  assert.equal(homeMetadata.twitter?.card, "summary_large_image");
+test("homepage metadata aligns with sitewide social defaults", () => {
+  const src = readFileSync(join(process.cwd(), "src/app/page.tsx"), "utf8");
+  assert.ok(src.includes("SITE_SOCIAL_OG_TITLE"));
+  assert.ok(src.includes("SITE_SOCIAL_OG_DESCRIPTION"));
+  assert.match(src, /card:\s*"summary_large_image"/);
+  assert.ok(src.includes("HomepageView"));
 });

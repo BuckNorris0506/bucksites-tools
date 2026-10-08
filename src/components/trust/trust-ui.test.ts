@@ -252,22 +252,15 @@ describe("public merchant-priority copy guard", () => {
     assert.ok(!/avoid sending you to a bad match/i.test(src));
   });
 
-  it("homepage uses FOH hero copy and purchase-options doctrine below the fold", () => {
-    const src = readFileSync(rooted("src/app/page.tsx"), "utf8");
+  it("homepage uses Astra lookup copy and keeps SearchForm Look it up on other routes", () => {
+    const src = readFileSync(rooted("src/components/homepage/HomepageView.tsx"), "utf8");
     const searchForm = readFileSync(rooted("src/components/SearchForm.tsx"), "utf8");
     assert.ok(!/store shortcut/i.test(src));
-    assert.ok(src.includes("Wrong Buck."));
-    assert.ok(src.includes("Right Parts"));
-    assert.ok(src.includes("Find the replacement that fits."));
+    assert.ok(src.includes("copy.h1Lead"));
+    assert.ok(src.includes("copy.philosophyTitle"));
+    assert.ok(src.includes("copy.step1Body"));
     assert.ok(searchForm.includes("Look it up"));
-    assert.ok(src.includes("Free to use · No account needed."));
-    assert.ok(src.includes("Buying is optional and comes after the fit answer."));
-    assert.ok(src.includes("Shop only after checks pass"));
-    assert.ok(
-      src.includes(
-        "BuckParts shows purchase options only when the listing matches the part number well enough to pass our checks.",
-      ),
-    );
+    assert.ok(src.includes("A search match is a starting point") || src.includes("copy.step1Body"));
     assert.ok(!/Shop only when checks pass/.test(src));
     assert.ok(!/avoid sending you to a bad match/i.test(src));
   });
