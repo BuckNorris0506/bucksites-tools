@@ -76,7 +76,7 @@ describe("FridgeModelFilterSection", () => {
       }),
     );
     assert.ok(html.includes("Full detail for each number"));
-    assert.ok(html.includes("chips above"));
+    assert.ok(html.includes("shown above"));
     assert.ok(html.includes("Not a ranked list"));
     assert.equal(/\bOption\s*1\b/i.test(html), false);
     assert.equal(/\bOption\s*2\b/i.test(html), false);
@@ -181,7 +181,7 @@ describe("FridgeModelFilterSection", () => {
       }),
     );
     const html = `${cardHtml}\n${quarantineHtml}`;
-    assert.ok(cardHtml.includes("Next steps"));
+    assert.ok(cardHtml.includes("Your model"));
     assert.ok(!cardHtml.includes("data-form-factor-visual="));
     assert.ok(!cardHtml.includes("<svg"));
     const banned = [/\bPDP\b/i, /\bbrowser truth\b/i, /\bdirect_buyable\b/i, /\bcanonical slug\b/i, /\btoken\b/i];

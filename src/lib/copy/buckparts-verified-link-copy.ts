@@ -25,6 +25,22 @@ export const BUCKPARTS_VERIFIED_LINK_WHEN_SHOWN_NOTE =
 export const BUCKPARTS_VERIFIED_LINK_NONE_YET =
   "No BuckParts Verified Link yet for this filter number. We haven’t found a retailer product page we’re comfortable showing." as const;
 
+/** Prominent buy strip when gates suppress (design package; does not change gate logic). */
+export const BUCKPARTS_VERIFIED_LINK_PROMINENT_NONE_YET =
+  "No verified buying link yet." as const;
+
+/** Model PDP — single inline cartridge confirmation (shown once). */
+export const FRIDGE_MODEL_PDP_CARTRIDGE_CONFIRMATION =
+  "Check the number printed on your old cartridge. If it matches one of the numbers above, continue." as const;
+
+/** Visible primary retailer CTA prefix when a verified link renders. */
+export const BUCKPARTS_VERIFIED_LINK_VIEW_AT_PREFIX = "View at" as const;
+
+/** Concise retailer check qualifier for model PDP prominent buy (part number interpolated). */
+export function buckpartsVerifiedLinkCheckedAgainstPart(partNumber: string): string {
+  return `BuckParts checked this retailer page against ${partNumber}.`;
+}
+
 /** Screen-reader prefix on primary retailer CTA (store name follows in visible label). */
 export const BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX = "BuckParts Verified Link at" as const;
 
