@@ -238,7 +238,7 @@ describe("public merchant-priority copy guard", () => {
   });
 
   it("global shell footer uses BuckParts Verified Link wording", () => {
-    const src = readFileSync(rooted("src/components/SiteShell.tsx"), "utf8");
+    const src = readFileSync(rooted("src/components/SiteHeader.tsx"), "utf8");
     assert.ok(!/store links/i.test(src));
     assert.ok(!/store buttons/i.test(src));
     assert.ok(src.includes("BuckParts Verified Link"));
@@ -252,28 +252,22 @@ describe("public merchant-priority copy guard", () => {
     assert.ok(!/avoid sending you to a bad match/i.test(src));
   });
 
-  it("homepage uses FOH hero copy and purchase-options doctrine below the fold", () => {
+  it("homepage uses approved fit-decision hero copy", () => {
     const src = readFileSync(rooted("src/app/page.tsx"), "utf8");
     const searchForm = readFileSync(rooted("src/components/SearchForm.tsx"), "utf8");
+    const copy = readFileSync(rooted("src/lib/homepage/homepage-copy.ts"), "utf8");
     assert.ok(!/store shortcut/i.test(src));
-    assert.ok(src.includes("Wrong Buck."));
-    assert.ok(src.includes("Right Parts"));
-    assert.ok(src.includes("Find the replacement that fits."));
+    assert.ok(!src.includes("Wrong Buck."));
+    assert.ok(copy.includes("Know what fits before you buy."));
+    assert.ok(copy.includes("We’re not a parts store."));
+    assert.ok(copy.includes("Find my part"));
     assert.ok(searchForm.includes("Look it up"));
-    assert.ok(src.includes("Free to use · No account needed."));
-    assert.ok(src.includes("Buying is optional and comes after the fit answer."));
-    assert.ok(src.includes("Shop only after checks pass"));
-    assert.ok(
-      src.includes(
-        "BuckParts shows purchase options only when the listing matches the part number well enough to pass our checks.",
-      ),
-    );
     assert.ok(!/Shop only when checks pass/.test(src));
     assert.ok(!/avoid sending you to a bad match/i.test(src));
   });
 
   it("global shell footer links to grant trust pages", () => {
-    const src = readFileSync(rooted("src/components/SiteShell.tsx"), "utf8");
+    const src = readFileSync(rooted("src/components/SiteHeader.tsx"), "utf8");
     assert.ok(src.includes('href="/truth-policy"'));
     assert.ok(src.includes('href="/wrong-part-prevention"'));
   });
