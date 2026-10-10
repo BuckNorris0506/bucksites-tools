@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useRouter } from "next/navigation";
 import { ExecutiveBrief } from "./ExecutiveBrief";
 import { CaptainLog } from "@/app/office/CaptainLog";
 import { OperatingStateControl } from "@/app/office/OperatingStateControl";
+import { useOperatingPoll } from "@/app/office/use-operating-poll";
 import { scopeFounderOperatingPicture } from "@/lib/j-office/scope-projection";
 import type {
   EconValue,
@@ -93,10 +94,11 @@ function waitingExternalDuplicatesNeed(
 
 export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
   const router = useRouter();
-  useEffect(() => {
-    const timer = setInterval(() => { if (!document.hidden) router.refresh(); }, 30000);
-    return () => clearInterval(timer);
-  }, [router]);
+  const { view: pollView, setView: setPollView } = useOperatingPoll({
+    onStatus: () => {
+      if (!document.hidden) router.refresh();
+    },
+  });
   const scopes = picture.business_scopes?.length
     ? picture.business_scopes
     : [{ id: "all", label: "ALL" }];
@@ -172,7 +174,8 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
       <header className="jo-strip">
         <div className="jo-brand">J OFFICE</div>
         <span className="jo-header-subtitle">Executive Brief</span>
-        <OperatingStateControl compact />
+        <OperatingStateControl compact pollView={pollView} setPollView={setPollView} />
+        <span className="jo-meta jo-next-cycle">Next cycle {text(system.next_cycle_label, "UNKNOWN")}</span>
         <a className="jo-system-link" href="#office-system">System ▾</a>
         <div className="jo-meta">updated {formatUpdated(system.updated_at ?? view.generated_at)}</div>
         {needs.length > 0 ? (
@@ -180,7 +183,11 @@ export function JOfficeView({ picture }: { picture: FounderOperatingPicture }) {
         ) : null}
       </header>
 
-      <ExecutiveBrief value={(picture.office_brief as OfficeBrief & { executive?: unknown })?.executive} />
+      <ExecutiveBrief
+        value={(picture.office_brief as OfficeBrief & { executive?: unknown })?.executive}
+        operatingProgress={view.office_brief?.operating_progress}
+        runtime={pollView}
+      />
       <details className="jo-technical" id="office-system"><summary>System / technical details</summary>
       {scopes.length > 1 ? (
         <nav className="jo-scopes" aria-label="Business scope">

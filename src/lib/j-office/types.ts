@@ -81,6 +81,7 @@ export type OfficeChangedItem = {
 export type OfficeBrief = {
   primary_status?: string | null;
   founder_action?: string | null;
+  /** Durable roll-up: ACTIVE | WAITING_VALIDLY | BLOCKED | IDLE_NO_WORK | DEGRADED */
   operating_progress?: string | null;
   founder_needed_count?: number;
   blocked?: Array<Record<string, unknown>>;

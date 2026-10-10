@@ -212,6 +212,15 @@ test("Mac desktop CSS uses a grid and does not collapse core sections", () => {
   assert.equal(viewSrc.includes("<details className=\"jo-panel jo-needs\""), false);
 });
 
+test("desktop cockpit stays one screen and the header names the next cycle", () => {
+  const css = read("src/app/office/office.css");
+  const view = read("src/app/office/JOfficeView.tsx");
+  assert.match(css, /max-height: calc\(100vh - 52px\)/);
+  assert.match(css, /overflow: hidden/);
+  assert.match(css, /\.jo-next-cycle \{\s*white-space: nowrap;\s*\}/);
+  assert.match(view, /Next cycle \{text\(system\.next_cycle_label, "UNKNOWN"\)\}/);
+});
+
 test("narrow viewport stacks needs, now, changed, money first without horizontal scroll", () => {
   const css = read("src/app/office/office.css");
   assert.match(css, /\.jo-needs \{ order: 1; \}/);

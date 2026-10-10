@@ -1,15 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
-import {
-  IgnoredOperatingPoll,
-  OPERATING_STATE_POLL_INTERVAL_MS,
-  reduceOperatingPoll,
-  startOperatingPoll,
-  type OperatingPollView,
-  type OperatingStatus,
-} from "@/app/office/operating-state-poll";
+import { reduceOperatingPoll, type OperatingStatus } from "@/app/office/operating-state-poll";
+import { readOperatingStatus } from "@/app/office/use-operating-poll";
+import type { OperatingPollView } from "@/app/office/operating-state-poll";
 
 import { useRouter } from "next/navigation";
 
@@ -31,41 +26,26 @@ function formatElapsed(seconds: number | null | undefined): string {
   return `${rest}s`;
 }
 
-async function readOperatingStatus(response: Response): Promise<OperatingStatus> {
-  const body = (await response.json()) as OperatingStatus;
-  if (!response.ok) {
-    throw new Error(body.error || "operating state unavailable");
-  }
-  return body;
-}
-
-export function OperatingStateControl({ compact = false }: { compact?: boolean }) {
+export function OperatingStateControl({
+  compact = false,
+  pollView,
+  setPollView,
+}: {
+  compact?: boolean;
+  pollView: OperatingPollView;
+  setPollView: (view: OperatingPollView) => void;
+}) {
   const router = useRouter();
-  const [view, setView] = useState<OperatingPollView>({ status: null, error: null });
+  const view = pollView;
   const [pending, setPending] = useState<string | null>(null);
   const viewRef = useRef(view);
   const requestGen = useRef(0);
   viewRef.current = view;
 
-  const apply = useCallback((next: OperatingPollView) => {
+  function apply(next: OperatingPollView) {
     viewRef.current = next;
-    setView(next);
-  }, []);
-
-  useEffect(() => {
-    const stop = startOperatingPoll({
-      intervalMs: OPERATING_STATE_POLL_INTERVAL_MS,
-      load: async () => {
-        const mine = ++requestGen.current;
-        const response = await fetch("/office/api/operating-state", { cache: "no-store" });
-        const status = await readOperatingStatus(response);
-        if (mine !== requestGen.current) throw new IgnoredOperatingPoll();
-        return status;
-      },
-      onView: apply,
-    });
-    return stop;
-  }, [apply]);
+    setPollView(next);
+  }
 
   async function setMode(mode: (typeof MODES)[number]) {
     const mine = ++requestGen.current;
