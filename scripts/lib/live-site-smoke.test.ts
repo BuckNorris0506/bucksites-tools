@@ -16,18 +16,47 @@ import {
   fixtureGoodWrongPartPreventionHtml,
 } from "./live-site-trust-page-content-contract-v1";
 
+function mockStaticAssetResponse(url: string): Response | null {
+  if (url.includes("/_next/static/css/")) {
+    return new Response("{}", { status: 200, headers: { "content-type": "text/css" } });
+  }
+  if (url.includes("/_next/static/chunks/")) {
+    return new Response("/*ok*/", {
+      status: 200,
+      headers: { "content-type": "application/javascript" },
+    });
+  }
+  if (url.endsWith("/buckparts-logo-black-transparent.png")) {
+    return new Response(new Uint8Array([137, 80, 78, 71]), {
+      status: 200,
+      headers: { "content-type": "image/png" },
+    });
+  }
+  if (url.endsWith("/fo-verify.html")) {
+    return new Response("<html>verify</html>", {
+      status: 200,
+      headers: { "content-type": "text/html" },
+    });
+  }
+  return null;
+}
+
 function mockFetchWithTrustPages(url: string, productBody?: string): Response {
+  const asset = mockStaticAssetResponse(url);
+  if (asset) return asset;
   if (url.includes("/wrong-part-prevention")) {
     return new Response(fixtureGoodWrongPartPreventionHtml(), {
       status: 200,
       headers: { "content-type": "text/html" },
     });
   }
+  const assetRefs =
+    '<link href="/_next/static/css/app.css" rel="stylesheet"/><script src="/_next/static/chunks/main.js"></script>';
   const body =
     productBody ??
     (url.endsWith("/fridge/lg-lfxs26973s") || url.endsWith("/filter/adq36006101")
-      ? `<html><script>__NEXT_DATA__</script>adq36006101 lg-lfxs26973s</html>`
-      : `<!DOCTYPE html><html><script>__NEXT_DATA__</script></html>`);
+      ? `<html>${assetRefs}<script>__NEXT_DATA__</script>adq36006101 lg-lfxs26973s</html>`
+      : `<!DOCTYPE html><html>${assetRefs}<script>__NEXT_DATA__</script></html>`);
   return new Response(body, { status: 200, headers: { "content-type": "text/html" } });
 }
 
@@ -270,4 +299,29 @@ test("probeLiveSiteRoute marks UNKNOWN on throw", async () => {
   assert.equal(r.status_code, "UNKNOWN");
   assert.equal(r.marker_found, "UNKNOWN");
   assert.equal(r.ok, false);
+});
+
+test("buildLiveSiteMonitorArtifact fails static asset contract when referenced assets return HTML 404", async () => {
+  const fetchFn = async (url: string) => {
+    if (url.includes("/_next/static/")) {
+      return new Response("<html>404</html>", {
+        status: 404,
+        headers: { "content-type": "text/html; charset=utf-8" },
+      });
+    }
+    return mockFetchWithTrustPages(url);
+  };
+  const art = await buildLiveSiteMonitorArtifact({
+    cwd: process.cwd(),
+    fetchFn,
+    env: { NEXT_PUBLIC_SITE_URL: "https://example.com" },
+    nowIso: "2026-05-09T12:00:00.000Z",
+    source: "test",
+    execSync: () => {
+      throw new Error("git");
+    },
+  });
+  assert.equal(art.static_asset_status, "ATTENTION");
+  assert.equal(art.runtime_status, "ATTENTION");
+  assert.ok(art.static_assets.some((a) => a.failure_reasons.includes("html_instead_of_asset")));
 });

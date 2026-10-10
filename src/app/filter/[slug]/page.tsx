@@ -10,6 +10,7 @@ import {
 import { FridgeWinnerFamilyRail } from "@/components/fridge/FridgeWinnerFamilyRail";
 import { FilterPdpCompatibleModelsSection } from "@/components/fridge/FilterPdpCompatibleModelsSection";
 import { FilterPdpRepoEvidenceSection } from "@/components/fridge/FilterPdpRepoEvidenceSection";
+import { FilterPdpLegacySuccessorSection } from "@/components/fridge/FilterPdpLegacySuccessorSection";
 import { FilterPdpTrustDecisionSection } from "@/components/fridge/FilterPdpTrustDecisionSection";
 import { JsonLdScript } from "@/components/seo/JsonLdScript";
 import { Prose } from "@/components/Prose";
@@ -210,6 +211,8 @@ export default async function FilterPage({ params }: Props) {
             ...filterTelemetryBase,
           }}
         />
+
+        <FilterPdpLegacySuccessorSection filterSlug={filter.slug} />
 
         <div className="overflow-hidden rounded-2xl border border-bp-border bg-bp-surface p-6 sm:p-7">
           {publicNotes ? (

@@ -31,6 +31,8 @@ function liveMonitorFixture(overrides: Partial<LiveSiteMonitorV1> = {}): LiveSit
     route_http_status: "OK",
     content_contract_status: "OK",
     content_contracts: [],
+    static_asset_status: "OK",
+    static_assets: [],
     runtime_status: "OK",
     routes: [{ path: "/", status_code: 200, ok: true, latency_ms: 1, marker_found: true }],
     local_head_commit: "localsha",
