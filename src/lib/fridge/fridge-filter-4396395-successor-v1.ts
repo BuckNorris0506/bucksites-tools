@@ -1,7 +1,17 @@
-/** Repo evidence + copy for /filter/4396395 Filter 4 successor (Phase 20B). */
+/**
+ * Copy for /filter/4396395 Filter 4 successor (Phase 20B).
+ * Read-only supersession evidence JSON is founder-approved at local commit
+ * e8bf3d5d2386817a08006c30184c5f52c04fd58e; ship-guard blocks `data/evidence/*`
+ * on ordinary deploy lanes — do not bundle that file in R01 without a separate
+ * approved evidence commit.
+ */
 
+/** Documentary provenance path (artifact may exist off deploy branch). */
 export const WHIRLPOOL_4396395_SUCCESSOR_EVIDENCE_REL_PATH =
   "data/evidence/whirlpool-4396395-filter4-successor-readonly.2026-10-09.json" as const;
+
+export const WHIRLPOOL_4396395_SUCCESSOR_EVIDENCE_SOURCE_COMMIT =
+  "e8bf3d5d2386817a08006c30184c5f52c04fd58e" as const;
 
 export const WHIRLPOOL_4396395_SUCCESSOR_SLUG = "4396395" as const;
 

@@ -41,10 +41,6 @@ import {
   buildFilterPdpRepoEvidencePaths,
   primaryBrowserProofMeta,
 } from "@/lib/fridge/filter-pdp-repo-evidence";
-import {
-  isWhirlpool4396395SuccessorPage,
-  WHIRLPOOL_4396395_SUCCESSOR_EVIDENCE_REL_PATH,
-} from "@/lib/fridge/fridge-filter-4396395-successor-v1";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
 import { intervalLabel } from "@/lib/vertical/interval";
@@ -168,9 +164,7 @@ export default async function FilterPage({ params }: Props) {
     trustSummary.buyer_path_state === "suppress_buy" ? "suppress_buy" : "show_buy";
   const buyingOptionsShown = trustSummary.buyer_path_state !== "suppress_buy";
   const repoEvidencePaths = buildFilterPdpRepoEvidencePaths({
-    censusEvidenceFiles: isWhirlpool4396395SuccessorPage(filter.slug)
-      ? [WHIRLPOOL_4396395_SUCCESSOR_EVIDENCE_REL_PATH]
-      : [],
+    censusEvidenceFiles: [],
     retailerLinks: filter.retailer_links,
   });
   const browserProofMeta = primaryBrowserProofMeta(filter.retailer_links);

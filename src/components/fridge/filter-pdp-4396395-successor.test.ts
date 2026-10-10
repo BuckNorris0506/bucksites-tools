@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { createHash } from "node:crypto";
 import { describe, it } from "node:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -11,15 +10,11 @@ import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import {
   WHIRLPOOL_4396395_SUCCESSOR_BODY_PARAGRAPHS,
   WHIRLPOOL_4396395_SUCCESSOR_EVIDENCE_REL_PATH,
+  WHIRLPOOL_4396395_SUCCESSOR_EVIDENCE_SOURCE_COMMIT,
   WHIRLPOOL_FILTER4_SUCCESSOR_SLUG,
 } from "@/lib/fridge/fridge-filter-4396395-successor-v1";
 import { BUCKPARTS_VERIFIED_LINK_NONE_YET } from "@/lib/copy/buckparts-verified-link-copy";
 import type { PartTrustSummary } from "@/lib/trust/part-trust";
-
-function sha256File(relPath: string): string {
-  const abs = join(process.cwd(), relPath);
-  return createHash("sha256").update(readFileSync(abs)).digest("hex");
-}
 
 function countCompatRows(filterSlug: string): number {
   const csv = readFileSync(join(process.cwd(), "data/compatibility_mappings.csv"), "utf8");
@@ -96,12 +91,11 @@ describe("4396395 Filter 4 successor PDP (Phase 20B)", () => {
     assert.deepEqual(rows, ["4396395,4396395"]);
   });
 
-  it("records durable supersession evidence artifact", () => {
-    const raw = readFileSync(join(process.cwd(), WHIRLPOOL_4396395_SUCCESSOR_EVIDENCE_REL_PATH), "utf8");
-    const doc = JSON.parse(raw) as { legacy_part_number: string; documented_successor_product: string };
-    assert.equal(doc.legacy_part_number, "4396395");
-    assert.equal(doc.documented_successor_product, "EDR4RXD1");
-    assert.ok(doc);
-    void sha256File(WHIRLPOOL_4396395_SUCCESSOR_EVIDENCE_REL_PATH);
+  it("documents supersession evidence provenance without requiring data/evidence on deploy lane", () => {
+    assert.equal(
+      WHIRLPOOL_4396395_SUCCESSOR_EVIDENCE_REL_PATH,
+      "data/evidence/whirlpool-4396395-filter4-successor-readonly.2026-10-09.json",
+    );
+    assert.equal(WHIRLPOOL_4396395_SUCCESSOR_EVIDENCE_SOURCE_COMMIT, "e8bf3d5d2386817a08006c30184c5f52c04fd58e");
   });
 });
