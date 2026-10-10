@@ -25,8 +25,8 @@ test("counts statuses correctly", () => {
   assert.equal(report.status_counts.NOT_STARTED, 0);
   assert.equal(report.status_counts.SUBMITTED, 4);
   assert.equal(report.status_counts.IN_REVIEW, 3);
-  assert.equal(report.status_counts.APPROVED, 3);
-  assert.equal(report.status_counts.REJECTED, 5);
+  assert.equal(report.status_counts.APPROVED, 2);
+  assert.equal(report.status_counts.REJECTED, 6);
   assert.equal(report.status_counts.PAUSED_OR_INACTIVE, 1);
 });
 
@@ -40,14 +40,22 @@ test("detects DRAFTING records", () => {
   assert.equal(report.status_counts.DRAFTING, 6);
 });
 
-test("records Rakuten Waterdrop as APPROVED with LinkSynergy tag verification", () => {
+test("records Rakuten Waterdrop as APPROVED; Amazon Associates as REJECTED after closure", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
   assert.ok(report.records_approved.includes("rakuten-waterdrop-filter"));
-  assert.ok(report.records_approved.includes("amazon-associates"));
+  assert.ok(report.records_rejected.includes("amazon-associates"));
   assert.ok(report.records_rejected.includes("rakuten-appliancepartspros"));
-  const raw = JSON.parse(readFileSync(TRACKER_PATH, "utf8")) as { id: string; tagVerified: boolean | null }[];
+  assert.ok(!report.records_approved.includes("amazon-associates"));
+  const raw = JSON.parse(readFileSync(TRACKER_PATH, "utf8")) as {
+    id: string;
+    status: string;
+    tagVerified: boolean | null;
+  }[];
   const waterdrop = raw.find((r) => r.id === "rakuten-waterdrop-filter");
+  const amazon = raw.find((r) => r.id === "amazon-associates");
   assert.equal(waterdrop?.tagVerified, true);
+  assert.equal(amazon?.status, "REJECTED");
+  assert.equal(amazon?.tagVerified, false);
 });
 
 test("Waterdrop tracker row encodes operator PPC restrictions and no-CTA guard", () => {
@@ -145,9 +153,9 @@ test("recommended next action prioritizes REAPPLY_REQUIRED over DRAFTING", () =>
 test("includes tag verification summary", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
   assert.deepEqual(report.tag_verification, {
-    verified_count: 2,
-    unverified_count: 0,
+    verified_count: 1,
+    unverified_count: 1,
     unknown_count: 20,
-    unverified_records: [],
+    unverified_records: ["amazon-associates"],
   });
 });

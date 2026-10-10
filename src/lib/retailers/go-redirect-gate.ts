@@ -1,5 +1,13 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+
 import { NextResponse } from "next/server";
 
+import {
+  isAmazonAssociatesMonetizationEligible,
+  isValidAffiliateApplicationRecord,
+  type AffiliateApplicationRecord,
+} from "@/lib/affiliates/affiliate-application-status";
 import {
   buyLinkGateFailureKind,
   staleBrowserTruthShadowClassification,
@@ -11,8 +19,42 @@ import {
   type LiveGoPathContextV1,
 } from "@/lib/retailers/live-buyer-path-go-decision-v1";
 
-/** Amazon Associates store ID applied at `/go` redirect time only (not stored on rows). */
+/** Historical Amazon Associates store ID; applied at `/go` redirect time only when monetization is eligible. */
 export const AMAZON_AFFILIATE_TAG = "buckparts20-20";
+
+let cachedAmazonAssociatesMonetizationEligible: boolean | null = null;
+
+/** Test-only: clears cached tracker read for monetization eligibility. */
+export function resetAmazonAssociatesMonetizationCacheForTests(): void {
+  cachedAmazonAssociatesMonetizationEligible = null;
+}
+
+function readAmazonAssociatesMonetizationEligibleFromTracker(): boolean {
+  if (cachedAmazonAssociatesMonetizationEligible !== null) {
+    return cachedAmazonAssociatesMonetizationEligible;
+  }
+  try {
+    const trackerPath = path.join(
+      process.cwd(),
+      "data/affiliate/affiliate-application-tracker.json",
+    );
+    const parsed = JSON.parse(readFileSync(trackerPath, "utf8")) as unknown[];
+    if (!Array.isArray(parsed)) {
+      cachedAmazonAssociatesMonetizationEligible = false;
+      return false;
+    }
+    const records = parsed.filter(isValidAffiliateApplicationRecord) as AffiliateApplicationRecord[];
+    cachedAmazonAssociatesMonetizationEligible = isAmazonAssociatesMonetizationEligible(records);
+  } catch {
+    cachedAmazonAssociatesMonetizationEligible = false;
+  }
+  return cachedAmazonAssociatesMonetizationEligible;
+}
+
+export type ApplyAmazonAffiliateRedirectUrlOptionsV1 = {
+  /** When omitted, reads `data/affiliate/affiliate-application-tracker.json` (fail-closed). */
+  amazonAssociatesMonetizationEligible?: boolean;
+};
 
 /**
  * True for `amazon.com` and subdomains (`www.amazon.com`, `smile.amazon.com`, …).
@@ -26,10 +68,13 @@ export function isAmazonComHost(hostname: string): boolean {
 /**
  * If the URL targets Amazon US with a `/dp/{ASIN}` path (ASIN = 10 alphanumerics), rewrite to
  * `https://www.amazon.com/dp/{ASIN}` (uppercase ASIN), preserving query params, then ensure
- * `tag=AMAZON_AFFILIATE_TAG`. Other Amazon US URLs get the tag only (path/host unchanged).
- * Idempotent: overwrites an existing `tag` param so it is never duplicated.
+ * `tag=AMAZON_AFFILIATE_TAG` when Amazon Associates monetization is eligible. Other Amazon US URLs
+ * get the tag only when eligible (path/host unchanged). Stale `tag` params are removed when inactive.
  */
-export function applyAmazonAffiliateRedirectUrl(rawUrl: string): string {
+export function applyAmazonAffiliateRedirectUrl(
+  rawUrl: string,
+  options?: ApplyAmazonAffiliateRedirectUrlOptionsV1,
+): string {
   const trimmed = rawUrl.trim();
   let u: URL;
   try {
@@ -41,6 +86,10 @@ export function applyAmazonAffiliateRedirectUrl(rawUrl: string): string {
   if (!isAmazonComHost(u.hostname)) {
     return trimmed;
   }
+
+  const monetizationEligible =
+    options?.amazonAssociatesMonetizationEligible ??
+    readAmazonAssociatesMonetizationEligibleFromTracker();
 
   const dpAsin = u.pathname.match(/\/dp\/([A-Z0-9]{10})/i);
   let out: URL;
@@ -55,7 +104,11 @@ export function applyAmazonAffiliateRedirectUrl(rawUrl: string): string {
     out = new URL(u.href);
   }
 
-  out.searchParams.set("tag", AMAZON_AFFILIATE_TAG);
+  if (monetizationEligible) {
+    out.searchParams.set("tag", AMAZON_AFFILIATE_TAG);
+  } else {
+    out.searchParams.delete("tag");
+  }
   return out.toString();
 }
 
@@ -144,8 +197,8 @@ export type NextResponseRedirectAffiliateIfSafeOptionsV1 = {
 
 /**
  * Builds the outbound `/go` retailer redirect only when `affiliateUrl` passes the
- * shared gate. Amazon US links get `tag=buckparts20-20` (and `/dp/{ASIN}` canonicalization)
- * here — not in stored rows. `outboundUrl` matches `Location` exactly.
+ * shared gate. Amazon US links get affiliate tagging only when Associates monetization is eligible
+ * (and `/dp/{ASIN}` canonicalization) here — not in stored rows. `outboundUrl` matches `Location` exactly.
  */
 export function nextResponseRedirectAffiliateIfSafe(
   retailerKey: string | null | undefined,
