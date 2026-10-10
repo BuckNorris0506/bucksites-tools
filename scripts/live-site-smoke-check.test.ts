@@ -12,14 +12,43 @@ import {
 } from "./lib/live-site-trust-page-content-contract-v1";
 
 function productRouteFetchBody(url: string): string {
+  const assetRefs =
+    '<link href="/_next/static/css/app.css" rel="stylesheet"/><script src="/_next/static/chunks/main.js"></script>';
   if (url.endsWith("/fridge/lg-lfxs26973s") || url.endsWith("/filter/adq36006101")) {
-    return `<html><script>__NEXT_DATA__</script>adq36006101 lg-lfxs26973s</html>`;
+    return `<html>${assetRefs}<script>__NEXT_DATA__</script>adq36006101 lg-lfxs26973s</html>`;
   }
-  return `<!DOCTYPE html><html><script>__NEXT_DATA__</script></html>`;
+  return `<!DOCTYPE html><html>${assetRefs}<script>__NEXT_DATA__</script></html>`;
+}
+
+function mockStaticAssetResponse(url: string): Response | null {
+  if (url.includes("/_next/static/css/")) {
+    return new Response("{}", { status: 200, headers: { "content-type": "text/css" } });
+  }
+  if (url.includes("/_next/static/chunks/")) {
+    return new Response("/*ok*/", {
+      status: 200,
+      headers: { "content-type": "application/javascript" },
+    });
+  }
+  if (url.endsWith("/buckparts-logo-black-transparent.png")) {
+    return new Response(new Uint8Array([137, 80, 78, 71]), {
+      status: 200,
+      headers: { "content-type": "image/png" },
+    });
+  }
+  if (url.endsWith("/fo-verify.html")) {
+    return new Response("<html>verify</html>", {
+      status: 200,
+      headers: { "content-type": "text/html" },
+    });
+  }
+  return null;
 }
 
 function mockLiveFetch(options: { staleWrongPartPrevention?: boolean } = {}): typeof fetch {
   return async (url: string) => {
+    const asset = mockStaticAssetResponse(url);
+    if (asset) return asset;
     if (url.includes("/wrong-part-prevention")) {
       return new Response(
         options.staleWrongPartPrevention
