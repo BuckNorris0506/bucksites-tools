@@ -3,6 +3,10 @@
 Follow [the BuckParts Constitution](docs/BuckParts-CONSTITUTION.md).
 This file does not authorize production changes.
 
+**Canonical product source:** `origin/main` is the canonical BuckParts product source.
+Product feature branches are temporary implementation lanes and must not become
+alternate long-lived product truth.
+
 ## Working loop
 
 1. Inspect git status, HEAD, relevant source, evidence, and tests before editing.
