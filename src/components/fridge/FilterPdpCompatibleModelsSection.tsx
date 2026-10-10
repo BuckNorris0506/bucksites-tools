@@ -1,6 +1,12 @@
+import React from "react";
 import Link from "next/link";
 
 import { FILTER_PDP_COMPAT_MODELS_SECTION_MARKER_V1 } from "@/lib/fridge/filter-pdp-referenceability-markers";
+import {
+  isWhirlpool4396395SuccessorPage,
+  whirlpool4396395CompatibleModelsHeading,
+  WHIRLPOOL_4396395_COMPAT_MODELS_INTRO,
+} from "@/lib/fridge/fridge-filter-4396395-successor-v1";
 
 export type FilterPdpCompatibleModelRowV1 = {
   id: string;
@@ -10,6 +16,7 @@ export type FilterPdpCompatibleModelRowV1 = {
 };
 
 export type FilterPdpCompatibleModelsSectionProps = {
+  filterSlug?: string;
   oemPartNumber: string;
   displayModelCount: number;
   hiddenQuarantinedModelCount: number;
@@ -21,27 +28,34 @@ export type FilterPdpCompatibleModelsSectionProps = {
  * Marker: FilterPdpCompatibleModelsSection (referenceability factory v1).
  */
 export function FilterPdpCompatibleModelsSection({
+  filterSlug,
   oemPartNumber,
   displayModelCount,
   hiddenQuarantinedModelCount,
   models,
 }: FilterPdpCompatibleModelsSectionProps) {
   void FILTER_PDP_COMPAT_MODELS_SECTION_MARKER_V1;
+  const successor4396395 = filterSlug ? isWhirlpool4396395SuccessorPage(filterSlug) : false;
+  const compatHeading = successor4396395
+    ? whirlpool4396395CompatibleModelsHeading(displayModelCount)
+    : `Compatible refrigerator models (${displayModelCount})`;
+  const compatAria = successor4396395
+    ? whirlpool4396395CompatibleModelsHeading(displayModelCount)
+    : "Compatible refrigerator models";
 
   return (
     <section
       className="space-y-4"
-      aria-label="Compatible refrigerator models"
+      aria-label={compatAria}
       data-referenceability-compat-models-v1="true"
     >
       <div>
-        <h2 className="text-lg font-semibold text-bp-text">
-          Compatible refrigerator models ({displayModelCount})
-        </h2>
+        <h2 className="text-lg font-semibold text-bp-text">{compatHeading}</h2>
         {displayModelCount > 1 ? (
           <p className="mt-2 text-sm leading-relaxed text-bp-muted">
-            Compare your refrigerator model number to the mapped models below. Each link opens the model
-            page where we list {oemPartNumber} when compatibility is on file.
+            {successor4396395
+              ? WHIRLPOOL_4396395_COMPAT_MODELS_INTRO
+              : `Compare your refrigerator model number to the mapped models below. Each link opens the model page where we list ${oemPartNumber} when compatibility is on file.`}
           </p>
         ) : null}
       </div>

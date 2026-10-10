@@ -311,6 +311,17 @@ export type LiveSiteMonitorDeploySyncStatusV1 =
   | "DEPLOYED_COMMIT_DIFFERS"
   | "UNKNOWN_DEPLOY_COMMIT";
 
+export type LiveSiteStaticAssetStatusV1 = "OK" | "ATTENTION" | "UNKNOWN_CONFIG";
+
+export type LiveSiteStaticAssetProbeV1 = {
+  url_path: string;
+  source_html_path: string;
+  status_code: number | "UNKNOWN";
+  content_type: string | "UNKNOWN";
+  ok: boolean;
+  failure_reasons: string[];
+};
+
 /** Produced by `npm run buckparts:live-site-smoke` — HTTP smoke only; no Netlify API. */
 export type LiveSiteMonitorV1 = {
   contract: "live_site_monitor_v1";
@@ -330,6 +341,9 @@ export type LiveSiteMonitorV1 = {
   /** Trust-page HTML marker + banned-phrase contract — independent of deploy commit sync. */
   content_contract_status: LiveSiteMonitorContentContractStatusV1;
   content_contracts: LiveSiteSmokeContentContractResultV1[];
+  /** Referenced `/_next/static/*` assets from probed HTML — 2xx + non-HTML MIME required. */
+  static_asset_status: LiveSiteStaticAssetStatusV1;
+  static_assets: LiveSiteStaticAssetProbeV1[];
   /** Overall: ATTENTION when route HTTP or trust content contract fails; never OK from deploy commit alone. */
   runtime_status: "OK" | "UNKNOWN_CONFIG" | "ATTENTION";
   routes: LiveSiteSmokeRouteResultV1[];

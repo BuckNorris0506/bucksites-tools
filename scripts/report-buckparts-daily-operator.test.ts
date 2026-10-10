@@ -358,6 +358,8 @@ function liveSite(overrides: Partial<LiveSiteMonitorV1> = {}): LiveSiteMonitorV1
         banned_phrases_found: [],
       },
     ],
+    static_asset_status: "OK",
+    static_assets: [],
     runtime_status: "OK",
     routes: [
       { path: "/", status_code: 200, ok: true, latency_ms: 1, marker_found: true },

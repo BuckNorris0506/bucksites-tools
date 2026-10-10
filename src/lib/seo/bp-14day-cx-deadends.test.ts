@@ -18,21 +18,27 @@ test("help empty state uses homeowner copy, not a technical placeholder", () => 
   assert.ok(src.includes("owner’s manual") || src.includes("owner's manual"));
 });
 
-test("homepage example chips include a resolved model, not the under-review LFXS26973S", () => {
+test("homepage uses a source-backed featured model and does not chip-link under-review LFXS26973S", () => {
   const src = read("src/app/page.tsx");
-  assert.ok(src.includes("WRX735SDHZ"));
+  const homeLookup = read("src/components/homepage/HomeLookup.tsx");
+  const featured = read("src/lib/homepage/featured-fit-example.ts");
+  const copy = read("src/lib/homepage/homepage-copy.ts");
   assert.ok(!src.includes("LFXS26973S"));
-  assert.ok(src.includes("DA29-00020B"));
-  assert.ok(src.includes("Need help finding the number?"));
-  assert.ok(src.includes("Find the replacement that fits."));
+  assert.ok(copy.includes("WRX735SDHZ"));
+  assert.ok(copy.includes("EDR4RXD1"));
+  assert.ok(homeLookup.includes("HOME_EXAMPLE_MODEL"));
+  assert.ok(featured.includes("whirlpool-wrx735sdhz"));
+  assert.ok(src.includes("HOME_H1_LINE_1"));
+  assert.ok(!src.includes("Wrong Buck."));
 });
 
-test("header keeps one Search action and does not duplicate Search in primary text nav", () => {
-  const src = read("src/components/SiteShell.tsx");
+test("header keeps one Search action off-homepage and omits Search on the homepage", () => {
+  const src = read("src/components/SiteHeader.tsx");
   const searchHrefs = src.match(/href="\/search"/g) ?? [];
   assert.equal(searchHrefs.length, 1);
-  assert.ok(src.includes("Browse filters"));
-  assert.ok(src.includes("Help"));
+  assert.ok(src.includes("isHome"));
+  assert.ok(src.includes("HOME_HEADER_HOW_WE_WORK"));
+  assert.ok(src.includes("HOME_FIND_MY_NUMBER"));
 });
 
 test("status legend leads with fit risk, not commercial status", () => {
