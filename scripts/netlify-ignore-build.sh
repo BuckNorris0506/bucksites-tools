@@ -24,6 +24,11 @@ else
     exit 1
   fi
 
+  if [[ "${CONTEXT:-}" == "production" ]]; then
+    log "production context; BUILD (exit 1)"
+    exit 1
+  fi
+
   if ! git rev-parse --verify "${CACHED_COMMIT_REF}^{commit}" >/dev/null 2>&1; then
     log "cached commit not found (${CACHED_COMMIT_REF}); defaulting to BUILD (exit 1)"
     exit 1
@@ -33,9 +38,10 @@ else
     exit 1
   fi
 
-  mapfile -t changed < <(
-    git diff --name-only "${CACHED_COMMIT_REF}" "${COMMIT_REF}" 2>/dev/null || true
-  )
+  changed=()
+  while IFS= read -r line; do
+    changed+=("$line")
+  done < <(git diff --name-only "${CACHED_COMMIT_REF}" "${COMMIT_REF}" 2>/dev/null || true)
 
   if [[ ${#changed[@]} -eq 0 ]]; then
     log "no changed files between ${CACHED_COMMIT_REF} and ${COMMIT_REF}; SKIP (exit 0)"
