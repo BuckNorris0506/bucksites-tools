@@ -10,6 +10,7 @@ import {
 } from "@/components/trust/VisualReplacementMatchCard";
 import { FridgeWinnerFamilyRail } from "@/components/fridge/FridgeWinnerFamilyRail";
 import { FilterPdpCompatibleModelsSection } from "@/components/fridge/FilterPdpCompatibleModelsSection";
+import { FilterPdpLegacySuccessorSection } from "@/components/fridge/FilterPdpLegacySuccessorSection";
 import { FilterPdpRepoEvidenceSection } from "@/components/fridge/FilterPdpRepoEvidenceSection";
 import { FilterPdpTrustDecisionSection } from "@/components/fridge/FilterPdpTrustDecisionSection";
 import { JsonLdScript } from "@/components/seo/JsonLdScript";
@@ -208,11 +209,14 @@ export default async function FilterPage({ params, searchParams }: Props) {
           aliases={filter.also_known_as}
           intervalLabel={interval ?? undefined}
           compatibleModelCount={pdpSafety.display_models_count}
+          filterSlug={filter.slug}
           storePlainStatus={storePlainStatus}
           telemetryBase={{
             ...filterTelemetryBase,
           }}
         />
+
+        <FilterPdpLegacySuccessorSection filterSlug={filter.slug} />
 
         <FridgeWinnerFamilyRail currentSlug={filter.slug} />
 
@@ -252,6 +256,7 @@ export default async function FilterPage({ params, searchParams }: Props) {
         </div>
 
         <FilterPdpTrustDecisionSection
+          filterSlug={filter.slug}
           oemPartNumber={filter.oem_part_number}
           compatibleModelCount={pdpSafety.display_models_count}
           buyingOptionsShown={buyingOptionsShown}
@@ -264,6 +269,7 @@ export default async function FilterPage({ params, searchParams }: Props) {
         />
 
         <FilterPdpCompatibleModelsSection
+          filterSlug={filter.slug}
           oemPartNumber={filter.oem_part_number}
           displayModelCount={pdpSafety.display_models_count}
           hiddenQuarantinedModelCount={pdpSafety.hidden_quarantined_model_count}

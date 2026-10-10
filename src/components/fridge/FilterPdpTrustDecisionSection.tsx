@@ -1,11 +1,19 @@
+import React from "react";
+
 import { COMPARE_BEFORE_BUY_CHECKLIST_LINES } from "@/lib/copy/public-trust";
 import {
   BUCKPARTS_VERIFIED_LINK_NONE_YET,
   BUCKPARTS_VERIFIED_LINK_WHEN_SHOWN_NOTE,
 } from "@/lib/copy/buckparts-verified-link-copy";
 import { FILTER_PDP_TRUST_DECISION_SECTION_MARKER_V1 } from "@/lib/fridge/filter-pdp-referenceability-markers";
+import {
+  isWhirlpool4396395SuccessorPage,
+  WHIRLPOOL_4396395_AVOID_VERIFIED_LINK_COPY,
+  WHIRLPOOL_4396395_UNCERTAINTY_COPY,
+} from "@/lib/fridge/fridge-filter-4396395-successor-v1";
 
 export type FilterPdpTrustDecisionSectionProps = {
+  filterSlug?: string;
   oemPartNumber: string;
   compatibleModelCount: number;
   buyingOptionsShown: boolean;
@@ -16,11 +24,13 @@ export type FilterPdpTrustDecisionSectionProps = {
  * Marker: FilterPdpTrustDecisionSection (referenceability factory v1).
  */
 export function FilterPdpTrustDecisionSection({
+  filterSlug,
   oemPartNumber,
   compatibleModelCount,
   buyingOptionsShown,
 }: FilterPdpTrustDecisionSectionProps) {
   void FILTER_PDP_TRUST_DECISION_SECTION_MARKER_V1;
+  const successor4396395 = filterSlug ? isWhirlpool4396395SuccessorPage(filterSlug) : false;
 
   return (
     <section
@@ -47,7 +57,9 @@ export function FilterPdpTrustDecisionSection({
           <p className="mt-2">
             {compatibleModelCount === 0
               ? "We may not have every refrigerator model that uses this cartridge on file yet. Compare numbers on your old filter and owner’s manual before ordering."
-              : "Compatibility lists can be incomplete. If your model is not listed below, compare part numbers manually before you buy."}
+              : successor4396395
+                ? WHIRLPOOL_4396395_UNCERTAINTY_COPY
+                : "Compatibility lists can be incomplete. If your model is not listed below, compare part numbers manually before you buy."}
           </p>
         </div>
         <div>
@@ -63,8 +75,9 @@ export function FilterPdpTrustDecisionSection({
             What to avoid
           </p>
           <p className="mt-2">
-            Do not order from a BuckParts Verified Link until the part number on the retailer product page
-            matches {oemPartNumber} and what is printed on your old filter.
+            {successor4396395
+              ? WHIRLPOOL_4396395_AVOID_VERIFIED_LINK_COPY
+              : `Do not order from a BuckParts Verified Link until the part number on the retailer product page matches ${oemPartNumber} and what is printed on your old filter.`}
           </p>
         </div>
       </div>
