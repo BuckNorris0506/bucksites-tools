@@ -9,6 +9,11 @@ import {
   LIVE_SITE_TRUST_PAGE_CONTENT_CONTRACTS_V1,
   probeLiveSiteTrustPageContentContract,
 } from "./live-site-trust-page-content-contract-v1";
+import {
+  probeNextStaticAssetsForHtmlPages,
+  probeRepresentativePublicAssets,
+  summarizeStaticAssetStatus,
+} from "./live-site-static-assets-v1";
 
 export const LIVE_SITE_MONITOR_CONTRACT = "live_site_monitor_v1" as const;
 
@@ -179,7 +184,12 @@ export function isLiveSiteMonitorV1(value: unknown): value is LiveSiteMonitorV1 
     typeof o.checked_at === "string" &&
     typeof o.target_base_url === "string" &&
     Array.isArray(o.routes) &&
-    (o.content_contracts === undefined || Array.isArray(o.content_contracts))
+    (o.content_contracts === undefined || Array.isArray(o.content_contracts)) &&
+    (o.static_asset_status === undefined ||
+      o.static_asset_status === "OK" ||
+      o.static_asset_status === "ATTENTION" ||
+      o.static_asset_status === "UNKNOWN_CONFIG") &&
+    (o.static_assets === undefined || Array.isArray(o.static_assets))
   );
 }
 
@@ -217,6 +227,8 @@ export async function buildLiveSiteMonitorArtifact(args: {
       route_http_status: "UNKNOWN_CONFIG",
       content_contract_status: "UNKNOWN_CONFIG",
       content_contracts: [],
+      static_asset_status: "UNKNOWN_CONFIG",
+      static_assets: [],
       runtime_status: "UNKNOWN_CONFIG",
       routes: [],
       local_head_commit: "UNKNOWN",
@@ -255,6 +267,18 @@ export async function buildLiveSiteMonitorArtifact(args: {
     );
   }
 
+  const next_static_assets = await probeNextStaticAssetsForHtmlPages({
+    fetchFn: args.fetchFn,
+    baseUrl: base,
+    htmlPaths: LIVE_SITE_SMOKE_ALLOWLISTED_PATHS,
+  });
+  const public_assets = await probeRepresentativePublicAssets({
+    fetchFn: args.fetchFn,
+    baseUrl: base,
+  });
+  const static_assets = [...next_static_assets, ...public_assets];
+  const static_asset_status = summarizeStaticAssetStatus(static_assets);
+
   const git = resolveGitCommitsSync({ cwd: args.cwd, execSync: args.execSync });
   const deployedRaw = (args.env.LIVE_SITE_DEPLOY_COMMIT ?? "").trim();
   const deployed_commit: string | "UNKNOWN" = deployedRaw.length > 0 ? deployedRaw : "UNKNOWN";
@@ -275,12 +299,21 @@ export async function buildLiveSiteMonitorArtifact(args: {
     ? "OK"
     : "ATTENTION";
   const runtime_status: LiveSiteMonitorV1["runtime_status"] =
-    route_http_status === "OK" && content_contract_status === "OK" ? "OK" : "ATTENTION";
+    route_http_status === "OK" &&
+    content_contract_status === "OK" &&
+    static_asset_status === "OK"
+      ? "OK"
+      : "ATTENTION";
 
   provenFacts.push(
     `Recorded ${routes.length} route GET probes and ${content_contracts.length} trust content contract probes at checked_at=${args.nowIso}.`,
   );
-  provenFacts.push(`route_http_status=${route_http_status}; content_contract_status=${content_contract_status}.`);
+  provenFacts.push(
+    `route_http_status=${route_http_status}; content_contract_status=${content_contract_status}; static_asset_status=${static_asset_status}.`,
+  );
+  provenFacts.push(
+    `Probed ${next_static_assets.length} unique referenced Next static asset path(s) from allowlisted HTML and ${public_assets.length} representative public asset path(s).`,
+  );
   for (const c of content_contracts) {
     provenFacts.push(
       `content_contract ${c.path}: http_ok=${String(c.http_ok)} required_markers_ok=${String(c.required_markers_ok)} banned_phrases_absent=${String(c.banned_phrases_absent)} content_contract_ok=${String(c.content_contract_ok)}.`,
@@ -313,6 +346,20 @@ export async function buildLiveSiteMonitorArtifact(args: {
     unknown_facts.push(
       `One or more routes failed HTTP ok check or threw; anyServerError=${String(anyServerError)} — investigate before assuming site-wide outage.`,
     );
+  }
+  if (static_asset_status !== "OK") {
+    const failed = static_assets.filter((a) => !a.ok);
+    unknown_facts.push(
+      `One or more referenced Next static assets failed checks (count=${failed.length}) — typical causes include publish-directory misconfiguration or HTML/asset deploy skew.`,
+    );
+    for (const asset of failed.slice(0, 8)) {
+      unknown_facts.push(
+        `Static asset ${asset.url_path} (from ${asset.source_html_path}): status=${String(asset.status_code)} content_type=${String(asset.content_type)} reasons=${asset.failure_reasons.join(",") || "UNKNOWN"}.`,
+      );
+    }
+    if (failed.length > 8) {
+      unknown_facts.push(`Additional static asset failures omitted from summary (${failed.length - 8} more).`);
+    }
   }
   if (!allContentOk) {
     for (const c of content_contracts.filter((x) => !x.content_contract_ok)) {
@@ -354,6 +401,8 @@ export async function buildLiveSiteMonitorArtifact(args: {
     route_http_status,
     content_contract_status,
     content_contracts,
+    static_asset_status,
+    static_assets,
     runtime_status,
     routes,
     local_head_commit: git.local_head_commit,
