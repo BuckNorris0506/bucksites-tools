@@ -11,11 +11,15 @@ export const BUCKPARTS_GO_FIRST_HOP_SMOKE_SOURCE_COMMAND_V1 =
 export const BUCKPARTS_GO_FIRST_HOP_RETAILER_REDIRECT_LEARNING_NOTE_V1 =
   "Retailer redirect smoke must validate BuckParts first-hop redirect only. Do not follow Amazon with curl -L; Amazon may return bot-dependent 500s unrelated to BuckParts." as const;
 
+export const BUCKPARTS_HISTORICAL_AMAZON_ASSOCIATES_TAG_V1 = "buckparts20-20" as const;
+
 export type BuckPartsGoFirstHopTargetV1 = {
   slug: string;
   link_id: string;
   expected_asin: string;
-  expected_tag: "buckparts20-20";
+  /** Tag required on Location only when Amazon Associates monetization is currently eligible. */
+  amazon_associates_monetization_eligible: boolean;
+  historical_amazon_associates_tag: typeof BUCKPARTS_HISTORICAL_AMAZON_ASSOCIATES_TAG_V1;
   expected_location_substring: string;
   go_path: string;
 };
@@ -88,6 +92,24 @@ function expectedAsinFromAmazonUrl(url: string): string | null {
   return match?.[1]?.toUpperCase() ?? null;
 }
 
+type AffiliateTrackerRow = {
+  id: string;
+  status: string;
+  tagVerified?: boolean | null;
+};
+
+export function readAmazonAssociatesMonetizationEligibleFromTrackerV1(args: {
+  rootDir: string;
+  readText?: (absPath: string) => string;
+}): boolean {
+  const readText = args.readText ?? ((absPath: string) => readFileSync(absPath, "utf8"));
+  const raw = JSON.parse(
+    readText(path.join(args.rootDir, "data/affiliate/affiliate-application-tracker.json")),
+  ) as AffiliateTrackerRow[];
+  const amazon = raw.find((row) => row.id === "amazon-associates");
+  return amazon?.status === "APPROVED" && amazon?.tagVerified === true;
+}
+
 export function validateBuckPartsGoFirstHopResponseV1(args: {
   target: BuckPartsGoFirstHopTargetV1;
   url: string;
@@ -114,8 +136,17 @@ export function validateBuckPartsGoFirstHopResponseV1(args: {
     } catch {
       blockers.push("first_hop_location_invalid_url");
     }
-    if (parsed?.searchParams.get("tag") !== args.target.expected_tag) {
-      blockers.push(`first_hop_location_missing_expected_tag: expected=${args.target.expected_tag}`);
+    const tag = parsed?.searchParams.get("tag");
+    if (args.target.amazon_associates_monetization_eligible) {
+      if (tag !== args.target.historical_amazon_associates_tag) {
+        blockers.push(
+          `monetization_missing_expected_tag: expected=${args.target.historical_amazon_associates_tag}`,
+        );
+      }
+    } else if (tag != null && tag !== "") {
+      blockers.push(
+        `monetization_unexpected_affiliate_tag: tag=${tag} (amazon-associates not eligible; destination may still be valid without tag=)`,
+      );
     }
   }
 
@@ -132,8 +163,15 @@ export function validateBuckPartsGoFirstHopResponseV1(args: {
 export function buildBuckPartsGoFirstHopTargetsFromCsvV1(args: {
   rootDir: string;
   readText?: (absPath: string) => string;
+  amazonAssociatesMonetizationEligible?: boolean;
 }): BuckPartsGoFirstHopTargetV1[] {
   const readText = args.readText ?? ((absPath: string) => readFileSync(absPath, "utf8"));
+  const amazonAssociatesMonetizationEligible =
+    args.amazonAssociatesMonetizationEligible ??
+    readAmazonAssociatesMonetizationEligibleFromTrackerV1({
+      rootDir: args.rootDir,
+      readText,
+    });
   const csvText = readText(path.join(args.rootDir, "data/retailer_links.csv"));
   const rows = parse(csvText, { columns: true, skip_empty_lines: true }) as RetailerLinksCsvRow[];
   const rowsBySlug = new Map(rows.map((row) => [normalizeSlug(row.filter_slug), row]));
@@ -157,7 +195,8 @@ export function buildBuckPartsGoFirstHopTargetsFromCsvV1(args: {
         slug,
         link_id: linkId,
         expected_asin: asin,
-        expected_tag: "buckparts20-20" as const,
+        amazon_associates_monetization_eligible: amazonAssociatesMonetizationEligible,
+        historical_amazon_associates_tag: BUCKPARTS_HISTORICAL_AMAZON_ASSOCIATES_TAG_V1,
         expected_location_substring: `/dp/${asin}`,
         go_path: `/go/${linkId}`,
       };
@@ -241,6 +280,7 @@ export async function buildBuckPartsGoFirstHopSmokeReportV1(args: {
     proven_facts: [
       "PROVEN: smoke validates BuckParts first-hop redirect response only with fetch redirect=manual.",
       "PROVEN: final Amazon HTTP status is not fetched and is not a pass/fail criterion.",
+      "PROVEN: destination ASIN checks are separate from Amazon Associates monetization tag eligibility.",
       "PROVEN: script has no Supabase, evidence, Netlify, or deploy write authority.",
     ],
     unknown_facts: [

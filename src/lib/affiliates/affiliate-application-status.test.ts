@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 import {
   AFFILIATE_APPLICATION_STATUSES,
+  isAmazonAssociatesMonetizationEligible,
   isValidAffiliateApplicationRecord,
 } from "@/lib/affiliates/affiliate-application-status";
 
@@ -113,6 +114,22 @@ test("tagValue must be null or non-empty string", () => {
     tagValue: "   ",
   };
   assert.equal(isValidAffiliateApplicationRecord(record), false);
+});
+
+test("Amazon monetization eligible only when APPROVED and tagVerified", () => {
+  const base = buildValidRecord();
+  assert.equal(
+    isAmazonAssociatesMonetizationEligible([
+      { ...base, id: "amazon-associates", status: AFFILIATE_APPLICATION_STATUSES.APPROVED, tagVerified: true },
+    ]),
+    true,
+  );
+  assert.equal(
+    isAmazonAssociatesMonetizationEligible([
+      { ...base, id: "amazon-associates", status: AFFILIATE_APPLICATION_STATUSES.REJECTED, tagVerified: false },
+    ]),
+    false,
+  );
 });
 
 test("starter tracker JSON records all validate", () => {

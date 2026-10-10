@@ -65,6 +65,19 @@ function isNullableNonEmptyString(value: unknown): value is string | null {
   return value === null || isNonEmptyString(value);
 }
 
+export const AMAZON_ASSOCIATES_TRACKER_ID = "amazon-associates" as const;
+
+/** True only when tracker proves current Amazon Associates monetization (not destination validity). */
+export function isAmazonAssociatesMonetizationEligible(
+  records: readonly AffiliateApplicationRecord[],
+): boolean {
+  const amazon = records.find((record) => record.id === AMAZON_ASSOCIATES_TRACKER_ID);
+  return (
+    amazon?.status === AFFILIATE_APPLICATION_STATUSES.APPROVED &&
+    amazon.tagVerified === true
+  );
+}
+
 export function isValidAffiliateApplicationRecord(
   input: unknown,
 ): input is AffiliateApplicationRecord {

@@ -3,11 +3,16 @@ import { describe, it } from "node:test";
 
 import {
   AMAZON_AFFILIATE_TAG,
+  applyAmazonAffiliateRedirectUrl,
   isAffiliateUrlSafeForGoRedirect,
   isHttpOrHttpsUrl,
   nextResponseRedirectAffiliateIfSafe,
+  resetAmazonAssociatesMonetizationCacheForTests,
   staleBrowserTruthShadowForGoRedirect,
 } from "@/lib/retailers/go-redirect-gate";
+
+const FRESH_BROWSER_TRUTH_CHECKED_AT = "2026-05-01T00:00:00.000Z";
+const FRESH_BROWSER_TRUTH_NOW = new Date("2026-06-10T12:00:00.000Z");
 
 describe("go-redirect-gate", () => {
   describe("isHttpOrHttpsUrl", () => {
@@ -32,7 +37,10 @@ describe("go-redirect-gate", () => {
           "https://www.amazon.com/dp/B00EXAMPLE",
           "direct_buyable",
           null,
-          "2026-05-01T00:00:00.000Z",
+          FRESH_BROWSER_TRUTH_CHECKED_AT,
+          null,
+          undefined,
+          { now: FRESH_BROWSER_TRUTH_NOW },
         ),
         true,
       );
@@ -97,7 +105,10 @@ describe("go-redirect-gate", () => {
           "https://www.honeywellstore.com/store/products/true-hepa-replacement-filter-r-hrf-r1.htm",
           "direct_buyable",
           null,
-          "2026-05-01T00:00:00.000Z",
+          FRESH_BROWSER_TRUTH_CHECKED_AT,
+          null,
+          undefined,
+          { now: FRESH_BROWSER_TRUTH_NOW },
         ),
         true,
       );
@@ -352,16 +363,53 @@ describe("go-redirect-gate", () => {
     });
   });
 
+  describe("applyAmazonAffiliateRedirectUrl (Amazon monetization vs destination)", () => {
+    it("A: APPROVED + tagVerified appends affiliate tag on /dp/{ASIN}", () => {
+      const out = applyAmazonAffiliateRedirectUrl("https://www.amazon.com/dp/b000ast3a1", {
+        amazonAssociatesMonetizationEligible: true,
+      });
+      assert.equal(out, `https://www.amazon.com/dp/B000AST3A1?tag=${AMAZON_AFFILIATE_TAG}`);
+    });
+
+    it("B: REJECTED + tagVerified false keeps ASIN destination without tag", () => {
+      const out = applyAmazonAffiliateRedirectUrl("https://www.amazon.com/dp/B000AST3A2", {
+        amazonAssociatesMonetizationEligible: false,
+      });
+      assert.equal(out, "https://www.amazon.com/dp/B000AST3A2");
+      assert.equal(new URL(out).searchParams.get("tag"), null);
+    });
+
+    it("C: strips stale tag from stored URL when monetization inactive", () => {
+      const out = applyAmazonAffiliateRedirectUrl(
+        `https://www.amazon.com/dp/B000AST3A3?tag=${AMAZON_AFFILIATE_TAG}`,
+        { amazonAssociatesMonetizationEligible: false },
+      );
+      assert.equal(out, "https://www.amazon.com/dp/B000AST3A3");
+    });
+
+    it("D: non-Amazon URLs are unchanged", () => {
+      const target = "https://www.honeywellstore.com/store/products/filter.htm";
+      assert.equal(applyAmazonAffiliateRedirectUrl(target), target);
+    });
+
+    it("E: invalid URL string is returned unchanged", () => {
+      assert.equal(applyAmazonAffiliateRedirectUrl("not a url"), "not a url");
+    });
+  });
+
   describe("nextResponseRedirectAffiliateIfSafe", () => {
-    it("returns response + outboundUrl; Location matches outboundUrl exactly (Amazon tag)", () => {
+    it("returns response + outboundUrl; Location matches outboundUrl (no tag when monetization inactive)", () => {
+      resetAmazonAssociatesMonetizationCacheForTests();
       const url = "https://www.amazon.com/dp/B00EXAMPLE";
-      const expected = `https://www.amazon.com/dp/B00EXAMPLE?tag=${AMAZON_AFFILIATE_TAG}`;
+      const expected = "https://www.amazon.com/dp/B00EXAMPLE";
       const r = nextResponseRedirectAffiliateIfSafe(
         "amazon",
         url,
         "direct_buyable",
         null,
-        "2026-05-01T00:00:00.000Z",
+        FRESH_BROWSER_TRUTH_CHECKED_AT,
+        null,
+        { now: FRESH_BROWSER_TRUTH_NOW },
       );
       assert.ok(r);
       assert.equal(r.outboundUrl, expected);
@@ -370,14 +418,17 @@ describe("go-redirect-gate", () => {
     });
 
     it("trims affiliate URL for both outboundUrl and Location", () => {
+      resetAmazonAssociatesMonetizationCacheForTests();
       const url = "https://www.amazon.com/dp/B00EXAMPLE";
-      const expected = `https://www.amazon.com/dp/B00EXAMPLE?tag=${AMAZON_AFFILIATE_TAG}`;
+      const expected = "https://www.amazon.com/dp/B00EXAMPLE";
       const r = nextResponseRedirectAffiliateIfSafe(
         "amazon",
         `  ${url}  `,
         "direct_buyable",
         null,
-        "2026-05-01T00:00:00.000Z",
+        FRESH_BROWSER_TRUTH_CHECKED_AT,
+        null,
+        { now: FRESH_BROWSER_TRUTH_NOW },
       );
       assert.ok(r);
       assert.equal(r.outboundUrl, expected);
@@ -435,7 +486,9 @@ describe("go-redirect-gate", () => {
         "https://www.amazon.com/dp/B00EXAMPLE",
         "direct_buyable",
         null,
-        "2026-05-01T00:00:00.000Z",
+        FRESH_BROWSER_TRUTH_CHECKED_AT,
+        null,
+        { now: FRESH_BROWSER_TRUTH_NOW },
       );
       assert.ok(r);
       assert.equal(r.response.status, 302);

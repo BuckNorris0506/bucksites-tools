@@ -61,16 +61,23 @@ test("failing slug mismatch returns CRITICAL", () => {
   );
 });
 
-test("failing affiliate mismatch returns CRITICAL", () => {
+test("closed Amazon Associates with tag still in gate emits HIGH monetization mismatch", () => {
   const sources = baseSources();
+  sources.goRedirectGate = `
+export const AMAZON_AFFILIATE_TAG = "buckparts20-20";
+out.searchParams.set("tag", AMAZON_AFFILIATE_TAG);
+`;
   sources.affiliateTrackerJson = JSON.stringify([
-    { id: "amazon-associates", status: "NOT_STARTED" },
+    { id: "amazon-associates", status: "REJECTED", tagVerified: false },
   ]);
   const report = evaluateBuckpartsSystemContractAudit(sources);
-  assert.equal(report.status, "FAIL");
-  assert.equal(report.blocking, true);
+  assert.equal(report.status, "PASS");
+  assert.equal(report.blocking, false);
   assert.equal(
-    report.failures.some((f) => f.id === "amazon_affiliate_truth_mismatch"),
+    report.failures.some(
+      (f) =>
+        f.id === "amazon_associates_monetization_tag_still_active" && f.severity === "HIGH",
+    ),
     true,
   );
 });

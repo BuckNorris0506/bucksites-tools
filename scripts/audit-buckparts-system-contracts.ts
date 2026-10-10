@@ -62,6 +62,16 @@ function extractAmazonTag(goRedirectGate: string): string | null {
   return match?.[1] ?? null;
 }
 
+function goRedirectGateInjectsAmazonTagWithoutEligibilityCheck(
+  goRedirectGate: string,
+): boolean {
+  if (!extractAmazonTag(goRedirectGate)) return false;
+  if (!/searchParams\.set\(\s*["']tag["']/.test(goRedirectGate)) return false;
+  return !/isAmazonAssociatesMonetizationEligible|amazonAssociatesMonetizationEligible|readAmazonAssociatesMonetizationEligibleFromTracker/.test(
+    goRedirectGate,
+  );
+}
+
 function checkLearningOutcomesSchemaVsWriter(
   failures: AuditFailure[],
   sources: AuditSources,
@@ -95,22 +105,25 @@ function checkAmazonAffiliateTruthAlignment(
   );
   const tag = extractAmazonTag(sources.goRedirectGate);
   if (tag == null || tracker == null) return;
+  if (!goRedirectGateInjectsAmazonTagWithoutEligibilityCheck(sources.goRedirectGate)) return;
 
   const amazonRecord = tracker.find((record) => record.id === "amazon-associates");
   if (!amazonRecord || typeof amazonRecord.status !== "string") return;
 
-  if (amazonRecord.status !== "APPROVED") {
-    addFailure(failures, {
-      id: "amazon_affiliate_truth_mismatch",
-      severity: "CRITICAL",
-      system: "affiliate_tracker_vs_redirect_gate",
-      message:
-        "Amazon affiliate tag is configured in redirect code while tracker does not show APPROVED.",
-      evidence: `AMAZON_AFFILIATE_TAG=${tag}; amazon-associates.status=${amazonRecord.status}`,
-      recommended_fix:
-        "Set tracker status to APPROVED when tag is active, or remove/disable tag until approval.",
-    });
+  if (amazonRecord.status === "APPROVED") {
+    return;
   }
+
+  addFailure(failures, {
+    id: "amazon_associates_monetization_tag_still_active",
+    severity: "HIGH",
+    system: "affiliate_tracker_vs_redirect_gate",
+    message:
+      "Amazon Associates is not APPROVED (account closed or inactive) but go-redirect-gate still injects an affiliate tag unconditionally. This is a monetization eligibility mismatch — not proof the Amazon product destination is invalid.",
+    evidence: `AMAZON_AFFILIATE_TAG=${tag}; amazon-associates.status=${amazonRecord.status}`,
+    recommended_fix:
+      "Stop injecting tag= while Associates is closed; keep or retarget ordinary Amazon product URLs only after separate customer-safe review.",
+  });
 }
 
 function checkAmazonAffiliateTagVerification(

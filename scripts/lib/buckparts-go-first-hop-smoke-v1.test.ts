@@ -37,17 +37,41 @@ test("buildBuckPartsGoFirstHopTargetsFromCsvV1 derives 14 guarded batch /go targ
   const targets = buildBuckPartsGoFirstHopTargetsFromCsvV1({
     rootDir: "/repo",
     readText: () => CSV,
+    amazonAssociatesMonetizationEligible: false,
   });
   assert.equal(targets.length, 14);
   assert.equal(targets.find((row) => row.slug === "4396710")?.link_id, "b2241855-b588-4884-9dfa-b0f5969becbf");
   assert.equal(targets.find((row) => row.slug === "4396710")?.expected_asin, "B087PDLZL9");
-  assert.equal(targets.every((row) => row.expected_tag === "buckparts20-20"), true);
+  assert.equal(
+    targets.every((row) => row.historical_amazon_associates_tag === "buckparts20-20"),
+    true,
+  );
+  assert.equal(targets.every((row) => row.amazon_associates_monetization_eligible === false), true);
 });
 
-test("validateBuckPartsGoFirstHopResponseV1 accepts first-hop redirect and ignores final Amazon status", () => {
+test("validateBuckPartsGoFirstHopResponseV1 accepts destination redirect without tag when monetization inactive", () => {
   const target = buildBuckPartsGoFirstHopTargetsFromCsvV1({
     rootDir: "/repo",
     readText: () => CSV,
+    amazonAssociatesMonetizationEligible: false,
+  }).find((row) => row.slug === "edr1rxd1")!;
+  const result = validateBuckPartsGoFirstHopResponseV1({
+    target,
+    url: `https://buckparts.test${target.go_path}`,
+    response: {
+      status: 302,
+      location: "https://www.amazon.com/dp/B00UXG4WR8",
+    },
+  });
+  assert.equal(result.validation_status, "PASS");
+  assert.deepEqual(result.blockers, []);
+});
+
+test("validateBuckPartsGoFirstHopResponseV1 rejects affiliate tag on hop when monetization inactive", () => {
+  const target = buildBuckPartsGoFirstHopTargetsFromCsvV1({
+    rootDir: "/repo",
+    readText: () => CSV,
+    amazonAssociatesMonetizationEligible: false,
   }).find((row) => row.slug === "edr1rxd1")!;
   const result = validateBuckPartsGoFirstHopResponseV1({
     target,
@@ -57,14 +81,42 @@ test("validateBuckPartsGoFirstHopResponseV1 accepts first-hop redirect and ignor
       location: "https://www.amazon.com/dp/B00UXG4WR8?tag=buckparts20-20",
     },
   });
-  assert.equal(result.validation_status, "PASS");
-  assert.deepEqual(result.blockers, []);
+  assert.equal(result.validation_status, "FAIL");
+  assert.ok(result.blockers.some((b) => b.startsWith("monetization_unexpected_affiliate_tag:")));
 });
 
-test("validateBuckPartsGoFirstHopResponseV1 rejects missing ASIN or affiliate tag", () => {
+test("validateBuckPartsGoFirstHopResponseV1 requires tag when monetization eligible", () => {
   const target = buildBuckPartsGoFirstHopTargetsFromCsvV1({
     rootDir: "/repo",
     readText: () => CSV,
+    amazonAssociatesMonetizationEligible: true,
+  }).find((row) => row.slug === "edr1rxd1")!;
+  const withTag = validateBuckPartsGoFirstHopResponseV1({
+    target,
+    url: `https://buckparts.test${target.go_path}`,
+    response: {
+      status: 302,
+      location: "https://www.amazon.com/dp/B00UXG4WR8?tag=buckparts20-20",
+    },
+  });
+  assert.equal(withTag.validation_status, "PASS");
+  const withoutTag = validateBuckPartsGoFirstHopResponseV1({
+    target,
+    url: `https://buckparts.test${target.go_path}`,
+    response: {
+      status: 302,
+      location: "https://www.amazon.com/dp/B00UXG4WR8",
+    },
+  });
+  assert.equal(withoutTag.validation_status, "FAIL");
+  assert.ok(withoutTag.blockers.some((b) => b.startsWith("monetization_missing_expected_tag:")));
+});
+
+test("validateBuckPartsGoFirstHopResponseV1 rejects missing ASIN on destination hop", () => {
+  const target = buildBuckPartsGoFirstHopTargetsFromCsvV1({
+    rootDir: "/repo",
+    readText: () => CSV,
+    amazonAssociatesMonetizationEligible: false,
   })[0]!;
   const result = validateBuckPartsGoFirstHopResponseV1({
     target,
@@ -77,23 +129,31 @@ test("validateBuckPartsGoFirstHopResponseV1 rejects missing ASIN or affiliate ta
   assert.equal(result.validation_status, "FAIL");
   assert.ok(result.blockers.includes("first_hop_status_not_redirect: status=200"));
   assert.ok(result.blockers.some((blocker) => blocker.startsWith("first_hop_location_missing_expected_asin:")));
-  assert.ok(result.blockers.includes("first_hop_location_missing_expected_tag: expected=buckparts20-20"));
 });
 
 test("buildBuckPartsGoFirstHopSmokeReportV1 uses injected first-hop fetch and remains read-only", async () => {
+  const readText = (absPath: string) => {
+    if (absPath.includes("affiliate-application-tracker")) {
+      return JSON.stringify([
+        { id: "amazon-associates", status: "REJECTED", tagVerified: false },
+      ]);
+    }
+    return CSV;
+  };
   const report = await buildBuckPartsGoFirstHopSmokeReportV1({
     rootDir: "/repo",
     baseUrl: "http://127.0.0.1:3012",
     now: () => new Date("2026-06-01T12:00:00.000Z"),
-    readText: () => CSV,
+    readText,
     fetchFirstHop: async (url) => {
       const target = buildBuckPartsGoFirstHopTargetsFromCsvV1({
         rootDir: "/repo",
         readText: () => CSV,
+        amazonAssociatesMonetizationEligible: false,
       }).find((row) => url.endsWith(row.go_path))!;
       return {
         status: 307,
-        location: `https://www.amazon.com/dp/${target.expected_asin}?tag=buckparts20-20`,
+        location: `https://www.amazon.com/dp/${target.expected_asin}`,
       };
     },
   });
