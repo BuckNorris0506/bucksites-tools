@@ -41,6 +41,7 @@ export function TieredBuyLinks({
   links,
   goBase = "/go",
   primaryCtaLabel = BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX,
+  visiblePrimaryPrefix,
   buyPathSortContext,
   goAttribution,
 }: {
@@ -48,6 +49,8 @@ export function TieredBuyLinks({
   goBase?: string;
   /** Screen-reader + button prefix; store name is appended. */
   primaryCtaLabel?: string;
+  /** Optional visible prefix before retailer name (e.g. “View at”). */
+  visiblePrimaryPrefix?: string;
   /** When set (e.g. from `buyPathSortContextForFilter`), exact-OEM context can affect tie-break among gated links. */
   buyPathSortContext?: BuyPathSortContext;
   /** When set, appended as query params on `/go` hrefs for click_events attribution. */
@@ -88,7 +91,13 @@ export function TieredBuyLinks({
           className="inline-flex min-h-12 w-full items-center justify-center rounded-lg border border-bp-trust/15 bg-bp-trust px-5 text-center text-base font-semibold text-white transition-colors hover:bg-bp-trust/90 focus:outline-none focus:ring-2 focus:ring-bp-trust/40 focus:ring-offset-2 focus:ring-offset-bp-bg sm:w-auto sm:min-w-[14rem]"
         >
           <span className="sr-only">{primaryCtaLabel} at </span>
-          {primaryName}
+          {visiblePrimaryPrefix ? (
+            <>
+              {visiblePrimaryPrefix} {primaryName}
+            </>
+          ) : (
+            primaryName
+          )}
           <span className="ml-2 text-white/75" aria-hidden>
             →
           </span>
