@@ -67,11 +67,11 @@ Each block maps to the numbered goals in the Phase 1 request (see §Mapping at e
 
 | Field | Content |
 |--------|--------|
-| **Purpose** | Queue OEM/search-placeholder rows for Amazon PDP verification and slot insertion when Amazon Associates is ready. |
+| **Purpose** | Queue OEM/search-placeholder rows for Amazon PDP verification and slot insertion when Amazon Associates is **eligible** (account currently **CLOSED_REJECTED** — see tracker + `data/evidence/amazon-associates-account-closure-readonly.2026-10-09.json`). |
 | **Current repo truth** | **PARTIAL** — `scripts/report-amazon-first-blocked-conversion-queue.ts` (`buckparts:amazon-first-blocked-queue`); WH rescue inventory `scripts/report-amazon-rescue-existing-whw-rows.ts`; staging/preflight scripts (`buckparts:stage:amazon-false-negative-rescue`, `preflight-*`). Command center v1 **does not** yet call the Amazon-first queue (aggregation gap). |
 | **Required inputs** | Same as blocked-link + `filters.slug` / `oem_part_number`; `data/affiliate/affiliate-application-tracker.json` for Amazon readiness. |
 | **Output fields** | Ranked candidates with `recommended_next_action` enum (`SEARCH_AMAZON_EXACT_TOKEN`, `NOOP_*`, `HOLD_*`, `UNKNOWN_*`). |
-| **Why it matters** | Amazon is the approved, tag-verified lane in tracker evidence; OEM search rows are high-leverage fixes. |
+| **Why it matters** | Amazon **was** tag-verified pre-closure; **active monetization tag is not current** (2026-10-09). OEM search rows remain high-leverage **only after** commercial-link reconciliation (R16) and reapplication policy. |
 | **Failure mode if missing** | Operators use ad-hoc lists; duplicates and no-op rescues waste time. |
 
 ### F) Non-Amazon affiliate readiness (goal 6)

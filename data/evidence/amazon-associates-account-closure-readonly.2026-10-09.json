@@ -1,0 +1,32 @@
+{
+  "report_name": "buckparts_amazon_associates_account_closure_readonly_v1",
+  "generated_at": "2026-10-10T06:30:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_ready": false,
+  "source": "founder_verified_amazon_associates_email",
+  "email_received_at": "2026-10-09",
+  "AMAZON_ASSOCIATES_STATUS": "CLOSED_REJECTED",
+  "REASON": "Did not drive three qualifying purchases within 180 days of signup (Amazon Associates program policy).",
+  "REAPPLICATION_ALLOWED": true,
+  "ACTIVE_AFFILIATE_TAG": false,
+  "HISTORICAL_STORE_ID": "buckparts20-20",
+  "account_scope": "Closed in all countries where store ID buckparts20-20 was configured.",
+  "prior_approval": {
+    "status_was": "APPROVED",
+    "tag_verified_at": "2026-04-30T00:00:00.000Z",
+    "tracker_row_id": "amazon-associates",
+    "tracker_path": "data/affiliate/affiliate-application-tracker.json"
+  },
+  "operating_constraints": [
+    "Do not reapply in this remediation lane.",
+    "Do not treat tag=buckparts20-20 as valid monetization while the account is closed.",
+    "Live Amazon CTA destinations and public links remain unchanged until separate owner review and authorization.",
+    "Defer reapplication until site-integrity (R01) and distribution readiness are restored."
+  ],
+  "does_not_prove": [
+    "Commission or earnings settlement outcomes.",
+    "Whether prior accrued earnings remain payable.",
+    "Automatic removal or retagging of live production /go or retailer_links rows."
+  ]
+}

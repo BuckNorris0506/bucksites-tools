@@ -12,7 +12,9 @@
 **Founder approval record:** `data/owner-decisions/2026-08-05-strategic-documentation-migration-phase5-execution-owner-approval-v1.json`  
 **Repo HEAD at conversion:** `17fe77ba5603b6c626117538464f9e67a580e54b`  
 **Audit packet repo anchor (in source):** HEAD `39e4f8e`  
-**Epistemic policy:** PROVEN / INFERRED / UNKNOWN labels are preserved exactly from the source deliverable. Conversion does not upgrade, downgrade, or invent labels.  
+**Epistemic policy:** PROVEN / INFERRED / UNKNOWN labels are preserved exactly from the source deliverable. Conversion does not upgrade, downgrade, or invent labels.
+
+**Commercial truth supersession (2026-10-10):** Statements in this artifact that **Amazon Associates APPROVED** reflect audit-time truth only. **Current operating truth:** Amazon Associates **`CLOSED_REJECTED`** (2026-10-09 email); see `data/evidence/amazon-associates-account-closure-readonly.2026-10-09.json` and `data/affiliate/affiliate-application-tracker.json` row `amazon-associates`. Body text below is **not** updated inline — treat Amazon approval claims as **historical**.  
 **Does not authorize:** mutation, deploy, CSV/Supabase/retailer_links changes, new instrumentation, Identity / Strategy Doctrine / Execution Playbook / Operating System authorship, or strategy expansion beyond this source.  
 **Supersedes:** (none)  
 **Superseded by:** (none)

@@ -5239,22 +5239,21 @@ node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
 
 ## 6) Current affiliate status
 
-**Tracker file:** `data/affiliate/affiliate-application-tracker.json` (14 records at handoff read).
+**Tracker file:** `data/affiliate/affiliate-application-tracker.json` (refresh counts via `npm run buckparts:affiliate-tracker` when validating).
 
-**From command center `affiliate_readiness_summary`:**
+**Amazon Associates (updated 2026-10-10 — founder-verified email 2026-10-09):**
 
-- `approved_count`: **1**
-- `affiliate_approval_pending`: **true**
-- `pending_count` / `pending_network_or_programs`: **4** buckets — `NOT_STARTED:1`, `DRAFTING:7`, `SUBMITTED:1`, `IN_REVIEW:2` (strings as emitted).
-- `repairclinic_status`: **DRAFTING**
+- **`AMAZON_ASSOCIATES_STATUS`:** **`CLOSED_REJECTED`** (tracker row `amazon-associates` uses enum **`REJECTED`**).
+- **Reason:** Fewer than three qualifying purchases within 180 days of signup; account closed in all countries where store ID **`buckparts20-20`** was configured.
+- **`REAPPLICATION_ALLOWED`:** **YES** (not authorized in current remediation lanes).
+- **`ACTIVE_AFFILIATE_TAG`:** **NO** (`tagVerified: false`).
+- **`HISTORICAL_STORE_ID`:** **`buckparts20-20`** (prior dashboard verification 2026-04-30 preserved in tracker notes + closure evidence).
+- **Evidence:** `data/evidence/amazon-associates-account-closure-readonly.2026-10-09.json`.
+- **Public links / `/go` routing:** **unchanged** — product/destination reconciliation and link mutations **pending separate owner authorization**.
 
-**Amazon Associates (from tracker JSON):** `status: APPROVED`, `tagVerified: true`, `tagValue: buckparts20-20`.
+**Other rails (re-run command center for live counts):** Rakuten Advertising publisher **APPROVED**; Rakuten Waterdrop program **APPROVED** with verified LinkSynergy tag; **Awin** / **FlexOffers** **REJECTED**; **CJ** **SUBMITTED**; **ShareASale** / **Walmart** **IN_REVIEW**.
 
-**Rejected in tracker (examples):** `awin`, `flexoffers` (each `REJECTED` with dated notes in JSON).
-
-**Command-surface `affiliate_tracker.health` (last run):** `OK` (no `REAPPLY_REQUIRED`).
-
-**Tag verification counts (command surface):** `verified_count: 1`, `unverified_count: 0`, `unknown_count: 13`.
+**Stale handoff note:** Prior text claiming Amazon Associates **`APPROVED`** with **`tagVerified: true`** is **superseded** by the closure record above. Recompute `affiliate_readiness_summary`, `affiliate_tracker.health`, and tag verification counts after tracker refresh — do not treat Amazon as an active approved monetization partner.
 
 ---
 
