@@ -76,17 +76,17 @@ If full closure cannot be established: **BLOCKED**, **AWAITING_PRODUCTION_VERIFI
 | **TITLE** | Referenced production assets missing (CSS and Next.js static chunks) |
 | **PRIORITY** | P0 |
 | **RELEASE_BLOCKER** | YES |
-| **CURRENT_STATE** | READY_FOR_DEPLOY |
-| **ROOT_CAUSE (corrected)** | **SUPERVISED_DEPLOYMENT_PATH** — not Netlify UI publish directory alone |
-| **CURRENT_OWNER / EXECUTOR** | Cursor agent / release-candidate worktree (`codex/buckparts-r01-production-assets`); production deploy **not** authorized in this lane |
-| **ACTIVE_BRANCH / WORKTREE** | `codex/buckparts-r01-production-assets` @ `/Users/jaredbuckman/bucksites-tools-r01` (audited baseline HEAD `5f3a595eef81980b4f9f844d8dabad86af2bf537`) |
+| **CURRENT_STATE** | VERIFIED_CLOSED |
+| **ROOT_CAUSE (corrected)** | **SUPERVISED_DEPLOYMENT_PATH** — not Netlify UI publish directory alone; plus Netlify ignore hook skipping production when merge commit tree matched deploy-preview cache (fixed PR #39) |
+| **CURRENT_OWNER / EXECUTOR** | Release lane closed 2026-10-10 after Git-connected production recovery |
+| **ACTIVE_BRANCH / WORKTREE** | `main` @ `f7c43787d615dd061ac6885f66cb53bb0e4e6e32` (merge PR #39 atop canonical PR #38 merge) |
 | **EXACT_SCOPE** | Site-wide public HTML references `/_next/static/*` assets that return **404** with **`text/html`**; unstyled rendering and failed hydration; reproduces on custom domain and Netlify alias; **1,343** pages / **40** chunk URLs / **1** stylesheet cited in baseline audit |
 | **SMALLEST_REQUIRED_FIX** | Replace broken **API / raw-`.next` directory** production publish with a **Git-connected Netlify build** using repo `netlify.toml` (`buckparts:deploy:preflight` + `npm run build` + `@netlify/plugin-nextjs` full packaging). Add **live-site static asset regression** (referenced `/_next/static/*` + key `public/` probes). **No** temporary `/_next/static` → `/static` rewrite unless post–correct-deploy proof requires it (none expected). |
 | **CLOSURE_REQUIREMENTS** | **Source fix:** correct deploy mechanism + merged release candidate on `main`. **Tests:** scoped R01 smoke/static-asset tests pass. **Build:** production build passes on candidate. **Commit:** authorized commit(s) on `main`. **Deploy:** authorized **Git-triggered** Netlify production build (not API `--dir=.next` upload). **Production readback:** HTML 200; referenced JS/CSS **2xx** + correct MIME; `public/` assets **2xx** where probed; styled rendering; hydration; `static_asset_status=OK` on live smoke. |
-| **CLOSURE_EVIDENCE** | *(production defect still live as of 2026-10-10)* **PROVEN:** deploy `6ac92ad95ab3e8477f6b92d8` — `deploy_source=api`, `commit_ref=null`, artifact rooted at `/private/tmp/buckparts-4396395-deploy/.next`; raw `.next` publication exposes chunks at `/static/*` while HTML requests `/_next/static/*`; `public/` assets omitted; **no redirect rules processed** on that deploy; failure after that publish. **INFERRED:** normal Git-connected Netlify build with `@netlify/plugin-nextjs` should package `/_next/static/*` and `public/` correctly without UI changes or rewrite workaround. **UNKNOWN:** exact off-repo shell/API command that created the bad deploy. |
-| **BLOCKER** | Production deploy not authorized; R01 repair **uncommitted** in worktree |
-| **NEXT_LAWFUL_ACTION** | Human review → authorized commit → authorized **Git-connected** production deploy → post-deploy live smoke until `static_asset_status=OK` |
-| **LAST_UPDATED** | 2026-10-10 (R01 root-cause reconciliation) |
+| **CLOSURE_EVIDENCE** | **PROVEN (2026-10-10 post–PR #39):** Netlify production deploy `6aca7be17df72c00089c2748` — `context=production`, `branch=main`, `commit_ref=f7c43787d615dd061ac6885f66cb53bb0e4e6e32`, `manual_deploy=false`, `published_at=2026-10-10T18:00:54.545Z`; buckparts.com RUM + `meta buckparts-deploy-commit` match. Live smoke: `runtime_status=OK`, `static_asset_status=OK`, `route_http_status=OK`, `content_contract_status=OK`. Sampled `/_next/static/*.js` + `*.css` **2xx** with JS/CSS MIME; `/buckparts-logo-black-transparent.png` **200** `image/png`; `/fo-verify.html` **200**. Canonical homepage: `bp-home`, “Find the filter” / “that fits.”, Find my filter / Find my number, `RealLookupExample`; no “Wrong Buck. Right Parts.” `/filter/4396395`: successor copy, EDR4RXD1 treatment, compatible-model section, `Compare the` visual card band. **Historical defect:** deploy `6ac92ad95ab3e8477f6b92d8` raw `.next` API publish (superseded). |
+| **BLOCKER** | — |
+| **NEXT_LAWFUL_ACTION** | — (closed); monitor via `npm run buckparts:live-site-smoke:check` on future production deploys |
+| **LAST_UPDATED** | 2026-10-10 (R01 VERIFIED_CLOSED — production recovery after PR #39) |
 
 **R01 audit closure expectations (not passed until evidence exists):**
 
