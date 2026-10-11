@@ -1,0 +1,76 @@
+{
+  "contract": "r06_closure_verification_v1",
+  "read_only": true,
+  "verified_at": "2026-10-11T15:15:00Z",
+  "classification": "VERIFIED_CLOSED",
+  "immutable_baseline": {
+    "artifact": "READ_ME_AUDIT_REPORT.md",
+    "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+    "root_heading": "R06 — P1 — Mapping counts and constants generate unsupported fit/OEM confidence"
+  },
+  "code_invariants_proven": {
+    "mapping_count_alone_not_high_confidence": true,
+    "missing_subtype_not_oem": true,
+    "compatible_winner_not_high_confidence": true,
+    "source_backed_single_unit_preserves_high_when_oem": true,
+    "ambiguous_multi_fit_model_stays_medium": true
+  },
+  "population_scope": {
+    "baseline_listed_paths": 712,
+    "full_path_rescan": false,
+    "note": "Closure proves trust-builder invariants and sampled production routes only; 712-path census not re-run."
+  },
+  "product_repair": {
+    "pull_request": "https://github.com/BuckNorris0506/bucksites-tools/pull/56",
+    "merge_commit": "561e35cb7517c091f2a891ac9c890cc728ec92f7",
+    "merge_method": "merge_commit",
+    "source_boundary": "src/lib/trust/part-trust.ts"
+  },
+  "preview": {
+    "host": "https://deploy-preview-56--buckparts.netlify.app",
+    "commit_ref": "c25be95",
+    "deploy_id": "6acba5bf7df72c0008d34766",
+    "routes": {
+      "/air-purifier/filter/shark-hepa-he15fkp": {
+        "fit_high": false,
+        "fit_medium": true,
+        "compatible_replacement": true,
+        "original_part": false
+      },
+      "/air-purifier/filter/alen-b75-mp": {
+        "fit_high": false,
+        "fit_medium": true,
+        "part_identity": true,
+        "original_part": false
+      }
+    }
+  },
+  "production_deploy": {
+    "context": "production",
+    "branch": "main",
+    "commit_ref": "561e35cb7517c091f2a891ac9c890cc728ec92f7",
+    "deploy_id": "UNKNOWN_GITHUB_CHECK_RUNS_EMPTY",
+    "manual_deploy": false,
+    "html_deploy_marker_commit": "561e35cb7517c091f2a891ac9c890cc728ec92f7"
+  },
+  "production_readback_sample": {
+    "/air-purifier/filter/shark-hepa-he15fkp": {
+      "fit_high": false,
+      "fit_medium": true,
+      "compatible_replacement": true,
+      "original_part": false
+    },
+    "/air-purifier/filter/alen-b75-mp": {
+      "fit_high": false,
+      "fit_medium": true,
+      "original_part": false
+    }
+  },
+  "tests": {
+    "focused": "PASS — src/lib/trust/part-trust.test.ts (R06 regressions)",
+    "ship_guard": {
+      "push_assessment": "SAFE",
+      "blockers": []
+    }
+  }
+}
