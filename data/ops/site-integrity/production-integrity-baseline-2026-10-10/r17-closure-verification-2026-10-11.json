@@ -1,0 +1,81 @@
+{
+  "classification": "VERIFIED_CLOSED",
+  "contract": "r17_closure_verification_v1",
+  "corrected_metadata_url": "/opengraph-image.png",
+  "immutable_baseline": {
+    "original_observed_at": "2026-10-11T05:26:24Z",
+    "original_production_get": "https://buckparts.com/opengraph-image",
+    "original_production_http": 404,
+    "root_title": "Explicit social image URL points to nonexistent extensionless endpoint"
+  },
+  "preview": {
+    "commit_ref": "c5a0cee0edf58780b86a9ab00c3c2d65e132443d",
+    "deploy_id": "6acb8e1ec1a92c000860dc60",
+    "host": "https://deploy-preview-49--buckparts.netlify.app",
+    "image_http": 200,
+    "image_type": "image/png",
+    "metadata_corrected": true,
+    "pages": [
+      {
+        "bytes": 28750,
+        "metadata_png": true,
+        "path": "/"
+      },
+      {
+        "bytes": 48100,
+        "metadata_png": true,
+        "path": "/filter/4396508"
+      }
+    ],
+    "state": "ready"
+  },
+  "product_repair": {
+    "base_sha": "0d38bf74c59404764af0cc83c019f9f0cd0bb122",
+    "head_sha": "c5a0cee0edf58780b86a9ab00c3c2d65e132443d",
+    "merge_commit": "a8bd239ac020ee5a2da3b48b48bf39bd767fda98",
+    "merge_method": "merge_commit",
+    "merged_at": "2026-10-11T13:30:04Z",
+    "new_image_created": false,
+    "pull_request": "https://github.com/BuckNorris0506/bucksites-tools/pull/49",
+    "source_change": "export const SITE_SOCIAL_OG_IMAGE_PATH = \"/opengraph-image.png\";"
+  },
+  "production_deploy": {
+    "branch": "main",
+    "commit_ref": "a8bd239ac020ee5a2da3b48b48bf39bd767fda98",
+    "context": "production",
+    "deploy_id": "6acb8f5ccfef520008a8ae73",
+    "image_http": 200,
+    "image_type": "image/png",
+    "manual_deploy": false,
+    "metadata_corrected": true,
+    "pages": [
+      {
+        "bytes": 28446,
+        "metadata_png": true,
+        "path": "/"
+      },
+      {
+        "bytes": 47796,
+        "metadata_png": true,
+        "path": "/filter/4396508"
+      }
+    ],
+    "published_at": "2026-10-11T13:35:14.376Z",
+    "state": "ready"
+  },
+  "read_only": true,
+  "tests": {
+    "build": {
+      "command": "npm run build",
+      "exit": 0,
+      "ok": true
+    },
+    "focused": "PASS",
+    "ship_guard": {
+      "blockers": [],
+      "exit": 0,
+      "push_assessment": "SAFE"
+    }
+  },
+  "verified_at": "2026-10-11T13:35:14.376Z"
+}
