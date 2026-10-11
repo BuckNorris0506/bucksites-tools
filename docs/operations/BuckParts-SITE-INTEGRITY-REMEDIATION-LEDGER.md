@@ -400,19 +400,19 @@ If full closure cannot be established: **BLOCKED**, **AWAITING_PRODUCTION_VERIFI
 | Field | Value |
 |--------|--------|
 | **ROOT_ID** | R16 |
-| **TITLE** | UNKNOWN — per immutable October 10, 2026 baseline root **R16** (not ingested to repo) |
-| **PRIORITY** | UNKNOWN |
-| **RELEASE_BLOCKER** | UNKNOWN |
-| **CURRENT_STATE** | NOT_STARTED |
-| **CURRENT_OWNER / EXECUTOR** | UNKNOWN |
-| **ACTIVE_BRANCH / WORKTREE** | — |
-| **EXACT_SCOPE** | UNKNOWN |
-| **SMALLEST_REQUIRED_FIX** | UNKNOWN |
-| **CLOSURE_REQUIREMENTS** | Per baseline |
-| **CLOSURE_EVIDENCE** | — |
-| **BLOCKER** | Baseline not ingested |
-| **NEXT_LAWFUL_ACTION** | Ingest baseline root **R16** |
-| **LAST_UPDATED** | 2026-10-10 |
+| **TITLE** | R16 — P1 — Exposed buying paths lack auditable current UUID-to-destination proof |
+| **PRIORITY** | P1 |
+| **RELEASE_BLOCKER** | YES |
+| **CURRENT_STATE** | VERIFIED_CLOSED |
+| **CURRENT_OWNER / EXECUTOR** | R16 commercial-link reconciliation completed 2026-10-11 |
+| **ACTIVE_BRANCH / WORKTREE** | docs/r16-verified-closure |
+| **EXACT_SCOPE** | Historical baseline commercial root covering 81 CTA occurrences / 6 redirect IDs / 64 pages, reconciled against current production inventory and all currently exposed commercial UUIDs. |
+| **SMALLEST_REQUIRED_FIX** | Reconcile current UUID-to-destination truth, inactive Amazon monetization behavior, customer-compatible labeling, and deterministic commercial regression coverage. |
+| **CLOSURE_REQUIREMENTS** | Current exposed UUIDs auditable; destination identity known; official/compatible labeling truthful; Amazon monetization eligibility enforced; GE unaffected; unsafe/stale rows fail closed; production SHA and current CTA inventory verified. |
+| **CLOSURE_EVIDENCE** | Historical baseline: `data/ops/site-integrity/production-integrity-baseline-2026-10-10/r16-baseline-root-v1.json` (81 CTA / 6 IDs / 64 pages). Current rescan: `r16-production-cta-inventory-2026-10-11.json` (92 CTA / 46 pages / 6 IDs). Closure rerun: `r16-closure-verification-2026-10-11.json`. Production SHA `c583fd19f297b5bb8a8066a50e24c09a5189d9f8`; deploy `6acb0a069dae3700085f8899`. Shark HE15/HE3 production compatible-label proof (PR #44). 4396508 / 4396710 / MWFP / XWFE destination evidence in closure artifact. Amazon Associates REJECTED / tagVerified=false (`data/affiliate/affiliate-application-tracker.json`). Phase A outbound tag stripping. launch-buy-links deterministic clock repair (PR #44). Tests: launch-buy-links, part-trust, go-first-hop smoke, go-redirect-gate, affiliate-application — PASS. `npm run buckparts:ship-guard -- --enforce` SAFE. `NEXT_PUBLIC_SITE_URL=https://buckparts.com npm run build` PASS. |
+| **BLOCKER** | — |
+| **NEXT_LAWFUL_ACTION** | — (closed; R17 baseline rerun remains separate) |
+| **LAST_UPDATED** | 2026-10-11 |
 
 ---
 

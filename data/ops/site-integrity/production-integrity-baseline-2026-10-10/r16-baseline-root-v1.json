@@ -1,0 +1,37 @@
+{
+  "contract": "production_integrity_baseline_r16_root_v1",
+  "read_only": true,
+  "baseline_date": "2026-10-10",
+  "ingested_at": "2026-10-11",
+  "ingest_note": "Smallest durable ingest of immutable R16 definition; full baseline packet not found on disk at ingest — R16 root fields copied verbatim from October 10, 2026 Production Site Integrity Baseline.",
+  "root_id": "R16",
+  "title": "R16 — P1 — Exposed buying paths lack auditable current UUID-to-destination proof",
+  "priority": "P1",
+  "category": "site_integrity_buyer_path_auditability",
+  "baseline_scope_counts": {
+    "cta_occurrences": 81,
+    "redirect_ids": 6,
+    "distinct_pages": 64,
+    "amazon_commercial_id_occurrences": 44,
+    "amazon_distinct_commercial_ids": 4,
+    "ge_commercial_id_occurrences": 37,
+    "ge_distinct_commercial_ids": 2
+  },
+  "baseline_six_commercial_identities": [
+    { "token": "HE15FKPET", "retailer_class": "amazon" },
+    { "token": "HE3FKPET", "retailer_class": "amazon" },
+    { "token": "4396508", "retailer_class": "amazon" },
+    { "token": "4396710", "retailer_class": "amazon" },
+    { "token": "MWFP", "retailer_class": "ge_appliance_parts" },
+    { "token": "XWFE", "retailer_class": "ge_appliance_parts" }
+  ],
+  "smallest_fix": "Obtain current read-only runtime rows; establish deployed SHA; reconcile exact destination, expected part token, official-vs-compatible status, pack where relevant, source freshness, and safe redirect behavior without contaminating click analytics; preserve correct customer-facing labeling.",
+  "regression_requirements": [
+    "Expected destination identity preserved on first-hop redirect",
+    "Amazon affiliate tag only when Amazon Associates monetization is eligible (APPROVED and tagVerified)",
+    "GE and other non-Amazon destinations unchanged by Amazon tagging logic",
+    "Unsafe or stale buyer-path rows fail closed",
+    "Customer-facing compatibility labeling matches destination type"
+  ],
+  "closure_intent": "Every currently exposed commercial UUID must have auditable current UUID-to-destination proof, or be truthfully fail-closed with evidence."
+}

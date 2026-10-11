@@ -1,0 +1,175 @@
+{
+  "contract": "r16_closure_verification_v1",
+  "read_only": true,
+  "verified_at": "2026-10-11",
+  "canonical_main_sha": "c583fd19f297b5bb8a8066a50e24c09a5189d9f8",
+  "production_deploy_id": "6acb0a069dae3700085f8899",
+  "production_deploy": {
+    "context": "production",
+    "branch": "main",
+    "commit_ref": "c583fd19f297b5bb8a8066a50e24c09a5189d9f8",
+    "manual_deploy": false,
+    "state": "ready",
+    "published_at": "2026-10-11T04:06:24.562Z"
+  },
+  "pr44_status": "MERGED",
+  "amazon_associates": {
+    "status": "REJECTED",
+    "tagVerified": false,
+    "source": "data/affiliate/affiliate-application-tracker.json"
+  },
+  "baseline_scope_snapshot": {
+    "source": "r16-baseline-root-v1.json",
+    "cta_occurrences": 81,
+    "distinct_pages": 64,
+    "redirect_ids": 6,
+    "amazon_commercial_id_occurrences": 44,
+    "amazon_distinct_commercial_ids": 4,
+    "ge_commercial_id_occurrences": 37,
+    "ge_distinct_commercial_ids": 2
+  },
+  "current_production_rescan": {
+    "source": "r16-production-cta-inventory-2026-10-11.json",
+    "site_url": "https://buckparts.com",
+    "rescan_method": "read-only HTML/RSC on sitemap URLs; no /go GETs",
+    "cta_occurrence_count": 92,
+    "distinct_page_count": 46,
+    "distinct_redirect_id_count": 6,
+    "amazon_redirect_occurrences": 24,
+    "ge_redirect_occurrences": 68,
+    "new_or_removed_redirect_ids": [],
+    "delta_note": "Current exposed commercial CTA population differs from 2026-10-10 baseline counts (+11 CTA occurrences, -18 pages); six redirect UUIDs unchanged."
+  },
+  "exposed_redirect_uuids": [
+    {
+      "token": "HE15FKPET",
+      "uuid": "18ee7ff0-25d0-45e0-83ce-87d71a95ee65",
+      "retailer": "amazon",
+      "destination_asin": "B0DJ4CXHPH",
+      "official_vs_compatible": "compatible_replacement",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-09-09",
+      "customer_exposure": "https://buckparts.com/air-purifier/filter/shark-hepa-he15fkp",
+      "gate_state": "gated_buy_surfaces_on_production",
+      "redirect_semantics": "Phase A outbound tag stripping when Amazon Associates inactive; ASIN destination preserved",
+      "audit_status": "PROVEN"
+    },
+    {
+      "token": "HE3FKPET",
+      "uuid": "d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff",
+      "retailer": "amazon",
+      "destination_asin": "B0DBTFY793",
+      "official_vs_compatible": "compatible_replacement",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-09-09",
+      "customer_exposure": "https://buckparts.com/air-purifier/filter/shark-hepa-he3fkp",
+      "gate_state": "gated_buy_surfaces_on_production",
+      "redirect_semantics": "Phase A outbound tag stripping when Amazon Associates inactive; ASIN destination preserved",
+      "audit_status": "PROVEN"
+    },
+    {
+      "token": "4396508",
+      "uuid": "e59a1742-6476-4651-8dff-c5b94998b734",
+      "retailer": "amazon",
+      "destination_asin": "B00NXPKBQ2",
+      "official_vs_compatible": "compatible_replacement",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-09-09T04:20:16.000Z",
+      "customer_exposure": "https://buckparts.com/filter/4396508",
+      "gate_state": "gated_buy_surfaces_on_production",
+      "redirect_semantics": "Phase A outbound tag stripping when Amazon Associates inactive; ASIN destination preserved",
+      "audit_status": "PROVEN",
+      "repo_evidence": "origin/main data/retailer_links.csv row filter_slug=4396508"
+    },
+    {
+      "token": "4396710",
+      "uuid": "b2241855-b588-4884-9dfa-b0f5969becbf",
+      "retailer": "amazon",
+      "destination_asin": "B087PDLZL9",
+      "official_vs_compatible": "compatible_replacement",
+      "pack_identity": "3-pack compatible",
+      "browser_truth_classification": "direct_buyable",
+      "customer_exposure": "https://buckparts.com/filter/4396710",
+      "gate_state": "gated_buy_surfaces_on_production",
+      "redirect_semantics": "Phase A outbound tag stripping when Amazon Associates inactive; ASIN destination preserved",
+      "audit_status": "PROVEN"
+    },
+    {
+      "token": "MWFP",
+      "uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "retailer": "ge_appliance_parts",
+      "destination": "GE spec MWFP",
+      "official_vs_compatible": "official_oem",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-07-14T17:40:40.135Z",
+      "customer_exposure": "https://buckparts.com/filter/smartwater-mwfp",
+      "gate_state": "gated_buy_surfaces_on_production",
+      "redirect_semantics": "GE destination unchanged by Amazon tagging logic",
+      "audit_status": "PROVEN",
+      "repo_evidence": "origin/main data/retailer_links.csv row filter_slug=smartwater-mwfp"
+    },
+    {
+      "token": "XWFE",
+      "uuid": "e274568e-2998-4a93-8642-53862d2eb915",
+      "retailer": "ge_appliance_parts",
+      "destination": "GE spec XWFE",
+      "official_vs_compatible": "official_oem",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-07-14T17:40:40.135Z",
+      "customer_exposure": "https://buckparts.com/filter/xwfe",
+      "gate_state": "gated_buy_surfaces_on_production",
+      "redirect_semantics": "GE destination unchanged by Amazon tagging logic",
+      "audit_status": "PROVEN",
+      "repo_evidence": "origin/main data/retailer_links.csv row filter_slug=xwfe"
+    }
+  ],
+  "public_labeling_verification": {
+    "HE15FKPET": {
+      "result": "PASS",
+      "note": "Production renders trust pill Compatible replacement; Amazon CTA /air-purifier/go/18ee7ff0-… preserved; Original part absent (post PR #44)."
+    },
+    "HE3FKPET": {
+      "result": "PASS",
+      "note": "Production renders Compatible replacement; Amazon CTA /air-purifier/go/d01ccbc2-… preserved; Original part absent (post PR #44)."
+    },
+    "4396508": {
+      "result": "PASS",
+      "note": "Compatible aftermarket treatment; Whirlpool part identity; BuckParts Verified Link at Amazon; no Original part on exposed compatible path."
+    },
+    "4396710": {
+      "result": "PASS",
+      "note": "Verified multipack options copy; BuckParts Verified Link; compatible 3-pack treatment."
+    },
+    "MWFP": {
+      "result": "PASS",
+      "note": "Official GE MWFP product context; BuckParts Verified Links to GE Appliance Parts spec MWFP."
+    },
+    "XWFE": {
+      "result": "PASS",
+      "note": "Official GE XWFE (RFID) product context; BuckParts Verified Links to GE spec XWFE."
+    }
+  },
+  "regression_verification": {
+    "launch_buy_links_test": "PASS (142 tests via BUCKPARTS_TEST_FILES subset)",
+    "part_trust_test": "PASS",
+    "go_first_hop_smoke_test": "PASS",
+    "go_redirect_gate_test": "PASS",
+    "affiliate_application_test": "PASS",
+    "launch_buy_links_fixture_clock": "Fixed LAUNCH_BUY_LINKS_TEST_NOW (PR #44); no wall-clock drift on historical fixtures",
+    "ship_guard": {
+      "command": "npm run buckparts:ship-guard -- --enforce",
+      "push_assessment": "SAFE",
+      "blockers": []
+    },
+    "build": {
+      "command": "NEXT_PUBLIC_SITE_URL=https://buckparts.com npm run build",
+      "result": "PASS"
+    }
+  },
+  "closure_gate": {
+    "all_exposed_uuids_auditable": true,
+    "public_labeling_correct": true,
+    "eligible_for_verified_closed": true,
+    "blocker": null
+  }
+}
