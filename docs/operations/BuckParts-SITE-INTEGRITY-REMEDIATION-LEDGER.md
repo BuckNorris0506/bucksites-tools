@@ -193,19 +193,20 @@ If full closure cannot be established: **BLOCKED**, **AWAITING_PRODUCTION_VERIFI
 | Field | Value |
 |--------|--------|
 | **ROOT_ID** | R06 |
-| **TITLE** | UNKNOWN — per immutable October 10, 2026 baseline root **R06** (not ingested to repo) |
-| **PRIORITY** | UNKNOWN |
-| **RELEASE_BLOCKER** | UNKNOWN |
-| **CURRENT_STATE** | NOT_STARTED |
-| **CURRENT_OWNER / EXECUTOR** | UNKNOWN |
-| **ACTIVE_BRANCH / WORKTREE** | — |
-| **EXACT_SCOPE** | UNKNOWN — audit phase: P1 truth / claim / data corrections |
-| **SMALLEST_REQUIRED_FIX** | UNKNOWN |
-| **CLOSURE_REQUIREMENTS** | Per baseline + truth closure standard |
-| **CLOSURE_EVIDENCE** | — |
-| **BLOCKER** | Baseline not ingested |
-| **NEXT_LAWFUL_ACTION** | Ingest baseline root **R06** |
-| **LAST_UPDATED** | 2026-10-10 |
+| **TITLE** | Mapping counts and constants generate unsupported fit/OEM confidence |
+| **PRIORITY** | P1 |
+| **RELEASE_BLOCKER** | YES (historical baseline; closed after production readback) |
+| **CURRENT_STATE** | VERIFIED_CLOSED |
+| **ROOT_CAUSE** | `buildPartPageTrust` treated `modelsCount > 0` as `match_confidence: high` and defaulted gated links without browser-truth subtype to `oem` |
+| **CURRENT_OWNER / EXECUTOR** | Integrity campaign closure 2026-10-11 after PR #56 production sample readback |
+| **ACTIVE_BRANCH / WORKTREE** | `main` @ `561e35cb7517c091f2a891ac9c890cc728ec92f7` |
+| **EXACT_SCOPE** | Trust builder (`part-trust.ts`) for part/model PDP trust summaries consumed by vertical + fridge trust panels (baseline: 712-path class; full rescan not claimed) |
+| **SMALLEST_REQUIRED_FIX** | Gate fit confidence and original/compatible identity on source-backed gated buy-path subtypes; never promote mapping counts alone to high confidence or OEM |
+| **CLOSURE_REQUIREMENTS** | Regression tests; ship guard SAFE; sampled production routes show no count-only high fit / false original labeling on representative AP PDPs |
+| **CLOSURE_EVIDENCE** | `r06-closure-verification-2026-10-11.json`. PR #56 merge `561e35cb7517c091f2a891ac9c890cc728ec92f7`. Sample production: shark-hepa-he15fkp compatible + medium fit; alen-b75-mp no false original + medium fit. |
+| **BLOCKER** | — |
+| **NEXT_LAWFUL_ACTION** | — (closed) |
+| **LAST_UPDATED** | 2026-10-11 |
 
 ---
 
