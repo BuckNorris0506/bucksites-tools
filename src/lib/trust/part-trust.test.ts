@@ -1,9 +1,15 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+
+import { PartTruthPanel } from "@/components/trust/PartTruthPanel";
+import { BUYABLE_SUBTYPES } from "@/lib/retailers/launch-buy-links";
 import {
   buildModelPageTrust,
   buildPartPageTrust,
+  oemOrCompatibleFromPreferredGatedBuyLink,
 } from "@/lib/trust/part-trust";
 
 describe("part-trust", () => {
@@ -117,6 +123,84 @@ describe("part-trust", () => {
     });
     assert.match(noModels.replacement_reasoning_summary, /Compare the part number/i);
     assert.ok(!/\bverify\b/i.test(noModels.replacement_reasoning_summary));
+  });
+
+  it("oemOrCompatibleFromPreferredGatedBuyLink follows gated winner subtype (Shark compatible Amazon)", () => {
+    const winner = {
+      id: "amazon-compatible",
+      retailer_name: "Amazon",
+      affiliate_url: "https://www.amazon.com/dp/B0DJ4CXHPH",
+      is_primary: true,
+      retailer_key: "amazon",
+      browser_truth_classification: "direct_buyable",
+      browser_truth_buyable_subtype: BUYABLE_SUBTYPES.COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE,
+      browser_truth_notes: "COMPATIBLE REPLACEMENT for HE15FKPET. Not official Shark OEM.",
+    };
+    assert.equal(
+      oemOrCompatibleFromPreferredGatedBuyLink({
+        preferredWinnerLink: winner,
+        approvedRetailerLinks: 1,
+      }),
+      "compatible",
+    );
+    const trust = buildPartPageTrust({
+      modelsCount: 4,
+      retailerLinks: [winner],
+      oemPartNumber: "HE15FKPET",
+    });
+    assert.equal(trust.oem_or_compatible, "compatible");
+    const html = renderToStaticMarkup(
+      createElement(PartTruthPanel, {
+        trust,
+        compatibleModelCount: 4,
+        hasNotes: false,
+      }),
+    );
+    assert.match(html, /Compatible replacement/);
+    assert.doesNotMatch(html, /Original part/);
+  });
+
+  it("oemOrCompatibleFromPreferredGatedBuyLink keeps OEM for official direct_buyable winner", () => {
+    const winner = {
+      id: "oem",
+      retailer_name: "Winix",
+      affiliate_url: "https://www.winixamerica.com/product/filter-h-116130",
+      is_primary: true,
+      retailer_key: "oem-catalog",
+      browser_truth_classification: "direct_buyable",
+      browser_truth_buyable_subtype: BUYABLE_SUBTYPES.SINGLE_UNIT_DIRECT_BUYABLE,
+    };
+    const trust = buildPartPageTrust({
+      modelsCount: 2,
+      retailerLinks: [winner],
+      oemPartNumber: "116130",
+    });
+    assert.equal(trust.oem_or_compatible, "oem");
+    const html = renderToStaticMarkup(
+      createElement(PartTruthPanel, {
+        trust,
+        compatibleModelCount: 2,
+        hasNotes: false,
+      }),
+    );
+    assert.match(html, /Original part/);
+  });
+
+  it("oemOrCompatibleFromPreferredGatedBuyLink is unknown when no gated buy path survives", () => {
+    assert.equal(
+      oemOrCompatibleFromPreferredGatedBuyLink({
+        preferredWinnerLink: null,
+        approvedRetailerLinks: 0,
+      }),
+      "unknown",
+    );
+    const trust = buildPartPageTrust({
+      modelsCount: 2,
+      retailerLinks: [],
+      oemPartNumber: "HE15FKPET",
+    });
+    assert.equal(trust.oem_or_compatible, "unknown");
+    assert.equal(trust.buyer_path_state, "suppress_buy");
   });
 
   it("buildModelPageTrust replacement_reasoning avoids verify when buy is suppressed", () => {
