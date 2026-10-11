@@ -76,6 +76,9 @@
   },
   "tests": {
     "focused": "PASS — src/app/page.test.ts, src/app/robots.test.ts",
+    "authoritative_validation_command": "node --import tsx --test src/app/page.test.ts src/app/robots.test.ts",
+    "authoritative_validation_result": "2/2 pass",
+    "non_authoritative_note": "npm test -- <same files> may exit 0 while emitting unrelated suite failures (e.g. canonical.test.ts CSS import via tsx); do not treat as R13 regression signal.",
     "ship_guard": {
       "push_assessment": "SAFE",
       "blockers": []
