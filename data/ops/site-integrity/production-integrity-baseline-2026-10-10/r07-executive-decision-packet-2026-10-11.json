@@ -1,0 +1,182 @@
+{
+  "contract": "r07_executive_decision_packet_v1",
+  "read_only": true,
+  "root_id": "R07",
+  "generated_at": "2026-10-11T18:30:00Z",
+  "root_status_unchanged": "OPEN",
+  "campaign_blocker_boundary_unchanged": "conflicting_factual_judgment",
+  "immutable_baseline": {
+    "artifact": "READ_ME_AUDIT_REPORT.md",
+    "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+    "root_heading": "R07 — P1 — Winix115115 mislabeled FilterH and unsafe model associations propagated"
+  },
+  "authoritative_sources": [
+    {
+      "label": "Winix America — Filter A PDP",
+      "url": "https://www.winixamerica.com/product/filter-a-115115/",
+      "retrieved_at": "2026-10-11",
+      "role": "primary_manufacturer",
+      "claims": [
+        "Primary product title: Filter A – 115115",
+        "SKU/token 115115 is the Filter A one-year replacement set",
+        "Compatible models listed: 6300, P300, 5300, 5500, 5300-2, 6300-2, AM90, C909, 9800, C535",
+        "Does not list 5500-2 or AM80 on this PDP compatibility list"
+      ]
+    },
+    {
+      "label": "Winix America — Filter H PDP",
+      "url": "https://www.winixamerica.com/product/filter-h-116130/",
+      "retrieved_at": "2026-10-11",
+      "role": "primary_manufacturer",
+      "claims": [
+        "Primary product title: Filter H – 116130",
+        "SKU/token 116130 is the Filter H one-year replacement set",
+        "Compatible models listed: 5500-2 and AM80 only"
+      ]
+    },
+    {
+      "label": "Immutable baseline R07 narrative",
+      "url": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/READ_ME_AUDIT_REPORT.md",
+      "role": "campaign_audit",
+      "claims": [
+        "Filter A = 115115; Filter H = 116130 for 5500-2/AM80",
+        "107 pages affected; do not infer all 104 model associations wrong from two model checks"
+      ]
+    },
+    {
+      "label": "Repo retailer_links browser-truth notes (winix-hepa-115115)",
+      "path": "data/air-purifier/retailer_links.csv",
+      "role": "repo_evidence",
+      "claims": [
+        "Official link targets filter-a-115115 PDP",
+        "Notes cite Filter A title and compatible 5300-2, 5500-2, C535 in product copy at proof time — cross-check against current Winix Filter A PDP (5500-2/AM80 not on Filter A list as of 2026-10-11 fetch)"
+      ]
+    },
+    {
+      "label": "AP net-new ingest owner review (116130)",
+      "path": "docs/air-purifier/AP-NET-NEW-CATALOG-INGEST-OWNER-REVIEW-WINIX-FILTER-H-116130-v1.md",
+      "role": "repo_evidence",
+      "claims": [
+        "5500-2 → winix-filter-h-116130 PROVEN in model-first artifact",
+        "AM80 → 116130 INFERRED from Filter H PDP copy",
+        "5300-2 / C535 → 115115 PROVEN; do not map to 116130"
+      ]
+    }
+  ],
+  "identity_adjudication": {
+    "115115": {
+      "classification": "PROVEN",
+      "statement": "Winix official SKU 115115 is Filter A (Replacement Filter A / Filter A – 115115), not Filter H."
+    },
+    "116130": {
+      "classification": "PROVEN",
+      "statement": "Winix official SKU 116130 is Filter H (Replacement Filter H / Filter H – 116130)."
+    },
+    "filter_a_vs_filter_h": {
+      "classification": "PROVEN",
+      "statement": "Filter A (115115) and Filter H (116130) are distinct official products with different manufacturer compatibility lists; they are not interchangeable aliases."
+    },
+    "supersession": {
+      "classification": "UNKNOWN",
+      "statement": "No manufacturer evidence retrieved that 115115 supersedes 116130 or vice versa."
+    },
+    "5500_vs_5500_2": {
+      "classification": "PROVEN",
+      "statement": "Winix Filter A PDP lists 5500 and 5300-2 but not 5500-2; Filter H PDP lists 5500-2 (and AM80) only. Treat 5500 and 5500-2 as distinct for fit authority."
+    }
+  },
+  "current_state_diff": [
+    {
+      "layer": "data/air-purifier/filters.csv row winix-hepa-115115",
+      "current": "name=Winix Filter H (HEPA); notes mention Filter A / 115115",
+      "authoritative": "Display identity should be Filter A for SKU 115115",
+      "conflict": "PROVEN — title says Filter H while notes and OEM PDP say Filter A"
+    },
+    {
+      "layer": "data/air-purifier/filters.csv row winix-filter-h-116130",
+      "current": "name=Winix Filter H (116130)",
+      "authoritative": "Filter H – 116130",
+      "conflict": "None material"
+    },
+    {
+      "layer": "compatibility_mappings winix-am80",
+      "current": "winix-am80 → winix-hepa-115115 (is_recommended=true); no row to winix-filter-h-116130",
+      "authoritative": "AM80 compatible with Filter H 116130 per Winix Filter H PDP; not listed on Filter A PDP",
+      "conflict": "PROVEN — wrong filter family for AM80"
+    },
+    {
+      "layer": "compatibility_mappings winix-5500-2",
+      "current": "winix-5500-2 → winix-hepa-115115 (true) AND winix-5500-2 → winix-filter-h-116130 (true)",
+      "authoritative": "5500-2 uses Filter H 116130; not on Filter A PDP compatibility list (2026-10-11 fetch)",
+      "conflict": "PROVEN — dual recommended HEPA paths; 115115 association contradicts Filter H primary identity for 5500-2"
+    },
+    {
+      "layer": "data/air-purifier/model_aliases.csv winix-5500-2",
+      "current": "alias WINIX 5500",
+      "authoritative": "5500 and 5500-2 are distinct units with different Filter H requirement",
+      "conflict": "INFERRED — alias may conflate legacy 5500 with 5500-2 in lookup/fit expansion"
+    },
+    {
+      "layer": "production /air-purifier/filter/winix-hepa-115115",
+      "current": "Filter H string count 4; Filter A 2; 115115×26; 116130×0 (2026-10-11 readback)",
+      "authoritative": "Customer-facing identity for this slug should be Filter A / 115115, not Filter H",
+      "conflict": "PROVEN — rendered Filter H labeling on Filter A SKU page"
+    },
+    {
+      "layer": "production /air-purifier/model/winix-am80",
+      "current": "115115×6; 116130×0; Filter H×2 (2026-10-11 readback)",
+      "authoritative": "Should surface Filter H 116130 as the Winix HEPA set for AM80",
+      "conflict": "PROVEN — missing 116130 surfacing; 115115 still linked"
+    },
+    {
+      "layer": "production /air-purifier/model/winix-5500-2",
+      "current": "Both 115115 and 116130 present (×6 each); Filter H×4 (2026-10-11 readback)",
+      "authoritative": "5500-2 should not present 115115 as Filter H; Filter H path should be 116130",
+      "conflict": "PROVEN — identity conflation persists on model page"
+    },
+    {
+      "layer": "28 model rows → winix-hepa-115115",
+      "current": "28 compatibility_mappings with is_recommended=true to winix-hepa-115115",
+      "authoritative": "Subset aligns with Filter A PDP (e.g. 5300-2, C535, AM90); full per-model proof not re-run",
+      "conflict": "UNKNOWN per model — bulk remap not authorized without row-level manufacturer proof"
+    }
+  ],
+  "executive_decision": {
+    "ready": true,
+    "governing_truth": "SKU 115115 is Winix Filter A only. SKU 116130 is Winix Filter H only. They are not aliases. AM80 and 5500-2 require Filter H (116130) per Winix Filter H PDP and must not be recommended to the winix-hepa-115115 identity as Filter H. The winix-hepa-115115 catalog/display name must not use Filter H branding.",
+    "explicit_non_decisions": [
+      "Do not mass-remove all 28 winix-hepa-115115 model mappings without per-model Filter A PDP proof",
+      "Do not infer all 104 model pages wrong beyond identity/5500-2/AM80 edges fixed in baseline"
+    ]
+  },
+  "minimum_repair_scope": {
+    "phase_1_definite": [
+      "data/air-purifier/filters.csv: winix-hepa-115115 name/notes — Filter A identity only (remove Filter H from customer-facing name)",
+      "data/air-purifier/compatibility_mappings.csv: remove or demote winix-am80 → winix-hepa-115115; add winix-am80 → winix-filter-h-116130 is_recommended=true",
+      "data/air-purifier/compatibility_mappings.csv: remove or demote winix-5500-2 → winix-hepa-115115; retain winix-5500-2 → winix-filter-h-116130",
+      "data/air-purifier/model_aliases.csv: adjudicate winix-5500-2 alias WINIX 5500 (remove or narrow per 5500 vs 5500-2 distinction)",
+      "Regression: data fixture — Filter A vs Filter H distinct; 5500 vs 5500-2 distinct; AM80 maps to 116130 not 115115"
+    ],
+    "phase_2_bounded_review": [
+      "Reconcile remaining winix-hepa-115115 mappings against Filter A PDP model list only where manufacturer list is explicit",
+      "Optional: retailer_links notes refresh if Winix PDP compatibility text changed"
+    ],
+    "out_of_scope_this_decision": [
+      "712-path trust semantics (R06 closed)",
+      "Supabase/runtime row mutation without existing apply authority"
+    ]
+  },
+  "required_validation": {
+    "tests": [
+      "node --import tsx --test <new winix-r07-fixture test path TBD in implementation PR>",
+      "Existing AP CSV integrity / compat tests that touch edited rows"
+    ],
+    "production_readback": [
+      "GET https://buckparts.com/air-purifier/filter/winix-hepa-115115 — Filter A labeling; no Filter H as primary identity",
+      "GET https://buckparts.com/air-purifier/model/winix-am80 — Filter H / 116130 recommended path visible; no 115115-as-Filter-H",
+      "GET https://buckparts.com/air-purifier/model/winix-5500-2 — 116130 Filter H primary; no contradictory Filter H label on 115115"
+    ],
+    "ship_guard": "npm run buckparts:ship-guard -- --enforce SAFE before merge"
+  },
+  "implementation_status": "DO_NOT_IMPLEMENT — decision packet only; root status unchanged"
+}
