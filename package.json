@@ -80,6 +80,7 @@
     "buckparts:all-product-safe-buyer-path-census": "tsx scripts/report-all-product-safe-buyer-path-census-v1.ts",
     "buckparts:evidence-freshness-recovery": "tsx scripts/report-evidence-freshness-recovery-v1.ts",
     "buckparts:ship-guard": "tsx scripts/buckparts-ship-guard.ts",
+    "buckparts:r16-amazon-stored-tag-normalization": "tsx scripts/report-buckparts-r16-amazon-stored-tag-normalization-v1.ts",
     "buckparts:deploy-classifier": "tsx scripts/report-buckparts-deploy-classifier-v1.ts",
     "buckparts:deploy-classifier:pre-push-summary": "tsx scripts/report-buckparts-deploy-classifier-v1.ts --push-ahead --summary-only",
     "buckparts:credit-control": "tsx scripts/report-buckparts-credit-control-center-v1.ts",

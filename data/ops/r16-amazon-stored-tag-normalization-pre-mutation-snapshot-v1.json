@@ -1,0 +1,288 @@
+{
+  "contract": "r16_amazon_stored_tag_normalization_pre_mutation_snapshot_v1",
+  "read_only": true,
+  "canonical_main_sha": "110e67541533d16c8d936cc394bfd36ffeb19dc9",
+  "generated_at": "2026-10-11T02:23:38.348Z",
+  "csv_rows": [
+    {
+      "filter_slug": "lt1000p",
+      "asin": "B07H9LHMR2",
+      "affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20"
+    },
+    {
+      "filter_slug": "lt1000pc",
+      "asin": "B07H9LHMR2",
+      "affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20"
+    },
+    {
+      "filter_slug": "lt700p",
+      "asin": "B0042ACZU2",
+      "affiliate_url": "https://www.amazon.com/dp/B0042ACZU2?tag=buckparts20-20"
+    },
+    {
+      "filter_slug": "lt800p",
+      "asin": "B00X3DWMS4",
+      "affiliate_url": "https://www.amazon.com/dp/B00X3DWMS4?tag=buckparts20-20"
+    },
+    {
+      "filter_slug": "lt600p",
+      "asin": "B07VGD8Z5Z",
+      "affiliate_url": "https://www.amazon.com/dp/B07VGD8Z5Z?tag=buckparts20-20"
+    },
+    {
+      "filter_slug": "mdj64844601",
+      "asin": "B08HDD1PK1",
+      "affiliate_url": "https://www.amazon.com/dp/B08HDD1PK1?tag=buckparts20-20"
+    },
+    {
+      "filter_slug": "da29-00019a",
+      "asin": "B019HPTP3G",
+      "affiliate_url": "https://www.amazon.com/dp/B019HPTP3G?tag=buckparts20-20"
+    },
+    {
+      "filter_slug": "da97-15217d",
+      "asin": "B07BHZWSCQ",
+      "affiliate_url": "https://www.amazon.com/dp/B07BHZWSCQ?tag=buckparts20-20"
+    },
+    {
+      "filter_slug": "edr1rxd1",
+      "asin": "B00UXG4WR8",
+      "affiliate_url": "https://www.amazon.com/dp/B00UXG4WR8?tag=buckparts20-20"
+    },
+    {
+      "filter_slug": "edr2rxd1",
+      "asin": "B00VBP8QPO",
+      "affiliate_url": "https://www.amazon.com/dp/B00VBP8QPO?tag=buckparts20-20"
+    },
+    {
+      "filter_slug": "ukf8001",
+      "asin": "B07C8C2VBH",
+      "affiliate_url": "https://www.amazon.com/dp/B07C8C2VBH?tag=buckparts20-20"
+    },
+    {
+      "filter_slug": "4396508",
+      "asin": "B00NXPKBQ2",
+      "affiliate_url": "https://www.amazon.com/dp/B00NXPKBQ2?tag=buckparts20-20"
+    },
+    {
+      "filter_slug": "8171413",
+      "asin": "B01CA0V1VE",
+      "affiliate_url": "https://www.amazon.com/dp/B01CA0V1VE?tag=buckparts20-20"
+    },
+    {
+      "filter_slug": "46-9002",
+      "asin": "B01IDH3IPU",
+      "affiliate_url": "https://www.amazon.com/dp/B01IDH3IPU?tag=buckparts20-20"
+    }
+  ],
+  "supabase_rows": [
+    {
+      "id": "e59a1742-6476-4651-8dff-c5b94998b734",
+      "slug": "4396508",
+      "filter_id": "063a6122-c85f-4332-92c0-0d8e53dc5d4c",
+      "affiliate_url": "https://www.amazon.com/dp/B00NXPKBQ2?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B00NXPKBQ2",
+      "asin": "B00NXPKBQ2",
+      "is_primary": true,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-09-09T04:20:16+00:00",
+      "created_at": "2026-04-21T04:58:00.978675+00:00"
+    },
+    {
+      "id": "b2241855-b588-4884-9dfa-b0f5969becbf",
+      "slug": "4396710",
+      "filter_id": "9e71e36c-32b1-42ae-bae1-b5384aaf48b1",
+      "affiliate_url": "https://www.amazon.com/dp/B087PDLZL9?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B087PDLZL9",
+      "asin": "B087PDLZL9",
+      "is_primary": false,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-09-09T14:41:34.635897+00:00",
+      "created_at": "2026-05-04T04:15:34.065852+00:00"
+    },
+    {
+      "id": "0ec8d954-9596-472f-8c74-815870226bce",
+      "slug": "4396841",
+      "filter_id": "c3fcdb45-1a17-4927-8c52-93ce60383016",
+      "affiliate_url": "https://www.amazon.com/dp/B087PDLZL9?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B087PDLZL9",
+      "asin": "B087PDLZL9",
+      "is_primary": false,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-05-04T04:41:12.610737+00:00",
+      "created_at": "2026-05-04T04:41:12.610737+00:00"
+    },
+    {
+      "id": "17510d54-85a3-4e43-a671-272a9df274b6",
+      "slug": "46-9002",
+      "filter_id": "afb33b4e-ff01-44b1-823c-fa6052d9c3c2",
+      "affiliate_url": "https://www.amazon.com/dp/B01IDH3IPU?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B01IDH3IPU?tag=buckparts20-20",
+      "asin": "B01IDH3IPU",
+      "is_primary": true,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-05-04T15:50:00+00:00",
+      "created_at": "2026-05-04T15:39:59.453203+00:00"
+    },
+    {
+      "id": "a891c852-2bd3-4b0c-9948-7226469c638a",
+      "slug": "8171413",
+      "filter_id": "5d281057-32b3-4f4d-aade-f0355d995389",
+      "affiliate_url": "https://www.amazon.com/dp/B01CA0V1VE?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B01CA0V1VE?tag=buckparts20-20",
+      "asin": "B01CA0V1VE",
+      "is_primary": true,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-05-04T22:00:00+00:00",
+      "created_at": "2026-05-04T21:55:01.775261+00:00"
+    },
+    {
+      "id": "72029713-27b2-4598-bd4f-33ba5a0e22cc",
+      "slug": "da29-00019a",
+      "filter_id": "7f84c6ad-b8ba-4b7e-98b6-c4f5c1d6cd7d",
+      "affiliate_url": "https://www.amazon.com/dp/B019HPTP3G?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B019HPTP3G?tag=buckparts20-20",
+      "asin": "B019HPTP3G",
+      "is_primary": true,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-04-30T00:00:00+00:00",
+      "created_at": "2026-04-30T18:19:32.540331+00:00"
+    },
+    {
+      "id": "3ae440ae-2324-4580-802b-5f50116f4da2",
+      "slug": "da97-15217d",
+      "filter_id": "5487ef82-2010-44d4-bb18-bf71e6ae35ba",
+      "affiliate_url": "https://www.amazon.com/dp/B07BHZWSCQ?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B07BHZWSCQ?tag=buckparts20-20",
+      "asin": "B07BHZWSCQ",
+      "is_primary": true,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-05-03T00:00:00+00:00",
+      "created_at": "2026-05-03T14:46:43.465261+00:00"
+    },
+    {
+      "id": "32288a9b-4ff3-4424-86fa-99f716308ef5",
+      "slug": "edr1rxd1",
+      "filter_id": "81d1c570-24cc-4008-80db-ce21d05a0607",
+      "affiliate_url": "https://www.amazon.com/dp/B00UXG4WR8?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B00UXG4WR8?tag=buckparts20-20",
+      "asin": "B00UXG4WR8",
+      "is_primary": true,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-05-05T01:20:00+00:00",
+      "created_at": "2026-05-05T01:12:08.975242+00:00"
+    },
+    {
+      "id": "6f81b4ce-a3b0-4c09-b0d9-965aca5bfc17",
+      "slug": "edr2rxd1",
+      "filter_id": "ccc6209e-dafb-43c0-a1e7-8469897257d3",
+      "affiliate_url": "https://www.amazon.com/dp/B00VBP8QPO?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B00VBP8QPO?tag=buckparts20-20",
+      "asin": "B00VBP8QPO",
+      "is_primary": true,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-05-05T01:20:00+00:00",
+      "created_at": "2026-05-05T01:12:46.627522+00:00"
+    },
+    {
+      "id": "c5303885-6ea2-43da-87bb-846a311edba1",
+      "slug": "lt1000p",
+      "filter_id": "351b197d-ecac-428e-aa99-39cfad397692",
+      "affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20",
+      "asin": "B07H9LHMR2",
+      "is_primary": true,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-05-03T00:00:00+00:00",
+      "created_at": "2026-05-03T15:38:16.423959+00:00"
+    },
+    {
+      "id": "0a1e3c22-518d-476e-ba95-91955984e2ec",
+      "slug": "lt1000pc",
+      "filter_id": "1e0fdf15-3698-498b-88ed-741b6ac76b59",
+      "affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20",
+      "asin": "B07H9LHMR2",
+      "is_primary": true,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-05-03T00:00:00+00:00",
+      "created_at": "2026-05-03T16:02:50.196647+00:00"
+    },
+    {
+      "id": "4b240a57-970a-42f5-a23d-ca99fbc40ad2",
+      "slug": "lt600p",
+      "filter_id": "f6ba1f25-c983-4ff5-b47b-7334845b0d92",
+      "affiliate_url": "https://www.amazon.com/dp/B07VGD8Z5Z?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B07VGD8Z5Z?tag=buckparts20-20",
+      "asin": "B07VGD8Z5Z",
+      "is_primary": true,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-05-03T00:00:00+00:00",
+      "created_at": "2026-05-03T16:26:11.002299+00:00"
+    },
+    {
+      "id": "a468799b-64c4-44e9-a16f-c87be931345a",
+      "slug": "lt700p",
+      "filter_id": "bc6bd3ec-42f5-4526-a246-fb60a274396e",
+      "affiliate_url": "https://www.amazon.com/dp/B0042ACZU2?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B0042ACZU2?tag=buckparts20-20",
+      "asin": "B0042ACZU2",
+      "is_primary": true,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-05-03T00:00:00+00:00",
+      "created_at": "2026-05-03T16:58:21.205252+00:00"
+    },
+    {
+      "id": "6bbf8586-a87e-46de-932c-2bc341587619",
+      "slug": "lt800p",
+      "filter_id": "0b0c1bb2-ac28-4d8e-ac91-01b5a6be2539",
+      "affiliate_url": "https://www.amazon.com/dp/B00X3DWMS4?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B00X3DWMS4?tag=buckparts20-20",
+      "asin": "B00X3DWMS4",
+      "is_primary": true,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-05-03T00:00:00+00:00",
+      "created_at": "2026-05-03T17:27:42.096617+00:00"
+    },
+    {
+      "id": "b289be90-b9c3-44c3-9c26-3a554c545a47",
+      "slug": "mdj64844601",
+      "filter_id": "c6d36a37-f69a-486e-8c11-209a653a1b3b",
+      "affiliate_url": "https://www.amazon.com/dp/B08HDD1PK1?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B08HDD1PK1?tag=buckparts20-20",
+      "asin": "B08HDD1PK1",
+      "is_primary": true,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-05-03T00:00:00+00:00",
+      "created_at": "2026-05-03T18:46:48.914854+00:00"
+    },
+    {
+      "id": "b1cc3087-935a-4890-8dfe-af6586c65997",
+      "slug": "ukf8001",
+      "filter_id": "944b8b28-582c-4017-ac6c-ac0069315f55",
+      "affiliate_url": "https://www.amazon.com/dp/B07C8C2VBH?tag=buckparts20-20",
+      "destination_url": "https://www.amazon.com/dp/B07C8C2VBH",
+      "asin": "B07C8C2VBH",
+      "is_primary": false,
+      "status": "approved",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_checked_at": "2026-05-05T01:13:18.284343+00:00",
+      "created_at": "2026-05-05T01:13:18.284343+00:00"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "packet_contract": "r16_amazon_stored_tag_normalization_owner_approval_v1",
+  "generated_at": "2026-10-11T02:24:00.000Z",
+  "canonical_main_sha": "110e67541533d16c8d936cc394bfd36ffeb19dc9",
+  "rows": [
+    {
+      "decision_id": "decision-2026-10-11-r16-amazon-stored-tag-normalization",
+      "source_queue_row_id": "queue-r16-phase-b1-amazon-stored-tag-normalization",
+      "decided_at": "2026-10-11T02:24:00.000Z",
+      "approved_at": "2026-10-11T02:24:00.000Z",
+      "issued_at": "2026-10-11T02:24:00.000Z",
+      "expires_at": "2027-10-11T02:24:00.000Z",
+      "review_after": null,
+      "decision_status": "approved",
+      "allowed_next_scope": "owner_mutation_approved",
+      "owner_note": "Founder authorizes R16 Phase B1 bounded tag-only normalization: strip inactive Amazon Associates tag buckparts20-20 from exactly 14 refrigerator data/retailer_links.csv primary Amazon rows and exactly 16 production public.retailer_links rows (affiliate_url and destination_url where tagged). Preserve ASIN /dp paths, ids, is_primary, status, browser_truth fields. No inserts/deletes, no air-purifier rows, no evidence refresh, no /go restoration. Canonical main 110e67541533d16c8d936cc394bfd36ffeb19dc9.",
+      "evidence_required_before_mutation": true,
+      "prohibited_actions_still_apply": [
+        "Do not change ASINs, retailer, slug, row IDs, is_primary, status, browser_truth_classification, or browser_truth_checked_at.",
+        "Do not delete or insert retailer_links rows.",
+        "Do not mutate air-purifier retailer_links CSV or Supabase rows.",
+        "Do not refresh stale browser truth or restore blocked /go paths.",
+        "Do not change UKF8001 primary-state drift.",
+        "Do not reapply to Amazon Associates or append affiliate tags at redirect."
+      ],
+      "r16_amazon_stored_tag_normalization_owner_approval_context_v1": {
+        "operation": "TAG_ONLY_STRIP",
+        "csv_approved_updates": 14,
+        "supabase_approved_updates": 16,
+        "approved_inserts": 0,
+        "approved_deletes": 0,
+        "inactive_tag": "buckparts20-20",
+        "apply_plan_rel_path": "data/fridge/batch-production/apply-plans/r16-amazon-stored-tag-normalization-apply-plan-v1.json",
+        "pre_mutation_snapshot_rel_path": "data/ops/r16-amazon-stored-tag-normalization-pre-mutation-snapshot-v1.json",
+        "owner_approved_by": "Jared"
+      },
+      "bound_artifacts_v1": [
+        {
+          "artifact_rel_path": "data/fridge/batch-production/apply-plans/r16-amazon-stored-tag-normalization-apply-plan-v1.json",
+          "sha256_at_binding": "10af75bebcd19115230e9cbe1c4d2cc18ff7eca66481b36271b8286e892f70e3",
+          "entry_type": "apply_plan"
+        },
+        {
+          "artifact_rel_path": "data/ops/r16-amazon-stored-tag-normalization-pre-mutation-snapshot-v1.json",
+          "sha256_at_binding": "f66c7b4b8bf46209644035a6e17eef83322ee5738c6672f91d3c033d0276a908",
+          "entry_type": "pre_mutation_snapshot"
+        }
+      ]
+    }
+  ]
+}
