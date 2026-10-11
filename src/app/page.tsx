@@ -20,10 +20,12 @@ import {
   SITE_SOCIAL_OG_DESCRIPTION,
   SITE_SOCIAL_OG_TITLE,
 } from "@/lib/site-social-metadata";
+import { canonicalAlternatesForPath } from "@/lib/seo/canonical";
 
 export const metadata: Metadata = {
   title: SITE_SOCIAL_OG_TITLE,
   description: SITE_SOCIAL_OG_DESCRIPTION,
+  ...canonicalAlternatesForPath("/"),
   openGraph: {
     title: SITE_SOCIAL_OG_TITLE,
     description: SITE_SOCIAL_OG_DESCRIPTION,
