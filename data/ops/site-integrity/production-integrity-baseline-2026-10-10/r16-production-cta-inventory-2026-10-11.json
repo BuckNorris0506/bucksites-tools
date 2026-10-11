@@ -1,0 +1,482 @@
+{
+  "contract": "r16_production_commercial_cta_inventory_v1",
+  "read_only": true,
+  "generated_at": "2026-10-11T04:16:22.066Z",
+  "site_url": "https://buckparts.com",
+  "sitemap_url_count": 1138,
+  "candidate_page_count": 1135,
+  "cta_occurrence_count": 92,
+  "distinct_page_count": 46,
+  "distinct_redirect_id_count": 6,
+  "distinct_redirect_ids": [
+    "18ee7ff0-25d0-45e0-83ce-87d71a95ee65",
+    "b2241855-b588-4884-9dfa-b0f5969becbf",
+    "d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff",
+    "e274568e-2998-4a93-8642-53862d2eb915",
+    "e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+    "e59a1742-6476-4651-8dff-c5b94998b734"
+  ],
+  "occurrences": [
+    {
+      "page_url": "https://buckparts.com/air-purifier/filter/shark-hepa-he15fkp",
+      "go_path": "/air-purifier/go/18ee7ff0-25d0-45e0-83ce-87d71a95ee65",
+      "redirect_uuid": "18ee7ff0-25d0-45e0-83ce-87d71a95ee65"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/filter/shark-hepa-he15fkp",
+      "go_path": "/air-purifier/go/18ee7ff0-25d0-45e0-83ce-87d71a95ee65",
+      "redirect_uuid": "18ee7ff0-25d0-45e0-83ce-87d71a95ee65"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/filter/shark-hepa-he3fkp",
+      "go_path": "/air-purifier/go/d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff",
+      "redirect_uuid": "d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/filter/shark-hepa-he3fkp",
+      "go_path": "/air-purifier/go/d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff",
+      "redirect_uuid": "d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp150",
+      "go_path": "/air-purifier/go/18ee7ff0-25d0-45e0-83ce-87d71a95ee65",
+      "redirect_uuid": "18ee7ff0-25d0-45e0-83ce-87d71a95ee65"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp150",
+      "go_path": "/air-purifier/go/18ee7ff0-25d0-45e0-83ce-87d71a95ee65",
+      "redirect_uuid": "18ee7ff0-25d0-45e0-83ce-87d71a95ee65"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp151",
+      "go_path": "/air-purifier/go/18ee7ff0-25d0-45e0-83ce-87d71a95ee65",
+      "redirect_uuid": "18ee7ff0-25d0-45e0-83ce-87d71a95ee65"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp151",
+      "go_path": "/air-purifier/go/18ee7ff0-25d0-45e0-83ce-87d71a95ee65",
+      "redirect_uuid": "18ee7ff0-25d0-45e0-83ce-87d71a95ee65"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp152",
+      "go_path": "/air-purifier/go/18ee7ff0-25d0-45e0-83ce-87d71a95ee65",
+      "redirect_uuid": "18ee7ff0-25d0-45e0-83ce-87d71a95ee65"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp152",
+      "go_path": "/air-purifier/go/18ee7ff0-25d0-45e0-83ce-87d71a95ee65",
+      "redirect_uuid": "18ee7ff0-25d0-45e0-83ce-87d71a95ee65"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp155",
+      "go_path": "/air-purifier/go/18ee7ff0-25d0-45e0-83ce-87d71a95ee65",
+      "redirect_uuid": "18ee7ff0-25d0-45e0-83ce-87d71a95ee65"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp155",
+      "go_path": "/air-purifier/go/18ee7ff0-25d0-45e0-83ce-87d71a95ee65",
+      "redirect_uuid": "18ee7ff0-25d0-45e0-83ce-87d71a95ee65"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp300",
+      "go_path": "/air-purifier/go/d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff",
+      "redirect_uuid": "d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp300",
+      "go_path": "/air-purifier/go/d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff",
+      "redirect_uuid": "d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp301",
+      "go_path": "/air-purifier/go/d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff",
+      "redirect_uuid": "d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp301",
+      "go_path": "/air-purifier/go/d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff",
+      "redirect_uuid": "d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp302",
+      "go_path": "/air-purifier/go/d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff",
+      "redirect_uuid": "d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp302",
+      "go_path": "/air-purifier/go/d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff",
+      "redirect_uuid": "d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp305",
+      "go_path": "/air-purifier/go/d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff",
+      "redirect_uuid": "d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff"
+    },
+    {
+      "page_url": "https://buckparts.com/air-purifier/model/shark-hp305",
+      "go_path": "/air-purifier/go/d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff",
+      "redirect_uuid": "d01ccbc2-3d4f-4677-9a2a-a37f3531b2ff"
+    },
+    {
+      "page_url": "https://buckparts.com/filter/4396508",
+      "go_path": "/go/e59a1742-6476-4651-8dff-c5b94998b734",
+      "redirect_uuid": "e59a1742-6476-4651-8dff-c5b94998b734"
+    },
+    {
+      "page_url": "https://buckparts.com/filter/4396508",
+      "go_path": "/go/e59a1742-6476-4651-8dff-c5b94998b734",
+      "redirect_uuid": "e59a1742-6476-4651-8dff-c5b94998b734"
+    },
+    {
+      "page_url": "https://buckparts.com/filter/4396710",
+      "go_path": "/go/b2241855-b588-4884-9dfa-b0f5969becbf",
+      "redirect_uuid": "b2241855-b588-4884-9dfa-b0f5969becbf"
+    },
+    {
+      "page_url": "https://buckparts.com/filter/4396710",
+      "go_path": "/go/b2241855-b588-4884-9dfa-b0f5969becbf",
+      "redirect_uuid": "b2241855-b588-4884-9dfa-b0f5969becbf"
+    },
+    {
+      "page_url": "https://buckparts.com/filter/smartwater-mwfp",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/filter/smartwater-mwfp",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/filter/xwfe",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/filter/xwfe",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-cfe28tshss",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-cfe28tshss",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-cwe23sshbb",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-cwe23sshbb",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-cye22tp2ms1",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-cye22tp2ms1",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfd28gslss",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfd28gslss",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfd28gslww",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfd28gslww",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfe24jgkbww",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfe24jgkbww",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfe24jgkww",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfe24jgkww",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfe26jymkww",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfe26jymkww",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfe27jmkes",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfe27jmkes",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfe28ggkww",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfe28ggkww",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfe28gmkww",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfe28gmkww",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfe28hskss",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gfe28hskss",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gne25jmkes",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gne25jmkes",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gne25jmkww",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gne25jmkww",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gne27fskss",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gne27fskss",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gne27jsmbb",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gne27jsmbb",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gne27jymbb",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gne27jymbb",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gne29gskbb",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gne29gskbb",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gse25gshss",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gse25gshss",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gss20eshss",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gss20eshss",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gss23gskbb",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gss23gskbb",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gss25gmkww",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gss25gmkww",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gss25lslss",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gss25lslss",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gye22gskbb",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gye22gskbb",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gye22hskbb",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-gye22hskbb",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-pfe28kblts",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-pfe28kblts",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-pfe28klyss",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-pfe28klyss",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-pfe28kmkbb",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-pfe28kmkbb",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-pfe28kynfs",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-pfe28kynfs",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-pvd28bslss",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-pvd28bslss",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-pvd28bymfs",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-pvd28bymfs",
+      "go_path": "/go/e274568e-2998-4a93-8642-53862d2eb915",
+      "redirect_uuid": "e274568e-2998-4a93-8642-53862d2eb915"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-pye22pynfs",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    },
+    {
+      "page_url": "https://buckparts.com/fridge/ge-pye22pynfs",
+      "go_path": "/go/e3d9ca23-1be5-4fe7-b001-6dc4948331fe",
+      "redirect_uuid": "e3d9ca23-1be5-4fe7-b001-6dc4948331fe"
+    }
+  ],
+  "baseline_comparison_note": "Compare counts to data/ops/site-integrity/production-integrity-baseline-2026-10-10/r16-baseline-root-v1.json baseline_scope_counts; differences are reported, not forced."
+}
