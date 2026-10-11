@@ -57,6 +57,58 @@ function preferredWinnerLink(
   return selectBestVerifiedBuyLink(links, sortContext);
 }
 
+/** Official original labeling requires an explicit gated direct-buy subtype, not mapping counts. */
+export function isSourceBackedOfficialBuyLink(link: BuyLinkRow | null): boolean {
+  if (!link) return false;
+  const subtype = normalizeBuyableSubtype(link.browser_truth_buyable_subtype);
+  if (subtype === BUYABLE_SUBTYPES.SINGLE_UNIT_DIRECT_BUYABLE) {
+    return true;
+  }
+  if (subtype === BUYABLE_SUBTYPES.MULTIPACK_DIRECT_BUYABLE) {
+    const notes = (link.browser_truth_notes ?? "").toLowerCase();
+    return !(
+      notes.includes("compatible") ||
+      notes.includes("aftermarket") ||
+      notes.includes("not oem")
+    );
+  }
+  return false;
+}
+
+function partPageMatchConfidence(args: {
+  modelsCount: number;
+  approvedRetailerLinks: number;
+  preferredWinnerLink: BuyLinkRow | null;
+  oemOrCompatible: OemOrCompatible;
+}): MatchConfidence {
+  if (args.modelsCount === 0) {
+    return "unknown";
+  }
+  if (
+    args.approvedRetailerLinks > 0 &&
+    args.oemOrCompatible === "oem" &&
+    isSourceBackedOfficialBuyLink(args.preferredWinnerLink)
+  ) {
+    return "high";
+  }
+  return "medium";
+}
+
+function partPageRequiresManualVerification(args: {
+  modelsCount: number;
+  approvedRetailerLinks: number;
+  matchConfidence: MatchConfidence;
+  oemOrCompatible: OemOrCompatible;
+}): boolean {
+  if (args.modelsCount === 0 || args.approvedRetailerLinks === 0) {
+    return true;
+  }
+  if (args.oemOrCompatible === "compatible" || args.oemOrCompatible === "unknown") {
+    return true;
+  }
+  return args.matchConfidence !== "high";
+}
+
 /**
  * Customer-facing original vs compatible follows the surviving gated buy-path row,
  * not the catalog part-number identity alone.
@@ -81,8 +133,12 @@ export function oemOrCompatibleFromPreferredGatedBuyLink(args: {
     ) {
       return "compatible";
     }
+    return "oem";
   }
-  return "oem";
+  if (subtype === BUYABLE_SUBTYPES.SINGLE_UNIT_DIRECT_BUYABLE) {
+    return "oem";
+  }
+  return "unknown";
 }
 
 export function buildPartPageTrust(args: PartPageTrustArgs): PartTrustSummary {
@@ -113,20 +169,32 @@ export function buildPartPageTrust(args: PartPageTrustArgs): PartTrustSummary {
     evidence_notes.push("No approved retailer links survived live-link gating");
   }
 
-  const match_confidence: MatchConfidence = args.modelsCount > 0 ? "high" : "unknown";
   const match_basis: MatchBasis =
     args.modelsCount > 0 ? "compatibility_mapping" : "no_repo_compatibility_mapping";
-  const requires_manual_verification =
-    args.modelsCount === 0 || approved_retailer_links === 0;
-  const buyer_path_state: BuyerPathTrustState =
-    args.modelsCount === 0 || approved_retailer_links === 0
-      ? "suppress_buy"
-      : "show_confident_buy";
 
   const oem_or_compatible = oemOrCompatibleFromPreferredGatedBuyLink({
     preferredWinnerLink: preferred_winner_link,
     approvedRetailerLinks: approved_retailer_links,
   });
+
+  const match_confidence = partPageMatchConfidence({
+    modelsCount: args.modelsCount,
+    approvedRetailerLinks: approved_retailer_links,
+    preferredWinnerLink: preferred_winner_link,
+    oemOrCompatible: oem_or_compatible,
+  });
+  const requires_manual_verification = partPageRequiresManualVerification({
+    modelsCount: args.modelsCount,
+    approvedRetailerLinks: approved_retailer_links,
+    matchConfidence: match_confidence,
+    oemOrCompatible: oem_or_compatible,
+  });
+  const buyer_path_state: BuyerPathTrustState =
+    args.modelsCount === 0 || approved_retailer_links === 0
+      ? "suppress_buy"
+      : oem_or_compatible === "compatible"
+        ? "show_caution_buy"
+        : "show_confident_buy";
 
   return {
     match_confidence,
@@ -181,11 +249,11 @@ export function buildModelPageTrust(args: ModelPageTrustArgs): PartTrustSummary 
       approved_retailer_links > 0 ? "show_confident_buy" : "suppress_buy";
     evidence_notes.push("Primary part is explicitly marked recommended in repo compatibility mappings");
   } else if (args.totalFits === 1) {
-    match_confidence = "high";
+    match_confidence = "medium";
     match_basis = "single_mapped_part";
-    requires_manual_verification = approved_retailer_links === 0;
+    requires_manual_verification = true;
     buyer_path_state =
-      approved_retailer_links > 0 ? "show_confident_buy" : "suppress_buy";
+      approved_retailer_links > 0 ? "show_caution_buy" : "suppress_buy";
     evidence_notes.push("Only one mapped part is present for this model");
   } else {
     match_confidence = "medium";

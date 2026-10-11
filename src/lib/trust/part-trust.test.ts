@@ -9,6 +9,7 @@ import { BUYABLE_SUBTYPES } from "@/lib/retailers/launch-buy-links";
 import {
   buildModelPageTrust,
   buildPartPageTrust,
+  isSourceBackedOfficialBuyLink,
   oemOrCompatibleFromPreferredGatedBuyLink,
 } from "@/lib/trust/part-trust";
 
@@ -30,9 +31,10 @@ describe("part-trust", () => {
       notes: "Replace every 6 months.",
     });
 
-    assert.equal(trust.match_confidence, "high");
+    assert.equal(trust.match_confidence, "medium");
+    assert.equal(trust.oem_or_compatible, "unknown");
     assert.equal(trust.buyer_path_state, "show_confident_buy");
-    assert.equal(trust.requires_manual_verification, false);
+    assert.equal(trust.requires_manual_verification, true);
     assert.equal(trust.approved_retailer_links, 1);
   });
 
@@ -158,6 +160,109 @@ describe("part-trust", () => {
     );
     assert.match(html, /Compatible replacement/);
     assert.doesNotMatch(html, /Original part/);
+  });
+
+  it("R06: positive modelsCount with compatible gated winner stays compatible and not high-confidence fit", () => {
+    const winner = {
+      id: "amazon-compatible",
+      retailer_name: "Amazon",
+      affiliate_url: "https://www.amazon.com/dp/B0DJ4CXHPH",
+      is_primary: true,
+      retailer_key: "amazon",
+      browser_truth_classification: "direct_buyable",
+      browser_truth_buyable_subtype: BUYABLE_SUBTYPES.COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE,
+      browser_truth_notes: "COMPATIBLE REPLACEMENT. Not official OEM.",
+    };
+    const trust = buildPartPageTrust({
+      modelsCount: 12,
+      retailerLinks: [winner],
+      oemPartNumber: "HE15FKPET",
+    });
+    assert.equal(trust.oem_or_compatible, "compatible");
+    assert.equal(trust.match_confidence, "medium");
+    assert.equal(trust.requires_manual_verification, true);
+    assert.equal(trust.buyer_path_state, "show_caution_buy");
+    const html = renderToStaticMarkup(
+      createElement(PartTruthPanel, {
+        trust,
+        compatibleModelCount: 12,
+        hasNotes: false,
+      }),
+    );
+    assert.match(html, /Compatible replacement/);
+    assert.doesNotMatch(html, /Original part/);
+    assert.match(html, /compare once more/i);
+  });
+
+  it("R06: mapping count alone without gated subtype does not assert original identity", () => {
+    const link = {
+      id: "1",
+      retailer_name: "Store",
+      affiliate_url: "https://example.com/pdp",
+      is_primary: true,
+      retailer_key: "amazon",
+      browser_truth_classification: "direct_buyable",
+    };
+    assert.equal(isSourceBackedOfficialBuyLink(link), false);
+    assert.equal(
+      oemOrCompatibleFromPreferredGatedBuyLink({
+        preferredWinnerLink: link,
+        approvedRetailerLinks: 1,
+      }),
+      "unknown",
+    );
+    const trust = buildPartPageTrust({
+      modelsCount: 5,
+      retailerLinks: [link],
+      oemPartNumber: "LT1000P",
+    });
+    assert.equal(trust.oem_or_compatible, "unknown");
+    assert.equal(trust.match_confidence, "medium");
+    assert.equal(trust.requires_manual_verification, true);
+  });
+
+  it("R06: source-backed official direct_buyable winner preserves high fit confidence", () => {
+    const winner = {
+      id: "oem",
+      retailer_name: "Winix",
+      affiliate_url: "https://www.winixamerica.com/product/filter-h-116130",
+      is_primary: true,
+      retailer_key: "oem-catalog",
+      browser_truth_classification: "direct_buyable",
+      browser_truth_buyable_subtype: BUYABLE_SUBTYPES.SINGLE_UNIT_DIRECT_BUYABLE,
+    };
+    assert.equal(isSourceBackedOfficialBuyLink(winner), true);
+    const trust = buildPartPageTrust({
+      modelsCount: 2,
+      retailerLinks: [winner],
+      oemPartNumber: "116130",
+    });
+    assert.equal(trust.oem_or_compatible, "oem");
+    assert.equal(trust.match_confidence, "high");
+    assert.equal(trust.requires_manual_verification, false);
+    assert.equal(trust.buyer_path_state, "show_confident_buy");
+  });
+
+  it("R06: ambiguous multi-fit model page stays uncertain without recommended mapping", () => {
+    const trust = buildModelPageTrust({
+      totalFits: 2,
+      hasRecommendedFit: false,
+      primaryIsRecommended: false,
+      retailerLinks: [
+        {
+          id: "1",
+          retailer_name: "OEM Store",
+          affiliate_url: "https://example.com/pdp",
+          is_primary: true,
+          retailer_key: "oem",
+        },
+      ],
+      oemPartNumber: "WF2CB",
+      modelNumber: "FGHS2631PF4A",
+    });
+    assert.equal(trust.match_confidence, "medium");
+    assert.equal(trust.buyer_path_state, "suppress_buy");
+    assert.equal(trust.requires_manual_verification, true);
   });
 
   it("oemOrCompatibleFromPreferredGatedBuyLink keeps OEM for official direct_buyable winner", () => {
