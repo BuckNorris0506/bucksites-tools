@@ -15,7 +15,7 @@
 |--------|--------|
 | Baseline name | October 10, 2026 BuckParts Production Site Integrity Baseline |
 | Root ID namespace | `R01` … `R17` (17 roots) |
-| Baseline artifact in repo | **UNKNOWN** — no committed copy of the full baseline text or per-root definitions was found under `docs/`, `data/ops/`, or `data/command-center/` at ledger creation time |
+| Baseline artifact in repo | `data/ops/site-integrity/production-integrity-baseline-2026-10-10/READ_ME_AUDIT_REPORT.md` (SHA256 `45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188`; provenance `read-me-audit-report-provenance-v1.json`) |
 | Rule | Copy titles, priorities, scopes, and audit wording from the immutable baseline when ingesting; **do not paraphrase the baseline into this ledger as if it were the source of truth** |
 
 ---
@@ -106,19 +106,20 @@ If full closure cannot be established: **BLOCKED**, **AWAITING_PRODUCTION_VERIFI
 | Field | Value |
 |--------|--------|
 | **ROOT_ID** | R02 |
-| **TITLE** | UNKNOWN — per immutable October 10, 2026 baseline root **R02** (not ingested to repo) |
-| **PRIORITY** | UNKNOWN |
-| **RELEASE_BLOCKER** | UNKNOWN |
-| **CURRENT_STATE** | NOT_STARTED |
-| **CURRENT_OWNER / EXECUTOR** | UNKNOWN |
-| **ACTIVE_BRANCH / WORKTREE** | — |
-| **EXACT_SCOPE** | UNKNOWN — baseline text not in repo; audit sequencing places **search consequences** after R01 |
-| **SMALLEST_REQUIRED_FIX** | UNKNOWN — copy from immutable baseline root R02 when ingested |
-| **CLOSURE_REQUIREMENTS** | Per baseline root R02 + closure standard above |
-| **CLOSURE_EVIDENCE** | — |
-| **BLOCKER** | R01 production static assets; baseline root definitions not in repo |
-| **NEXT_LAWFUL_ACTION** | Ingest baseline root **R02** definition into repo read-only storage; do not start until R01 **VERIFIED_CLOSED** or baseline explicitly allows parallel work |
-| **LAST_UPDATED** | 2026-10-10 |
+| **TITLE** | R02 — P1 — Hydration-dependent GA and interactive search are not operational |
+| **PRIORITY** | P1 |
+| **RELEASE_BLOCKER** | YES (historical baseline; closed after R01 recovery) |
+| **CURRENT_STATE** | VERIFIED_CLOSED |
+| **ROOT_CAUSE (historical)** | R01 missing `/_next/static` assets broke hydration; SearchForm without hydration fell through to broken `/?q=` behavior; GA `afterInteractive` never initialized (`gtag` / `dataLayer` absent in baseline browser sample) |
+| **CURRENT_OWNER / EXECUTOR** | Integrity campaign closure 2026-10-11 (verification-only; no product-code repair) |
+| **ACTIVE_BRANCH / WORKTREE** | `docs/r02-verified-closure` |
+| **EXACT_SCOPE** | Sitewide dependency on hydration for interactive homepage search and GA4 + fridge funnel events; baseline 1,343 paths / 23-route runtime sample; historical homepage submit to `/?q=` with UTM loss |
+| **SMALLEST_REQUIRED_FIX** | Restore R01 (done); verify natural search nav to `/search?q=` (or intentional direct-model redirect); verify natural GA `page_view` and fridge funnel events — **no redesign** |
+| **CLOSURE_REQUIREMENTS** | Production browser proof: chunks load, hydration, search cases, natural GA collect (no injected events), attribution contract documented |
+| **CLOSURE_EVIDENCE** | Baseline: `r02-baseline-root-v1.json` + `READ_ME_AUDIT_REPORT.md` §R02. Closure: `r02-closure-verification-2026-10-11.json`. Production main `6f9dbac660f63056fb7cc2b08a88e475a73dad13`; deploy meta on buckparts.com matches. Hydration: `gtag` function, `dataLayer`, Next chunks 200. Search: WRX735SDHZ → `/fridge/whirlpool-wrx735sdhz`; EDR4RXD1 → `/search?q=EDR4RXD1`; HE15FKPET → `/search?q=HE15FKPET` disambiguation; no `/?q=` fallback. GA: natural `g/collect` `page_view` (UTMs in `dl` on landing), `fridge_model_view`; no duplicate `page_view` in sampled nav. GA search events **not** in source contract (Supabase search telemetry). **No product-code change.** |
+| **BLOCKER** | — |
+| **NEXT_LAWFUL_ACTION** | — (closed) |
+| **LAST_UPDATED** | 2026-10-11 |
 
 ---
 

@@ -1,0 +1,37 @@
+{
+  "contract": "production_integrity_baseline_r02_root_v1",
+  "read_only": true,
+  "baseline_date": "2026-10-10",
+  "ingested_at": "2026-10-11",
+  "full_baseline_artifact": "READ_ME_AUDIT_REPORT.md",
+  "full_baseline_sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+  "root_id": "R02",
+  "title": "R02 — P1 — Hydration-dependent GA and interactive search are not operational",
+  "priority": "P1",
+  "category": "MEASUREMENT_DEFECT",
+  "baseline_scope_counts": {
+    "listed_paths": 1343,
+    "status": "SITEWIDE_DEPENDENCY_EXPOSURE",
+    "runtime_confirmed_on_sample_routes": 23
+  },
+  "historical_evidence_summary": [
+    "Sitewide missing Next.js chunks (dependency on R01)",
+    "Browser: gtag undefined / dataLayer absent on sampled routes",
+    "Homepage search submitted to /?q= instead of /search; UTM query loss on that path",
+    "No GA receipt demonstrated at baseline; Grow/Snowplow traffic observed"
+  ],
+  "likely_source_boundary": [
+    "src/components/AnalyticsScripts.tsx",
+    "src/lib/analytics/fridge-trust-funnel.ts",
+    "src/components/analytics/FridgeTrustFunnelViewTracker.tsx",
+    "src/components/SearchForm.tsx"
+  ],
+  "smallest_fix": "Restore R01 asset/hydration infrastructure; correct search navigation to /search?q=; verify natural GA page_view and funnel events; audit event-once race only after hydration restored.",
+  "regression_requirements": [
+    "Browser smoke with natural navigation and GA collect requests",
+    "No manual injected gtag/dataLayer events",
+    "Confirm UTM/campaign capture on landing page_view per GA config",
+    "Confirm search does not fall back to /?q="
+  ],
+  "dependency_note": "R02 symptoms were explicitly linked to R01 at baseline; closure requires independent production proof after R01 VERIFIED_CLOSED."
+}

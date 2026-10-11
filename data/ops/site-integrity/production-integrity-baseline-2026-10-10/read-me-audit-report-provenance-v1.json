@@ -1,0 +1,12 @@
+{
+  "contract": "immutable_baseline_provenance_v1",
+  "read_only": true,
+  "baseline_title": "BuckParts — Production Site Integrity Baseline",
+  "baseline_date": "2026-10-10",
+  "ingested_at": "2026-10-11",
+  "repo_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/READ_ME_AUDIT_REPORT.md",
+  "operator_source_path_at_ingest": "/Users/jaredbuckman/Downloads/READ_ME_AUDIT_REPORT.md",
+  "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+  "byte_length": 50716,
+  "content_mutation_policy": "Do not rewrite baseline text in repo; add dated closure artifacts instead."
+}
