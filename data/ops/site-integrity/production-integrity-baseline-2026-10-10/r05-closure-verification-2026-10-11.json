@@ -1,0 +1,67 @@
+{
+  "classification": "VERIFIED_CLOSED",
+  "contract": "r05_closure_verification_v1",
+  "database_mutation": false,
+  "existing_freshness_rule": "isLiveBuyerPathCtaEligibleV1 via LIVE_BROWSER_TRUTH_MAX_AGE_MS",
+  "final_claim_behavior": "The aggregate checked-store sentence is absent on https://buckparts.com/fridge/ge-gfe28gmkbb. No Last checked date is rendered. The proof block and Where to buy section still render.",
+  "immutable_baseline": {
+    "original_observed_at": "2026-10-11T05:08:56Z",
+    "original_production_claim": "We checked a direct store product page against the filter number(s) listed for this model.",
+    "original_production_get": "https://buckparts.com/fridge/ge-gfe28gmkbb",
+    "original_production_http": 200,
+    "root_title": "Static allowlist emits checked-store proof without requiring current evidence",
+    "source_predicate_before": "proof_status assigned FRIDGE_MODEL_PDP_VISIBLE_PROOF_STATUS_SAFE_V1 from allowlist membership, with a date appended only when checked_at existed"
+  },
+  "new_evidence_invented": false,
+  "preview": {
+    "checked_store_sentence_present": false,
+    "commit_ref": "7f35f9357f23b656aa0f3e9cb2110e79291641fa",
+    "deploy_id": "6acb94b116099a00081ad63b",
+    "host": "https://deploy-preview-51--buckparts.netlify.app",
+    "last_checked_present": false,
+    "page_http": 200,
+    "path": "/fridge/ge-gfe28gmkbb",
+    "proof_block_present": true,
+    "state": "ready",
+    "where_to_buy_present": true
+  },
+  "product_repair": {
+    "base_sha": "25d607cd169455d076bba10870ccc418a4161524",
+    "branch": "fix/r05-evidence-derived-checked-store-proof",
+    "head_sha": "7f35f9357f23b656aa0f3e9cb2110e79291641fa",
+    "merge_commit": "e7c215b4725f884c3f86dae7f2ca4a9d89df6e30",
+    "merge_method": "merge_commit",
+    "merged_at": "2026-10-11T13:58:27Z",
+    "pull_request": "https://github.com/BuckNorris0506/bucksites-tools/pull/51",
+    "source_change": "checkedStoreProofSentenceV1 emits the aggregate sentence only when every displayed part has a link permitted by isLiveBuyerPathCtaEligibleV1; otherwise the sentence is omitted or names only qualifying parts"
+  },
+  "production_deploy": {
+    "branch": "main",
+    "checked_store_sentence_present": false,
+    "commit_ref": "e7c215b4725f884c3f86dae7f2ca4a9d89df6e30",
+    "context": "production",
+    "deploy_id": "6acb96059dcb9900083a5578",
+    "last_checked_present": false,
+    "manual_deploy": false,
+    "page_http": 200,
+    "path": "/fridge/ge-gfe28gmkbb",
+    "proof_block_present": true,
+    "published_at": "2026-10-11T14:04:02.676Z",
+    "state": "ready",
+    "where_to_buy_present": true
+  },
+  "read_only": true,
+  "tests": {
+    "build": {
+      "command": "npm run build",
+      "exit": 0,
+      "ok": true
+    },
+    "focused": "PASS",
+    "ship_guard": {
+      "blockers": [],
+      "push_assessment": "SAFE"
+    }
+  },
+  "verified_at": "2026-10-11T14:04:02.676Z"
+}

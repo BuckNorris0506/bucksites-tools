@@ -171,19 +171,20 @@ If full closure cannot be established: **BLOCKED**, **AWAITING_PRODUCTION_VERIFI
 | Field | Value |
 |--------|--------|
 | **ROOT_ID** | R05 |
-| **TITLE** | UNKNOWN — per immutable October 10, 2026 baseline root **R05** (not ingested to repo) |
-| **PRIORITY** | UNKNOWN |
-| **RELEASE_BLOCKER** | UNKNOWN |
-| **CURRENT_STATE** | NOT_STARTED |
-| **CURRENT_OWNER / EXECUTOR** | UNKNOWN |
-| **ACTIVE_BRANCH / WORKTREE** | — |
-| **EXACT_SCOPE** | UNKNOWN — audit phase: P1 truth / claim / data corrections |
-| **SMALLEST_REQUIRED_FIX** | UNKNOWN |
-| **CLOSURE_REQUIREMENTS** | Per baseline + truth closure standard |
-| **CLOSURE_EVIDENCE** | — |
-| **BLOCKER** | Baseline not ingested |
-| **NEXT_LAWFUL_ACTION** | Ingest baseline root **R05** |
-| **LAST_UPDATED** | 2026-10-10 |
+| **TITLE** | Static allowlist emits checked-store proof without requiring current evidence |
+| **PRIORITY** | P1 |
+| **RELEASE_BLOCKER** | YES (historical baseline; closed after production readback) |
+| **CURRENT_STATE** | VERIFIED_CLOSED |
+| **ROOT_CAUSE** | Allowlist membership assigned the checked-store sentence. A date was appended only when a checked-at value already existed, so the page could claim a current store check without current per-part evidence. |
+| **CURRENT_OWNER / EXECUTOR** | Integrity campaign R05 repair |
+| **ACTIVE_BRANCH / WORKTREE** | `main` @ `e7c215b4725f884c3f86dae7f2ca4a9d89df6e30` |
+| **EXACT_SCOPE** | `checkedStoreProofSentenceV1` in `src/lib/fridge/fridge-model-pdp-safe-buyer-path-visible-proof-v1.ts` |
+| **SMALLEST_REQUIRED_FIX** | Keep the allowlist as scope. Emit the checked-store sentence only from links that pass the existing `isLiveBuyerPathCtaEligibleV1` freshness rule. |
+| **CLOSURE_REQUIREMENTS** | Preview and Git-connected production no longer show the aggregate sentence unless every displayed part has qualifying current evidence. |
+| **CLOSURE_EVIDENCE** | `r05-closure-verification-2026-10-11.json`. Preview deploy `6acb94b116099a00081ad63b` commit `7f35f9357f23b656aa0f3e9cb2110e79291641fa`. Merge commit `e7c215b4725f884c3f86dae7f2ca4a9d89df6e30` at 2026-10-11T13:58:27Z. Production deploy `6acb96059dcb9900083a5578`: context=production, branch=main, commit_ref=e7c215b4725f884c3f86dae7f2ca4a9d89df6e30, manual_deploy=false, state=ready. Live `/fridge/ge-gfe28gmkbb` returns 200 and does not show the checked-store sentence or a Last checked date. |
+| **BLOCKER** | — |
+| **NEXT_LAWFUL_ACTION** | — (closed) |
+| **LAST_UPDATED** | 2026-10-11 |
 
 ---
 
