@@ -4,10 +4,10 @@
   "data_mutation": false,
   "mutation_blocked_until_owner_approval": true,
   "mutation_authorized": false,
-  "generated_at": "2026-06-08T05:42:45.806Z",
+  "generated_at": "2026-06-08T12:00:00.000Z",
   "source_audit_contract": "model_filter_correctness_audit_v1",
   "source_audit_path": "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
-  "dangerous_model_count": 76,
+  "dangerous_model_count": 79,
   "indexable_risk_page_count": 0,
   "root_cause_groups": [
     {
@@ -49,8 +49,9 @@
         "samsung-rs25h5111sr"
       ],
       "dominant_mapped_filter_patterns": [
-        "da29-10105j (8)",
-        "da29-00019a (6)",
+        "da29-10105j (6)",
+        "da29-00019a (4)",
+        "da97-17376b (4)",
         "da29-00003g (3)",
         "da29-00003g|da97-08006b (3)",
         "da29-00019a|da97-08006b (3)",
@@ -269,16 +270,16 @@
           "model_number": "RF27T5201SR",
           "classification": "WRONG_PART_RISK",
           "mapped_filter_slugs": [
-            "da29-10105j"
+            "da97-17376b"
           ],
-          "suspected_correct_filter_family": "UNKNOWN",
+          "suspected_correct_filter_family": "samsung::HAFQIN",
           "evidence_needed": [
             "Official Samsung model/support page naming exact water filter marketing token (HAF-QIN vs HAF-CIN) and DA97/DA29 part family",
             "Per-model proof before any compat row removal — use haf-qin-wildcard-expansion-review-v1 bucket guidance",
             "Cross-check against refrigerator-model-first-samsung-marketing-token-cross-reference-v1 allowed slug families",
             "Wildcard bucket REVIEW_DA29_CONFLICT for samsung-rf27t5201sr — compat=da29-10105j"
           ],
-          "safest_action": "evidence_research",
+          "safest_action": "split_mapping",
           "hyperagent_can_help": true,
           "blockers": [
             "wildcard:REVIEW_DA29_CONFLICT"
@@ -457,16 +458,16 @@
           "model_number": "RF28R6301SR",
           "classification": "WRONG_PART_RISK",
           "mapped_filter_slugs": [
-            "da29-00019a"
+            "da97-17376b"
           ],
-          "suspected_correct_filter_family": "UNKNOWN",
+          "suspected_correct_filter_family": "samsung::HAFQIN",
           "evidence_needed": [
             "Official Samsung model/support page naming exact water filter marketing token (HAF-QIN vs HAF-CIN) and DA97/DA29 part family",
             "Per-model proof before any compat row removal — use haf-qin-wildcard-expansion-review-v1 bucket guidance",
             "Cross-check against refrigerator-model-first-samsung-marketing-token-cross-reference-v1 allowed slug families",
             "Wildcard bucket REVIEW_DA29_CONFLICT for samsung-rf28r6301sr — compat=da29-00019a"
           ],
-          "safest_action": "evidence_research",
+          "safest_action": "split_mapping",
           "hyperagent_can_help": true,
           "blockers": [
             "wildcard:REVIEW_DA29_CONFLICT"
@@ -666,16 +667,16 @@
           "model_number": "RF28T5101SR",
           "classification": "WRONG_PART_RISK",
           "mapped_filter_slugs": [
-            "da29-00019a"
+            "da97-17376b"
           ],
-          "suspected_correct_filter_family": "UNKNOWN",
+          "suspected_correct_filter_family": "samsung::HAFQIN",
           "evidence_needed": [
             "Official Samsung model/support page naming exact water filter marketing token (HAF-QIN vs HAF-CIN) and DA97/DA29 part family",
             "Per-model proof before any compat row removal — use haf-qin-wildcard-expansion-review-v1 bucket guidance",
             "Cross-check against refrigerator-model-first-samsung-marketing-token-cross-reference-v1 allowed slug families",
             "Wildcard bucket REVIEW_DA29_CONFLICT for samsung-rf28t5101sr — compat=da29-00019a"
           ],
-          "safest_action": "evidence_research",
+          "safest_action": "split_mapping",
           "hyperagent_can_help": true,
           "blockers": [
             "wildcard:REVIEW_DA29_CONFLICT"
@@ -727,16 +728,16 @@
           "model_number": "RS22T5201SG",
           "classification": "WRONG_PART_RISK",
           "mapped_filter_slugs": [
-            "da29-10105j"
+            "da97-17376b"
           ],
-          "suspected_correct_filter_family": "UNKNOWN",
+          "suspected_correct_filter_family": "samsung::HAFQIN",
           "evidence_needed": [
             "Official Samsung model/support page naming exact water filter marketing token (HAF-QIN vs HAF-CIN) and DA97/DA29 part family",
             "Per-model proof before any compat row removal — use haf-qin-wildcard-expansion-review-v1 bucket guidance",
             "Cross-check against refrigerator-model-first-samsung-marketing-token-cross-reference-v1 allowed slug families",
             "Wildcard bucket REVIEW_DA29_CONFLICT for samsung-rs22t5201sg — compat=da29-10105j"
           ],
-          "safest_action": "evidence_research",
+          "safest_action": "split_mapping",
           "hyperagent_can_help": true,
           "blockers": [
             "wildcard:REVIEW_DA29_CONFLICT"
@@ -771,7 +772,7 @@
         "samsung-rf27t5501sr"
       ],
       "dominant_mapped_filter_patterns": [
-        "da29-00012b|da29-00020b (1)"
+        "da97-17376b (1)"
       ],
       "suspected_correct_filter_family": "samsung::HAFCIN",
       "evidence_needed": [
@@ -786,8 +787,7 @@
           "model_number": "RF27T5501SR",
           "classification": "WRONG_PART_RISK",
           "mapped_filter_slugs": [
-            "da29-00012b",
-            "da29-00020b"
+            "da97-17376b"
           ],
           "suspected_correct_filter_family": "samsung::HAFCIN",
           "evidence_needed": [
@@ -1558,19 +1558,23 @@
     },
     {
       "root_cause_group": "ge_xwf_xwfe_rpwfe_legacy_mixes",
-      "affected_slug_count": 7,
+      "affected_slug_count": 10,
       "affected_slugs": [
         "ge-gfe28gskww",
         "ge-gfe28gynes",
         "ge-gie21gsnerss",
+        "ge-gne27jstss",
+        "ge-gse25hskss",
         "ge-gye22hskww",
+        "ge-pfe28kmkww",
         "ge-pfe28kskbb",
         "ge-pfe28kynww",
         "ge-pwe23kmkes"
       ],
       "dominant_mapped_filter_patterns": [
-        "xwf|xwfe (4)",
-        "rpwfe|xwfe (3)"
+        "xwf|xwfe (6)",
+        "rpwfe|xwfe (3)",
+        "rpwfe|xwf (1)"
       ],
       "suspected_correct_filter_family": "UNKNOWN",
       "evidence_needed": [
@@ -1638,12 +1642,69 @@
           ]
         },
         {
+          "fridge_slug": "ge-gne27jstss",
+          "model_number": "GNE27JSTSS",
+          "classification": "WRONG_PART_RISK",
+          "mapped_filter_slugs": [
+            "xwf",
+            "xwfe"
+          ],
+          "suspected_correct_filter_family": "UNKNOWN",
+          "evidence_needed": [
+            "Official GE spec page identifying RFID (XWFE/RPWFE) vs legacy (XWF/MWF) shell for this exact model",
+            "Model-specific filter cartridge OEM before split_mapping"
+          ],
+          "safest_action": "evidence_research",
+          "hyperagent_can_help": true,
+          "blockers": [
+            "confusion:XWF vs XWFE (GE RFID shell mismatch)"
+          ]
+        },
+        {
+          "fridge_slug": "ge-gse25hskss",
+          "model_number": "GSE25HSKSS",
+          "classification": "WRONG_PART_RISK",
+          "mapped_filter_slugs": [
+            "xwf",
+            "xwfe"
+          ],
+          "suspected_correct_filter_family": "UNKNOWN",
+          "evidence_needed": [
+            "Official GE spec page identifying RFID (XWFE/RPWFE) vs legacy (XWF/MWF) shell for this exact model",
+            "Model-specific filter cartridge OEM before split_mapping"
+          ],
+          "safest_action": "evidence_research",
+          "hyperagent_can_help": true,
+          "blockers": [
+            "confusion:XWF vs XWFE (GE RFID shell mismatch)"
+          ]
+        },
+        {
           "fridge_slug": "ge-gye22hskww",
           "model_number": "GYE22HSKWW",
           "classification": "WRONG_PART_RISK",
           "mapped_filter_slugs": [
             "rpwfe",
             "xwfe"
+          ],
+          "suspected_correct_filter_family": "UNKNOWN",
+          "evidence_needed": [
+            "Official GE spec page identifying RFID (XWFE/RPWFE) vs legacy (XWF/MWF) shell for this exact model",
+            "Model-specific filter cartridge OEM before split_mapping"
+          ],
+          "safest_action": "evidence_research",
+          "hyperagent_can_help": true,
+          "blockers": [
+            "confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family"
+          ]
+        },
+        {
+          "fridge_slug": "ge-pfe28kmkww",
+          "model_number": "PFE28KMKWW",
+          "classification": "WRONG_PART_RISK",
+          "mapped_filter_slugs": [
+            "rpwfe",
+            "xwf"
           ],
           "suspected_correct_filter_family": "UNKNOWN",
           "evidence_needed": [
@@ -1764,7 +1825,7 @@
         "ge_xwf_xwfe_rpwfe_legacy_mixes",
         "quarantined_models"
       ],
-      "affected_slug_count": 76,
+      "affected_slug_count": 79,
       "risk_reduction_rationale": "Defensive publication gate: zero indexable_risk_pages in committed audit, but block factory/index promotion for all 76 dangerous slugs until mappings are split or removed.",
       "owner_approval_required": false,
       "repo_mutation_required": false
@@ -1841,7 +1902,7 @@
       "root_cause_groups": [
         "ge_xwf_xwfe_rpwfe_legacy_mixes"
       ],
-      "affected_slug_count": 7,
+      "affected_slug_count": 10,
       "risk_reduction_rationale": "7 GE models mix RFID (XWFE/RPWFE) and legacy (XWF) shells — model-specific GE spec required.",
       "owner_approval_required": true,
       "repo_mutation_required": false
@@ -1852,7 +1913,7 @@
       "root_cause_groups": [
         "ge_xwf_xwfe_rpwfe_legacy_mixes"
       ],
-      "affected_slug_count": 7,
+      "affected_slug_count": 10,
       "risk_reduction_rationale": "Retain single RFID or legacy slug per proven GE model.",
       "owner_approval_required": true,
       "repo_mutation_required": true
@@ -1888,7 +1949,7 @@
     "src/lib/fridge/fridge-model-review-overrides.ts"
   ],
   "proven_facts": [
-    "PROVEN: dangerous_model_count=76 from data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json.",
+    "PROVEN: dangerous_model_count=79 from data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json.",
     "PROVEN: indexable_risk_page_count=0.",
     "PROVEN: samsung::HAFQIN and samsung::HAFCIN families repo-proven via refrigerator-model-first-samsung-marketing-token-cross-reference-v1.",
     "PROVEN: lg-lrfxs3106s official LT1000P documented in docs/fridge-model-filter-mapping-discrepancies.md.",

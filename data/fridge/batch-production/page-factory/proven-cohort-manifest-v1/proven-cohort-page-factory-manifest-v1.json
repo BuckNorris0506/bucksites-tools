@@ -4,7 +4,7 @@
   "data_mutation": false,
   "mutation_blocked_until_owner_approval": true,
   "mutation_authorized": false,
-  "generated_at": "2026-06-08T05:35:00.057Z",
+  "generated_at": "2026-10-11T14:32:58.932Z",
   "source_audit_contract": "model_filter_correctness_audit_v1",
   "source_audit_path": "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
   "clone_anchor_slug": "samsung-rf28r7351sr",

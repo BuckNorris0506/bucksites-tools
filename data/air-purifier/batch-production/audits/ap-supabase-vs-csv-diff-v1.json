@@ -2,8 +2,8 @@
   "contract": "air_purifier_supabase_vs_csv_diff_v1",
   "read_only": true,
   "data_mutation": false,
-  "generated_at": "2026-06-23T09:09:33.474Z",
-  "git_head_hint": "d08898406e5c44167c4b17ad400f342e1349b432",
+  "generated_at": "2026-10-11T23:22:06.639Z",
+  "git_head_hint": "a15d6f6f866121ba80ca944eb9599a38204dfb33",
   "exact_repo_paths_read": [
     "data/air-purifier/brands.csv",
     "data/air-purifier/filters.csv",
@@ -34,12 +34,12 @@
       "field_drift_count": 0
     },
     "air_purifier_filters": {
-      "csv_count": 60,
-      "supabase_count": 70,
-      "csv_only_count": 3,
-      "supabase_only_count": 13,
+      "csv_count": 59,
+      "supabase_count": 72,
+      "csv_only_count": 2,
+      "supabase_only_count": 15,
       "shared_count": 57,
-      "field_drift_count": 17
+      "field_drift_count": 13
     },
     "air_purifier_models": {
       "csv_count": 287,
@@ -51,41 +51,41 @@
     },
     "air_purifier_filter_aliases": {
       "csv_count": 42,
-      "supabase_count": 33,
-      "csv_only_count": 14,
+      "supabase_count": 43,
+      "csv_only_count": 4,
       "supabase_only_count": 5,
-      "shared_count": 28,
+      "shared_count": 38,
       "field_drift_count": 0
     },
     "air_purifier_model_aliases": {
-      "csv_count": 21,
-      "supabase_count": 115,
+      "csv_count": 20,
+      "supabase_count": 114,
       "csv_only_count": 0,
       "supabase_only_count": 94,
-      "shared_count": 21,
+      "shared_count": 20,
       "field_drift_count": 0
     },
     "air_purifier_compatibility_mappings": {
-      "csv_count": 295,
-      "supabase_count": 731,
-      "csv_only_count": 8,
-      "supabase_only_count": 444,
-      "shared_count": 287,
+      "csv_count": 289,
+      "supabase_count": 732,
+      "csv_only_count": 11,
+      "supabase_only_count": 454,
+      "shared_count": 278,
       "field_drift_count": 0
     },
     "air_purifier_retailer_links": {
-      "csv_count": 66,
-      "supabase_count": 100,
-      "csv_only_count": 8,
-      "supabase_only_count": 40,
-      "shared_count": 58,
-      "field_drift_count": 5
+      "csv_count": 65,
+      "supabase_count": 104,
+      "csv_only_count": 5,
+      "supabase_only_count": 42,
+      "shared_count": 60,
+      "field_drift_count": 1
     },
-    "seed_import_blocker_count": 23,
-    "browser_truth_drift_count": 58,
-    "dangerous_db_only_slug_count": 13,
-    "csv_safe_direct_buyable_count": 34,
-    "supabase_safe_direct_buyable_count": 28
+    "seed_import_blocker_count": 20,
+    "browser_truth_drift_count": 60,
+    "dangerous_db_only_slug_count": 15,
+    "csv_safe_direct_buyable_count": 0,
+    "supabase_safe_direct_buyable_count": 0
   },
   "brands": {
     "csv_only": [],
@@ -148,19 +148,14 @@
   "air_purifier_filters": {
     "csv_only": [
       {
-        "slug": "blueair-f4max-411max",
-        "oem_part_number": "F4MAX",
-        "brand_slug": "blueair"
-      },
-      {
-        "slug": "blueair-fmini-mini-max",
-        "oem_part_number": "FMINI",
-        "brand_slug": "blueair"
-      },
-      {
         "slug": "shark-hepa-he1fkbas",
         "oem_part_number": "HE1FKBAS",
         "brand_slug": "shark"
+      },
+      {
+        "slug": "vornado-md1-0022",
+        "oem_part_number": "VORNADO-MD1-0022",
+        "brand_slug": "vornado"
       }
     ],
     "supabase_only": [
@@ -220,9 +215,19 @@
         "brand_slug": "medify"
       },
       {
+        "slug": "renpho-rp-ap003",
+        "oem_part_number": "RENPHO-RP-AP003",
+        "brand_slug": "renpho"
+      },
+      {
         "slug": "shark-carbon-foam",
         "oem_part_number": "SHARK-CARBON-FOAM",
         "brand_slug": "shark"
+      },
+      {
+        "slug": "vornado-md1-0023",
+        "oem_part_number": "VORNADO-MD1-0023",
+        "brand_slug": "vornado"
       },
       {
         "slug": "winix-filter-r",
@@ -231,18 +236,6 @@
       }
     ],
     "field_drift": [
-      {
-        "key": "levoit-rf-rar029",
-        "field": "oem_part_number",
-        "csv_value": "LEVOIT-CORE-300-P-RF",
-        "supabase_value": "LEVOIT-RF-RAR029"
-      },
-      {
-        "key": "levoit-rf-rar029",
-        "field": "name",
-        "csv_value": "Core 300 Series Original Filter (Core 300-P-RF)",
-        "supabase_value": "Core 300 / Core 300S HEPA 3-in-1 filter"
-      },
       {
         "key": "coway-airmega250-rf",
         "field": "oem_part_number",
@@ -266,18 +259,6 @@
         "field": "name",
         "csv_value": "Airmega 400 / 400S Max2 filter set",
         "supabase_value": "Airmega 300 / 400 series replacement set"
-      },
-      {
-        "key": "winix-carbon-116131",
-        "field": "oem_part_number",
-        "csv_value": "WINIX-FILTER-I-116131",
-        "supabase_value": "WINIX-116131"
-      },
-      {
-        "key": "winix-carbon-116131",
-        "field": "name",
-        "csv_value": "Winix Filter I (116131) annual replacement set",
-        "supabase_value": "Winix activated carbon filter"
       },
       {
         "key": "blueair-f2-211",
@@ -1866,18 +1847,6 @@
   "air_purifier_filter_aliases": {
     "csv_only": [
       {
-        "filter_slug": "blueair-f4max-411max",
-        "alias": "F4MAX"
-      },
-      {
-        "filter_slug": "blueair-f4max-411max",
-        "alias": "110036"
-      },
-      {
-        "filter_slug": "blueair-fmini-mini-max",
-        "alias": "FMINI"
-      },
-      {
         "filter_slug": "blueair-particle-411",
         "alias": "F411PACF"
       },
@@ -1886,40 +1855,12 @@
         "alias": "411 Series Filter"
       },
       {
-        "filter_slug": "levoit-rf-rar029",
-        "alias": "Core 300-P-RF"
-      },
-      {
-        "filter_slug": "levoit-rf-rar029",
-        "alias": "Core 300-RF"
-      },
-      {
-        "filter_slug": "levoit-rf-rar029",
-        "alias": "Core 300-P 3-Stage Original Filter"
-      },
-      {
-        "filter_slug": "levoit-rf-rar029",
-        "alias": "HEACAFLVNUS0012A"
-      },
-      {
         "filter_slug": "shark-hepa-he1fkbas",
         "alias": "HE1FKBAS"
       },
       {
         "filter_slug": "shark-hepa-he1fkbas",
         "alias": "Shark HP100 Series filter"
-      },
-      {
-        "filter_slug": "winix-carbon-116131",
-        "alias": "Filter I"
-      },
-      {
-        "filter_slug": "winix-carbon-116131",
-        "alias": "Filter I – 116131"
-      },
-      {
-        "filter_slug": "winix-carbon-116131",
-        "alias": "116131 Replacement Filter I"
       }
     ],
     "supabase_only": [
@@ -2331,16 +2272,6 @@
   "air_purifier_compatibility_mappings": {
     "csv_only": [
       {
-        "model_slug": "blueair-411a-max",
-        "filter_slug": "blueair-f4max-411max",
-        "is_recommended": true
-      },
-      {
-        "model_slug": "blueair-mini-max",
-        "filter_slug": "blueair-fmini-mini-max",
-        "is_recommended": true
-      },
-      {
         "model_slug": "shark-hp100",
         "filter_slug": "shark-hepa-he1fkbas",
         "is_recommended": true
@@ -2368,6 +2299,31 @@
       {
         "model_slug": "shark-hp135",
         "filter_slug": "shark-hepa-he1fkbas",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "vornado-ac350",
+        "filter_slug": "vornado-md1-0022",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "vornado-ac500",
+        "filter_slug": "vornado-md1-0022",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "vornado-ac500b",
+        "filter_slug": "vornado-md1-0022",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "vornado-ac550",
+        "filter_slug": "vornado-md1-0022",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "vornado-ac550w",
+        "filter_slug": "vornado-md1-0022",
         "is_recommended": true
       }
     ],
@@ -3558,6 +3514,26 @@
         "is_recommended": true
       },
       {
+        "model_slug": "renpho-rp-ap001",
+        "filter_slug": "renpho-rp-ap003",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "renpho-rp-ap002",
+        "filter_slug": "renpho-rp-ap003",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "renpho-rp-ap003",
+        "filter_slug": "renpho-rp-ap003",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "renpho-rp-ap080",
+        "filter_slug": "renpho-rp-ap003",
+        "is_recommended": true
+      },
+      {
         "model_slug": "shark-hp100",
         "filter_slug": "shark-carbon-foam",
         "is_recommended": true
@@ -3680,6 +3656,36 @@
       {
         "model_slug": "shark-hp652",
         "filter_slug": "shark-carbon-foam",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "vornado-ac350",
+        "filter_slug": "vornado-md1-0023",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "vornado-ac500",
+        "filter_slug": "vornado-md1-0023",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "vornado-ac500b",
+        "filter_slug": "vornado-md1-0023",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "vornado-ac550",
+        "filter_slug": "vornado-md1-0023",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "vornado-ac550w",
+        "filter_slug": "vornado-md1-0023",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "vornado-pc300",
+        "filter_slug": "vornado-md1-0023",
         "is_recommended": true
       },
       {
@@ -4598,26 +4604,6 @@
   "air_purifier_retailer_links": {
     "csv_only": [
       {
-        "filter_slug": "blueair-f4max-411max",
-        "retailer_key": "oem-catalog",
-        "affiliate_url": "https://www.blueair.com/products/f4max-replacement-pac-filter-for-411max-series-f4max",
-        "destination_url": "https://www.blueair.com/products/f4max-replacement-pac-filter-for-411max-series-f4max",
-        "is_primary": true,
-        "browser_truth_classification": "direct_buyable",
-        "browser_truth_notes": "Live-browser model-first ap-model-first-blueair-particle-411-live-browser-v1 (2026-06-22): official F4MAX PDP; 411i Max / 411a Max only; F4MAX token in primary slice; Add to Cart per batch-v2 catalog identity + model-first wrong-family proof. NOT legacy 411/411+/411 Auto.",
-        "browser_truth_checked_at": "2026-06-22T16:20:00.000Z"
-      },
-      {
-        "filter_slug": "blueair-fmini-mini-max",
-        "retailer_key": "oem-catalog",
-        "affiliate_url": "https://www.blueair.com/products/replacement-filter-for-blue-pure-mini-max",
-        "destination_url": "https://www.blueair.com/products/replacement-filter-for-blue-pure-mini-max",
-        "is_primary": true,
-        "browser_truth_classification": "direct_buyable",
-        "browser_truth_notes": "Live re-proof 2026-06-22T18:55:15.000Z + model-first ap-model-first-blueair-particle-411-live-browser-v1: official FMINI PDP; Blue Pure Mini Max only; FMINI token in primary slice; $21.99; Add to Cart active; Shopify available:true.",
-        "browser_truth_checked_at": "2026-06-22T18:55:15.000Z"
-      },
-      {
         "filter_slug": "honeywell-hrf-r1",
         "retailer_key": "amazon",
         "affiliate_url": "https://www.amazon.com/dp/B00BWYNZV4?tag=buckparts20-20",
@@ -4626,16 +4612,6 @@
         "browser_truth_classification": null,
         "browser_truth_notes": null,
         "browser_truth_checked_at": null
-      },
-      {
-        "filter_slug": "levoit-rf-rar029",
-        "retailer_key": "oem-catalog",
-        "affiliate_url": "https://levoit.com/products/core300-p-air-purifier-replacement-filter",
-        "destination_url": "https://levoit.com/products/core300-p-air-purifier-replacement-filter",
-        "is_primary": true,
-        "browser_truth_classification": "direct_buyable",
-        "browser_truth_notes": "Core 300 identity correction + Consumer Naming Bridge Option A; live browser proof ap-model-first-levoit-rf-rar029-live-browser-v1 (2026-05-30): official PDP Core 300 Series Original Filter; consumer tokens Core 300-P-RF / Core 300-P 3-Stage Original Filter in primary slice; Shopify SKU HEACAFLVNUS0012A; UPC 817915026880; Add to cart $29.99 available:true. PROVEN: internal tokens RAR029 / RF-RAR029 / LEVOIT-RF-RAR029 absent from primary. Legacy core300-air-purifier-replacement-filter (Core 300-RF) sold out — reference only. wrong_family_tokens_seen [] in primary; Pet 300-RF-PA variants not in primary slice.",
-        "browser_truth_checked_at": "2026-05-30T06:00:00.000Z"
       },
       {
         "filter_slug": "medify-ma25-rf",
@@ -4668,14 +4644,14 @@
         "browser_truth_checked_at": "2026-05-24T05:39:50.321Z"
       },
       {
-        "filter_slug": "winix-carbon-116131",
+        "filter_slug": "vornado-md1-0022",
         "retailer_key": "oem-catalog",
-        "affiliate_url": "https://www.winixamerica.com/product/filter-i-116131/",
-        "destination_url": "https://www.winixamerica.com/product/filter-i-116131/",
+        "affiliate_url": "https://www.vornado.com/search?q=MD1-0022",
+        "destination_url": "https://www.vornado.com/search?q=MD1-0022",
         "is_primary": true,
-        "browser_truth_classification": "direct_buyable",
-        "browser_truth_notes": "Filter I identity correction; batch-v2 + model-first + live PDP 2026-06-18: official Filter I – 116131 PDP; True HEPA + washable AOC carbon annual set; compatible C555 per manufacturer copy; in stock; Add to cart. PROVEN: not Filter B / not carbon-only. PROVEN: internal WINIX-116131 search placeholder abandoned. wrong_family_tokens_seen [] in primary slice; Filter A 115115 / Filter H 116130 in cross-sell only.",
-        "browser_truth_checked_at": "2026-06-18T14:00:00.000Z"
+        "browser_truth_classification": null,
+        "browser_truth_notes": null,
+        "browser_truth_checked_at": null
       }
     ],
     "supabase_only": [
@@ -4910,16 +4886,6 @@
         "browser_truth_checked_at": "2026-04-20T19:04:20.984+00:00"
       },
       {
-        "filter_slug": "levoit-rf-rar029",
-        "retailer_key": "oem-catalog",
-        "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-RAR029",
-        "destination_url": "https://levoit.com/search?q=LEVOIT-RF-RAR029",
-        "is_primary": true,
-        "browser_truth_classification": "likely_search_results",
-        "browser_truth_notes": "URL pattern suggests search/catalog listing",
-        "browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00"
-      },
-      {
         "filter_slug": "levoit-rf-rar040",
         "retailer_key": "amazon",
         "affiliate_url": "https://www.amazon.com/dp/B08SQQK6K7",
@@ -5030,6 +4996,16 @@
         "browser_truth_checked_at": null
       },
       {
+        "filter_slug": "renpho-rp-ap003",
+        "retailer_key": "oem-catalog",
+        "affiliate_url": "https://renpho.com/search?q=RENPHO-RP-AP003",
+        "destination_url": "https://renpho.com/search?q=RENPHO-RP-AP003",
+        "is_primary": true,
+        "browser_truth_classification": "likely_not_found",
+        "browser_truth_notes": "matched not-found phrase heuristic",
+        "browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00"
+      },
+      {
         "filter_slug": "shark-carbon-foam",
         "retailer_key": "oem-catalog",
         "affiliate_url": "https://www.sharkclean.com/search?q=SHARK-CARBON-FOAM",
@@ -5040,13 +5016,33 @@
         "browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00"
       },
       {
-        "filter_slug": "winix-carbon-116131",
+        "filter_slug": "shark-hepa-he15fkp",
+        "retailer_key": "amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B0DJ4CXHPH?tag=buckparts20-20",
+        "destination_url": "https://www.amazon.com/dp/B0DJ4CXHPH",
+        "is_primary": false,
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "COMPATIBLE REPLACEMENT for HE15FKPET. Aftermarket Nispira listing ASIN B0DJ4CXHPH. Not official Shark OEM. Owner-browser 2026-09-09: visible H1 includes literal HE15FKPET; In Stock; Add to Cart enabled. H1 does not include HE3FKPET, HE1FKBAS, HE1FKPET, HP102, or HC450. Do not characterize as official Shark HE15FKPET.",
+        "browser_truth_checked_at": "2026-09-09T18:24:22.698822+00:00"
+      },
+      {
+        "filter_slug": "shark-hepa-he3fkp",
+        "retailer_key": "amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B0DBTFY793?tag=buckparts20-20",
+        "destination_url": "https://www.amazon.com/dp/B0DBTFY793",
+        "is_primary": false,
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "COMPATIBLE REPLACEMENT for HE3FKPET. Aftermarket Senowi 2-pack listing ASIN B0DBTFY793. Not official Shark OEM. Owner-browser 2026-09-09: visible H1 includes literal HE3FKPET; In Stock; Add to Cart enabled. H1 does not include HE15FKPET, HE1FKBAS, HE2FKBAS, or HE2FKPET. Do not characterize as official Shark HE3FKPET.",
+        "browser_truth_checked_at": "2026-09-09T21:09:21.977729+00:00"
+      },
+      {
+        "filter_slug": "vornado-md1-0023",
         "retailer_key": "oem-catalog",
-        "affiliate_url": "https://www.winixamerica.com/search?q=WINIX-116131",
-        "destination_url": "https://www.winixamerica.com/search?q=WINIX-116131",
+        "affiliate_url": "https://www.vornado.com/search?q=VORNADO-MD1-0023",
+        "destination_url": "https://www.vornado.com/search?q=VORNADO-MD1-0023",
         "is_primary": true,
-        "browser_truth_classification": "likely_not_found",
-        "browser_truth_notes": "matched not-found phrase heuristic",
+        "browser_truth_classification": "likely_search_results",
+        "browser_truth_notes": "URL pattern suggests search/catalog listing",
         "browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00"
       },
       {
@@ -5086,33 +5082,20 @@
         "field": "is_primary",
         "csv_value": "true",
         "supabase_value": "false"
-      },
-      {
-        "key": "honeywell-hrf-r2/oem-catalog",
-        "field": "is_primary",
-        "csv_value": "true",
-        "supabase_value": "false"
-      },
-      {
-        "key": "honeywell-hrf-r2/amazon",
-        "field": "is_primary",
-        "csv_value": "false",
-        "supabase_value": "true"
-      },
-      {
-        "key": "honeywell-hrf-r3/oem-catalog",
-        "field": "is_primary",
-        "csv_value": "true",
-        "supabase_value": "false"
-      },
-      {
-        "key": "honeywell-hrf-r3/amazon",
-        "field": "is_primary",
-        "csv_value": "false",
-        "supabase_value": "true"
       }
     ],
     "browser_truth_drift": [
+      {
+        "filter_slug": "levoit-rf-rar029",
+        "retailer_key": "oem-catalog",
+        "affiliate_url": "https://levoit.com/products/core300-p-air-purifier-replacement-filter",
+        "csv_browser_truth_classification": "direct_buyable",
+        "supabase_browser_truth_classification": "direct_buyable",
+        "csv_browser_truth_notes": "Core 300 identity correction + Consumer Naming Bridge Option A; live browser proof ap-model-first-levoit-rf-rar029-live-browser-v1 (2026-05-30): official PDP Core 300 Series Original Filter; consumer tokens Core 300-P-RF / Core 300-P 3-Stage Original Filter in primary slice; Shopify SKU HEACAFLVNUS0012A; UPC 817915026880; Add to cart $29.99 available:true. PROVEN: internal tokens RAR029 / RF-RAR029 / LEVOIT-RF-RAR029 absent from primary. Legacy core300-air-purifier-replacement-filter (Core 300-RF) sold out — reference only. wrong_family_tokens_seen [] in primary; Pet 300-RF-PA variants not in primary slice.",
+        "supabase_browser_truth_notes": "Core 300 identity correction + Consumer Naming Bridge Option A; live browser proof ap-model-first-levoit-rf-rar029-live-browser-v1 (2026-05-30): official PDP Core 300 Series Original Filter; consumer tokens Core 300-P-RF / Core 300-P 3-Stage Original Filter in primary slice; Shopify SKU HEACAFLVNUS0012A; UPC 817915026880; Add to cart $29.99 available:true. PROVEN: internal tokens RAR029 / RF-RAR029 / LEVOIT-RF-RAR029 absent from primary. Legacy core300-air-purifier-replacement-filter (Core 300-RF) sold out — reference only. wrong_family_tokens_seen [] in primary; Pet 300-RF-PA variants not in primary slice.",
+        "csv_browser_truth_checked_at": "2026-05-30T06:00:00.000Z",
+        "supabase_browser_truth_checked_at": "2026-05-30T06:00:00+00:00"
+      },
       {
         "filter_slug": "levoit-rf-rar040",
         "retailer_key": "oem-catalog",
@@ -5224,6 +5207,17 @@
         "supabase_browser_truth_checked_at": "2026-05-24T05:39:50.321+00:00"
       },
       {
+        "filter_slug": "winix-carbon-116131",
+        "retailer_key": "oem-catalog",
+        "affiliate_url": "https://www.winixamerica.com/product/filter-i-116131/",
+        "csv_browser_truth_classification": "direct_buyable",
+        "supabase_browser_truth_classification": "direct_buyable",
+        "csv_browser_truth_notes": "Filter I identity correction; batch-v2 + model-first + live PDP 2026-06-18: official Filter I – 116131 PDP; True HEPA + washable AOC carbon annual set; compatible C555 per manufacturer copy; in stock; Add to cart. PROVEN: not Filter B / not carbon-only. PROVEN: internal WINIX-116131 search placeholder abandoned. wrong_family_tokens_seen [] in primary slice; Filter A 115115 / Filter H 116130 in cross-sell only.",
+        "supabase_browser_truth_notes": "Filter I identity correction; batch-v2 + model-first + live PDP 2026-06-18: official Filter I – 116131 PDP; True HEPA + washable AOC carbon annual set; compatible C555 per manufacturer copy; in stock; Add to cart. PROVEN: not Filter B / not carbon-only. PROVEN: internal WINIX-116131 search placeholder abandoned. wrong_family_tokens_seen [] in primary slice; Filter A 115115 / Filter H 116130 in cross-sell only.",
+        "csv_browser_truth_checked_at": "2026-06-18T14:00:00.000Z",
+        "supabase_browser_truth_checked_at": "2026-06-18T14:00:00+00:00"
+      },
+      {
         "filter_slug": "winix-filter-h-116130",
         "retailer_key": "oem-catalog",
         "affiliate_url": "https://www.winixamerica.com/product/filter-h-116130/",
@@ -5277,6 +5271,28 @@
         "supabase_browser_truth_notes": "Live-browser model-first ap-model-first-blueair-particle-411-live-browser-v1 (2026-06-22): official Blue Pure 411 Series Particle + Carbon Filter; $23.99 IN STOCK with Add to Cart; fits 411 / 411+ / 411 Auto only; NOT F4MAX Max-series; NOT Mini Max (FMINI). Supersedes BLUEAIR-PART411 search placeholder.",
         "csv_browser_truth_checked_at": "2026-06-22T16:20:00.000Z",
         "supabase_browser_truth_checked_at": "2026-06-22T16:20:00+00:00"
+      },
+      {
+        "filter_slug": "blueair-f4max-411max",
+        "retailer_key": "oem-catalog",
+        "affiliate_url": "https://www.blueair.com/products/f4max-replacement-pac-filter-for-411max-series-f4max",
+        "csv_browser_truth_classification": "direct_buyable",
+        "supabase_browser_truth_classification": "direct_buyable",
+        "csv_browser_truth_notes": "Live-browser model-first ap-model-first-blueair-particle-411-live-browser-v1 (2026-06-22): official F4MAX PDP; 411i Max / 411a Max only; F4MAX token in primary slice; Add to Cart per batch-v2 catalog identity + model-first wrong-family proof. NOT legacy 411/411+/411 Auto.",
+        "supabase_browser_truth_notes": "Live-browser model-first ap-model-first-blueair-particle-411-live-browser-v1 (2026-06-22): official F4MAX PDP; 411i Max / 411a Max only; F4MAX token in primary slice; Add to Cart per batch-v2 catalog identity + model-first wrong-family proof. NOT legacy 411/411+/411 Auto.",
+        "csv_browser_truth_checked_at": "2026-06-22T16:20:00.000Z",
+        "supabase_browser_truth_checked_at": "2026-06-22T16:20:00+00:00"
+      },
+      {
+        "filter_slug": "blueair-fmini-mini-max",
+        "retailer_key": "oem-catalog",
+        "affiliate_url": "https://www.blueair.com/products/replacement-filter-for-blue-pure-mini-max",
+        "csv_browser_truth_classification": "direct_buyable",
+        "supabase_browser_truth_classification": "direct_buyable",
+        "csv_browser_truth_notes": "Live re-proof 2026-06-22T18:55:15.000Z + model-first ap-model-first-blueair-particle-411-live-browser-v1: official FMINI PDP; Blue Pure Mini Max only; FMINI token in primary slice; $21.99; Add to Cart active; Shopify available:true.",
+        "supabase_browser_truth_notes": "Live re-proof 2026-06-22T18:55:15.000Z + model-first ap-model-first-blueair-particle-411-live-browser-v1: official FMINI PDP; Blue Pure Mini Max only; FMINI token in primary slice; $21.99; Add to Cart active; Shopify available:true.",
+        "csv_browser_truth_checked_at": "2026-06-22T18:55:15.000Z",
+        "supabase_browser_truth_checked_at": "2026-06-22T18:55:15+00:00"
       },
       {
         "filter_slug": "medify-ma25-rf",
@@ -5499,17 +5515,6 @@
         "supabase_browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00"
       },
       {
-        "filter_slug": "vornado-md1-0023",
-        "retailer_key": "oem-catalog",
-        "affiliate_url": "https://www.vornado.com/search?q=VORNADO-MD1-0023",
-        "csv_browser_truth_classification": null,
-        "supabase_browser_truth_classification": "likely_search_results",
-        "csv_browser_truth_notes": null,
-        "supabase_browser_truth_notes": "URL pattern suggests search/catalog listing",
-        "csv_browser_truth_checked_at": null,
-        "supabase_browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00"
-      },
-      {
         "filter_slug": "vornado-carbon-pad",
         "retailer_key": "oem-catalog",
         "affiliate_url": "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1",
@@ -5535,17 +5540,6 @@
         "filter_slug": "renpho-rp-ap068",
         "retailer_key": "oem-catalog",
         "affiliate_url": "https://renpho.com/search?q=RENPHO-RP-AP068",
-        "csv_browser_truth_classification": null,
-        "supabase_browser_truth_classification": "likely_not_found",
-        "csv_browser_truth_notes": null,
-        "supabase_browser_truth_notes": "matched not-found phrase heuristic",
-        "csv_browser_truth_checked_at": null,
-        "supabase_browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00"
-      },
-      {
-        "filter_slug": "renpho-rp-ap003",
-        "retailer_key": "oem-catalog",
-        "affiliate_url": "https://renpho.com/search?q=RENPHO-RP-AP003",
         "csv_browser_truth_classification": null,
         "supabase_browser_truth_classification": "likely_not_found",
         "csv_browser_truth_notes": null,
@@ -5714,9 +5708,9 @@
         "csv_browser_truth_classification": "direct_buyable",
         "supabase_browser_truth_classification": "direct_buyable",
         "csv_browser_truth_notes": "Playwright Honeywell bite #2: PDP HRF-R2 2-pack; Add to Cart; not search/404; R1/R3 tokens not dominant",
-        "supabase_browser_truth_notes": "visible purchase action: Add to Cart Set Up Subscription",
+        "supabase_browser_truth_notes": "Playwright Honeywell bite #2: PDP HRF-R2 2-pack; Add to Cart; not search/404; R1/R3 tokens not dominant",
         "csv_browser_truth_checked_at": "2026-05-22T23:00:00.000Z",
-        "supabase_browser_truth_checked_at": "2026-04-20T13:55:22.546+00:00"
+        "supabase_browser_truth_checked_at": "2026-05-22T23:00:00+00:00"
       },
       {
         "filter_slug": "honeywell-hrf-r2",
@@ -5736,9 +5730,9 @@
         "csv_browser_truth_classification": "direct_buyable",
         "supabase_browser_truth_classification": "direct_buyable",
         "csv_browser_truth_notes": "Playwright pilot v1: PDP title/H1 HRF-R3; Add to Cart visible; not search/404; wrong-family R1/R2 not dominant",
-        "supabase_browser_truth_notes": "visible purchase action: Add to Cart Set Up Subscription",
+        "supabase_browser_truth_notes": "Playwright pilot v1: PDP title/H1 HRF-R3; Add to Cart visible; not search/404; wrong-family R1/R2 not dominant",
         "csv_browser_truth_checked_at": "2026-05-22T22:30:00.000Z",
-        "supabase_browser_truth_checked_at": "2026-04-20T13:55:22.546+00:00"
+        "supabase_browser_truth_checked_at": "2026-05-22T22:30:00+00:00"
       },
       {
         "filter_slug": "honeywell-hrf-r3",
@@ -5756,11 +5750,6 @@
   "seed_import_blockers": [
     {
       "blocker_kind": "filter_slug_oem_collision",
-      "key": "levoit-rf-rar029",
-      "detail": "vertical-seed upserts on oem_part_number; CSV oem LEVOIT-CORE-300-P-RF is new but slug levoit-rf-rar029 already exists with oem LEVOIT-RF-RAR029 — insert would violate unique(slug)"
-    },
-    {
-      "blocker_kind": "filter_slug_oem_collision",
       "key": "coway-airmega250-rf",
       "detail": "vertical-seed upserts on oem_part_number; CSV oem COWAY-3109144 is new but slug coway-airmega250-rf already exists with oem COWAY-3712487 — insert would violate unique(slug)"
     },
@@ -5768,11 +5757,6 @@
       "blocker_kind": "filter_slug_oem_collision",
       "key": "coway-airmega400-rf",
       "detail": "vertical-seed upserts on oem_part_number; CSV oem COWAY-3104756 is new but slug coway-airmega400-rf already exists with oem COWAY-AMI400-RF — insert would violate unique(slug)"
-    },
-    {
-      "blocker_kind": "filter_slug_oem_collision",
-      "key": "winix-carbon-116131",
-      "detail": "vertical-seed upserts on oem_part_number; CSV oem WINIX-FILTER-I-116131 is new but slug winix-carbon-116131 already exists with oem WINIX-116131 — insert would violate unique(slug)"
     },
     {
       "blocker_kind": "filter_slug_oem_collision",
@@ -5791,16 +5775,6 @@
     },
     {
       "blocker_kind": "compat_unknown_filter_slug",
-      "key": "blueair-411a-max|blueair-f4max-411max",
-      "detail": "filter_slug blueair-f4max-411max absent from Supabase before compat upsert"
-    },
-    {
-      "blocker_kind": "compat_unknown_filter_slug",
-      "key": "blueair-mini-max|blueair-fmini-mini-max",
-      "detail": "filter_slug blueair-fmini-mini-max absent from Supabase before compat upsert"
-    },
-    {
-      "blocker_kind": "compat_unknown_filter_slug",
       "key": "shark-hp102|shark-hepa-he1fkbas",
       "detail": "filter_slug shark-hepa-he1fkbas absent from Supabase before compat upsert"
     },
@@ -5808,6 +5782,31 @@
       "blocker_kind": "compat_unknown_filter_slug",
       "key": "shark-hp132|shark-hepa-he1fkbas",
       "detail": "filter_slug shark-hepa-he1fkbas absent from Supabase before compat upsert"
+    },
+    {
+      "blocker_kind": "compat_unknown_filter_slug",
+      "key": "vornado-ac350|vornado-md1-0022",
+      "detail": "filter_slug vornado-md1-0022 absent from Supabase before compat upsert"
+    },
+    {
+      "blocker_kind": "compat_unknown_filter_slug",
+      "key": "vornado-ac500|vornado-md1-0022",
+      "detail": "filter_slug vornado-md1-0022 absent from Supabase before compat upsert"
+    },
+    {
+      "blocker_kind": "compat_unknown_filter_slug",
+      "key": "vornado-ac550|vornado-md1-0022",
+      "detail": "filter_slug vornado-md1-0022 absent from Supabase before compat upsert"
+    },
+    {
+      "blocker_kind": "compat_unknown_filter_slug",
+      "key": "vornado-ac500b|vornado-md1-0022",
+      "detail": "filter_slug vornado-md1-0022 absent from Supabase before compat upsert"
+    },
+    {
+      "blocker_kind": "compat_unknown_filter_slug",
+      "key": "vornado-ac550w|vornado-md1-0022",
+      "detail": "filter_slug vornado-md1-0022 absent from Supabase before compat upsert"
     },
     {
       "blocker_kind": "compat_unknown_filter_slug",
@@ -5831,13 +5830,8 @@
     },
     {
       "blocker_kind": "retailer_link_unknown_filter_slug",
-      "key": "blueair-f4max-411max/oem-catalog",
-      "detail": "filter_slug blueair-f4max-411max absent from Supabase before retailer link import"
-    },
-    {
-      "blocker_kind": "retailer_link_unknown_filter_slug",
-      "key": "blueair-fmini-mini-max/oem-catalog",
-      "detail": "filter_slug blueair-fmini-mini-max absent from Supabase before retailer link import"
+      "key": "vornado-md1-0022/oem-catalog",
+      "detail": "filter_slug vornado-md1-0022 absent from Supabase before retailer link import"
     },
     {
       "blocker_kind": "retailer_link_unknown_filter_slug",
@@ -5853,21 +5847,6 @@
       "blocker_kind": "filter_alias_unknown_filter_slug",
       "key": "shark-hepa-he1fkbas|Shark HP100 Series filter",
       "detail": "filter_slug shark-hepa-he1fkbas absent from Supabase before filter_aliases upsert"
-    },
-    {
-      "blocker_kind": "filter_alias_unknown_filter_slug",
-      "key": "blueair-f4max-411max|F4MAX",
-      "detail": "filter_slug blueair-f4max-411max absent from Supabase before filter_aliases upsert"
-    },
-    {
-      "blocker_kind": "filter_alias_unknown_filter_slug",
-      "key": "blueair-f4max-411max|110036",
-      "detail": "filter_slug blueair-f4max-411max absent from Supabase before filter_aliases upsert"
-    },
-    {
-      "blocker_kind": "filter_alias_unknown_filter_slug",
-      "key": "blueair-fmini-mini-max|FMINI",
-      "detail": "filter_slug blueair-fmini-mini-max absent from Supabase before filter_aliases upsert"
     }
   ],
   "dangerous_db_only_slugs": [
@@ -5968,6 +5947,22 @@
       "why_dangerous": "DB-only filter slug has live retailer_links — may surface in runtime discovery."
     },
     {
+      "filter_slug": "renpho-rp-ap003",
+      "danger_class": "db_only_with_live_links",
+      "supabase_oem_part_number": "RENPHO-RP-AP003",
+      "supabase_retailer_link_count": 1,
+      "supabase_compat_model_count": 4,
+      "why_dangerous": "DB-only filter slug has live retailer_links — may surface in runtime discovery."
+    },
+    {
+      "filter_slug": "vornado-md1-0023",
+      "danger_class": "db_only_with_live_links",
+      "supabase_oem_part_number": "VORNADO-MD1-0023",
+      "supabase_retailer_link_count": 1,
+      "supabase_compat_model_count": 6,
+      "why_dangerous": "DB-only filter slug has live retailer_links — may surface in runtime discovery."
+    },
+    {
       "filter_slug": "winix-filter-r",
       "danger_class": "db_only_with_live_links",
       "supabase_oem_part_number": "WINIX-FILTER-R",
@@ -5983,9 +5978,9 @@
     "browser_truth_parity_apply": "READY_FOR_OWNER_APPROVAL",
     "stale_db_delete_packet": "READY_FOR_OWNER_APPROVAL",
     "rationale": [
-      "seed_import_blockers=23; oem_collisions=7.",
-      "browser_truth_drift_rows=58; csv_safe_cta=34; supabase_safe_cta=28.",
-      "dangerous_db_only_slugs=13.",
+      "seed_import_blockers=20; oem_collisions=5.",
+      "browser_truth_drift_rows=60; csv_safe_cta=0; supabase_safe_cta=0.",
+      "dangerous_db_only_slugs=15.",
       "vertical-seed does not delete DB-only rows or sync browser_truth_* from CSV."
     ]
   },
@@ -5994,9 +5989,9 @@
     "PROVEN: vertical-seed import is upsert-only — no delete path for DB-only AP rows.",
     "PROVEN: vertical-seed retailer_links import does not write browser_truth_* columns from CSV.",
     "PROVEN: supabase_truth_status=CHECKED.",
-    "PROVEN: seed_import_blocker_count=23.",
-    "PROVEN: browser_truth_drift_count=58.",
-    "PROVEN: dangerous_db_only_slug_count=13."
+    "PROVEN: seed_import_blocker_count=20.",
+    "PROVEN: browser_truth_drift_count=60.",
+    "PROVEN: dangerous_db_only_slug_count=15."
   ],
   "inferred_facts": [
     "INFERRED: npm run seed:import:air-purifier will abort at importFilters() until OEM pre-alignment resolves slug/oem collisions.",

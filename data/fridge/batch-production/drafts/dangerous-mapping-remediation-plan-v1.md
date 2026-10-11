@@ -1,7 +1,7 @@
 # Dangerous mapping remediation plan v1
 
-- generated_at: **2026-06-08T05:42:45.806Z**
-- dangerous_model_count: **76**
+- generated_at: **2026-06-08T12:00:00.000Z**
+- dangerous_model_count: **79**
 - indexable_risk_page_count: **0**
 
 ## Smallest safe remediation sequence
@@ -9,7 +9,7 @@
 ### Step 1: noindex
 
 - root_cause_groups: samsung_haf_qin_da29_da97_conflicts, samsung_haf_cin_canonical_blockers, lg_lt_generation_co_maps, ge_xwf_xwfe_rpwfe_legacy_mixes, quarantined_models
-- affected_slug_count: **76**
+- affected_slug_count: **79**
 - owner_approval_required: **false**
 - repo_mutation_required: **false**
 - rationale: Defensive publication gate: zero indexable_risk_pages in committed audit, but block factory/index promotion for all 76 dangerous slugs until mappings are split or removed.
@@ -65,7 +65,7 @@
 ### Step 8: evidence_research
 
 - root_cause_groups: ge_xwf_xwfe_rpwfe_legacy_mixes
-- affected_slug_count: **7**
+- affected_slug_count: **10**
 - owner_approval_required: **true**
 - repo_mutation_required: **false**
 - rationale: 7 GE models mix RFID (XWFE/RPWFE) and legacy (XWF) shells — model-specific GE spec required.
@@ -73,7 +73,7 @@
 ### Step 9: split_mapping
 
 - root_cause_groups: ge_xwf_xwfe_rpwfe_legacy_mixes
-- affected_slug_count: **7**
+- affected_slug_count: **10**
 - owner_approval_required: **true**
 - repo_mutation_required: **true**
 - rationale: Retain single RFID or legacy slug per proven GE model.
@@ -92,7 +92,7 @@
 - suspected_correct_filter_family: **UNKNOWN**
 - safest_action: **evidence_research**
 - hyperagent_can_help: **true**
-- dominant_mapped_filter_patterns: da29-10105j (8); da29-00019a (6); da29-00003g (3); da29-00003g|da97-08006b (3); da29-00019a|da97-08006b (3); da29-00003g|da97-17376a|da97-17376b (2); da29-00020a (2); da29-00020a|da97-06317a (2); da29-00020a|da97-15217d (2); da29-00019a|da29-10105j (1); da29-10105j|da97-19467c (1)
+- dominant_mapped_filter_patterns: da29-10105j (6); da29-00019a (4); da97-17376b (4); da29-00003g (3); da29-00003g|da97-08006b (3); da29-00019a|da97-08006b (3); da29-00003g|da97-17376a|da97-17376b (2); da29-00020a (2); da29-00020a|da97-06317a (2); da29-00020a|da97-15217d (2); da29-00019a|da29-10105j (1); da29-10105j|da97-19467c (1)
 
 ### Affected slugs
 
@@ -136,7 +136,7 @@
 - suspected_correct_filter_family: **samsung::HAFCIN**
 - safest_action: **remove_mapping**
 - hyperagent_can_help: **false**
-- dominant_mapped_filter_patterns: da29-00012b|da29-00020b (1)
+- dominant_mapped_filter_patterns: da97-17376b (1)
 
 ### Affected slugs
 
@@ -189,18 +189,21 @@
 
 ## ge_xwf_xwfe_rpwfe_legacy_mixes
 
-- affected_slug_count: **7**
+- affected_slug_count: **10**
 - suspected_correct_filter_family: **UNKNOWN**
 - safest_action: **split_mapping**
 - hyperagent_can_help: **true**
-- dominant_mapped_filter_patterns: xwf|xwfe (4); rpwfe|xwfe (3)
+- dominant_mapped_filter_patterns: xwf|xwfe (6); rpwfe|xwfe (3); rpwfe|xwf (1)
 
 ### Affected slugs
 
 - `ge-gfe28gskww`
 - `ge-gfe28gynes`
 - `ge-gie21gsnerss`
+- `ge-gne27jstss`
+- `ge-gse25hskss`
 - `ge-gye22hskww`
+- `ge-pfe28kmkww`
 - `ge-pfe28kskbb`
 - `ge-pfe28kynww`
 - `ge-pwe23kmkes`

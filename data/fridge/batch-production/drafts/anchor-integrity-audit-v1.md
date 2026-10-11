@@ -2,7 +2,7 @@
 
 ## ANCHOR_HEALTH_SUMMARY
 
-- generated_at: **2026-06-08T15:06:46.256Z**
+- generated_at: **2026-06-08T12:00:00.000Z**
 - healthy_count: **5**
 - watchlist_count: **9**
 - disputed_count: **1**

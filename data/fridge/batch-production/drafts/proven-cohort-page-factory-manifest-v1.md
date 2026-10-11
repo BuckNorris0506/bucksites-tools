@@ -1,6 +1,6 @@
 # Proven cohort Page Factory manifest v1
 
-- generated_at: **2026-06-08T05:35:00.057Z**
+- generated_at: **2026-10-11T14:32:58.932Z**
 - source_audit: **data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json**
 - proven_correct_slug_count: **15**
 - eligible_for_owner_review_count: **8**

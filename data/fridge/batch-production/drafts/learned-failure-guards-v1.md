@@ -2,7 +2,7 @@
 
 - generated_at: **2026-06-08T12:00:00.000Z**
 - total_catalog_models: **500**
-- dangerous_count_regression: **PASS**
+- dangerous_count_regression: **BLOCK**
 - dangerous_slugs_all_blocked: **true**
 
 ## Confusion family block counts
@@ -12,8 +12,8 @@
 - `samsung_wildcard_da29_conflict`: **8**
 - `samsung_haf_cin_canonical`: **2**
 - `lg_lt_generation_mix`: **34**
-- `ge_xwf_xwfe_mix`: **4**
-- `ge_rpwfe_legacy_mix`: **3**
+- `ge_xwf_xwfe_mix`: **6**
+- `ge_rpwfe_legacy_mix`: **4**
 - `frigidaire_fppwfu01_vs_fppwfu02`: **0**
 - `frigidaire_ultrawf_vs_eptwfu01_mix`: **0**
 - `frigidaire_eptwfu01_vs_wf3cb_mix`: **0**
@@ -22,4 +22,4 @@
 
 ## Recommended next action
 
-Phase 2: wire learned_failure_guards into page-factory-preflight and quality-gate before any new registry rows.
+Reconcile dangerous-count regression before Page Factory scaling.

@@ -1,0 +1,43 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-10-12-r08-fxwpc-identity-tranche-supabase-parity-approve",
+      "source_queue_row_id": "queue-r08-fxwpc-identity-tranche-supabase-parity",
+      "source_decision_packet_id": "r08_fxwpc_identity_tranche_supabase_parity_owner_approval_v1",
+      "decided_at": "2026-10-12T00:00:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "R08 FXWPC identity tranche explicitly authorized: correct ge-fxwpc to pleated sediment (not carbon), 3-month/16000 gal interval; correct GXWH20S notes (FXUSC in-box, FXWPC pleated alternate, FXWTC carbon — not FXWPC). Excludes FXHTC interval, GXWH20S↔FXHTC mapping, R04/R09, blind WHW seed. Bound to r08-fxwpc-identity-tranche-supabase-parity-plan. Session apply with BUCKPARTS_IO_CAPABILITY=MUTATION and BUCKPARTS_R08_FXWPC_IDENTITY_TRANCHE_SUPABASE_PARITY_MUTATION_ENABLED=1 only.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "expires_at": "2027-10-12T00:00:00.000Z",
+      "prohibited_actions_still_apply": [
+        "Do not mutate any whole_house_water row outside the two bounded updates in the bound parity plan.",
+        "Do not run npm run seed:import:whole-house-water --write or full-catalog vertical seed.",
+        "Do not change FXHTC interval or GXWH20S→FXHTC compatibility mappings.",
+        "Do not touch R04 or R09.",
+        "Do not mark R08 VERIFIED_CLOSED from FXWPC tranche alone.",
+        "Do not run autonomous apply — explicit founder-run --apply with IO MUTATION and R08 mutation env flag required."
+      ],
+      "r08_fxwpc_identity_tranche_supabase_parity_owner_approval_context_v1": {
+        "founder_option_id": "approve_r08_fxwpc_identity_tranche_supabase_parity_plan",
+        "option_id": "approve_r08_fxwpc_identity_tranche_supabase_parity_plan",
+        "parity_plan_rel_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-fxwpc-identity-tranche-supabase-parity-plan-2026-10-11.json",
+        "expected_operation_count": 2,
+        "mutation_env_flag_required": "BUCKPARTS_R08_FXWPC_IDENTITY_TRANCHE_SUPABASE_PARITY_MUTATION_ENABLED=1",
+        "io_capability_required": "BUCKPARTS_IO_CAPABILITY=MUTATION",
+        "owner_approved_by": "Jared",
+        "approved_at": "2026-10-12T00:00:00.000Z"
+      },
+      "bound_artifacts_v1": [
+        {
+          "artifact_rel_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-fxwpc-identity-tranche-supabase-parity-plan-2026-10-11.json",
+          "sha256_at_binding": "7d1560832f2a5afe7f87f7f27fee272b6cdca6970da63d5b1a457fc58372a4cc",
+          "entry_type": "apply_plan"
+        }
+      ]
+    }
+  ]
+}

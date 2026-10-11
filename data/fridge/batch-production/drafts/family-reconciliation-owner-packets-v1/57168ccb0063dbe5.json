@@ -5,7 +5,7 @@
   "target_filter_slug": "rpwfe",
   "severity": "MEDIUM",
   "title": "Family reconciliation — filter::ge::rpwfe",
-  "summary": "13 model-line conflicts across 14 unlock slugs for rpwfe.",
+  "summary": "19 model-line conflicts across 20 unlock slugs for rpwfe.",
   "owner_checklist": [
     "Confirm model-line sibling mappings in data/compatibility_mappings.csv before evidence scaling.",
     "Resolve alias/co-map WARN rows before promoting LIKELY_CORRECT slugs to PROVEN_CORRECT.",
@@ -13,6 +13,21 @@
     "Do not apply HyperAgent compat removals until owner review closes NEEDS_COMPAT_REVIEW rows."
   ],
   "slug_rows": [
+    {
+      "fridge_slug": "ge-cwe23sshww",
+      "model_number": "CWE23SSHWW",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "rpwfe"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "ge-cwe23sshbb",
+      "conflicting_filter_slugs": [
+        "smartwater-mwfp"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
     {
       "fridge_slug": "ge-gfd28gslbb",
       "model_number": "GFD28GSLBB",
@@ -59,11 +74,60 @@
       "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
     },
     {
+      "fridge_slug": "ge-gfe28gmkbb",
+      "model_number": "GFE28GMKBB",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "rpwfe"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "ge-gfe28gelds",
+      "conflicting_filter_slugs": [
+        "opfg3f",
+        "pfmwf"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "ge-gfe28gskes",
+      "model_number": "GFE28GSKES",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "rpwfe"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "ge-gfe28gelds",
+      "conflicting_filter_slugs": [
+        "opfg3f",
+        "pfmwf"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
       "fridge_slug": "ge-gfe28gynww",
       "model_number": "GFE28GYNWW",
       "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "mapped_filter_slugs": [
         "rpwfe"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "ge-gfe28gelds",
+      "conflicting_filter_slugs": [
+        "opfg3f",
+        "pfmwf"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "ge-gfe28hskss",
+      "model_number": "GFE28HSKSS",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "rpwfe",
+        "smartwater-mwfp"
       ],
       "conflict_type": "model_line_filter_split",
       "conflicting_sibling_slug": "ge-gfe28gelds",
@@ -180,6 +244,21 @@
       "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
     },
     {
+      "fridge_slug": "ge-gye22gskww",
+      "model_number": "GYE22GSKWW",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "rpwfe"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "ge-gye22gskbb",
+      "conflicting_filter_slugs": [
+        "smartwater-mwfp"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
       "fridge_slug": "ge-pfe28kelds",
       "model_number": "PFE28KELDS",
       "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
@@ -197,6 +276,21 @@
     {
       "fridge_slug": "ge-pfe28kmkes",
       "model_number": "PFE28KMKES",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "rpwfe"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "ge-pfe28kblts",
+      "conflicting_filter_slugs": [
+        "smartwater-mwfp"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "ge-pfe28kynbb",
+      "model_number": "PFE28KYNBB",
       "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "mapped_filter_slugs": [
         "rpwfe"
