@@ -10,7 +10,7 @@
     "docs/BuckParts-TRUTH-INTEGRITY-REGISTRY.md"
   ],
   "created_at": "2026-06-23T03:27:11.000Z",
-  "last_re_audit_at": "2026-06-23T03:27:11.000Z",
+  "last_re_audit_at": "2026-10-11T20:40:00.000Z",
   "git_head_at_population": "bc29506d3de4d171c69371b41ea295920daa5c74",
   "population_note": "Initial seed from HyperAgent audits: R1 stale browser truth (shadow mode), R5 HQ handoff fake freshness test. Read-only — no Supabase/CSV/production mutation.",
   "findings": [
@@ -103,9 +103,9 @@
       "re_audit": {
         "workflow": "1) Run prove_gap to confirm gate still ignores checked_at age. 2) Run prove_mitigation report; record totals.stale_shadow_count and by_source_table. 3) If enforcement lands, run prove_fixed and transition to FIXED. 4) Cross-check AP parity packet apply status vs ap-runtime-convergence-gap residual slugs.",
         "cadence_days": 30,
-        "next_re_audit_after": "2026-07-23T00:00:00.000Z",
-        "last_re_audit_at": "2026-06-23T03:27:11.000Z",
-        "re_audit_owner": "hyperagent"
+        "next_re_audit_after": "2026-11-10T00:00:00.000Z",
+        "last_re_audit_at": "2026-10-11T20:40:00.000Z",
+        "re_audit_owner": "cursor_readonly"
       },
       "status_history": [
         {
@@ -210,9 +210,9 @@
       "re_audit": {
         "workflow": "1) Run prove_gap: confirm freshness test passes and HEAD != handoff top checkpoint when handoff not updated. 2) Check §0B vs top stopping-point agreement. 3) If head-parity test lands, run prove_fixed and set FIXED. 4) Count commits since handoff checkpoint for blast_radius note.",
         "cadence_days": 14,
-        "next_re_audit_after": "2026-07-07T00:00:00.000Z",
-        "last_re_audit_at": "2026-06-23T03:27:11.000Z",
-        "re_audit_owner": "hyperagent"
+        "next_re_audit_after": "2026-10-25T00:00:00.000Z",
+        "last_re_audit_at": "2026-10-11T20:40:00.000Z",
+        "re_audit_owner": "cursor_readonly"
       },
       "status_history": [
         {

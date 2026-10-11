@@ -1,0 +1,45 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-10-11-r07-winix-filter-a-h-phase1-supabase-parity-approve",
+      "source_queue_row_id": "queue-r07-winix-filter-a-h-phase1-supabase-parity",
+      "source_decision_packet_id": "r07_winix_filter_a_h_phase1_supabase_parity_owner_approval_v1",
+      "decided_at": "2026-10-11T20:45:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "I approve a bounded Supabase parity apply for R07 Phase 1 only: UPDATE winix-hepa-115115 to Winix Filter A / 115115 (no Filter H branding); DELETE compat winix-am80→winix-hepa-115115 and winix-5500-2→winix-hepa-115115; UPSERT winix-am80→winix-filter-h-116130 and RETAIN winix-5500-2→winix-filter-h-116130 with recommended=true; DELETE model alias WINIX 5500 from winix-5500-2. Excludes all other air-purifier catalog mutations, remaining 115115 mappings, R04/R08/R09, and blind full-catalog seed. Bound to data/ops/site-integrity/production-integrity-baseline-2026-10-10/r07-phase1-supabase-parity-plan-2026-10-11.json. Unlocks explicit founder-run npm run buckparts:r07-winix-filter-a-h-phase1-supabase-parity-guarded-apply -- --apply with BUCKPARTS_IO_CAPABILITY=MUTATION and BUCKPARTS_R07_PHASE1_SUPABASE_PARITY_MUTATION_ENABLED=1 in that session only.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "expires_at": "2027-10-11T20:45:00.000Z",
+      "prohibited_actions_still_apply": [
+        "Do not mutate any air_purifier row outside the six bounded operations in the bound parity plan.",
+        "Do not run npm run seed:import:air-purifier -- --write or any full-catalog vertical seed.",
+        "Do not mutate data/air-purifier CSV files from this Supabase approval (CSV repair remains PR #60).",
+        "Do not touch R04, R08, or R09.",
+        "Do not bulk-remap remaining winix-hepa-115115 model associations.",
+        "Do not mutate retailer_links, brands, models.csv content, or unrelated wedges.",
+        "Do not run autonomous or scheduled apply — explicit founder-run --apply with IO MUTATION and R07 mutation env flag required.",
+        "Approval alone does not mutate Supabase."
+      ],
+      "r07_winix_filter_a_h_phase1_supabase_parity_owner_approval_context_v1": {
+        "founder_option_id": "approve_r07_phase1_supabase_parity_plan",
+        "option_id": "approve_r07_phase1_supabase_parity_plan",
+        "parity_plan_rel_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r07-phase1-supabase-parity-plan-2026-10-11.json",
+        "expected_operation_count": 6,
+        "mutation_env_flag_required": "BUCKPARTS_R07_PHASE1_SUPABASE_PARITY_MUTATION_ENABLED=1",
+        "io_capability_required": "BUCKPARTS_IO_CAPABILITY=MUTATION",
+        "owner_approved_by": "Jared",
+        "approved_at": "2026-10-11T20:45:00.000Z"
+      },
+      "bound_artifacts_v1": [
+        {
+          "artifact_rel_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r07-phase1-supabase-parity-plan-2026-10-11.json",
+          "sha256_at_binding": "b03079f5023e69a39a017959096dc88fb432bc9fd7e8a12e4999797cccf1055d",
+          "entry_type": "apply_plan"
+        }
+      ]
+    }
+  ]
+}

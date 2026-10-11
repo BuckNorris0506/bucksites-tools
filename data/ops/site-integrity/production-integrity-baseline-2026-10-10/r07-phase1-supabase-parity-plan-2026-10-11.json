@@ -1,0 +1,44 @@
+{
+  "contract": "r07_winix_filter_a_h_phase1_supabase_parity_plan_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "supabase_mutation_authorized": false,
+  "apply_authorized": false,
+  "generated_at": "2026-10-11T20:45:00Z",
+  "source_repo_repair": "https://github.com/BuckNorris0506/bucksites-tools/pull/60",
+  "executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r07-executive-decision-packet-2026-10-11.json",
+  "expected_operation_count": 6,
+  "proposed_supabase_changes": {
+    "filter_updates": [
+      {
+        "filter_slug": "winix-hepa-115115",
+        "name": "Winix Filter A (115115)",
+        "notes": "Official Winix Filter A replacement set SKU 115115 (True HEPA cartridge)"
+      }
+    ],
+    "compatibility_removals": [
+      { "model_slug": "winix-am80", "filter_slug": "winix-hepa-115115" },
+      { "model_slug": "winix-5500-2", "filter_slug": "winix-hepa-115115" }
+    ],
+    "compatibility_upserts": [
+      {
+        "model_slug": "winix-am80",
+        "filter_slug": "winix-filter-h-116130",
+        "is_recommended": true
+      },
+      {
+        "model_slug": "winix-5500-2",
+        "filter_slug": "winix-filter-h-116130",
+        "is_recommended": true
+      }
+    ],
+    "model_alias_removals": [{ "model_slug": "winix-5500-2", "alias": "WINIX 5500" }]
+  },
+  "explicit_exclusions": [
+    "No other air_purifier_filters rows",
+    "No other compatibility_mappings rows",
+    "No retailer_links",
+    "No full vertical seed",
+    "No R04/R08/R09 scope"
+  ]
+}
