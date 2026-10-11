@@ -30,7 +30,7 @@
     "state": "ready"
   },
   "product_repair": {
-    "base_sha": "0d38bf74c59404764af0cc83c019f9f0cd0bb122",
+    "base_sha": "a8bd239ac020ee5a2da3b48b48bf39bd767fda98",
     "head_sha": "c5a0cee0edf58780b86a9ab00c3c2d65e132443d",
     "merge_commit": "a8bd239ac020ee5a2da3b48b48bf39bd767fda98",
     "merge_method": "merge_commit",
