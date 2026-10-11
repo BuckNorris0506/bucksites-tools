@@ -1,0 +1,51 @@
+{
+  "contract": "r03_closure_verification_v1",
+  "read_only": true,
+  "verified_at": "2026-10-11T04:57:09Z",
+  "immutable_baseline": {
+    "artifact": "READ_ME_AUDIT_REPORT.md",
+    "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+    "root_title": "Catalog refrigerator entry links to absent /brand route",
+    "root_heading": "R03 — P1 — Catalog refrigerator entry links to absent /brand route"
+  },
+  "classification": "VERIFIED_CLOSED",
+  "product_repair": {
+    "pull_request": "https://github.com/BuckNorris0506/bucksites-tools/pull/47",
+    "head_sha": "667689ae3b925a7c9dd7d83e56a232969cd6b88c",
+    "merge_method": "merge_commit",
+    "merged_at": "2026-10-11T04:51:49Z",
+    "merge_commit": "797418fd78674a2ffa12abb5684ccbe57896ebbe"
+  },
+  "preview": {
+    "deploy_id": "6acb127b847b8c000936197f",
+    "context": "deploy-preview",
+    "commit_ref": "667689ae3b925a7c9dd7d83e56a232969cd6b88c",
+    "state": "ready",
+    "url": "https://deploy-preview-47--buckparts.netlify.app",
+    "brand_http": 200,
+    "catalog_http": 200,
+    "catalog_refrigerator_href": "/brand",
+    "brand_page_h1": "Refrigerator filter brands",
+    "brand_browse_link_count": 31
+  },
+  "production_deploy": {
+    "deploy_id": "6acb15e7ad63800008313f8f",
+    "context": "production",
+    "branch": "main",
+    "commit_ref": "797418fd78674a2ffa12abb5684ccbe57896ebbe",
+    "manual_deploy": false,
+    "state": "ready",
+    "published_at": "2026-10-11T04:57:09.802Z",
+    "title": "Merge pull request #47 from BuckNorris0506/fix/r03-catalog-brand-index-route"
+  },
+  "production_readback": {
+    "brand_url": "https://buckparts.com/brand",
+    "brand_http": 200,
+    "brand_h1": "Refrigerator filter brands",
+    "brand_browse_link_count": 31,
+    "catalog_url": "https://buckparts.com/catalog",
+    "catalog_http": 200,
+    "catalog_refrigerator_href": "/brand",
+    "catalog_refrigerator_text": "Refrigerator water filters"
+  }
+}

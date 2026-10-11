@@ -128,19 +128,20 @@ If full closure cannot be established: **BLOCKED**, **AWAITING_PRODUCTION_VERIFI
 | Field | Value |
 |--------|--------|
 | **ROOT_ID** | R03 |
-| **TITLE** | UNKNOWN — per immutable October 10, 2026 baseline root **R03** (not ingested to repo) |
-| **PRIORITY** | UNKNOWN |
-| **RELEASE_BLOCKER** | UNKNOWN |
-| **CURRENT_STATE** | NOT_STARTED |
-| **CURRENT_OWNER / EXECUTOR** | UNKNOWN |
-| **ACTIVE_BRANCH / WORKTREE** | — |
-| **EXACT_SCOPE** | UNKNOWN — audit sequencing places **measurement consequences** after R01 |
-| **SMALLEST_REQUIRED_FIX** | UNKNOWN — copy from immutable baseline root R03 when ingested |
-| **CLOSURE_REQUIREMENTS** | Per baseline root R03 + closure standard (natural GA/instrumentation behavior) |
-| **CLOSURE_EVIDENCE** | — |
-| **BLOCKER** | R01; baseline not ingested |
-| **NEXT_LAWFUL_ACTION** | Ingest baseline root **R03**; sequence after R01 closure unless baseline permits otherwise |
-| **LAST_UPDATED** | 2026-10-10 |
+| **TITLE** | Catalog refrigerator entry links to absent /brand route |
+| **PRIORITY** | P1 |
+| **RELEASE_BLOCKER** | YES (historical baseline; closed after production readback) |
+| **CURRENT_STATE** | VERIFIED_CLOSED |
+| **ROOT_CAUSE** | Public catalog hub linked the refrigerator category to `/brand`, and that route was absent (baseline BROKEN_LINK, 1 path) |
+| **CURRENT_OWNER / EXECUTOR** | Integrity campaign closure 2026-10-11 after PR #47 production readback |
+| **ACTIVE_BRANCH / WORKTREE** | `main` @ `797418fd78674a2ffa12abb5684ccbe57896ebbe` |
+| **EXACT_SCOPE** | `/catalog` refrigerator entry → `/brand` (baseline: 1 listed path; status OBSERVED) |
+| **SMALLEST_REQUIRED_FIX** | Restore a `/brand` index the catalog refrigerator card can open, with brand browse links; regression on public category hub hrefs |
+| **CLOSURE_REQUIREMENTS** | Preview and Git-connected production: GET `/brand` 200 with refrigerator brand browse links; GET `/catalog` 200; refrigerator entry resolves to `/brand` |
+| **CLOSURE_EVIDENCE** | `r03-closure-verification-2026-10-11.json`. Preview deploy `6acb127b847b8c000936197f` commit `667689ae3b925a7c9dd7d83e56a232969cd6b88c`. Merge commit `797418fd78674a2ffa12abb5684ccbe57896ebbe` at 2026-10-11T04:51:49Z (merge commit). Production deploy `6acb15e7ad63800008313f8f`: context=production, branch=main, commit_ref=797418fd78674a2ffa12abb5684ccbe57896ebbe, manual_deploy=false, state=ready, published_at=2026-10-11T04:57:09.802Z. Production readback: `/brand` 200 h1 “Refrigerator filter brands” (31 brand links); `/catalog` 200 refrigerator card href `/brand`. |
+| **BLOCKER** | — |
+| **NEXT_LAWFUL_ACTION** | — (closed) |
+| **LAST_UPDATED** | 2026-10-11 |
 
 ---
 
