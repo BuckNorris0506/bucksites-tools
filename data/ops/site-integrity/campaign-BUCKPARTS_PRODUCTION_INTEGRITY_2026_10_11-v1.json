@@ -3,7 +3,7 @@
   "campaign_id": "BUCKPARTS_PRODUCTION_INTEGRITY_2026_10_11",
   "activated_at": "2026-10-11",
   "canonical_main_sha_at_activation": "6f9dbac660f63056fb7cc2b08a88e475a73dad13",
-  "canonical_main_sha_current": "561e35cb7517c091f2a891ac9c890cc728ec92f7",
+  "canonical_main_sha_current": "e42eb66d424a1574a7b4cb6cb13805117e3ea143",
   "immutable_baseline": {
     "repo_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/READ_ME_AUDIT_REPORT.md",
     "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188"
@@ -14,11 +14,11 @@
   "r07_executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r07-executive-decision-packet-2026-10-11.json",
   "r07_phase1_repo_repair": {
     "pull_request": "https://github.com/BuckNorris0506/bucksites-tools/pull/60",
-    "status": "READY_NOT_MERGED",
-    "tests": "src/lib/data/air-purifier/winix-filter-a-h-identity-phase1-v1.test.ts (7/7 PASS on branch)"
+    "merge_commit_sha": "e42eb66d424a1574a7b4cb6cb13805117e3ea143",
+    "status": "MERGED_VERIFIED_CLOSED",
+    "tests": "src/lib/data/air-purifier/winix-filter-a-h-identity-phase1-v1.test.ts (7/7 PASS)"
   },
-  "r07_mutation_authority_bottleneck": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r07-mutation-authority-bottleneck-2026-10-11.json",
-  "r07_blocker_classification": "mutation_authority_runtime_parity",
+  "r07_state": "VERIFIED_CLOSED",
   "r07_closure_artifact": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r07-closure-verification-2026-10-11.json",
   "required_pre_distribution_blockers": ["R04", "R08", "R09"],
   "next_lawful_actions": [],
