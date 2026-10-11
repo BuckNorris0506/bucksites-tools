@@ -1,0 +1,71 @@
+{
+  "contract": "r07_phase1_preview_readback_v1",
+  "read_only": true,
+  "root_id": "R07",
+  "classification": "PREVIEW_INVARIANTS_FAILED",
+  "generated_at": "2026-10-11T17:43:00Z",
+  "pull_request": "https://github.com/BuckNorris0506/bucksites-tools/pull/60",
+  "branch": "fix/r07-winix-filter-a-h-phase1",
+  "merge_commit": null,
+  "executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r07-executive-decision-packet-2026-10-11.json",
+  "repo_csv_repair": "COMPLETE_ON_BRANCH",
+  "runtime_parity": {
+    "observation": "Production and Netlify preview read from Supabase; CSV edits alone do not change rendered pages until vertical seed import applies.",
+    "seed_import_write_attempt": {
+      "command": "npm run seed:import:air-purifier -- --write",
+      "apply_status": "BLOCKED",
+      "mutation_preflight_blockers": [
+        "io_capability_read_index_cannot_mutate_supabase",
+        "trust_currency:trust_currency_revalidation:revalidation_cadence_missed",
+        "trust_currency:owner_decision_queue_stale_count:1",
+        "trust_currency:owner_decision_queue_stale_critical_count:1",
+        "trust_currency:truth_integrity_high_severity_revalidation_expired",
+        "trust_currency:trust_currency_aggregate:EXPIRED",
+        "founder_owner_mutation_approved_missing_or_inactive"
+      ]
+    },
+    "supabase_vs_csv_diff_sample": {
+      "key": "winix-hepa-115115",
+      "csv_value": "Winix Filter A (115115)",
+      "note": "Supabase still carries pre-Phase-1 Filter H naming at readback time"
+    }
+  },
+  "preview_host": "https://deploy-preview-60--buckparts.netlify.app",
+  "readback_counts": {
+    "/air-purifier/filter/winix-hepa-115115": {
+      "Filter_A": 2,
+      "Filter_H": 7,
+      "115115": 26,
+      "116130": 0,
+      "pass": false,
+      "reason": "Filter H still dominates; title not Filter A branded"
+    },
+    "/air-purifier/model/winix-am80": {
+      "Filter_A": 4,
+      "Filter_H": 3,
+      "115115": 6,
+      "116130": 0,
+      "pass": false,
+      "reason": "116130 absent; 115115 still linked"
+    },
+    "/air-purifier/model/winix-5500-2": {
+      "Filter_A": 4,
+      "Filter_H": 5,
+      "115115": 6,
+      "116130": 6,
+      "pass": false,
+      "reason": "115115 still present alongside 116130"
+    }
+  },
+  "production_baseline_comparison": {
+    "/air-purifier/filter/winix-hepa-115115": {
+      "Filter_A": 2,
+      "Filter_H": 7,
+      "115115": 26,
+      "116130": 0,
+      "note": "Preview matched production — no runtime change from CSV-only PR"
+    }
+  },
+  "merge_authorized": false,
+  "r07_verified_closed": false
+}
