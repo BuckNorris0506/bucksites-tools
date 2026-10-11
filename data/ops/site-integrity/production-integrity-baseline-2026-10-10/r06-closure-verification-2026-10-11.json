@@ -68,6 +68,8 @@
   },
   "tests": {
     "focused": "PASS — src/lib/trust/part-trust.test.ts (R06 regressions)",
+    "authoritative_validation_command": "node --import tsx --test src/lib/trust/part-trust.test.ts",
+    "authoritative_validation_note": "Prefer direct node test runner; npm test may pull unrelated suites and emit failures despite exit 0.",
     "ship_guard": {
       "push_assessment": "SAFE",
       "blockers": []
