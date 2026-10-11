@@ -4,3 +4,11 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# R13: default Netlify subdomain must not serve a duplicate crawlable origin.
+[[redirects]]
+  from = "/*"
+  to = "https://buckparts.com/:splat"
+  status = 301
+  force = true
+  conditions = { Host = ["buckparts.netlify.app"] }
