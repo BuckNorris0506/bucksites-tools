@@ -1,0 +1,84 @@
+{
+  "contract": "r13_closure_verification_v1",
+  "read_only": true,
+  "verified_at": "2026-10-11T14:52:00Z",
+  "classification": "VERIFIED_CLOSED",
+  "immutable_baseline": {
+    "artifact": "READ_ME_AUDIT_REPORT.md",
+    "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+    "root_heading": "R13 — P2 — Canonical-origin metadata disagrees and Netlify alias remains separately reachable"
+  },
+  "product_repair": [
+    {
+      "pull_request": "https://github.com/BuckNorris0506/bucksites-tools/pull/53",
+      "merge_commit": "24f758794848e3abec3bba470d2ef61327a6dd8f",
+      "merged_at": "2026-10-11T14:38:00Z",
+      "source_change": "homepage canonicalAlternatesForPath(\"/\"); initial netlify.toml Host conditions redirect (alias did not apply on production)"
+    },
+    {
+      "pull_request": "https://github.com/BuckNorris0506/bucksites-tools/pull/54",
+      "merge_commit": "088d08fb410c9484cb43b559c3fef809260c2e33",
+      "merged_at": "2026-10-11T14:50:00Z",
+      "source_change": "absolute URL redirects in netlify.toml plus public/_redirects for buckparts.netlify.app → buckparts.com"
+    }
+  ],
+  "preview": {
+    "pr_53": {
+      "host": "https://deploy-preview-53--buckparts.netlify.app",
+      "commit_ref": "c6d3dbef1f4fe01fd58a01f233357260eac43c12",
+      "deploy_id": "6acb9eb95ecf220008253741",
+      "state": "ready",
+      "home_canonical": "https://buckparts.com",
+      "catalog_http": 200,
+      "catalog_canonical": "https://buckparts.com/catalog",
+      "redirect_rules_check": "pass"
+    },
+    "pr_54": {
+      "host": "https://deploy-preview-54--buckparts.netlify.app",
+      "commit_ref": "641d8dc",
+      "deploy_id": "6acba158fb4f2400089eb723",
+      "state": "ready",
+      "home_canonical": "https://buckparts.com",
+      "catalog_ok": true,
+      "redirect_rules_check": "pass"
+    }
+  },
+  "production_deploy": {
+    "context": "production",
+    "branch": "main",
+    "commit_ref": "088d08fb410c9484cb43b559c3fef809260c2e33",
+    "deploy_id": "UNKNOWN_GITHUB_CHECK_RUNS_EMPTY",
+    "manual_deploy": false,
+    "state": "ready",
+    "html_deploy_marker_commit": "088d08fb410c9484cb43b559c3fef809260c2e33"
+  },
+  "production_readback": {
+    "home_url": "https://buckparts.com/",
+    "home_http": 200,
+    "home_canonical": "https://buckparts.com",
+    "catalog_url": "https://buckparts.com/catalog",
+    "catalog_http": 200,
+    "catalog_canonical": "https://buckparts.com/catalog",
+    "catalog_title_ok": true,
+    "alias_root_url": "https://buckparts.netlify.app/",
+    "alias_root_http": 301,
+    "alias_root_location": "https://buckparts.com/",
+    "alias_catalog_url": "https://buckparts.netlify.app/catalog",
+    "alias_catalog_http": 301,
+    "alias_catalog_location": "https://buckparts.com/catalog",
+    "robots_host": "Host: https://buckparts.com",
+    "robots_sitemap": "Sitemap: https://buckparts.com/sitemap.xml"
+  },
+  "first_merge_gap": {
+    "merge_commit": "24f758794848e3abec3bba470d2ef61327a6dd8f",
+    "alias_http_before_followup": 200,
+    "resolution": "PR #54 absolute redirect URLs + public/_redirects"
+  },
+  "tests": {
+    "focused": "PASS — src/app/page.test.ts, src/app/robots.test.ts",
+    "ship_guard": {
+      "push_assessment": "SAFE",
+      "blockers": []
+    }
+  }
+}
