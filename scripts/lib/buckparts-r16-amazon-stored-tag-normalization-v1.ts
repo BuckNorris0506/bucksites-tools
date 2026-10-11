@@ -100,8 +100,12 @@ export function sha256Text(text: string): string {
   return createHash("sha256").update(text).digest("hex");
 }
 
-export function sha256File(rootDir: string, rel: string, readText = readFileSync): string {
-  return sha256Text(readText(path.join(rootDir, rel), "utf8"));
+export function sha256File(
+  rootDir: string,
+  rel: string,
+  readText: (abs: string) => string = (abs) => readFileSync(abs, "utf8"),
+): string {
+  return sha256Text(readText(path.join(rootDir, rel)));
 }
 
 export function normalizeSlug(slug: string): string {
@@ -400,6 +404,9 @@ export async function applyR16SupabaseTagStripWriteV1(args: {
     mode: "write",
     io_capability: resolveIoCapabilityFromEnvV1(),
   });
+  if (!preflight.mutation_authorized) {
+    return { ok: false, blockers: [...preflight.blockers] };
+  }
   try {
     assertSupabaseMutationAuthorizedV1(preflight);
   } catch (err) {

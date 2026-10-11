@@ -385,14 +385,35 @@ export function retailerLinksDriftBlockers(check: ProtectedRetailerLinksCheckV1)
   return blockers;
 }
 
-function readGitBlobTextAtHead(rootDir: string, filePath: string): string | null {
-  const r = spawnSync("git", ["show", `HEAD:${filePath}`], {
+function readGitBlobTextAtRef(rootDir: string, ref: string, filePath: string): string | null {
+  const r = spawnSync("git", ["show", `${ref}:${filePath}`], {
     cwd: rootDir,
     encoding: "utf8",
     maxBuffer: 32 * 1024 * 1024,
   });
   if (r.status !== 0) return null;
   return String(r.stdout ?? "");
+}
+
+function readGitBlobTextAtHead(rootDir: string, filePath: string): string | null {
+  return readGitBlobTextAtRef(rootDir, "HEAD", filePath);
+}
+
+/** Baseline CSV for closeout allowances: origin/main when branch differs; else HEAD for uncommitted-only edits. */
+function retailerLinksAllowanceBaselineCsvTextV1(args: {
+  rootDir: string;
+  protectedRetailer: ProtectedRetailerLinksCheckV1;
+  injectedHeadCsvText?: string | null;
+}): string | null {
+  if (args.injectedHeadCsvText != null) return args.injectedHeadCsvText;
+  const rel = PROTECTED_RETAILER_LINKS_CSV_REL;
+  if (args.protectedRetailer.git_diff_head_vs_origin_main === true) {
+    return readGitBlobTextAtRef(args.rootDir, "origin/main", rel);
+  }
+  if (args.protectedRetailer.git_diff_working_tree_vs_head === true) {
+    return readGitBlobTextAtHead(args.rootDir, rel);
+  }
+  return readGitBlobTextAtHead(args.rootDir, rel);
 }
 
 /**
@@ -487,8 +508,11 @@ function buildBuckpartsShipGuardReportInternalV1(args: {
     protectedRetailer.listed_in_changed_files;
   const workingCsvAbs = path.join(rootDir, PROTECTED_RETAILER_LINKS_CSV_REL);
   const headCsvTextForAllowance = retailerLinksDirty
-    ? (args.retailerLinksCsvTexts?.headCsvText ??
-      readGitBlobTextAtHead(rootDir, PROTECTED_RETAILER_LINKS_CSV_REL))
+    ? retailerLinksAllowanceBaselineCsvTextV1({
+        rootDir,
+        protectedRetailer,
+        injectedHeadCsvText: args.retailerLinksCsvTexts?.headCsvText,
+      })
     : null;
   const workingCsvTextForAllowance = retailerLinksDirty
     ? (args.retailerLinksCsvTexts?.workingCsvText ??

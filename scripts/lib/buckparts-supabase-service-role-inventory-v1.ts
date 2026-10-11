@@ -39,6 +39,11 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
       mutation_lane: "retailer_link_parity_guarded_apply_v1",
     },
     {
+      rel_path: "scripts/lib/buckparts-r16-amazon-stored-tag-normalization-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "r16_amazon_stored_tag_normalization_v1",
+    },
+    {
       rel_path: "scripts/lib/buckparts-retailer-link-parity-issue-intake-v1.ts",
       access_class: "read_only",
     },
