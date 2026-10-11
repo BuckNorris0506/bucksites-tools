@@ -1,0 +1,216 @@
+{
+  "contract": "r08_executive_decision_packet_v1",
+  "read_only": true,
+  "root_id": "R08",
+  "generated_at": "2026-10-11T23:55:00Z",
+  "root_status_unchanged": "STILL_PRESENT",
+  "campaign_blocker_boundary_unchanged": "required_pre_distribution_blockers includes R08",
+  "immutable_baseline": {
+    "artifact": "READ_ME_AUDIT_REPORT.md",
+    "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+    "root_heading": "R08 — P1 — GE cartridge media/intervals and housing-size mappings conflated"
+  },
+  "scope_note": "This packet adjudicates authoritative GE truth for FXWPC (media, pleated characterization, interval, 2.5-inch class) and GXWH20S edges required to resolve FXWPC conflicts. Full R08 closure also includes FXHTC interval and GXWH20S→FXHTC size-class mapping; those are listed as sibling scope, not re-opened here for implementation.",
+  "authoritative_sources": [
+    {
+      "label": "GE Appliances Parts — FXWPC spec",
+      "url": "https://www.geapplianceparts.com/store/parts/spec/FXWPC",
+      "retrieved_at": "2026-10-11",
+      "role": "primary_manufacturer",
+      "claims": [
+        "Product: GE WHOLE HOUSE BASIC REPLACEMENT WATER FILTER (FXWPC)",
+        "Sand and Sediment Reduction: Yes",
+        "Nominal particulate reduction: 30 microns (manufacturer internal testing)",
+        "Filter Life: 3 Months or 16,000 gallons",
+        "Overall dimensions: 2.5 in W × 2.5 in D × 9.75 in H",
+        "No chlorine/carbon reduction called out on FXWPC spec table",
+        "Marketing compatibility callout names GXWH20T; accessory list includes GXWH20S housing"
+      ]
+    },
+    {
+      "label": "GE Salsify — filter element chart (doc 49-50043-3 excerpt via search index)",
+      "url": "https://products-salsify.geappliances.com/image/upload/s--2hwIBm-X--/48eddafbc42dc3ffbf3557d89a8cb715e8942cc8.pdf",
+      "retrieved_at": "2026-10-11",
+      "role": "primary_manufacturer",
+      "claims": [
+        "FXWPC: Function Sediment; Life 3 month/16,000 gallons; Construction Pleated",
+        "FXWTC: Carbon Paper (distinct SKU — not FXWPC)",
+        "FXUSC: Polyspun sediment (distinct construction)"
+      ]
+    },
+    {
+      "label": "GE GXWH20S installation instructions (49-50202)",
+      "url": "https://products-salsify.geappliances.com/image/upload/s--qbgnU6AN--/395dbdf31f13a3e741e7f42c124dcab31a741592.pdf",
+      "retrieved_at": "2026-10-11",
+      "role": "primary_manufacturer_housing_manual",
+      "claims": [
+        "Ships with Sediment filter FXUSC (Rev. 2) for GXWH20S only",
+        "Replacement element chart: FXWPC Sediment 3 month/16,000 gallons Pleated",
+        "FXWTC (Rev. 2) listed as Carbon Paper sediment-stage cartridge — not FXWPC",
+        "Parts list line: FXWPC Filter Element—Pleated (alternate element, not in-box default)",
+        "GXWH20S certified/test narrative references FXUSC (Rev. 2), not FXHTC"
+      ]
+    },
+    {
+      "label": "GE Appliances Parts — FXHTC spec (size contrast only)",
+      "url": "https://www.geapplianceparts.com/store/parts/spec/FXHTC",
+      "retrieved_at": "2026-10-11",
+      "role": "primary_manufacturer_cross_reference",
+      "claims": [
+        "FXHTC Overall Width/Depth: 4.5 in (different physical class from FXWPC 2.5 in)",
+        "Filter Life: 3 Months or 30,000 gallons",
+        "Chlorine taste/odor reduction: Yes; sediment reduction features present"
+      ]
+    },
+    {
+      "label": "Immutable baseline R08 narrative",
+      "path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/READ_ME_AUDIT_REPORT.md",
+      "role": "campaign_audit",
+      "claims": [
+        "FXWPC is pleated sediment, not carbon",
+        "Filter PDPs claim 6 months vs manufacturer 3-month guidance",
+        "GXWH20S primary FXHTC (4.5 in) conflicts with manual 2.5 in cartridge class"
+      ]
+    },
+    {
+      "label": "Production readback ge-fxwpc",
+      "url": "https://buckparts.com/whole-house-water/filter/ge-fxwpc",
+      "retrieved_at": "2026-10-11",
+      "role": "production_evidence",
+      "claims": [
+        "Rendered HTML contains carbon and 6-month interval language (grep sample)",
+        "Does not match GE FXWPC sediment + 3-month authority"
+      ]
+    }
+  ],
+  "identity_adjudication": {
+    "fxwpc_media_type": {
+      "classification": "PROVEN",
+      "statement": "GE FXWPC is a whole-house sediment reduction cartridge (sand/sediment; 30 µm nominal particulate). It is not a carbon cartridge."
+    },
+    "fxwpc_pleated": {
+      "classification": "PROVEN",
+      "statement": "GE documents FXWPC construction as Pleated (GXWH20S manual element chart; GE filter-element specification chart 49-50043-3)."
+    },
+    "fxwpc_vs_fxwtc_carbon": {
+      "classification": "PROVEN",
+      "statement": "For GXWH20S-class 2.5-inch elements, GE lists FXWTC (Rev. 2) as Carbon Paper chlorine reduction — not FXWPC. BuckParts must not label FXWPC as carbon."
+    },
+    "fxwpc_replacement_interval": {
+      "classification": "PROVEN",
+      "statement": "GE replacement guidance for FXWPC: 3 months or 16,000 gallons (whichever comes first per OEM spec tables)."
+    },
+    "fxwpc_physical_class": {
+      "classification": "PROVEN",
+      "statement": "FXWPC is a 2.5-inch × 9.75-inch cartridge class per GE parts spec dimensions."
+    },
+    "gxwh20s_default_vs_fxwpc": {
+      "classification": "PROVEN",
+      "statement": "GXWH20S ships with FXUSC (Rev. 2) polypropylene sediment filter. FXWPC is documented as an alternate Pleated sediment element in the same function/life class — not the in-box default."
+    },
+    "gxwh20s_fxwpc_recommended_mapping": {
+      "classification": "INFERRED",
+      "statement": "Repo mapping ge-whole-house-gxwh20s → ge-fxwpc (is_recommended=true) is plausibly defensible as an OEM alternate sediment cartridge, but only after customer-facing copy stops calling FXWPC carbon and uses 3-month interval. Prefer not elevating FXWPC above FXUSC without explicit staged recommendation policy."
+    },
+    "gxwh20s_fxhtc_mapping": {
+      "classification": "PROVEN_CONFLICT",
+      "statement": "Recommended mapping ge-whole-house-gxwh20s → ge-fxhtc conflicts with FXHTC 4.5-inch spec vs GXWH20S 2.5-inch cartridge family in manual. Hold or demote pending separate R08 repair tranche — out of FXWPC identity-only apply."
+    }
+  },
+  "current_state_diff": [
+    {
+      "layer": "data/whole-house-water/filters.csv ge-fxwpc",
+      "current": "name=GE whole home carbon filter; replacement_interval_months=6; notes=OEM carbon cartridge…",
+      "authoritative": "Sediment (pleated) cartridge; replacement_interval_months=3; notes cite 3 mo/16,000 gal sediment — not carbon",
+      "conflict": "PROVEN — media type and interval both wrong"
+    },
+    {
+      "layer": "data/whole-house-water/models.csv ge-whole-house-gxwh20s notes",
+      "current": "FXHTC (sediment) and FXWPC (carbon)",
+      "authoritative": "FXUSC (Rev. 2) in-box sediment; FXWPC pleated sediment alternate; FXWTC carbon paper for chlorine — FXWPC is not carbon",
+      "conflict": "PROVEN — FXWPC mislabeled carbon on model notes"
+    },
+    {
+      "layer": "data/whole-house-water/compatibility_mappings.csv ge-whole-house-gxwh20s → ge-fxwpc",
+      "current": "is_recommended=true",
+      "authoritative": "FXWPC appears in GXWH20S manual element chart as pleated sediment alternate",
+      "conflict": "INFERRED — mapping may remain after copy fix; conflict is copy/identity not existence"
+    },
+    {
+      "layer": "data/whole-house-water/compatibility_mappings.csv ge-whole-house-gxwh20s → ge-fxhtc",
+      "current": "is_recommended=true",
+      "authoritative": "FXHTC is 4.5-inch class; GXWH20S manual documents 2.5-inch FXUSC/FXWPC/FXWTC family",
+      "conflict": "PROVEN — cross-size recommended fit (sibling R08 scope)"
+    },
+    {
+      "layer": "production /whole-house-water/filter/ge-fxwpc",
+      "current": "carbon + 6-month strings in HTML (2026-10-11 curl sample)",
+      "authoritative": "Sediment pleated FXWPC; 3-month / 16,000 gal OEM interval",
+      "conflict": "PROVEN — rendered buyer-facing claims contradict GE"
+    },
+    {
+      "layer": "production /whole-house-water/model/ge-whole-house-gxwh20s",
+      "current": "FXWPC and carbon co-occur; FXHTC recommended alongside FXWPC (2026-10-11 sample)",
+      "authoritative": "Do not describe FXWPC as carbon; do not treat FXHTC as same housing size class without evidence",
+      "conflict": "PROVEN for FXWPC carbon label; PROVEN for FXHTC size class (sibling fix)"
+    },
+    {
+      "layer": "data/whole-house-water/filters.csv ge-fxhtc",
+      "current": "replacement_interval_months=6",
+      "authoritative": "GE FXHTC spec: 3 Months or 30,000 gallons",
+      "conflict": "PROVEN interval defect — sibling R08 scope, not FXWPC SKU identity"
+    }
+  ],
+  "runtime_architecture": {
+    "buyer_facing_source": "Supabase tables whole_house_water_parts, whole_house_water_models, whole_house_water_compatibility_mappings (see src/lib/data/whole-house-water/filters.ts, models.ts)",
+    "repo_csv_role": "Seed source via npm run seed:import:whole-house-water; CSV edits alone do not change production until import or bounded parity apply",
+    "parity_precedent": "R07 Phase 1 used bounded guarded Supabase apply after preview proved runtime reads DB not branch CSV",
+    "mutation_executor_for_r08": "NOT AUTHORIZED — do not create until founder bounded approval exists"
+  },
+  "executive_decision": {
+    "ready": true,
+    "governing_truth_fxwpc": "GE FXWPC (OEM part FXWPC) is a 2.5-inch-class whole-house Basic Replacement Water Filter for sediment/sand reduction (~30 µm nominal particulate), pleated construction, with OEM service interval of 3 months or 16,000 gallons. It is not a carbon filter; GE assigns carbon/chlorine reduction for this housing size class to FXWTC (Rev. 2), not FXWPC.",
+    "explicit_non_decisions": [
+      "Do not adjudicate full R08 FXHTC copy, chlorine claims, or all GXWH20S mapping demotions in the FXWPC identity tranche",
+      "Do not mass-edit other GE model→FXWPC mappings (gxwh30c/35f/40f) beyond shared CSV row and notes that repeat the carbon error",
+      "Do not treat retailer/marketplace carbon labels as authority over GE OEM specs"
+    ]
+  },
+  "minimum_repair_scope": {
+    "fxwpc_identity_tranche_definite": [
+      "data/whole-house-water/filters.csv: ge-fxwpc — set name/notes to sediment pleated identity; replacement_interval_months=3",
+      "data/whole-house-water/models.csv: ge-whole-house-gxwh20s — correct notes (FXWPC sediment pleated alternate; carbon = FXWTC not FXWPC; default in-box FXUSC Rev. 2)",
+      "Review other models.csv lines that echo FXWPC (carbon) if present (e.g. GXWH40F class copy)",
+      "Bounded Supabase parity: whole_house_water_parts row slug ge-fxwpc (name, notes, replacement_interval_months) + model notes for ge-whole-house-gxwh20s after founder approval — same pattern as R07",
+      "New regression test: CSV + optional golden strings — ge-fxwpc must not contain carbon; interval must be 3; FXWPC ≠ FXWTC"
+    ],
+    "r08_sibling_tranche_not_in_fxwpc_identity_apply": [
+      "ge-fxhtc replacement_interval_months 6→3 and any chlorine/sediment copy alignment",
+      "ge-whole-house-gxwh20s → ge-fxhtc recommended mapping demote/hold per 4.5 vs 2.5 inch PROVEN conflict",
+      "Landing/brand aggregate pages that repeat 6-month language for both cartridges"
+    ],
+    "out_of_scope": ["R04", "R09", "final baseline rerun", "blind full vertical seed"]
+  },
+  "required_validation": {
+    "tests": [
+      "node --import tsx --test src/lib/data/whole-house-water/ge-fxwpc-media-interval-r08-fixture-v1.test.ts (path TBD at implementation)",
+      "Existing WHW CSV integrity tests if touched rows participate"
+    ],
+    "preview_readback": [
+      "GET /whole-house-water/filter/ge-fxwpc — no primary carbon identity; 3-month (or OEM-equivalent) interval surfacing",
+      "GET /whole-house-water/model/ge-whole-house-gxwh20s — FXWPC not described as carbon"
+    ],
+    "production_readback": [
+      "Same URLs on https://buckparts.com after deploy + any authorized Supabase parity",
+      "Optional baseline sample: /whole-house-water, /whole-house-water/brand/ge, /whole-house-water/filter/ge-fxhtc for sibling tranche closure"
+    ],
+    "ship_guard": "npm run buckparts:ship-guard -- --enforce SAFE before merge"
+  },
+  "affected_routes_baseline": [
+    "/whole-house-water",
+    "/whole-house-water/brand/ge",
+    "/whole-house-water/filter/ge-fxwpc",
+    "/whole-house-water/filter/ge-fxhtc",
+    "/whole-house-water/model/ge-whole-house-gxwh20s"
+  ]
+}
