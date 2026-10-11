@@ -2,22 +2,21 @@ import React from "react";
 import {
   FRIDGE_MODEL_PDP_VISIBLE_PROOF_BLOCK_MARKER_V1,
   buildFridgeModelPdpVisibleProofCopyV1,
+  fridgeVisibleProofLinkIsCurrentEvidenceV1,
   pickLatestBrowserProofCheckedAtV1,
   shouldShowFridgeModelPdpVisibleProofBlockV1,
+  splitCheckedStoreProofPartsV1,
+  type FridgeModelPdpVisibleProofFilterV1,
 } from "@/lib/fridge/fridge-model-pdp-safe-buyer-path-visible-proof-v1";
 import { formatBuyLinkCheckedYyyyMmDd } from "@/lib/copy/public-trust";
 
-export type FridgeModelPdpVisibleProofFilterInputV1 = {
-  oem_part_number?: string | null;
-  retailer_links?: readonly {
-    browser_truth_checked_at?: string | null;
-  }[];
-};
+export type FridgeModelPdpVisibleProofFilterInputV1 = FridgeModelPdpVisibleProofFilterV1;
 
 export type FridgeModelPdpVisibleProofBlockProps = {
   fridgeModelSlug: string;
   quarantined: boolean;
   filters: readonly FridgeModelPdpVisibleProofFilterInputV1[];
+  now?: Date;
 };
 
 /**
@@ -29,6 +28,7 @@ export function FridgeModelPdpVisibleProofBlock({
   fridgeModelSlug,
   quarantined,
   filters,
+  now,
 }: FridgeModelPdpVisibleProofBlockProps) {
   void FRIDGE_MODEL_PDP_VISIBLE_PROOF_BLOCK_MARKER_V1;
 
@@ -42,18 +42,25 @@ export function FridgeModelPdpVisibleProofBlock({
     return null;
   }
 
-  const partNumbers = filters
-    .map((f) => f.oem_part_number ?? "")
-    .map((p) => p.trim())
-    .filter(Boolean);
-  const checkedAtIso = pickLatestBrowserProofCheckedAtV1(
-    filters.flatMap((f) => (f.retailer_links ?? []).map((l) => l.browser_truth_checked_at)),
+  const evidenceOptions = now ? { now } : undefined;
+  const { displayedPartNumbers, qualifyingPartNumbers } = splitCheckedStoreProofPartsV1(
+    filters,
+    evidenceOptions,
   );
+  const qualifyingCheckedAt = filters.flatMap((filter) => {
+    const partNumber = filter.oem_part_number?.trim() ?? "";
+    if (!partNumber || !qualifyingPartNumbers.includes(partNumber)) return [];
+    return (filter.retailer_links ?? [])
+      .filter((link) => fridgeVisibleProofLinkIsCurrentEvidenceV1(link, evidenceOptions))
+      .map((link) => link.browser_truth_checked_at);
+  });
+  const checkedAtIso = pickLatestBrowserProofCheckedAtV1(qualifyingCheckedAt);
   const lastCheckedYyyyMmDd = checkedAtIso
     ? formatBuyLinkCheckedYyyyMmDd(checkedAtIso)
     : null;
   const copy = buildFridgeModelPdpVisibleProofCopyV1({
-    partNumbers,
+    partNumbers: displayedPartNumbers,
+    qualifyingPartNumbers,
     lastCheckedYyyyMmDd,
   });
 
@@ -66,15 +73,17 @@ export function FridgeModelPdpVisibleProofBlock({
     >
       <h2 className="text-base font-semibold text-bp-text">{copy.heading}</h2>
       <p className="mt-2 text-sm leading-relaxed text-bp-muted">{copy.intro}</p>
-      <p className="mt-4 text-sm text-bp-text/90">
-        {copy.proof_status}
-        {copy.last_checked_label ? (
-          <>
-            {" "}
-            {copy.last_checked_label}.
-          </>
-        ) : null}
-      </p>
+      {copy.proof_status ? (
+        <p className="mt-4 text-sm text-bp-text/90">
+          {copy.proof_status}
+          {copy.last_checked_label ? (
+            <>
+              {" "}
+              {copy.last_checked_label}.
+            </>
+          ) : null}
+        </p>
+      ) : null}
       <p className="mt-3 text-sm text-bp-text/90">
         <span className="font-medium text-bp-text">{copy.mapped_filters_label}:</span>{" "}
         <span className="bp-code font-semibold text-bp-text">{copy.part_numbers_display}</span>

@@ -2,7 +2,15 @@
  * Owner-review UI prototype: homeowner-visible proof metadata gate for fridge model PDPs.
  * Scope: exactly the 21 SAFE_BUYER_PATH_PASS slugs from live customer-visible proof readiness.
  * Does not expand CTAs, invent links, emit Product JSON-LD offers, or claim live HTML proof.
+ *
+ * CHECKED_STORE_PROOF =
+ *   allowlist scope (shouldShowFridgeModelPdpVisibleProofBlockV1)
+ *   AND every displayed part has a link permitted by isLiveBuyerPathCtaEligibleV1.
+ * Allowlist membership alone never emits the checked-store sentence.
+ * Currency is that helper's existing LIVE_BROWSER_TRUTH_MAX_AGE_MS rule.
  */
+
+import { isLiveBuyerPathCtaEligibleV1 } from "@/lib/retailers/live-buyer-path-go-decision-v1";
 
 export const FRIDGE_MODEL_PDP_VISIBLE_PROOF_BLOCK_CONTRACT_V1 =
   "fridge_model_pdp_visible_proof_block_owner_review_v1" as const;
@@ -124,10 +132,24 @@ export const FRIDGE_MODEL_PDP_VISIBLE_PROOF_SUPPRESS_NOTE_V1 =
 export const FRIDGE_MODEL_PDP_VISIBLE_PROOF_NO_UNSAFE_CTA_NOTE_V1 =
   "A BuckParts Verified Link appears only after a product-page check clears. Search-only listings stay hidden." as const;
 
+export type FridgeModelPdpVisibleProofLinkV1 = {
+  retailer_key?: string | null;
+  affiliate_url?: string | null;
+  browser_truth_classification?: string | null;
+  browser_truth_buyable_subtype?: string | null;
+  browser_truth_notes?: string | null;
+  browser_truth_checked_at?: string | null;
+};
+
+export type FridgeModelPdpVisibleProofFilterV1 = {
+  oem_part_number?: string | null;
+  retailer_links?: readonly FridgeModelPdpVisibleProofLinkV1[] | null;
+};
+
 export type FridgeModelPdpVisibleProofCopyV1 = {
   heading: string;
   intro: string;
-  proof_status: string;
+  proof_status: string | null;
   last_checked_label: string | null;
   mapped_filters_label: string;
   part_numbers_display: string;
@@ -165,19 +187,74 @@ export function pickLatestBrowserProofCheckedAtV1(
   return bestIso;
 }
 
+export function fridgeVisibleProofLinkIsCurrentEvidenceV1(
+  link: FridgeModelPdpVisibleProofLinkV1,
+  options?: { now?: Date },
+): boolean {
+  const affiliateUrl = link.affiliate_url?.trim() ?? "";
+  if (!affiliateUrl) return false;
+  return isLiveBuyerPathCtaEligibleV1(
+    {
+      retailer_key: link.retailer_key,
+      affiliate_url: affiliateUrl,
+      browser_truth_classification: link.browser_truth_classification,
+      browser_truth_buyable_subtype: link.browser_truth_buyable_subtype,
+      browser_truth_notes: link.browser_truth_notes,
+      browser_truth_checked_at: link.browser_truth_checked_at,
+    },
+    { now: options?.now },
+  );
+}
+
+export function splitCheckedStoreProofPartsV1(
+  filters: readonly FridgeModelPdpVisibleProofFilterV1[],
+  options?: { now?: Date },
+): { displayedPartNumbers: string[]; qualifyingPartNumbers: string[] } {
+  const displayedPartNumbers: string[] = [];
+  const qualifyingPartNumbers: string[] = [];
+  for (const filter of filters) {
+    const partNumber = filter.oem_part_number?.trim() ?? "";
+    if (!partNumber || displayedPartNumbers.includes(partNumber)) continue;
+    displayedPartNumbers.push(partNumber);
+    const links = filter.retailer_links ?? [];
+    if (links.some((link) => fridgeVisibleProofLinkIsCurrentEvidenceV1(link, options))) {
+      qualifyingPartNumbers.push(partNumber);
+    }
+  }
+  return { displayedPartNumbers, qualifyingPartNumbers };
+}
+
+/** Aggregate sentence only when every displayed part has current buyer-path evidence. */
+export function checkedStoreProofSentenceV1(
+  displayedPartNumbers: readonly string[],
+  qualifyingPartNumbers: readonly string[],
+): string | null {
+  if (qualifyingPartNumbers.length === 0 || displayedPartNumbers.length === 0) return null;
+  const qualifying = new Set(qualifyingPartNumbers);
+  const coversEveryDisplayedPart = displayedPartNumbers.every((part) => qualifying.has(part));
+  if (coversEveryDisplayedPart) return FRIDGE_MODEL_PDP_VISIBLE_PROOF_STATUS_SAFE_V1;
+  return `We checked a direct store product page against ${formatFridgeModelPdpVisibleProofPartNumbersV1(qualifyingPartNumbers)}.`;
+}
+
 export function buildFridgeModelPdpVisibleProofCopyV1(args: {
   partNumbers: readonly string[];
+  qualifyingPartNumbers?: readonly string[];
   lastCheckedYyyyMmDd: string | null;
 }): FridgeModelPdpVisibleProofCopyV1 {
   const part_numbers_display = formatFridgeModelPdpVisibleProofPartNumbersV1(args.partNumbers);
+  const proof_status = checkedStoreProofSentenceV1(
+    args.partNumbers,
+    args.qualifyingPartNumbers ?? [],
+  );
   return {
     heading: "What we checked for this model",
     intro:
       "Before a store link appears on this page, we check a direct product page against the filter number(s) mapped to this fridge model.",
-    proof_status: FRIDGE_MODEL_PDP_VISIBLE_PROOF_STATUS_SAFE_V1,
-    last_checked_label: args.lastCheckedYyyyMmDd
-      ? `Last checked ${args.lastCheckedYyyyMmDd}`
-      : null,
+    proof_status,
+    last_checked_label:
+      proof_status && args.lastCheckedYyyyMmDd
+        ? `Last checked ${args.lastCheckedYyyyMmDd}`
+        : null,
     mapped_filters_label: "Filter number(s) to compare",
     part_numbers_display,
     identity_framing: FRIDGE_MODEL_PDP_VISIBLE_PROOF_COMPAT_FRAMING_V1,

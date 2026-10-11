@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, it } from "node:test";
 
 import { FridgeModelPdpVisibleProofBlock } from "@/components/fridge/FridgeModelPdpVisibleProofBlock";
+import { LIVE_BROWSER_TRUTH_MAX_AGE_MS } from "@/lib/retailers/launch-buy-links";
 import {
   FRIDGE_MODEL_PDP_SAFE_BUYER_PATH_VISIBLE_PROOF_SLUGS_V1,
   FRIDGE_MODEL_PDP_VISIBLE_PROOF_EXCLUDED_FAIL_SLUGS_V1,
@@ -15,6 +16,7 @@ import {
   FRIDGE_MODEL_PDP_VISIBLE_PROOF_STATUS_SAFE_V1,
   FRIDGE_MODEL_PDP_VISIBLE_PROOF_SUPPRESS_NOTE_V1,
   buildFridgeModelPdpVisibleProofCopyV1,
+  checkedStoreProofSentenceV1,
   isFridgeModelPdpSafeBuyerPathVisibleProofSlugV1,
   shouldShowFridgeModelPdpVisibleProofBlockV1,
 } from "@/lib/fridge/fridge-model-pdp-safe-buyer-path-visible-proof-v1";
@@ -28,6 +30,21 @@ const LIB_SOURCE = readFileSync(
   "src/lib/fridge/fridge-model-pdp-safe-buyer-path-visible-proof-v1.ts",
   "utf8",
 );
+
+const NOW = new Date("2026-07-15T12:00:00.000Z");
+const FRESH_CHECKED_AT = new Date(NOW.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+const STALE_CHECKED_AT = new Date(NOW.getTime() - LIVE_BROWSER_TRUTH_MAX_AGE_MS - 60_000).toISOString();
+
+function currentLink(checkedAt: string) {
+  return {
+    retailer_key: "amazon",
+    affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
+    browser_truth_classification: "direct_buyable" as const,
+    browser_truth_buyable_subtype: null,
+    browser_truth_notes: null,
+    browser_truth_checked_at: checkedAt,
+  };
+}
 
 const SAMPLE_FILTERS = [
   {
@@ -112,8 +129,13 @@ describe("fridge-model-pdp-safe-buyer-path-visible-proof-v1", () => {
   it("copy avoids unsafe OEM overclaim and promotes suppress / no unsafe CTA language", () => {
     const copy = buildFridgeModelPdpVisibleProofCopyV1({
       partNumbers: ["RPWFE"],
+      qualifyingPartNumbers: ["RPWFE"],
       lastCheckedYyyyMmDd: "2026-06-02",
     });
+    assert.equal(
+      checkedStoreProofSentenceV1(["RPWFE"], []),
+      null,
+    );
     assert.equal(copy.proof_status, FRIDGE_MODEL_PDP_VISIBLE_PROOF_STATUS_SAFE_V1);
     assert.equal(copy.last_checked_label, "Last checked 2026-06-02");
     assert.equal(copy.identity_framing, FRIDGE_MODEL_PDP_VISIBLE_PROOF_COMPAT_FRAMING_V1);
@@ -129,18 +151,110 @@ describe("fridge-model-pdp-safe-buyer-path-visible-proof-v1", () => {
 });
 
 describe("FridgeModelPdpVisibleProofBlock", () => {
+  it("does not emit the checked-store sentence from allowlist membership without current evidence", () => {
+    const html = renderToStaticMarkup(
+      createElement(FridgeModelPdpVisibleProofBlock, {
+        fridgeModelSlug: "ge-gfe28gmkbb",
+        quarantined: false,
+        filters: [...SAMPLE_FILTERS],
+        now: NOW,
+      }),
+    );
+    assert.ok(html.includes('data-fridge-model-pdp-visible-proof-v1="true"'));
+    assert.equal(html.includes(FRIDGE_MODEL_PDP_VISIBLE_PROOF_STATUS_SAFE_V1), false);
+    assert.equal(html.includes("Last checked"), false);
+  });
+
+  it("does not emit the checked-store sentence for stale buyer-path evidence", () => {
+    const html = renderToStaticMarkup(
+      createElement(FridgeModelPdpVisibleProofBlock, {
+        fridgeModelSlug: "ge-gfe28gmkbb",
+        quarantined: false,
+        filters: [
+          { oem_part_number: "RPWFE", retailer_links: [currentLink(STALE_CHECKED_AT)] },
+        ],
+        now: NOW,
+      }),
+    );
+    assert.equal(html.includes(FRIDGE_MODEL_PDP_VISIBLE_PROOF_STATUS_SAFE_V1), false);
+    assert.equal(html.includes("We checked a direct store product page"), false);
+    assert.equal(html.includes("Last checked"), false);
+  });
+
+  it("emits the checked-store sentence only for parts with current buyer-path evidence", () => {
+    const one = renderToStaticMarkup(
+      createElement(FridgeModelPdpVisibleProofBlock, {
+        fridgeModelSlug: "ge-gfe28gmkbb",
+        quarantined: false,
+        filters: [
+          { oem_part_number: "RPWFE", retailer_links: [currentLink(FRESH_CHECKED_AT)] },
+        ],
+        now: NOW,
+      }),
+    );
+    assert.ok(one.includes(FRIDGE_MODEL_PDP_VISIBLE_PROOF_STATUS_SAFE_V1));
+    assert.ok(one.includes(`Last checked ${FRESH_CHECKED_AT.slice(0, 10)}`));
+    assert.ok(one.includes("RPWFE"));
+
+    const partial = renderToStaticMarkup(
+      createElement(FridgeModelPdpVisibleProofBlock, {
+        fridgeModelSlug: "ge-gfe28gmkbb",
+        quarantined: false,
+        filters: [
+          { oem_part_number: "RPWFE", retailer_links: [currentLink(FRESH_CHECKED_AT)] },
+          { oem_part_number: "XWFE", retailer_links: [currentLink(STALE_CHECKED_AT)] },
+        ],
+        now: NOW,
+      }),
+    );
+    assert.equal(partial.includes(FRIDGE_MODEL_PDP_VISIBLE_PROOF_STATUS_SAFE_V1), false);
+    assert.ok(partial.includes("We checked a direct store product page against RPWFE."));
+    assert.equal(partial.includes("against RPWFE and XWFE"), false);
+    assert.equal(partial.includes("against XWFE"), false);
+
+    const all = renderToStaticMarkup(
+      createElement(FridgeModelPdpVisibleProofBlock, {
+        fridgeModelSlug: "ge-gfe28gmkbb",
+        quarantined: false,
+        filters: [
+          { oem_part_number: "RPWFE", retailer_links: [currentLink(FRESH_CHECKED_AT)] },
+          { oem_part_number: "XWFE", retailer_links: [currentLink(FRESH_CHECKED_AT)] },
+        ],
+        now: NOW,
+      }),
+    );
+    assert.ok(all.includes(FRIDGE_MODEL_PDP_VISIBLE_PROOF_STATUS_SAFE_V1));
+  });
+
+  it("keeps non-allowlisted models outside the proof block", () => {
+    const html = renderToStaticMarkup(
+      createElement(FridgeModelPdpVisibleProofBlock, {
+        fridgeModelSlug: "not-a-listed-fridge-model",
+        quarantined: false,
+        filters: [
+          { oem_part_number: "RPWFE", retailer_links: [currentLink(FRESH_CHECKED_AT)] },
+        ],
+        now: NOW,
+      }),
+    );
+    assert.equal(html, "");
+  });
+
   it("renders for a safe buyer-path slug with proof status, last checked, and part number", () => {
     const html = renderToStaticMarkup(
       createElement(FridgeModelPdpVisibleProofBlock, {
         fridgeModelSlug: "ge-cwe23sshww",
         quarantined: false,
-        filters: [...SAMPLE_FILTERS],
+        filters: [
+          { oem_part_number: "RPWFE", retailer_links: [currentLink(FRESH_CHECKED_AT)] },
+        ],
+        now: NOW,
       }),
     );
     assert.ok(html.includes('data-fridge-model-pdp-visible-proof-v1="true"'));
     assert.ok(html.includes("What we checked for this model"));
     assert.ok(html.includes(FRIDGE_MODEL_PDP_VISIBLE_PROOF_STATUS_SAFE_V1));
-    assert.ok(html.includes("Last checked 2026-06-02"));
+    assert.ok(html.includes(`Last checked ${FRESH_CHECKED_AT.slice(0, 10)}`));
     assert.ok(html.includes("Filter number(s) to compare"));
     assert.ok(html.includes("RPWFE"));
     assert.ok(html.includes(FRIDGE_MODEL_PDP_VISIBLE_PROOF_COMPAT_FRAMING_V1));
