@@ -340,19 +340,20 @@ If full closure cannot be established: **BLOCKED**, **AWAITING_PRODUCTION_VERIFI
 | Field | Value |
 |--------|--------|
 | **ROOT_ID** | R13 |
-| **TITLE** | UNKNOWN — per immutable October 10, 2026 baseline root **R13** (not ingested to repo) |
-| **PRIORITY** | UNKNOWN |
-| **RELEASE_BLOCKER** | UNKNOWN |
-| **CURRENT_STATE** | NOT_STARTED |
-| **CURRENT_OWNER / EXECUTOR** | UNKNOWN |
-| **ACTIVE_BRANCH / WORKTREE** | — |
-| **EXACT_SCOPE** | UNKNOWN |
-| **SMALLEST_REQUIRED_FIX** | UNKNOWN |
-| **CLOSURE_REQUIREMENTS** | Per baseline |
-| **CLOSURE_EVIDENCE** | — |
-| **BLOCKER** | Baseline not ingested |
-| **NEXT_LAWFUL_ACTION** | Ingest baseline root **R13** |
-| **LAST_UPDATED** | 2026-10-10 |
+| **TITLE** | Canonical-origin metadata disagrees and Netlify alias remains separately reachable |
+| **PRIORITY** | P2 |
+| **RELEASE_BLOCKER** | YES (historical baseline; closed after production readback) |
+| **CURRENT_STATE** | VERIFIED_CLOSED |
+| **ROOT_CAUSE** | Homepage lacked self-referencing canonical; default Netlify subdomain served duplicate 200 origin; robots/sitemap already pointed at `.com` |
+| **CURRENT_OWNER / EXECUTOR** | Integrity campaign closure 2026-10-11 after PR #53 + PR #54 production readback |
+| **ACTIVE_BRANCH / WORKTREE** | `main` @ `088d08fb410c9484cb43b559c3fef809260c2e33` |
+| **EXACT_SCOPE** | `/`, `/catalog`, sitewide robots host + alias policy (baseline: 2 alias pages sampled + metadata policy) |
+| **SMALLEST_REQUIRED_FIX** | Homepage canonical; 301 `buckparts.netlify.app` → `buckparts.com`; keep robots Host/Sitemap on `.com` |
+| **CLOSURE_REQUIREMENTS** | Production: `/` and `/catalog` 200 with `.com` canonicals; alias URLs 301 to `.com`; robots Host/Sitemap `.com` |
+| **CLOSURE_EVIDENCE** | `r13-closure-verification-2026-10-11.json`. PR #53 merge `24f7587…` (canonical). PR #54 merge `088d08f…` (alias 301). Production readback: home canonical `https://buckparts.com`; catalog canonical `https://buckparts.com/catalog`; `buckparts.netlify.app/` → 301 `https://buckparts.com/`; robots Host `https://buckparts.com`. |
+| **BLOCKER** | — |
+| **NEXT_LAWFUL_ACTION** | — (closed) |
+| **LAST_UPDATED** | 2026-10-11 |
 
 ---
 
