@@ -53,6 +53,8 @@ test("sitewide social metadata references OG and Twitter image routes", () => {
   const first = ogImages[0];
   assert.ok(first && typeof first === "object" && "url" in first);
   assert.equal(first.url, SITE_SOCIAL_OG_IMAGE_PATH);
+  assert.equal(SITE_SOCIAL_OG_IMAGE_PATH, "/opengraph-image.png");
+  assert.notEqual(SITE_SOCIAL_OG_IMAGE_PATH, "/opengraph-image");
   assert.equal(first.width, SITE_SOCIAL_OG_IMAGE_WIDTH);
   assert.equal(first.height, SITE_SOCIAL_OG_IMAGE_HEIGHT);
   assert.equal(first.alt, SITE_SOCIAL_OG_IMAGE_ALT);

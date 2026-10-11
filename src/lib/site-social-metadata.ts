@@ -9,7 +9,7 @@ export const SITE_SOCIAL_OG_DESCRIPTION =
   "Look up refrigerator, air purifier, and water filter replacements. BuckParts checks fit evidence and safe buying paths before showing a BuckParts Verified Link.";
 
 /** App Router static OG image (see src/app/opengraph-image.png). */
-export const SITE_SOCIAL_OG_IMAGE_PATH = "/opengraph-image";
+export const SITE_SOCIAL_OG_IMAGE_PATH = "/opengraph-image.png";
 
 export const SITE_SOCIAL_OG_IMAGE_WIDTH = 1200;
 export const SITE_SOCIAL_OG_IMAGE_HEIGHT = 630;
