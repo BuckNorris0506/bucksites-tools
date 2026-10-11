@@ -17,6 +17,7 @@ export type BuyLinkRow = {
   browser_truth_buyable_subtype?: string | null;
   /** When set on the primary gated row, TieredBuyLinks may show a buy-link check date footnote. */
   browser_truth_checked_at?: string | null;
+  browser_truth_notes?: string | null;
 };
 
 /**

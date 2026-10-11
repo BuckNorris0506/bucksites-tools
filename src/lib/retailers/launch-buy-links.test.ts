@@ -23,6 +23,10 @@ import {
   summarizeStaleBrowserTruthShadowCounts,
 } from "./launch-buy-links";
 
+/** Fixed evaluation clock: May–Jun 2026 fixture checked_at values stay within LIVE_BROWSER_TRUTH_MAX_AGE_MS. */
+const LAUNCH_BUY_LINKS_TEST_NOW = new Date("2026-07-15T12:00:00.000Z");
+const launchBuyLinksTestGateOptions = { now: LAUNCH_BUY_LINKS_TEST_NOW } as const;
+
 describe("isSearchEngineDiscoveryUrl (major search hosts)", () => {
   it("flags Google /search?q= for any retailer_key via isSearchPlaceholderBuyLink", () => {
     assert.equal(
@@ -252,7 +256,7 @@ describe("buyable subtype foundation (strict direct_buyable gate)", () => {
         affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
         browser_truth_classification: "direct_buyable",
         browser_truth_checked_at: freshCheckedAt,
-      }),
+      }, launchBuyLinksTestGateOptions),
       null,
     );
   });
@@ -288,7 +292,7 @@ describe("buyable subtype foundation (strict direct_buyable gate)", () => {
         affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
         browser_truth_classification: "direct_buyable",
         browser_truth_buyable_subtype: BUYABLE_SUBTYPES.BLOCKED_UNSAFE,
-      }),
+      }, launchBuyLinksTestGateOptions),
       "unsafe_browser_truth",
     );
   });
@@ -333,7 +337,7 @@ describe("isHardDeniedBrowserTruthNotes (explicit status tokens only)", () => {
         browser_truth_checked_at: freshCheckedAt,
         browser_truth_notes:
           "Official PDP; Add to Cart present. PROVEN: wrong_family_tokens_seen [] in primary buy box.",
-      }),
+      }, launchBuyLinksTestGateOptions),
       null,
     );
   });
@@ -347,7 +351,7 @@ describe("isHardDeniedBrowserTruthNotes (explicit status tokens only)", () => {
         browser_truth_classification: "direct_buyable",
         browser_truth_checked_at: freshCheckedAt,
         browser_truth_notes: "WRONG_FAMILY: model mismatch",
-      }),
+      }, launchBuyLinksTestGateOptions),
       "hard_denied_browser_truth",
     );
   });
@@ -361,7 +365,7 @@ describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with
         retailer_key: "oem-parts-catalog",
         affiliate_url: "https://www.frigidaire.com/en/catalogsearch/result/?q=WF3CB",
         browser_truth_classification: "likely_valid",
-      }),
+      }, launchBuyLinksTestGateOptions),
       "search_placeholder",
     );
   });
@@ -372,7 +376,7 @@ describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with
         retailer_key: "oem-parts-catalog",
         affiliate_url: "https://www.lg.com/us/appliances-accessories/lg-lt1000p-refrigerator-water-filter",
         browser_truth_classification: null,
-      }),
+      }, launchBuyLinksTestGateOptions),
       "missing_browser_truth",
     );
   });
@@ -383,7 +387,7 @@ describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with
         retailer_key: "amazon",
         affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
         browser_truth_classification: "likely_search_results",
-      }),
+      }, launchBuyLinksTestGateOptions),
       "unsafe_browser_truth",
     );
   });
@@ -394,7 +398,7 @@ describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with
         retailer_key: "oem-catalog",
         affiliate_url: "https://www.honeywellstore.com/store/products/true-hepa-replacement-filter-r-hrf-r1.htm",
         browser_truth_classification: "likely_valid",
-      }),
+      }, launchBuyLinksTestGateOptions),
       "unsafe_browser_truth",
     );
   });
@@ -406,7 +410,7 @@ describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with
         affiliate_url: "https://www.honeywellstore.com/store/products/true-hepa-replacement-filter-r-hrf-r1.htm",
         browser_truth_classification: "direct_buyable",
         browser_truth_checked_at: freshCheckedAt,
-      }),
+      }, launchBuyLinksTestGateOptions),
       null,
     );
   });
@@ -417,7 +421,7 @@ describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with
         retailer_key: "oem-solventum-ap810-case-pdp",
         affiliate_url: "https://www.solventum.com/en-us/home/v/v000075117/",
         browser_truth_classification: "likely_valid",
-      }),
+      }, launchBuyLinksTestGateOptions),
       "indirect_discovery",
     );
   });
@@ -428,7 +432,7 @@ describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with
         retailer_key: "oem-catalog",
         affiliate_url: "https://www.kinetico.com/en-us/for-home/water-filtration/",
         browser_truth_classification: "likely_valid",
-      }),
+      }, launchBuyLinksTestGateOptions),
       "indirect_discovery",
     );
   });
@@ -439,7 +443,7 @@ describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with
         retailer_key: "oem-parts-catalog",
         affiliate_url: "https://www.geapplianceparts.com/store/parts/spec/MWF",
         browser_truth_classification: "likely_valid",
-      }),
+      }, launchBuyLinksTestGateOptions),
       "broken_destination",
     );
   });
@@ -451,7 +455,7 @@ describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with
         affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
         browser_truth_classification: "direct_buyable",
         browser_truth_checked_at: freshCheckedAt,
-      }),
+      }, launchBuyLinksTestGateOptions),
       null,
     );
   });
@@ -462,7 +466,7 @@ describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with
         retailer_key: "amazon",
         affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
         browser_truth_classification: "likely_valid",
-      }),
+      }, launchBuyLinksTestGateOptions),
       "unsafe_browser_truth",
     );
   });
@@ -1088,7 +1092,10 @@ describe("Waterdrop exact-proof purchase-option priority", () => {
       "6bbf8586-a87e-46de-932c-2bc341587619",
     );
     assert.deepEqual(
-      filterRealBuyRetailerLinks([unsafeWaterdropLink, amazonLink]).map((r) => r.id),
+      filterRealBuyRetailerLinks(
+        [unsafeWaterdropLink, amazonLink],
+        launchBuyLinksTestGateOptions,
+      ).map((r) => r.id),
       ["6bbf8586-a87e-46de-932c-2bc341587619"],
     );
   });
@@ -1113,14 +1120,17 @@ describe("staleBrowserTruthShadowClassification (diagnostics after live gate enf
   });
 
   it("filterRealBuyRetailerLinks excludes stale direct_buyable rows", () => {
-    const links = filterRealBuyRetailerLinks([
-      {
-        retailer_key: "amazon",
-        affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
-        browser_truth_classification: "direct_buyable",
-        browser_truth_checked_at: staleCheckedAt,
-      },
-    ]);
+    const links = filterRealBuyRetailerLinks(
+      [
+        {
+          retailer_key: "amazon",
+          affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
+          browser_truth_classification: "direct_buyable",
+          browser_truth_checked_at: staleCheckedAt,
+        },
+      ],
+      { now },
+    );
     assert.equal(links.length, 0);
   });
 

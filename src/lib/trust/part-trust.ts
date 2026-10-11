@@ -1,6 +1,10 @@
 import type { BuyLinkRow } from "@/components/BuyLinks";
 import type { BuyPathSortContext } from "@/lib/retailers/launch-buy-links";
-import { selectBestVerifiedBuyLink } from "@/lib/retailers/launch-buy-links";
+import {
+  BUYABLE_SUBTYPES,
+  normalizeBuyableSubtype,
+  selectBestVerifiedBuyLink,
+} from "@/lib/retailers/launch-buy-links";
 
 export type MatchConfidence = "high" | "medium" | "unknown";
 export type MatchBasis =
@@ -53,6 +57,34 @@ function preferredWinnerLink(
   return selectBestVerifiedBuyLink(links, sortContext);
 }
 
+/**
+ * Customer-facing original vs compatible follows the surviving gated buy-path row,
+ * not the catalog part-number identity alone.
+ */
+export function oemOrCompatibleFromPreferredGatedBuyLink(args: {
+  preferredWinnerLink: BuyLinkRow | null;
+  approvedRetailerLinks: number;
+}): OemOrCompatible {
+  if (args.approvedRetailerLinks === 0 || !args.preferredWinnerLink) {
+    return "unknown";
+  }
+  const subtype = normalizeBuyableSubtype(args.preferredWinnerLink.browser_truth_buyable_subtype);
+  if (subtype === BUYABLE_SUBTYPES.COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE) {
+    return "compatible";
+  }
+  if (subtype === BUYABLE_SUBTYPES.MULTIPACK_DIRECT_BUYABLE) {
+    const notes = (args.preferredWinnerLink.browser_truth_notes ?? "").toLowerCase();
+    if (
+      notes.includes("compatible") ||
+      notes.includes("aftermarket") ||
+      notes.includes("not oem")
+    ) {
+      return "compatible";
+    }
+  }
+  return "oem";
+}
+
 export function buildPartPageTrust(args: PartPageTrustArgs): PartTrustSummary {
   const approved_retailer_links = args.retailerLinks.length;
   const preferred_winner_link = preferredWinnerLink(
@@ -91,11 +123,16 @@ export function buildPartPageTrust(args: PartPageTrustArgs): PartTrustSummary {
       ? "suppress_buy"
       : "show_confident_buy";
 
+  const oem_or_compatible = oemOrCompatibleFromPreferredGatedBuyLink({
+    preferredWinnerLink: preferred_winner_link,
+    approvedRetailerLinks: approved_retailer_links,
+  });
+
   return {
     match_confidence,
     match_basis,
-    oem_or_compatible: "oem",
-    compatible_risk_level: "low",
+    oem_or_compatible,
+    compatible_risk_level: oem_or_compatible === "compatible" ? "medium" : "low",
     evidence_notes,
     requires_manual_verification,
     approved_retailer_links,
@@ -158,11 +195,16 @@ export function buildModelPageTrust(args: ModelPageTrustArgs): PartTrustSummary 
     evidence_notes.push("Multiple mapped parts exist and none is marked recommended, so BuckParts should not pick a buy-ready winner yet");
   }
 
+  const oem_or_compatible = oemOrCompatibleFromPreferredGatedBuyLink({
+    preferredWinnerLink: preferred_winner_link,
+    approvedRetailerLinks: approved_retailer_links,
+  });
+
   return {
     match_confidence,
     match_basis,
-    oem_or_compatible: "oem",
-    compatible_risk_level: "low",
+    oem_or_compatible,
+    compatible_risk_level: oem_or_compatible === "compatible" ? "medium" : "low",
     evidence_notes,
     requires_manual_verification,
     approved_retailer_links,

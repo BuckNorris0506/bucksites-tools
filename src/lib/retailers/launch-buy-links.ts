@@ -475,7 +475,7 @@ export function summarizeStaleBrowserTruthShadowCounts<
   let stale_browser_truth_checked_at_count = 0;
 
   for (const link of links) {
-    if (!isDirectBuyableSafeCtaRow(link)) continue;
+    if (!isDirectBuyableSafeCtaRow(link, options)) continue;
     live_direct_buyable_count += 1;
     const shadow = staleBrowserTruthShadowClassification(link, options);
     if (!shadow) continue;
@@ -545,8 +545,11 @@ export function summarizeBuyPathGateSuppression<
 }
 
 /** Strips search-placeholder rows and browser-truth-unproven rows before rendering buy CTAs. */
-export function filterRealBuyRetailerLinks<T extends BuyLinkGateLinkV1>(links: T[]): T[] {
-  return links.filter((l) => buyLinkGateFailureKind(l) === null);
+export function filterRealBuyRetailerLinks<T extends BuyLinkGateLinkV1>(
+  links: T[],
+  options?: { now?: Date; maxAgeMs?: number },
+): T[] {
+  return links.filter((l) => buyLinkGateFailureKind(l, options) === null);
 }
 
 type WinnerSelectableBuyLink = {
@@ -849,10 +852,12 @@ export function isDirectBuyableSafeCtaRow<
     browser_truth_buyable_subtype?: string | null;
     retailer_key?: string | null;
     affiliate_url: string;
+    browser_truth_checked_at?: string | null;
+    browser_truth_notes?: string | null;
   },
->(link: T): boolean {
+>(link: T, options?: { now?: Date; maxAgeMs?: number }): boolean {
   return (
-    buyLinkGateFailureKind(link) === null &&
+    buyLinkGateFailureKind(link, options) === null &&
     link.browser_truth_classification?.trim() === "direct_buyable"
   );
 }
