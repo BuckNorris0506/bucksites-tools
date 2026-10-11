@@ -1,0 +1,41 @@
+{
+  "contract": "buckparts_production_integrity_campaign_state_v1",
+  "campaign_id": "BUCKPARTS_PRODUCTION_INTEGRITY_2026_10_11",
+  "activated_at": "2026-10-11",
+  "canonical_main_sha_at_activation": "6f9dbac660f63056fb7cc2b08a88e475a73dad13",
+  "immutable_baseline": {
+    "repo_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/READ_ME_AUDIT_REPORT.md",
+    "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188"
+  },
+  "triage_artifact": "data/ops/site-integrity/remaining-root-triage-2026-10-11.json",
+  "roots_verified_closed": ["R01", "R16"],
+  "roots_pending_durable_closure_on_main": ["R02"],
+  "next_lawful_actions": [
+    {
+      "root_id": "R02",
+      "action": "docs_evidence_pr_merge_verify",
+      "branch_intent": "docs/r02-verified-closure"
+    },
+    {
+      "root_id": "R03",
+      "action": "verify_production_then_smallest_fix",
+      "lane": "technical_navigation_metadata",
+      "status": "queued_after_r02_merge"
+    }
+  ],
+  "required_pre_distribution_blockers_after_r02": [
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R13",
+    "R17"
+  ],
+  "merge_policy": "serialize_integrity_merges",
+  "max_parallel_worker_lanes": 3,
+  "final_baseline_rerun": "NOT_YET",
+  "broad_distribution_release_ready": false
+}

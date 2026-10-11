@@ -1,0 +1,88 @@
+{
+  "contract": "r02_closure_verification_v1",
+  "read_only": true,
+  "verified_at": "2026-10-11",
+  "immutable_baseline": {
+    "artifact": "READ_ME_AUDIT_REPORT.md",
+    "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+    "root_snapshot": "r02-baseline-root-v1.json"
+  },
+  "canonical_main_sha_at_verification": "6f9dbac660f63056fb7cc2b08a88e475a73dad13",
+  "production_site_url": "https://buckparts.com",
+  "production_deploy_marker": {
+    "source": "HTML meta buckparts-deploy-commit on homepage fetch",
+    "commit_ref": "6f9dbac660f63056fb7cc2b08a88e475a73dad13"
+  },
+  "product_code_repair_required": false,
+  "classification": {
+    "R02_CURRENT_CLASSIFICATION": "VERIFIED_CURRENTLY_WORKING",
+    "R02_SEARCH": "PASS",
+    "R02_HYDRATION": "PASS",
+    "R02_NATURAL_MEASUREMENT": "PASS",
+    "R02_REPAIR_REQUIRED": "NO"
+  },
+  "hydration_evidence": {
+    "next_static_chunks_loaded": true,
+    "sample_chunk_urls": [
+      "https://buckparts.com/_next/static/chunks/fd9d1056-c82e9b72e958ea1e.js",
+      "https://buckparts.com/_next/static/chunks/main-app-ea05d39ddb9d74ee.js"
+    ],
+    "window_gtag_type": "function",
+    "dataLayer_present": true,
+    "homepage_search_interactive_after_load": true
+  },
+  "search_cases": [
+    {
+      "query": "WRX735SDHZ",
+      "entry": "homepage SearchForm after hydration",
+      "final_url": "https://buckparts.com/fridge/whirlpool-wrx735sdhz",
+      "broken_home_q_fallback": false,
+      "note": "Client navigation to /search?q= then server direct-model redirect per resolveCustomerSearchRouteV1"
+    },
+    {
+      "query": "EDR4RXD1",
+      "entry": "homepage SearchForm after hydration",
+      "final_url": "https://buckparts.com/search?q=EDR4RXD1",
+      "broken_home_q_fallback": false,
+      "results_rendered": true
+    },
+    {
+      "query": "HE15FKPET",
+      "entry": "homepage SearchForm after hydration",
+      "final_url": "https://buckparts.com/search?q=HE15FKPET",
+      "broken_home_q_fallback": false,
+      "disambiguation_ui": true
+    }
+  ],
+  "attribution_contract": {
+    "source": "src/components/SearchForm.tsx router.push without UTM propagation; src/components/AnalyticsScripts.tsx send_page_view on config",
+    "utm_landing_url_tested": "https://buckparts.com/?utm_source=r02test&utm_medium=verification&utm_campaign=integrity",
+    "ga_page_view_dl_included_utms": true,
+    "utm_appended_on_search_navigation": false,
+    "intended_behavior": "GA first-hit page_location captures campaign params; client search nav does not require URL-level UTM preservation"
+  },
+  "natural_ga_evidence": {
+    "measurement_id": "G-Z2TV02DKPZ",
+    "collect_endpoint_observed": "https://www.google-analytics.com/g/collect",
+    "events_observed": [
+      { "en": "page_view", "dl_includes_utms_on_landing": true },
+      { "en": "form_start", "context": "homepage search interaction" },
+      { "en": "page_view", "dl": "https://buckparts.com/fridge/whirlpool-wrx735sdhz" },
+      { "en": "fridge_model_view", "ep.event_name": "fridge_model_view", "ep.page_type": "fridge_model" }
+    ],
+    "duplicate_page_view_in_sampled_navigation": false,
+    "ga_search_event_in_source_contract": false,
+    "search_intelligence_path": "server-side Supabase search_events via src/lib/search/telemetry.ts"
+  },
+  "third_party_measurement_note": "Grow/Snowplow beacons observed (baseline noted); distinct from GA4 and not R02 closure criteria.",
+  "content_page_opened": {
+    "url": "https://buckparts.com/fridge/whirlpool-wrx735sdhz",
+    "method": "full document navigation",
+    "no_go_clicks_for_analytics": true
+  },
+  "unknowns": [
+    "Whether every client-side App Router transition emits a second GA page_view without full document load — repo has no SPA route-change GA helper beyond initial gtag config",
+    "Supabase search_events row write on production searches not verified in this pass"
+  ],
+  "closure_status": "VERIFIED_CLOSED"
+}

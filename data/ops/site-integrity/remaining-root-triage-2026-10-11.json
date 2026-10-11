@@ -1,0 +1,378 @@
+{
+  "contract": "remaining_site_integrity_root_triage_v1",
+  "read_only": true,
+  "generated_at": "2026-10-11T04:30:00.000Z",
+  "canonical_main_sha": "6f9dbac660f63056fb7cc2b08a88e475a73dad13",
+  "production_site_url": "https://buckparts.com",
+  "immutable_baseline_source": {
+    "primary_artifact": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/READ_ME_AUDIT_REPORT.md",
+    "primary_artifact_sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+    "baseline_date": "2026-10-10",
+    "release_decision_at_baseline": "SITE_INTEGRITY_FIXES_REQUIRED",
+    "repo_partial_ingest": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r16-baseline-root-v1.json",
+    "search_locations": [
+      "data/ops/site-integrity/production-integrity-baseline-2026-10-10/ (R16 partial only)",
+      "docs/operations/BuckParts-SITE-INTEGRITY-REMEDIATION-LEDGER.md (references only)",
+      "/Users/jaredbuckman/bucksites-tools-operating-main",
+      "/Users/jaredbuckman/bucksites-tools-r01 and sibling worktrees",
+      "Cursor agent stores",
+      "/Users/jaredbuckman/Downloads/READ_ME_AUDIT_REPORT.md (FOUND — full R01–R17 narrative)"
+    ]
+  },
+  "ledger_mapping_errors": [
+    {
+      "root_id": "R03",
+      "ledger_placeholder_suggested": "measurement consequences after R01",
+      "immutable_baseline_title": "Catalog refrigerator entry links to absent /brand route",
+      "note": "Ledger EXACT_SCOPE incorrectly inferred R03 as measurement; baseline R03 is BROKEN_LINK on /catalog → /brand."
+    },
+    {
+      "root_id": "R02",
+      "ledger_placeholder_suggested": "search consequences only in sequencing note",
+      "immutable_baseline_title": "Hydration-dependent GA and interactive search are not operational",
+      "note": "Baseline R02 is MEASUREMENT_DEFECT (GA + search + R01 dependency), not a separate search-only root."
+    },
+    {
+      "root_id": "R08",
+      "ledger_phase_placeholder": "commercial-link reconciliation",
+      "immutable_baseline_title": "GE cartridge media/intervals and housing-size mappings conflated",
+      "note": "Baseline R08 is PAGE-SPECIFIC_DATA_DEFECT (whole-house GE), not commercial UUID work."
+    },
+    {
+      "root_id": "R09",
+      "ledger_phase_placeholder": "commercial-link reconciliation",
+      "immutable_baseline_title": "AP903 configuration and AP910R media contradict manufacturer",
+      "note": "Baseline R09 is 3M whole-house data/copy, not R16 commercial scope."
+    },
+    {
+      "root_id": "R10",
+      "ledger_phase_placeholder": "navigation / origin / indexability bucket",
+      "immutable_baseline_title": "Honeywell R pack quantities labeled sizes",
+      "note": "Baseline R10 is AP Honeywell pack copy, not origin/sitemap."
+    },
+    {
+      "root_id": "R11",
+      "ledger_phase_placeholder": "navigation / origin / indexability bucket",
+      "immutable_baseline_title": "Pilot no-link state still promises opening checked product page",
+      "note": "Baseline R11 is AP pilot copy/CTA state mismatch."
+    },
+    {
+      "root_id": "R17",
+      "ledger_placeholder": "UNKNOWN — rerun production integrity baseline",
+      "immutable_baseline_title": "Explicit social image URL points to nonexistent extensionless endpoint",
+      "note": "Ledger R17 describes future full baseline rerun; immutable baseline R17 is P2 og:image path defect on 57 fridge filter pages."
+    }
+  ],
+  "roots": [
+    {
+      "root_id": "R01",
+      "immutable_baseline": {
+        "title": "Referenced production assets missing: CSS and all Next JS chunks",
+        "priority": "P0",
+        "category": "SYSTEMIC_ROOT_DEFECT",
+        "baseline_scope": "1343 listed paths; 40 JS + 1 CSS 404 at baseline"
+      },
+      "prior_ledger_state": "VERIFIED_CLOSED",
+      "current_classification": "VERIFIED_CLOSED",
+      "current_evidence": "Production 2026-10-11: deploy marker c583fd19…; sampled /_next/static chunk 200 application/javascript; buckparts:live-site-smoke:check static_asset_status=OK.",
+      "distribution_blocker": false,
+      "smallest_next_action": "—",
+      "closure_proof_required": "—"
+    },
+    {
+      "root_id": "R02",
+      "immutable_baseline": {
+        "title": "Hydration-dependent GA and interactive search are not operational",
+        "priority": "P1",
+        "category": "MEASUREMENT_DEFECT",
+        "baseline_scope": "1343 paths; RUNTIME_CONFIRMED_ON23 at baseline"
+      },
+      "prior_ledger_state": "NOT_STARTED (placeholder)",
+      "current_classification": "VERIFIED_CLOSED",
+      "current_evidence": "r02-closure-verification-2026-10-11.json — hydration PASS, search PASS, natural GA page_view + fridge_model_view PASS at main 6f9dbac…; no product-code repair.",
+      "distribution_blocker": false,
+      "smallest_next_action": "—",
+      "closure_proof_required": "—"
+    },
+    {
+      "root_id": "R03",
+      "immutable_baseline": {
+        "title": "Catalog refrigerator entry links to absent /brand route",
+        "priority": "P1",
+        "category": "BROKEN_LINK",
+        "baseline_scope": "1 path (/catalog)"
+      },
+      "prior_ledger_state": "NOT_STARTED (mis-mapped as measurement in EXACT_SCOPE note)",
+      "current_classification": "STILL_PRESENT",
+      "current_evidence": "Production /catalog HTML href=\"/brand\"; GET https://buckparts.com/brand → 404. Source unchanged: src/lib/catalog/public-category-hub.ts href /brand.",
+      "distribution_blocker": true,
+      "smallest_next_action": "Point refrigerator hub card to existing canonical browse route; extend public-category-hub.test.ts href resolution.",
+      "closure_proof_required": "Production /catalog refrigerator card 200 target; no /brand 404 from public hub."
+    },
+    {
+      "root_id": "R04",
+      "immutable_baseline": {
+        "title": "Compatibility-review warning contradicted by right-place and identity-equivalence copy",
+        "priority": "P1",
+        "category": "SYSTEMIC_ROOT_DEFECT",
+        "baseline_scope": "2 paths (/filter/gswf, /filter/gswf2)"
+      },
+      "prior_ledger_state": "NOT_STARTED",
+      "current_classification": "PARTIALLY_RESOLVED",
+      "current_evidence": "Production GSWF/GSWF2: review/caution copy present; no 'right place' string; 'Also listed as GSWF2' alias block remains on /filter/gswf.",
+      "distribution_blocker": true,
+      "smallest_next_action": "Align alias/identity copy with unresolved compatibility state per baseline regression fixtures.",
+      "closure_proof_required": "Rendered GSWF/GSWF2 without unconditional fit authority; typed successor only with evidence."
+    },
+    {
+      "root_id": "R05",
+      "immutable_baseline": {
+        "title": "Static allowlist emits checked-store proof without requiring current evidence",
+        "priority": "P1",
+        "category": "SYSTEMIC_ROOT_DEFECT",
+        "baseline_scope": "21 fridge model pages at baseline"
+      },
+      "prior_ledger_state": "NOT_STARTED",
+      "current_classification": "STILL_PRESENT",
+      "current_evidence": "Production /fridge/ge-gfe28gmkbb and /fridge/frigidaire-ffhb2740ps render data-fridge-model-pdp-visible-proof-v1 blocks ('What we checked for this model'). Source: fridge-model-pdp-safe-buyer-path-visible-proof-v1.ts.",
+      "distribution_blocker": true,
+      "smallest_next_action": "Derive visible proof from per-part current evidence; remove unconditional allowlist assertions.",
+      "closure_proof_required": "Zero-proof and stale-proof fixtures fail closed on affected model PDPs."
+    },
+    {
+      "root_id": "R06",
+      "immutable_baseline": {
+        "title": "Mapping counts and constants generate unsupported fit/OEM confidence",
+        "priority": "P1",
+        "category": "SYSTEMIC_ROOT_DEFECT",
+        "baseline_scope": "712 listed paths at baseline"
+      },
+      "prior_ledger_state": "NOT_STARTED",
+      "current_classification": "PARTIALLY_RESOLVED",
+      "current_evidence": "PR #44 merged: oemOrCompatibleFromPreferredGatedBuyLink in part-trust.ts; Shark HE15/HE3 production Compatible replacement. Sample /air-purifier/filter/alen-b75-mp shows Part identity not blanket Original part. Full 712-page rescan not executed this pass.",
+      "distribution_blocker": true,
+      "smallest_next_action": "Extend trust-builder coverage on vertical templates; spot-rescan high-traffic PDPs for count-derived OEM/confidence copy.",
+      "closure_proof_required": "Tests: aftermarket never original; gated winner drives pill; ambiguous mappings stay uncertain."
+    },
+    {
+      "root_id": "R07",
+      "immutable_baseline": {
+        "title": "Winix115115 mislabeled FilterH and unsafe model associations propagated",
+        "priority": "P1",
+        "category": "PAGE-SPECIFIC_DATA_DEFECT",
+        "baseline_scope": "107 listed paths at baseline"
+      },
+      "prior_ledger_state": "NOT_STARTED",
+      "current_classification": "STILL_PRESENT",
+      "current_evidence": "Production /air-purifier/filter/winix-hepa-115115 still contains 'Filter H' (4×) and HE15FKPET-scale 115115 identity; Filter A only 1×. data/air-purifier/filters.csv identity unchanged in main.",
+      "distribution_blocker": true,
+      "smallest_next_action": "Correct Winix A/H identity and 5500 vs 5500-2 edges per baseline data boundary.",
+      "closure_proof_required": "Production winix-hepa-115115 and affected model pages match manufacturer Filter A vs Filter H."
+    },
+    {
+      "root_id": "R08",
+      "immutable_baseline": {
+        "title": "GE cartridge media/intervals and housing-size mappings conflated",
+        "priority": "P1",
+        "category": "PAGE-SPECIFIC_DATA_DEFECT",
+        "baseline_scope": "8 listed paths at baseline"
+      },
+      "prior_ledger_state": "NOT_STARTED (ledger phase mis-tag)",
+      "current_classification": "STILL_PRESENT",
+      "current_evidence": "Production /whole-house-water/filter/ge-fxwpc HTML still references carbon and 6-month interval language (baseline: pleated sediment, 3-month guidance).",
+      "distribution_blocker": true,
+      "smallest_next_action": "Correct GE FXWPC/FXHTC media and interval copy; hold GXWH20S cross-size fit until manual evidence.",
+      "closure_proof_required": "Production PDP copy matches cited GE manufacturer specs on sampled routes."
+    },
+    {
+      "root_id": "R09",
+      "immutable_baseline": {
+        "title": "AP903 configuration and AP910R media contradict manufacturer",
+        "priority": "P1",
+        "category": "PAGE-SPECIFIC_DATA_DEFECT",
+        "baseline_scope": "4 listed paths at baseline"
+      },
+      "prior_ledger_state": "NOT_STARTED (ledger phase mis-tag)",
+      "current_classification": "STILL_PRESENT",
+      "current_evidence": "Production /whole-house-water/model/3m-aquapure-ap903 contains dual-stage, AP910R, AP917HD, carbon strings consistent with baseline contradiction.",
+      "distribution_blocker": true,
+      "smallest_next_action": "Correct AP902/AP903/AP904 standard-cartridge story in data + rendered copy.",
+      "closure_proof_required": "AP903 model page matches manufacturer single-cartridge configuration."
+    },
+    {
+      "root_id": "R10",
+      "immutable_baseline": {
+        "title": "Honeywell R pack quantities labeled sizes",
+        "priority": "P2",
+        "category": "PAGE-SPECIFIC_DATA_DEFECT",
+        "baseline_scope": "3 listed paths at baseline"
+      },
+      "prior_ledger_state": "NOT_STARTED (ledger phase mis-tag)",
+      "current_classification": "NEEDS_EVIDENCE",
+      "current_evidence": "Production /air-purifier/filter/honeywell-hrf-r1 HTTP 200; visible text includes 'Size' tokens but this pass did not extract exact pack-vs-size phrasing from rendered body.",
+      "distribution_blocker": false,
+      "smallest_next_action": "Re-read Honeywell HRF rail copy on R1/R2/R3 PDPs against baseline manufacturer citation.",
+      "closure_proof_required": "Pack count distinct from cartridge geometry on all three Honeywell R filter PDPs."
+    },
+    {
+      "root_id": "R11",
+      "immutable_baseline": {
+        "title": "Pilot no-link state still promises opening checked product page",
+        "priority": "P2",
+        "category": "SYSTEMIC_ROOT_DEFECT",
+        "baseline_scope": "4 listed paths at baseline"
+      },
+      "prior_ledger_state": "NOT_STARTED (ledger phase mis-tag)",
+      "current_classification": "STILL_PRESENT",
+      "current_evidence": "Production /air-purifier/filter/levoit-rf-rar040: 'No verified link right now' plus 'Opens the checked Levoit product page' / official Levoit copy while no /air-purifier/go/ CTA.",
+      "distribution_blocker": false,
+      "smallest_next_action": "Gate pilot invitation copy on final CTA state (ap-homeowner-framework + ApHomeownerFilterPage).",
+      "closure_proof_required": "Pilot pages with no gated CTA must not promise opening checked retailer product page."
+    },
+    {
+      "root_id": "R12",
+      "immutable_baseline": {
+        "title": "Sitemap emits seven safety-noindex filter pages",
+        "priority": "P2",
+        "category": "SYSTEMIC_ROOT_DEFECT",
+        "baseline_scope": "7 listed paths at baseline"
+      },
+      "prior_ledger_state": "NOT_STARTED",
+      "current_classification": "STILL_PRESENT",
+      "current_evidence": "Production sitemap.xml includes /filter/adq36006101; page HTML robots noindex. Same indexability predicate mismatch described in baseline.",
+      "distribution_blocker": false,
+      "smallest_next_action": "Unify filter safety predicate between page metadata and wedge-indexable-urls sitemap emission.",
+      "closure_proof_required": "Quarantined/noindex filters absent from production sitemap."
+    },
+    {
+      "root_id": "R13",
+      "immutable_baseline": {
+        "title": "Canonical-origin metadata disagrees and Netlify alias remains separately reachable",
+        "priority": "P2",
+        "category": "SYSTEMIC_ROOT_DEFECT",
+        "baseline_scope": "2 alias pages sampled + sitewide metadata policy"
+      },
+      "prior_ledger_state": "NOT_STARTED",
+      "current_classification": "STILL_PRESENT",
+      "current_evidence": "Production robots.txt Host: buckparts.netlify.app; homepage lacks rel=canonical; https://buckparts.netlify.app/ → 200 (no redirect to .com in this check).",
+      "distribution_blocker": true,
+      "smallest_next_action": "Reconcile NEXT_PUBLIC_SITE_URL/build origin, robots/sitemap host, homepage canonical, alias policy.",
+      "closure_proof_required": "Production robots/sitemap/canonical matrix matches chosen .com canonical contract."
+    },
+    {
+      "root_id": "R14",
+      "immutable_baseline": {
+        "title": "Seven repo help candidates throw500; public help index empty",
+        "priority": "P2",
+        "category": "SYSTEMIC_ROOT_DEFECT",
+        "baseline_scope": "7 repo candidate paths (not all public at baseline)"
+      },
+      "prior_ledger_state": "NOT_STARTED",
+      "current_classification": "PARTIALLY_RESOLVED",
+      "current_evidence": "Production GET /help/how-often-to-replace-refrigerator-water-filter → 404 (not 500). /help → 200. Full help index empty-state / placeholder wording not fully re-audited this pass.",
+      "distribution_blocker": false,
+      "smallest_next_action": "Confirm all missing help slugs fail closed with 404; remove implementation placeholder on /help if still present.",
+      "closure_proof_required": "No public help slug returns 500; help index user-safe."
+    },
+    {
+      "root_id": "R15",
+      "immutable_baseline": {
+        "title": "Two provenance links resolve to generic destinations",
+        "priority": "P2",
+        "category": "BROKEN_LINK",
+        "baseline_scope": "4 listed fridge model paths at baseline"
+      },
+      "prior_ledger_state": "NOT_STARTED",
+      "current_classification": "NEEDS_EVIDENCE",
+      "current_evidence": "Production /fridge/samsung-rf28nhedbsr HTTP 200; this pass did not re-fetch cited external source URLs post-redirect for generic landing proof.",
+      "distribution_blocker": false,
+      "smallest_next_action": "Revalidate manual-evidence JSON citations; adjust source labels on four Samsung model PDPs.",
+      "closure_proof_required": "Source checker proves model-specific destination or downgrades label."
+    },
+    {
+      "root_id": "R16",
+      "immutable_baseline": {
+        "title": "Exposed buying paths lack auditable current UUID-to-destination proof",
+        "priority": "P1",
+        "category": "site_integrity_buyer_path_auditability",
+        "baseline_scope": "81 CTA / 6 IDs / 64 pages historical"
+      },
+      "prior_ledger_state": "VERIFIED_CLOSED",
+      "current_classification": "VERIFIED_CLOSED",
+      "current_evidence": "Ledger + data/ops/site-integrity/production-integrity-baseline-2026-10-10/r16-closure-verification-2026-10-11.json; production Shark compatible labeling post PR #44.",
+      "distribution_blocker": false,
+      "smallest_next_action": "—",
+      "closure_proof_required": "—"
+    },
+    {
+      "root_id": "R17",
+      "immutable_baseline": {
+        "title": "Explicit social image URL points to nonexistent extensionless endpoint",
+        "priority": "P2",
+        "category": "SYSTEMIC_ROOT_DEFECT",
+        "baseline_scope": "57 refrigerator filter pages at baseline"
+      },
+      "prior_ledger_state": "NOT_STARTED (ledger conflated with full baseline rerun)",
+      "current_classification": "STILL_PRESENT",
+      "current_evidence": "GET https://buckparts.com/opengraph-image → 404; /opengraph-image.png → 200. Production /filter/4396508 og:image https://buckparts.com/opengraph-image. Source SITE_SOCIAL_OG_IMAGE_PATH=/opengraph-image.",
+      "distribution_blocker": true,
+      "smallest_next_action": "Point site-social-metadata at served static OG route (existing .png).",
+      "closure_proof_required": "Production og:image URLs return 2xx image MIME on sampled fridge filter PDPs."
+    }
+  ],
+  "summary_counts": {
+    "total_roots": 17,
+    "durably_closed": 2,
+    "already_resolved_but_not_durably_closed": 0,
+    "still_present": 9,
+    "partially_resolved": 4,
+    "superseded": 0,
+    "needs_evidence": 2
+  },
+  "current_required_pre_distribution_roots": [
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R13",
+    "R17"
+  ],
+  "recommended_repair_batches": [
+    {
+      "batch_id": 1,
+      "root_ids": ["R03", "R13"],
+      "reason": "Shared public navigation/origin boundary: catalog hub hrefs and site-url/robots/canonical contract."
+    },
+    {
+      "batch_id": 2,
+      "root_ids": ["R17", "R12"],
+      "reason": "Shared indexability/metadata predicate: og:image path helper and sitemap vs page noindex quarantine."
+    },
+    {
+      "batch_id": 3,
+      "root_ids": ["R07", "R08", "R09", "R10"],
+      "reason": "Page-specific manufacturer/data copy defects with independent evidence boundaries (AP/GE/3M/Honeywell)."
+    },
+    {
+      "batch_id": 4,
+      "root_ids": ["R05", "R06", "R11"],
+      "reason": "Shared trust-state rendering: fridge visible proof, part-trust/vertical confidence, AP pilot CTA/copy alignment."
+    }
+  ],
+  "estimated_repair_batch_count_before_final_baseline_rerun": 4,
+  "validation_run": {
+    "tests": "public-category-hub, site-social-metadata, part-trust — PASS (subset)",
+    "live_site_smoke_check": "static_asset_status=OK on https://buckparts.com (2026-10-11)"
+  },
+  "explicit_non_actions": [
+    "No product/data/Supabase mutations",
+    "No ledger edits",
+    "No VERIFIED_CLOSED assignments beyond existing R01/R16",
+    "No R17 full baseline rerun",
+    "Artifact not committed (operator review pending)"
+  ]
+}
