@@ -1,0 +1,92 @@
+{
+  "contract": "r07_mutation_authority_bottleneck_v1",
+  "read_only": true,
+  "root_id": "R07",
+  "generated_at": "2026-10-11T20:35:00Z",
+  "factual_decision": "RESOLVED",
+  "executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r07-executive-decision-packet-2026-10-11.json",
+  "repo_repair": {
+    "pull_request": "https://github.com/BuckNorris0506/bucksites-tools/pull/60",
+    "branch": "fix/r07-winix-filter-a-h-phase1",
+    "status": "READY_NOT_MERGED"
+  },
+  "runtime_blocker_class": "mutation_authority_runtime_parity",
+  "seed_import_command": "npm run seed:import:air-purifier -- --write",
+  "mutation_gate_contract": "vertical_seed_mutation_gate_v1",
+  "mutation_gate_plan_rel": "scripts/lib/vertical-seed-run-v1.ts",
+  "founder_gate_mechanism": {
+    "function": "findActiveFounderDecisionForVerticalSeedV1",
+    "requires": [
+      "decision_status=approved",
+      "allowed_next_scope=owner_mutation_approved",
+      "founderRegistryRowPassesMutationApprovalGateV1 (active, unexpired, artifact bindings verify)",
+      "apply_context_apply_plan_rel_paths includes scripts/lib/vertical-seed-run-v1.ts",
+      "founderRowBindsAllCsvArtifactsV1 for all verticalSeedCsvRelPathsV1 air_purifier CSV rel paths with matching sha256"
+    ],
+    "scan_result": {
+      "founder_rows_loaded": 19,
+      "active_vertical_seed_match": null,
+      "blocker_emitted": "founder_owner_mutation_approved_missing_or_inactive"
+    },
+    "note": "Existing owner_mutation_approved rows (fridge EDR4, GSWF compat sync, etc.) bind other apply_plan_rel paths — none authorize vertical seed import."
+  },
+  "trust_currency_gate": {
+    "contract": "guarded_apply_trust_currency_preflight_v1",
+    "aggregate_status": "EXPIRED",
+    "blockers": [
+      "trust_currency_revalidation:revalidation_cadence_missed",
+      "owner_decision_queue_stale_count:1",
+      "owner_decision_queue_stale_critical_count:1",
+      "truth_integrity_high_severity_revalidation_expired",
+      "trust_currency_aggregate:EXPIRED"
+    ],
+    "stale_owner_decision_request": {
+      "decision_request_id": "odr-v1-1b199aa245ea",
+      "status": "STALE",
+      "source_artifact_path": "scripts/report-supabase-csv-parity-guarded-apply-v1.ts",
+      "expires_or_stale_after": "2026-07-11T14:58:46.497Z",
+      "active_mutation_approval_decision_id": null
+    },
+    "lawful_refresh_path": "Truth Integrity Registry re-audit per docs/BuckParts-TRUTH-INTEGRITY-REGISTRY.md (update re_audit.last_re_audit_at / next_re_audit_after for unfixed high-severity findings); resolve or supersede stale owner-decision queue request odr-v1-1b199aa245ea."
+  },
+  "io_mutation_capability_gate": {
+    "env_var": "BUCKPARTS_IO_CAPABILITY",
+    "observed": "READ_INDEX",
+    "required_for_write": "MUTATION",
+    "blocker": "io_capability_read_index_cannot_mutate_supabase",
+    "lawful_enablement": "Founder/operator session exports BUCKPARTS_IO_CAPABILITY=MUTATION only after founder + trust gates pass; does not bypass founder or trust currency."
+  },
+  "bounded_runtime_write_set": {
+    "tables": [
+      "air_purifier_filters",
+      "air_purifier_compatibility_mappings",
+      "air_purifier_model_aliases"
+    ],
+    "intended_deltas": [
+      {
+        "table": "air_purifier_filters",
+        "filter_slug": "winix-hepa-115115",
+        "change": "name/notes → Filter A (115115) identity; remove Filter H branding"
+      },
+      {
+        "table": "air_purifier_compatibility_mappings",
+        "change": "DELETE mapping winix-am80 → winix-hepa-115115 (recommended); UPSERT winix-am80 → winix-filter-h-116130 recommended=true"
+      },
+      {
+        "table": "air_purifier_compatibility_mappings",
+        "change": "DELETE mapping winix-5500-2 → winix-hepa-115115 (recommended); RETAIN winix-5500-2 → winix-filter-h-116130 recommended=true"
+      },
+      {
+        "table": "air_purifier_model_aliases",
+        "change": "DELETE alias WINIX 5500 for model winix-5500-2"
+      }
+    ],
+    "supabase_vs_csv_diff_evidence": "data/air-purifier/batch-production/audits/ap-supabase-vs-csv-diff-v1.json (regenerated 2026-10-11 on PR #60 CSV)"
+  },
+  "executor_scope_warning": {
+    "proven": "scripts/lib/vertical-seed-run-v1.ts upserts CSV rows only — no prune of Supabase-only compatibility_mappings or model_aliases rows removed from CSV.",
+    "impact": "Even if vertical seed gates cleared, seed import alone may UPDATE filter name and ADD am80→116130 but may NOT REMOVE am80→115115, 5500-2→115115, or WINIX 5500 alias without a bounded delete-capable parity lane.",
+    "recommended_lane": "Founder-approved bounded Supabase parity apply scoped to R07 deltas (pattern: fridge EDR4 / GSWF compat sync owner approvals) — not yet registered for R07."
+  },
+  "write_not_executed": true
+}
