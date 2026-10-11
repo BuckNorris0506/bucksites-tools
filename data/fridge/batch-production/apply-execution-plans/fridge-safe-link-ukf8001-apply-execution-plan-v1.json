@@ -3,7 +3,7 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "generated_at": "2026-06-27T06:00:22.901Z",
+  "generated_at": "2026-10-11T14:32:49.607Z",
   "wedge": "refrigerator_water",
   "execution_plan_status": "READY_FOR_MUTATION_AUTH_REVIEW",
   "source_apply_plan_artifact_rel_path": "data/fridge/batch-production/drafts/supabase-csv-parity-ukf8001-apply-plan-proposal-v1.json",
@@ -17,14 +17,14 @@
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
       "before_row": {
         "filter_slug": "ukf8001",
-        "retailer_name": "OEM parts catalog (keyword lookup)",
-        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=UKF8001",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B07C8C2VBH",
         "is_primary": "true",
         "sort_order": "0",
-        "retailer_key": "oem-parts-catalog",
-        "browser_truth_classification": "",
-        "browser_truth_notes": "",
-        "browser_truth_checked_at": ""
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Amazon Basics compatible replacement for UKF8001 (ASIN B07C8C2VBH); PDP title includes UKF8001; aftermarket compatible, not OEM. Evidence amazon-ukf8001-aftermarket-pdp-evidence.2026-05-04.json (superseded). Live outcome: amazon-ukf8001-live-outcome.2026-05-05.json.",
+        "browser_truth_checked_at": "2026-05-05"
       },
       "after_row": {
         "filter_slug": "ukf8001",
@@ -38,12 +38,7 @@
         "browser_truth_checked_at": "2026-05-05"
       },
       "changed_fields": [
-        "affiliate_url",
-        "browser_truth_checked_at",
-        "browser_truth_classification",
-        "browser_truth_notes",
-        "retailer_key",
-        "retailer_name"
+        "affiliate_url"
       ]
     }
   ],
@@ -54,33 +49,28 @@
       "action": "rollback_restore_before_row",
       "before_row": {
         "filter_slug": "ukf8001",
-        "retailer_name": "OEM parts catalog (keyword lookup)",
-        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=UKF8001",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B07C8C2VBH?tag=buckparts20-20",
         "is_primary": "true",
         "sort_order": "0",
-        "retailer_key": "oem-parts-catalog",
-        "browser_truth_classification": "",
-        "browser_truth_notes": "",
-        "browser_truth_checked_at": ""
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Amazon Basics compatible replacement for UKF8001 (ASIN B07C8C2VBH); PDP title includes UKF8001; aftermarket compatible, not OEM. Evidence amazon-ukf8001-aftermarket-pdp-evidence.2026-05-04.json (superseded). Live outcome: amazon-ukf8001-live-outcome.2026-05-05.json.",
+        "browser_truth_checked_at": "2026-05-05"
       },
       "after_row": {
         "filter_slug": "ukf8001",
-        "retailer_name": "OEM parts catalog (keyword lookup)",
-        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=UKF8001",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B07C8C2VBH",
         "is_primary": "true",
         "sort_order": "0",
-        "retailer_key": "oem-parts-catalog",
-        "browser_truth_classification": "",
-        "browser_truth_notes": "",
-        "browser_truth_checked_at": ""
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Amazon Basics compatible replacement for UKF8001 (ASIN B07C8C2VBH); PDP title includes UKF8001; aftermarket compatible, not OEM. Evidence amazon-ukf8001-aftermarket-pdp-evidence.2026-05-04.json (superseded). Live outcome: amazon-ukf8001-live-outcome.2026-05-05.json.",
+        "browser_truth_checked_at": "2026-05-05"
       },
       "changed_fields": [
-        "affiliate_url",
-        "browser_truth_checked_at",
-        "browser_truth_classification",
-        "browser_truth_notes",
-        "retailer_key",
-        "retailer_name"
+        "affiliate_url"
       ]
     }
   ],

@@ -5,7 +5,7 @@
   "evidence_mode": "live_browser_model_first_v1",
   "evidence_collection_mode": "live_browser_model_first_v1",
   "packet_id": "whw-model-first-watts-w50pehd-director-batch-v1",
-  "run_id": "whw-model-first-watts-w50pehd-director-batch-2026-05-29",
+  "run_id": "whw-model-first-watts-w50pehd-director-batch-2026-10-11",
   "queue_contract": "whole_house_water_model_first_easiest_proof_queue_v1",
   "anchor_brand_slug": "watts",
   "anchor_model_slug": "watts-w50whd-housing",
@@ -13,8 +13,8 @@
   "filter_slug": "watts-w50pehd",
   "read_only_artifact": true,
   "do_not_open_public": true,
-  "generated_at": "2026-05-29T23:35:50.585Z",
-  "checked_at": "2026-05-29T23:35:50.585Z",
+  "generated_at": "2026-10-11T14:30:59.612Z",
+  "checked_at": "2026-10-11T14:30:59.612Z",
   "source_status": "PARTIAL",
   "model_rows": [
     {

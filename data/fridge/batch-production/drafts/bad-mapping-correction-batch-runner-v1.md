@@ -1,15 +1,15 @@
 # Bad mapping correction batch runner v1
 
-- generated_at: **2026-06-09T17:26:52.403Z**
+- generated_at: **2026-06-08T12:00:00.000Z**
 - dangerous_slug_count: **76**
 - recommended_first_batch: **15** slugs
 
 ## Recommended first batch
 
 - `samsung-rf23m8070sg`
+- `samsung-rf23m8570sg`
 - `samsung-rf23m8590sg`
 - `samsung-rf27t5201sr`
-- `samsung-rf27t5501sr`
 - `samsung-rf28r6201ww`
 - `samsung-rf28r6241sb`
 - `samsung-rf28r6241sg`
@@ -61,35 +61,15 @@ Do not infer from sibling models. Output filter_specification evidence per slug.
 ### hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-10105j
 
 - root_cause_group: `samsung_haf_qin_da29_da97_conflicts`
-- slug_count: **8**
+- slug_count: **6**
 - compat_edit_authorized: **false**
 
 ```
 BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.
 Batch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-10105j.
 Mapped pattern: da29-10105j.
-Models (8): RF23M8070SG, RF27T5201SR, RF28R6201WW, RF28R6241SW, RF28R7201SG, RF28T5101SG, RS22T5201SG, RS25H5111SR.
-Slugs: samsung-rf23m8070sg, samsung-rf27t5201sr, samsung-rf28r6201ww, samsung-rf28r6241sw, samsung-rf28r7201sg, samsung-rf28t5101sg, samsung-rs22t5201sg, samsung-rs25h5111sr.
-For each model, find the official Samsung support/spec page and extract:
-1) Water filter marketing token (HAF-QIN or HAF-CIN)
-2) Exact DA97 or DA29 OEM part number
-3) Source URL and page title
-Reject wildcard-only inference. Cross-check against samsung::HAFQIN (da97-17376a/b) and samsung::HAFCIN (da29-00020b) repo-proven families.
-Output: one evidence row per slug suitable for data/manual-evidence/refrigerator/{slug}.json filter_specification source.
-```
-
-### hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00019a
-
-- root_cause_group: `samsung_haf_qin_da29_da97_conflicts`
-- slug_count: **6**
-- compat_edit_authorized: **false**
-
-```
-BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.
-Batch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00019a.
-Mapped pattern: da29-00019a.
-Models (6): RF23M8590SG, RF28R6241SB, RF28R6241SG, RF28R6301SR, RF28T5101SR, RF28T5F01SR.
-Slugs: samsung-rf23m8590sg, samsung-rf28r6241sb, samsung-rf28r6241sg, samsung-rf28r6301sr, samsung-rf28t5101sr, samsung-rf28t5f01sr.
+Models (6): RF23M8070SG, RF28R6201WW, RF28R6241SW, RF28R7201SG, RF28T5101SG, RS25H5111SR.
+Slugs: samsung-rf23m8070sg, samsung-rf28r6201ww, samsung-rf28r6241sw, samsung-rf28r7201sg, samsung-rf28t5101sg, samsung-rs25h5111sr.
 For each model, find the official Samsung support/spec page and extract:
 1) Water filter marketing token (HAF-QIN or HAF-CIN)
 2) Exact DA97 or DA29 OEM part number
@@ -129,6 +109,46 @@ Models (4): GFE28GSKWW, GFE28GYNES, GIE21GSNERSS, PFE28KYNWW.
 Slugs: ge-gfe28gskww, ge-gfe28gynes, ge-gie21gsnerss, ge-pfe28kynww.
 For each model, find the official GE spec and determine RFID (XWFE/RPWFE) vs legacy (XWF/MWF) shell.
 Output one proven filter slug per model for post-research split_mapping.
+```
+
+### hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00019a
+
+- root_cause_group: `samsung_haf_qin_da29_da97_conflicts`
+- slug_count: **4**
+- compat_edit_authorized: **false**
+
+```
+BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.
+Batch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00019a.
+Mapped pattern: da29-00019a.
+Models (4): RF23M8590SG, RF28R6241SB, RF28R6241SG, RF28T5F01SR.
+Slugs: samsung-rf23m8590sg, samsung-rf28r6241sb, samsung-rf28r6241sg, samsung-rf28t5f01sr.
+For each model, find the official Samsung support/spec page and extract:
+1) Water filter marketing token (HAF-QIN or HAF-CIN)
+2) Exact DA97 or DA29 OEM part number
+3) Source URL and page title
+Reject wildcard-only inference. Cross-check against samsung::HAFQIN (da97-17376a/b) and samsung::HAFCIN (da29-00020b) repo-proven families.
+Output: one evidence row per slug suitable for data/manual-evidence/refrigerator/{slug}.json filter_specification source.
+```
+
+### hyperagent-samsung-haf-qin-da29-da97-conflicts-da97-17376b
+
+- root_cause_group: `samsung_haf_qin_da29_da97_conflicts`
+- slug_count: **4**
+- compat_edit_authorized: **false**
+
+```
+BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.
+Batch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da97-17376b.
+Mapped pattern: da97-17376b.
+Models (4): RF27T5201SR, RF28R6301SR, RF28T5101SR, RS22T5201SG.
+Slugs: samsung-rf27t5201sr, samsung-rf28r6301sr, samsung-rf28t5101sr, samsung-rs22t5201sg.
+For each model, find the official Samsung support/spec page and extract:
+1) Water filter marketing token (HAF-QIN or HAF-CIN)
+2) Exact DA97 or DA29 OEM part number
+3) Source URL and page title
+Reject wildcard-only inference. Cross-check against samsung::HAFQIN (da97-17376a/b) and samsung::HAFCIN (da29-00020b) repo-proven families.
+Output: one evidence row per slug suitable for data/manual-evidence/refrigerator/{slug}.json filter_specification source.
 ```
 
 ### hyperagent-ge-xwf-xwfe-rpwfe-legacy-mixes-rpwfe-xwfe

@@ -1,0 +1,33 @@
+{
+  "contract": "r08_fxwpc_identity_tranche_supabase_parity_plan_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "supabase_mutation_authorized": false,
+  "apply_authorized": false,
+  "generated_at": "2026-10-12T00:05:00Z",
+  "source_executive_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-executive-decision-packet-2026-10-11.json",
+  "expected_operation_count": 2,
+  "proposed_supabase_changes": {
+    "part_updates": [
+      {
+        "part_slug": "ge-fxwpc",
+        "name": "GE whole home pleated sediment filter (FXWPC)",
+        "replacement_interval_months": 3,
+        "notes": "OEM pleated sediment cartridge (~30 µm sand/sediment reduction); GE service 3 months or 16000 gallons. Not carbon — FXWTC is the carbon-paper SKU in this family."
+      }
+    ],
+    "model_notes_updates": [
+      {
+        "model_slug": "ge-whole-house-gxwh20s",
+        "notes": "In-box sediment: FXUSC (Rev. 2). GE pleated sediment alternate: FXWPC. Carbon/chlorine in this family: FXWTC — not FXWPC. Confirm stamped cartridge on your head."
+      }
+    ]
+  },
+  "explicit_exclusions": [
+    "No whole_house_water_compatibility_mappings changes",
+    "No ge-fxhtc interval or copy changes",
+    "No ge-whole-house-gxwh20s → ge-fxhtc mapping changes",
+    "No full vertical seed",
+    "No R04/R09 scope"
+  ]
+}

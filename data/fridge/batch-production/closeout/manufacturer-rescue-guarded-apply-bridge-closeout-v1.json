@@ -3,18 +3,18 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "generated_at": "2026-07-04T03:46:40.058Z",
+  "generated_at": "2026-06-29T12:00:00.000Z",
   "source_command": "npm run buckparts:manufacturer-rescue-guarded-apply-bridge",
   "filter_slug": "eptwfu01",
-  "bridge_status": "APPLIED",
-  "write_csv_applied": true,
+  "bridge_status": "BLOCKED",
+  "write_csv_applied": false,
   "previous_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
-  "new_page_classification": "SAFE_BUYER_PATH_PROVEN",
-  "safe_buyer_path_proven_delta": 1,
+  "new_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+  "safe_buyer_path_proven_delta": 0,
   "census_delta": {
-    "safe_buyer_path_proven_count_before": 52,
-    "safe_buyer_path_proven_count_after": 53,
-    "safe_buyer_path_proven_count_delta": 1
+    "safe_buyer_path_proven_count_before": 3,
+    "safe_buyer_path_proven_count_after": 3,
+    "safe_buyer_path_proven_count_delta": 0
   },
   "customer_closure_delta": {
     "customer_visible_closures_count_before": 0,
@@ -26,24 +26,24 @@
   "execution_ledger_entry": {
     "trigger_source": "npm run buckparts:manufacturer-rescue-guarded-apply-bridge",
     "ledger_rel_path": "data/command-center/execution-ledger-v1.json",
-    "entries_indexed": 11,
+    "entries_indexed": 16,
     "latest_entry_summary": null
   },
   "source_artifact_paths": {
     "readiness_gate": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
     "runner": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-runner-v1.json",
     "apply_plan": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-eptwfu01-v1.json",
-    "execution_plan": "data/fridge/batch-production/apply-execution-plans/manufacturer-rescue-guarded-apply-execution-plan-eptwfu01-v1-e6ec576b3f74.json"
+    "execution_plan": null
   },
   "guarded_executor_summary": {
-    "executor_status": "PRE_APPLY_DRY_RUN_READY",
-    "row_patch_count": 1,
-    "post_write_validation_status": "PROVEN"
+    "executor_status": "BLOCKED",
+    "row_patch_count": 0,
+    "post_write_validation_status": null
   },
-  "post_apply_refresh_ran": true,
+  "post_apply_refresh_ran": false,
   "proven_facts": [
-    "PROVEN: bridge closeout for eptwfu01 with bridge_status=APPLIED.",
-    "PROVEN: classification SAFE_BUYER_PATH_SUPPRESSED_TRUST -> SAFE_BUYER_PATH_PROVEN."
+    "PROVEN: bridge closeout for eptwfu01 with bridge_status=BLOCKED.",
+    "PROVEN: classification SAFE_BUYER_PATH_SUPPRESSED_TRUST -> SAFE_BUYER_PATH_SUPPRESSED_TRUST."
   ],
   "unknown_facts": []
 }

@@ -4,33 +4,33 @@
   "data_mutation": false,
   "mutation_blocked_until_owner_approval": true,
   "mutation_authorized": false,
-  "generated_at": "2026-06-09T17:26:44.996Z",
+  "generated_at": "2026-10-11T14:32:58.126Z",
   "total_models": 500,
-  "models_with_compat_mapping": 500,
-  "models_without_compat_mapping": 0,
+  "models_with_compat_mapping": 499,
+  "models_without_compat_mapping": 1,
   "manual_evidence_fixture_count": 20,
   "quarantined_model_count": 1,
   "classification_counts": {
     "PROVEN_CORRECT": 15,
-    "LIKELY_CORRECT_NEEDS_EVIDENCE": 409,
-    "WRONG_PART_RISK": 75,
+    "LIKELY_CORRECT_NEEDS_EVIDENCE": 405,
+    "WRONG_PART_RISK": 78,
     "BLOCKED": 1,
-    "UNKNOWN": 0
+    "UNKNOWN": 1
   },
   "confusion_family_summary": {
     "haf_qin_vs_haf_cin": 0,
     "da29_vs_da97": 13,
-    "xwf_vs_xwfe": 4,
+    "xwf_vs_xwfe": 6,
     "fppwfu01_vs_fppwfu02": 0,
     "lg_lt_generation_mixes": 34,
-    "ge_rpwfe_mixed_legacy": 3,
+    "ge_rpwfe_mixed_legacy": 4,
     "wildcard_blocked_haf_cin": 1,
     "wildcard_review_da29_conflict": 26
   },
   "factory_scaling": {
     "safe": 15,
-    "needs_evidence": 409,
-    "dangerous": 76
+    "needs_evidence": 406,
+    "dangerous": 79
   },
   "top_50_risk_pages": [
     {
@@ -1515,6 +1515,82 @@
       "quality_gate_publication_authorized": null
     },
     {
+      "fridge_slug": "ge-gne27jstss",
+      "model_number": "GNE27JSTSS",
+      "brand_slug": "ge",
+      "mapped_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "classification": "WRONG_PART_RISK",
+      "evidence_status": "NONE",
+      "per_filter_proof": [
+        {
+          "filter_slug": "xwf",
+          "proof_status": "WRONG_FAMILY_RISK",
+          "oem_part_number": "XWF",
+          "notes": [
+            "included in wrong-family / confusion-family blocker set"
+          ]
+        },
+        {
+          "filter_slug": "xwfe",
+          "proof_status": "WRONG_FAMILY_RISK",
+          "oem_part_number": "XWFE",
+          "notes": [
+            "included in wrong-family / confusion-family blocker set"
+          ]
+        }
+      ],
+      "evidence_paths": [],
+      "blockers": [
+        "confusion:XWF vs XWFE (GE RFID shell mismatch)"
+      ],
+      "recommended_action": "Remove wrong-family compat rows or capture model-specific proof for the correct family only.",
+      "risk_score": 109,
+      "quality_gate_artifact_path": null,
+      "quality_gate_recommended_robots_index": null,
+      "quality_gate_publication_authorized": null
+    },
+    {
+      "fridge_slug": "ge-gse25hskss",
+      "model_number": "GSE25HSKSS",
+      "brand_slug": "ge",
+      "mapped_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "classification": "WRONG_PART_RISK",
+      "evidence_status": "NONE",
+      "per_filter_proof": [
+        {
+          "filter_slug": "xwf",
+          "proof_status": "WRONG_FAMILY_RISK",
+          "oem_part_number": "XWF",
+          "notes": [
+            "included in wrong-family / confusion-family blocker set"
+          ]
+        },
+        {
+          "filter_slug": "xwfe",
+          "proof_status": "WRONG_FAMILY_RISK",
+          "oem_part_number": "XWFE",
+          "notes": [
+            "included in wrong-family / confusion-family blocker set"
+          ]
+        }
+      ],
+      "evidence_paths": [],
+      "blockers": [
+        "confusion:XWF vs XWFE (GE RFID shell mismatch)"
+      ],
+      "recommended_action": "Remove wrong-family compat rows or capture model-specific proof for the correct family only.",
+      "risk_score": 109,
+      "quality_gate_artifact_path": null,
+      "quality_gate_recommended_robots_index": null,
+      "quality_gate_publication_authorized": null
+    },
+    {
       "fridge_slug": "ge-gye22hskww",
       "model_number": "GYE22HSKWW",
       "brand_slug": "ge",
@@ -1537,6 +1613,44 @@
           "filter_slug": "xwfe",
           "proof_status": "WRONG_FAMILY_RISK",
           "oem_part_number": "XWFE",
+          "notes": [
+            "included in wrong-family / confusion-family blocker set"
+          ]
+        }
+      ],
+      "evidence_paths": [],
+      "blockers": [
+        "confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family"
+      ],
+      "recommended_action": "Remove wrong-family compat rows or capture model-specific proof for the correct family only.",
+      "risk_score": 109,
+      "quality_gate_artifact_path": null,
+      "quality_gate_recommended_robots_index": null,
+      "quality_gate_publication_authorized": null
+    },
+    {
+      "fridge_slug": "ge-pfe28kmkww",
+      "model_number": "PFE28KMKWW",
+      "brand_slug": "ge",
+      "mapped_filter_slugs": [
+        "rpwfe",
+        "xwf"
+      ],
+      "classification": "WRONG_PART_RISK",
+      "evidence_status": "NONE",
+      "per_filter_proof": [
+        {
+          "filter_slug": "rpwfe",
+          "proof_status": "WRONG_FAMILY_RISK",
+          "oem_part_number": "RPWFE",
+          "notes": [
+            "included in wrong-family / confusion-family blocker set"
+          ]
+        },
+        {
+          "filter_slug": "xwf",
+          "proof_status": "WRONG_FAMILY_RISK",
+          "oem_part_number": "XWF",
           "notes": [
             "included in wrong-family / confusion-family blocker set"
           ]
@@ -2239,120 +2353,6 @@
       "evidence_paths": [],
       "blockers": [
         "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
-      ],
-      "recommended_action": "Remove wrong-family compat rows or capture model-specific proof for the correct family only.",
-      "risk_score": 109,
-      "quality_gate_artifact_path": null,
-      "quality_gate_recommended_robots_index": null,
-      "quality_gate_publication_authorized": null
-    },
-    {
-      "fridge_slug": "lg-lsxs27366s",
-      "model_number": "LSXS27366S",
-      "brand_slug": "lg",
-      "mapped_filter_slugs": [
-        "lt600p",
-        "lt800p"
-      ],
-      "classification": "WRONG_PART_RISK",
-      "evidence_status": "NONE",
-      "per_filter_proof": [
-        {
-          "filter_slug": "lt600p",
-          "proof_status": "WRONG_FAMILY_RISK",
-          "oem_part_number": "LT600P",
-          "notes": [
-            "included in wrong-family / confusion-family blocker set"
-          ]
-        },
-        {
-          "filter_slug": "lt800p",
-          "proof_status": "WRONG_FAMILY_RISK",
-          "oem_part_number": "LT800P",
-          "notes": [
-            "included in wrong-family / confusion-family blocker set"
-          ]
-        }
-      ],
-      "evidence_paths": [],
-      "blockers": [
-        "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
-      ],
-      "recommended_action": "Remove wrong-family compat rows or capture model-specific proof for the correct family only.",
-      "risk_score": 109,
-      "quality_gate_artifact_path": null,
-      "quality_gate_recommended_robots_index": null,
-      "quality_gate_publication_authorized": null
-    },
-    {
-      "fridge_slug": "lg-lupxs3186n",
-      "model_number": "LUPXS3186N",
-      "brand_slug": "lg",
-      "mapped_filter_slugs": [
-        "lt600p",
-        "lt800p"
-      ],
-      "classification": "WRONG_PART_RISK",
-      "evidence_status": "NONE",
-      "per_filter_proof": [
-        {
-          "filter_slug": "lt600p",
-          "proof_status": "WRONG_FAMILY_RISK",
-          "oem_part_number": "LT600P",
-          "notes": [
-            "included in wrong-family / confusion-family blocker set"
-          ]
-        },
-        {
-          "filter_slug": "lt800p",
-          "proof_status": "WRONG_FAMILY_RISK",
-          "oem_part_number": "LT800P",
-          "notes": [
-            "included in wrong-family / confusion-family blocker set"
-          ]
-        }
-      ],
-      "evidence_paths": [],
-      "blockers": [
-        "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
-      ],
-      "recommended_action": "Remove wrong-family compat rows or capture model-specific proof for the correct family only.",
-      "risk_score": 109,
-      "quality_gate_artifact_path": null,
-      "quality_gate_recommended_robots_index": null,
-      "quality_gate_publication_authorized": null
-    },
-    {
-      "fridge_slug": "samsung-rf18hfenbww",
-      "model_number": "RF18HFENBWW",
-      "brand_slug": "samsung",
-      "mapped_filter_slugs": [
-        "da29-00020a",
-        "da97-15217d"
-      ],
-      "classification": "WRONG_PART_RISK",
-      "evidence_status": "NONE",
-      "per_filter_proof": [
-        {
-          "filter_slug": "da29-00020a",
-          "proof_status": "WRONG_FAMILY_RISK",
-          "oem_part_number": "DA29-00020A",
-          "notes": [
-            "included in wrong-family / confusion-family blocker set"
-          ]
-        },
-        {
-          "filter_slug": "da97-15217d",
-          "proof_status": "WRONG_FAMILY_RISK",
-          "oem_part_number": "DA97-15217D",
-          "notes": [
-            "included in wrong-family / confusion-family blocker set"
-          ]
-        }
-      ],
-      "evidence_paths": [],
-      "blockers": [
-        "confusion:Samsung DA29 (da29-00020a) + DA97 (da97-15217d) co-mapped"
       ],
       "recommended_action": "Remove wrong-family compat rows or capture model-specific proof for the correct family only.",
       "risk_score": 109,
@@ -5943,29 +5943,22 @@
       "model_number": "CWE23SSHWW",
       "brand_slug": "ge",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "rpwfe"
       ],
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "evidence_status": "NONE",
       "per_filter_proof": [
         {
-          "filter_slug": "gswf",
+          "filter_slug": "rpwfe",
           "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF",
-          "notes": []
-        },
-        {
-          "filter_slug": "gswf2",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF2",
+          "oem_part_number": "RPWFE",
           "notes": []
         }
       ],
       "evidence_paths": [],
       "blockers": [],
       "recommended_action": "Capture official manufacturer filter_specification evidence before scaling.",
-      "risk_score": 34,
+      "risk_score": 32,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -6150,36 +6143,29 @@
       "model_number": "GFE24JGKWW",
       "brand_slug": "ge",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2",
-        "smartwater-mwfp"
+        "smartwater-mwfp",
+        "xwfe"
       ],
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "evidence_status": "NONE",
       "per_filter_proof": [
         {
-          "filter_slug": "gswf",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF",
-          "notes": []
-        },
-        {
-          "filter_slug": "gswf2",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF2",
-          "notes": []
-        },
-        {
           "filter_slug": "smartwater-mwfp",
           "proof_status": "NEEDS_EVIDENCE",
           "oem_part_number": "MWFP",
+          "notes": []
+        },
+        {
+          "filter_slug": "xwfe",
+          "proof_status": "NEEDS_EVIDENCE",
+          "oem_part_number": "XWFE",
           "notes": []
         }
       ],
       "evidence_paths": [],
       "blockers": [],
       "recommended_action": "Capture official manufacturer filter_specification evidence before scaling.",
-      "risk_score": 36,
+      "risk_score": 34,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -6289,29 +6275,22 @@
       "model_number": "GFE27JMKES",
       "brand_slug": "ge",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "xwfe"
       ],
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "evidence_status": "NONE",
       "per_filter_proof": [
         {
-          "filter_slug": "gswf",
+          "filter_slug": "xwfe",
           "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF",
-          "notes": []
-        },
-        {
-          "filter_slug": "gswf2",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF2",
+          "oem_part_number": "XWFE",
           "notes": []
         }
       ],
       "evidence_paths": [],
       "blockers": [],
       "recommended_action": "Capture official manufacturer filter_specification evidence before scaling.",
-      "risk_score": 34,
+      "risk_score": 32,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -6378,29 +6357,22 @@
       "model_number": "GFE28GMKBB",
       "brand_slug": "ge",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "rpwfe"
       ],
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "evidence_status": "NONE",
       "per_filter_proof": [
         {
-          "filter_slug": "gswf",
+          "filter_slug": "rpwfe",
           "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF",
-          "notes": []
-        },
-        {
-          "filter_slug": "gswf2",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF2",
+          "oem_part_number": "RPWFE",
           "notes": []
         }
       ],
       "evidence_paths": [],
       "blockers": [],
       "recommended_action": "Capture official manufacturer filter_specification evidence before scaling.",
-      "risk_score": 34,
+      "risk_score": 32,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -6489,29 +6461,22 @@
       "model_number": "GFE28GSKES",
       "brand_slug": "ge",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "rpwfe"
       ],
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "evidence_status": "NONE",
       "per_filter_proof": [
         {
-          "filter_slug": "gswf",
+          "filter_slug": "rpwfe",
           "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF",
-          "notes": []
-        },
-        {
-          "filter_slug": "gswf2",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF2",
+          "oem_part_number": "RPWFE",
           "notes": []
         }
       ],
       "evidence_paths": [],
       "blockers": [],
       "recommended_action": "Capture official manufacturer filter_specification evidence before scaling.",
-      "risk_score": 34,
+      "risk_score": 32,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -6787,23 +6752,16 @@
       "model_number": "GFE28HSKSS",
       "brand_slug": "ge",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2",
+        "rpwfe",
         "smartwater-mwfp"
       ],
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "evidence_status": "NONE",
       "per_filter_proof": [
         {
-          "filter_slug": "gswf",
+          "filter_slug": "rpwfe",
           "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF",
-          "notes": []
-        },
-        {
-          "filter_slug": "gswf2",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF2",
+          "oem_part_number": "RPWFE",
           "notes": []
         },
         {
@@ -6816,7 +6774,7 @@
       "evidence_paths": [],
       "blockers": [],
       "recommended_action": "Capture official manufacturer filter_specification evidence before scaling.",
-      "risk_score": 36,
+      "risk_score": 34,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -6946,29 +6904,22 @@
       "model_number": "GNE25JMKWW",
       "brand_slug": "ge",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "xwfe"
       ],
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "evidence_status": "NONE",
       "per_filter_proof": [
         {
-          "filter_slug": "gswf",
+          "filter_slug": "xwfe",
           "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF",
-          "notes": []
-        },
-        {
-          "filter_slug": "gswf2",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF2",
+          "oem_part_number": "XWFE",
           "notes": []
         }
       ],
       "evidence_paths": [],
       "blockers": [],
       "recommended_action": "Capture official manufacturer filter_specification evidence before scaling.",
-      "risk_score": 34,
+      "risk_score": 32,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -7178,36 +7129,35 @@
       "model_number": "GNE27JSTSS",
       "brand_slug": "ge",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2",
-        "xwf"
+        "xwf",
+        "xwfe"
       ],
-      "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "classification": "WRONG_PART_RISK",
       "evidence_status": "NONE",
       "per_filter_proof": [
         {
-          "filter_slug": "gswf",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF",
-          "notes": []
-        },
-        {
-          "filter_slug": "gswf2",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF2",
-          "notes": []
-        },
-        {
           "filter_slug": "xwf",
-          "proof_status": "NEEDS_EVIDENCE",
+          "proof_status": "WRONG_FAMILY_RISK",
           "oem_part_number": "XWF",
-          "notes": []
+          "notes": [
+            "included in wrong-family / confusion-family blocker set"
+          ]
+        },
+        {
+          "filter_slug": "xwfe",
+          "proof_status": "WRONG_FAMILY_RISK",
+          "oem_part_number": "XWFE",
+          "notes": [
+            "included in wrong-family / confusion-family blocker set"
+          ]
         }
       ],
       "evidence_paths": [],
-      "blockers": [],
-      "recommended_action": "Capture official manufacturer filter_specification evidence before scaling.",
-      "risk_score": 36,
+      "blockers": [
+        "confusion:XWF vs XWFE (GE RFID shell mismatch)"
+      ],
+      "recommended_action": "Remove wrong-family compat rows or capture model-specific proof for the correct family only.",
+      "risk_score": 109,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -7456,36 +7406,35 @@
       "model_number": "GSE25HSKSS",
       "brand_slug": "ge",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2",
-        "xwf"
+        "xwf",
+        "xwfe"
       ],
-      "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "classification": "WRONG_PART_RISK",
       "evidence_status": "NONE",
       "per_filter_proof": [
         {
-          "filter_slug": "gswf",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF",
-          "notes": []
-        },
-        {
-          "filter_slug": "gswf2",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF2",
-          "notes": []
-        },
-        {
           "filter_slug": "xwf",
-          "proof_status": "NEEDS_EVIDENCE",
+          "proof_status": "WRONG_FAMILY_RISK",
           "oem_part_number": "XWF",
-          "notes": []
+          "notes": [
+            "included in wrong-family / confusion-family blocker set"
+          ]
+        },
+        {
+          "filter_slug": "xwfe",
+          "proof_status": "WRONG_FAMILY_RISK",
+          "oem_part_number": "XWFE",
+          "notes": [
+            "included in wrong-family / confusion-family blocker set"
+          ]
         }
       ],
       "evidence_paths": [],
-      "blockers": [],
-      "recommended_action": "Capture official manufacturer filter_specification evidence before scaling.",
-      "risk_score": 36,
+      "blockers": [
+        "confusion:XWF vs XWFE (GE RFID shell mismatch)"
+      ],
+      "recommended_action": "Remove wrong-family compat rows or capture model-specific proof for the correct family only.",
+      "risk_score": 109,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -7876,30 +7825,16 @@
       "fridge_slug": "ge-gte18gsnrss",
       "model_number": "GTE18GSNRSS",
       "brand_slug": "ge",
-      "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
-      ],
-      "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [],
+      "classification": "UNKNOWN",
       "evidence_status": "NONE",
-      "per_filter_proof": [
-        {
-          "filter_slug": "gswf",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF",
-          "notes": []
-        },
-        {
-          "filter_slug": "gswf2",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF2",
-          "notes": []
-        }
-      ],
+      "per_filter_proof": [],
       "evidence_paths": [],
-      "blockers": [],
-      "recommended_action": "Capture official manufacturer filter_specification evidence before scaling.",
-      "risk_score": 34,
+      "blockers": [
+        "no_compat_mapping"
+      ],
+      "recommended_action": "Add compatibility mapping after official manufacturer filter proof.",
+      "risk_score": 55,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -7959,29 +7894,22 @@
       "model_number": "GYE22GSKWW",
       "brand_slug": "ge",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "rpwfe"
       ],
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "evidence_status": "NONE",
       "per_filter_proof": [
         {
-          "filter_slug": "gswf",
+          "filter_slug": "rpwfe",
           "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF",
-          "notes": []
-        },
-        {
-          "filter_slug": "gswf2",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF2",
+          "oem_part_number": "RPWFE",
           "notes": []
         }
       ],
       "evidence_paths": [],
       "blockers": [],
       "recommended_action": "Capture official manufacturer filter_specification evidence before scaling.",
-      "risk_score": 34,
+      "risk_score": 32,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -8204,36 +8132,35 @@
       "model_number": "PFE28KMKWW",
       "brand_slug": "ge",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2",
+        "rpwfe",
         "xwf"
       ],
-      "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "classification": "WRONG_PART_RISK",
       "evidence_status": "NONE",
       "per_filter_proof": [
         {
-          "filter_slug": "gswf",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF",
-          "notes": []
-        },
-        {
-          "filter_slug": "gswf2",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF2",
-          "notes": []
+          "filter_slug": "rpwfe",
+          "proof_status": "WRONG_FAMILY_RISK",
+          "oem_part_number": "RPWFE",
+          "notes": [
+            "included in wrong-family / confusion-family blocker set"
+          ]
         },
         {
           "filter_slug": "xwf",
-          "proof_status": "NEEDS_EVIDENCE",
+          "proof_status": "WRONG_FAMILY_RISK",
           "oem_part_number": "XWF",
-          "notes": []
+          "notes": [
+            "included in wrong-family / confusion-family blocker set"
+          ]
         }
       ],
       "evidence_paths": [],
-      "blockers": [],
-      "recommended_action": "Capture official manufacturer filter_specification evidence before scaling.",
-      "risk_score": 36,
+      "blockers": [
+        "confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family"
+      ],
+      "recommended_action": "Remove wrong-family compat rows or capture model-specific proof for the correct family only.",
+      "risk_score": 109,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -8331,29 +8258,22 @@
       "model_number": "PFE28KYNBB",
       "brand_slug": "ge",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "rpwfe"
       ],
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "evidence_status": "NONE",
       "per_filter_proof": [
         {
-          "filter_slug": "gswf",
+          "filter_slug": "rpwfe",
           "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF",
-          "notes": []
-        },
-        {
-          "filter_slug": "gswf2",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF2",
+          "oem_part_number": "RPWFE",
           "notes": []
         }
       ],
       "evidence_paths": [],
       "blockers": [],
       "recommended_action": "Capture official manufacturer filter_specification evidence before scaling.",
-      "risk_score": 34,
+      "risk_score": 32,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -8458,29 +8378,22 @@
       "model_number": "PVD28BYMFS",
       "brand_slug": "ge",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "xwfe"
       ],
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "evidence_status": "NONE",
       "per_filter_proof": [
         {
-          "filter_slug": "gswf",
+          "filter_slug": "xwfe",
           "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF",
-          "notes": []
-        },
-        {
-          "filter_slug": "gswf2",
-          "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "GSWF2",
+          "oem_part_number": "XWFE",
           "notes": []
         }
       ],
       "evidence_paths": [],
       "blockers": [],
       "recommended_action": "Capture official manufacturer filter_specification evidence before scaling.",
-      "risk_score": 34,
+      "risk_score": 32,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -18374,15 +18287,15 @@
     "total_models": 500,
     "classification_counts": {
       "PROVEN_CORRECT": 15,
-      "LIKELY_CORRECT_NEEDS_EVIDENCE": 409,
-      "WRONG_PART_RISK": 75,
+      "LIKELY_CORRECT_NEEDS_EVIDENCE": 405,
+      "WRONG_PART_RISK": 78,
       "BLOCKED": 1,
-      "UNKNOWN": 0
+      "UNKNOWN": 1
     },
     "factory_scaling": {
       "safe": 15,
-      "needs_evidence": 409,
-      "dangerous": 76
+      "needs_evidence": 406,
+      "dangerous": 79
     },
     "recommended_next_action": "Resolve WRONG_PART_RISK and BLOCKED models before batch page factory scaling; prioritize indexable_risk_pages with quality-gate index=true."
   },
@@ -18402,7 +18315,7 @@
   ],
   "proven_facts": [
     "PROVEN: total_models=500 from data/fridge_models.csv.",
-    "PROVEN: classification_counts={\"PROVEN_CORRECT\":15,\"LIKELY_CORRECT_NEEDS_EVIDENCE\":409,\"WRONG_PART_RISK\":75,\"BLOCKED\":1,\"UNKNOWN\":0}.",
+    "PROVEN: classification_counts={\"PROVEN_CORRECT\":15,\"LIKELY_CORRECT_NEEDS_EVIDENCE\":405,\"WRONG_PART_RISK\":78,\"BLOCKED\":1,\"UNKNOWN\":1}.",
     "PROVEN: manual_evidence_fixture_count=20.",
     "PROVEN: quarantined_model_count=1.",
     "PROVEN: Read-only audit — no compat, Supabase, retailer link, sitemap, robots, or page mutations."

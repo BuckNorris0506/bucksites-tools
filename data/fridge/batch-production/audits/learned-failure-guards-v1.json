@@ -8130,8 +8130,7 @@
       "brand_slug": "ge",
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "rpwfe"
       ],
       "confusion_family_guards": [
         {
@@ -8196,11 +8195,11 @@
         }
       ],
       "single_filter_family": {
-        "verdict": "WARN",
-        "detail": "Multiple mapped filter slugs without proven single-family proof",
+        "verdict": "PASS",
+        "detail": "Single mapped filter slug",
         "proven_marketing_families": []
       },
-      "aggregate_verdict": "WARN"
+      "aggregate_verdict": "PASS"
     },
     {
       "fridge_slug": "ge-cye22tp2ms1",
@@ -8739,9 +8738,8 @@
       "brand_slug": "ge",
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2",
-        "smartwater-mwfp"
+        "smartwater-mwfp",
+        "xwfe"
       ],
       "confusion_family_guards": [
         {
@@ -9121,8 +9119,7 @@
       "brand_slug": "ge",
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "xwfe"
       ],
       "confusion_family_guards": [
         {
@@ -9187,11 +9184,11 @@
         }
       ],
       "single_filter_family": {
-        "verdict": "WARN",
-        "detail": "Multiple mapped filter slugs without proven single-family proof",
+        "verdict": "PASS",
+        "detail": "Single mapped filter slug",
         "proven_marketing_families": []
       },
-      "aggregate_verdict": "WARN"
+      "aggregate_verdict": "PASS"
     },
     {
       "fridge_slug": "ge-gfe28gelds",
@@ -9351,8 +9348,7 @@
       "brand_slug": "ge",
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "rpwfe"
       ],
       "confusion_family_guards": [
         {
@@ -9417,11 +9413,11 @@
         }
       ],
       "single_filter_family": {
-        "verdict": "WARN",
-        "detail": "Multiple mapped filter slugs without proven single-family proof",
+        "verdict": "PASS",
+        "detail": "Single mapped filter slug",
         "proven_marketing_families": []
       },
-      "aggregate_verdict": "WARN"
+      "aggregate_verdict": "PASS"
     },
     {
       "fridge_slug": "ge-gfe28gmkes",
@@ -9656,8 +9652,7 @@
       "brand_slug": "ge",
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "rpwfe"
       ],
       "confusion_family_guards": [
         {
@@ -9722,11 +9717,11 @@
         }
       ],
       "single_filter_family": {
-        "verdict": "WARN",
-        "detail": "Multiple mapped filter slugs without proven single-family proof",
+        "verdict": "PASS",
+        "detail": "Single mapped filter slug",
         "proven_marketing_families": []
       },
-      "aggregate_verdict": "WARN"
+      "aggregate_verdict": "PASS"
     },
     {
       "fridge_slug": "ge-gfe28gskss",
@@ -10420,8 +10415,7 @@
       "brand_slug": "ge",
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2",
+        "rpwfe",
         "smartwater-mwfp"
       ],
       "confusion_family_guards": [
@@ -10804,8 +10798,7 @@
       "brand_slug": "ge",
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "xwfe"
       ],
       "confusion_family_guards": [
         {
@@ -10870,11 +10863,11 @@
         }
       ],
       "single_filter_family": {
-        "verdict": "WARN",
-        "detail": "Multiple mapped filter slugs without proven single-family proof",
+        "verdict": "PASS",
+        "detail": "Single mapped filter slug",
         "proven_marketing_families": []
       },
-      "aggregate_verdict": "WARN"
+      "aggregate_verdict": "PASS"
     },
     {
       "fridge_slug": "ge-gne25jskss",
@@ -11487,11 +11480,10 @@
     {
       "fridge_slug": "ge-gne27jstss",
       "brand_slug": "ge",
-      "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "classification": "WRONG_PART_RISK",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2",
-        "xwf"
+        "xwf",
+        "xwfe"
       ],
       "confusion_family_guards": [
         {
@@ -11521,8 +11513,8 @@
         },
         {
           "guard_id": "ge_xwf_xwfe_mix",
-          "verdict": "PASS",
-          "detail": "No GE XWF/XWFE co-map"
+          "verdict": "BLOCK",
+          "detail": "GE XWF and XWFE RFID shell mismatch co-mapped"
         },
         {
           "guard_id": "ge_rpwfe_legacy_mix",
@@ -11556,11 +11548,11 @@
         }
       ],
       "single_filter_family": {
-        "verdict": "WARN",
-        "detail": "Multiple mapped filter slugs without proven single-family proof",
+        "verdict": "BLOCK",
+        "detail": "Confusion-family guard BLOCK present",
         "proven_marketing_families": []
       },
-      "aggregate_verdict": "WARN"
+      "aggregate_verdict": "BLOCK"
     },
     {
       "fridge_slug": "ge-gne27jymbb",
@@ -12251,11 +12243,10 @@
     {
       "fridge_slug": "ge-gse25hskss",
       "brand_slug": "ge",
-      "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "classification": "WRONG_PART_RISK",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2",
-        "xwf"
+        "xwf",
+        "xwfe"
       ],
       "confusion_family_guards": [
         {
@@ -12285,8 +12276,8 @@
         },
         {
           "guard_id": "ge_xwf_xwfe_mix",
-          "verdict": "PASS",
-          "detail": "No GE XWF/XWFE co-map"
+          "verdict": "BLOCK",
+          "detail": "GE XWF and XWFE RFID shell mismatch co-mapped"
         },
         {
           "guard_id": "ge_rpwfe_legacy_mix",
@@ -12320,11 +12311,11 @@
         }
       ],
       "single_filter_family": {
-        "verdict": "WARN",
-        "detail": "Multiple mapped filter slugs without proven single-family proof",
+        "verdict": "BLOCK",
+        "detail": "Confusion-family guard BLOCK present",
         "proven_marketing_families": []
       },
-      "aggregate_verdict": "WARN"
+      "aggregate_verdict": "BLOCK"
     },
     {
       "fridge_slug": "ge-gse26gshess",
@@ -13470,11 +13461,8 @@
     {
       "fridge_slug": "ge-gte18gsnrss",
       "brand_slug": "ge",
-      "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-      "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
-      ],
+      "classification": "UNKNOWN",
+      "mapped_filter_slugs": [],
       "confusion_family_guards": [
         {
           "guard_id": "samsung_haf_qin_vs_haf_cin",
@@ -13538,11 +13526,11 @@
         }
       ],
       "single_filter_family": {
-        "verdict": "WARN",
-        "detail": "Multiple mapped filter slugs without proven single-family proof",
+        "verdict": "PASS",
+        "detail": "Single mapped filter slug",
         "proven_marketing_families": []
       },
-      "aggregate_verdict": "WARN"
+      "aggregate_verdict": "PASS"
     },
     {
       "fridge_slug": "ge-gye22gskbb",
@@ -13701,8 +13689,7 @@
       "brand_slug": "ge",
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "rpwfe"
       ],
       "confusion_family_guards": [
         {
@@ -13767,11 +13754,11 @@
         }
       ],
       "single_filter_family": {
-        "verdict": "WARN",
-        "detail": "Multiple mapped filter slugs without proven single-family proof",
+        "verdict": "PASS",
+        "detail": "Single mapped filter slug",
         "proven_marketing_families": []
       },
-      "aggregate_verdict": "WARN"
+      "aggregate_verdict": "PASS"
     },
     {
       "fridge_slug": "ge-gye22hskbb",
@@ -14385,10 +14372,9 @@
     {
       "fridge_slug": "ge-pfe28kmkww",
       "brand_slug": "ge",
-      "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "classification": "WRONG_PART_RISK",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2",
+        "rpwfe",
         "xwf"
       ],
       "confusion_family_guards": [
@@ -14424,8 +14410,8 @@
         },
         {
           "guard_id": "ge_rpwfe_legacy_mix",
-          "verdict": "PASS",
-          "detail": "No GE RPWFE legacy mix"
+          "verdict": "BLOCK",
+          "detail": "GE RPWFE mixed with legacy MWF/XWF/XWFE family"
         },
         {
           "guard_id": "frigidaire_fppwfu01_vs_fppwfu02",
@@ -14454,11 +14440,11 @@
         }
       ],
       "single_filter_family": {
-        "verdict": "WARN",
-        "detail": "Multiple mapped filter slugs without proven single-family proof",
+        "verdict": "BLOCK",
+        "detail": "Confusion-family guard BLOCK present",
         "proven_marketing_families": []
       },
-      "aggregate_verdict": "WARN"
+      "aggregate_verdict": "BLOCK"
     },
     {
       "fridge_slug": "ge-pfe28kskbb",
@@ -14694,8 +14680,7 @@
       "brand_slug": "ge",
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "rpwfe"
       ],
       "confusion_family_guards": [
         {
@@ -14760,11 +14745,11 @@
         }
       ],
       "single_filter_family": {
-        "verdict": "WARN",
-        "detail": "Multiple mapped filter slugs without proven single-family proof",
+        "verdict": "PASS",
+        "detail": "Single mapped filter slug",
         "proven_marketing_families": []
       },
-      "aggregate_verdict": "WARN"
+      "aggregate_verdict": "PASS"
     },
     {
       "fridge_slug": "ge-pfe28kynfs",
@@ -15001,8 +14986,7 @@
       "brand_slug": "ge",
       "classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
       "mapped_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "xwfe"
       ],
       "confusion_family_guards": [
         {
@@ -15067,11 +15051,11 @@
         }
       ],
       "single_filter_family": {
-        "verdict": "WARN",
-        "detail": "Multiple mapped filter slugs without proven single-family proof",
+        "verdict": "PASS",
+        "detail": "Single mapped filter slug",
         "proven_marketing_families": []
       },
-      "aggregate_verdict": "WARN"
+      "aggregate_verdict": "PASS"
     },
     {
       "fridge_slug": "ge-pvd28bynfs",
@@ -26461,7 +26445,7 @@
       "brand_slug": "samsung",
       "classification": "WRONG_PART_RISK",
       "mapped_filter_slugs": [
-        "da29-10105j"
+        "da97-17376b"
       ],
       "confusion_family_guards": [
         {
@@ -26613,8 +26597,7 @@
       "brand_slug": "samsung",
       "classification": "WRONG_PART_RISK",
       "mapped_filter_slugs": [
-        "da29-00012b",
-        "da29-00020b"
+        "da97-17376b"
       ],
       "confusion_family_guards": [
         {
@@ -28224,7 +28207,7 @@
       "brand_slug": "samsung",
       "classification": "WRONG_PART_RISK",
       "mapped_filter_slugs": [
-        "da29-00019a"
+        "da97-17376b"
       ],
       "confusion_family_guards": [
         {
@@ -29988,7 +29971,7 @@
       "brand_slug": "samsung",
       "classification": "WRONG_PART_RISK",
       "mapped_filter_slugs": [
-        "da29-00019a"
+        "da97-17376b"
       ],
       "confusion_family_guards": [
         {
@@ -30293,7 +30276,7 @@
       "brand_slug": "samsung",
       "classification": "WRONG_PART_RISK",
       "mapped_filter_slugs": [
-        "da29-10105j"
+        "da97-17376b"
       ],
       "confusion_family_guards": [
         {
@@ -38471,8 +38454,8 @@
     "samsung_wildcard_da29_conflict": 8,
     "samsung_haf_cin_canonical": 2,
     "lg_lt_generation_mix": 34,
-    "ge_xwf_xwfe_mix": 4,
-    "ge_rpwfe_legacy_mix": 3,
+    "ge_xwf_xwfe_mix": 6,
+    "ge_rpwfe_legacy_mix": 4,
     "frigidaire_fppwfu01_vs_fppwfu02": 0,
     "frigidaire_ultrawf_vs_eptwfu01_mix": 0,
     "frigidaire_eptwfu01_vs_wf3cb_mix": 0,
@@ -38480,13 +38463,13 @@
     "frigidaire_fppwfu01_prefix_family_contamination": 6
   },
   "dangerous_count_regression": {
-    "verdict": "PASS",
-    "dangerous_count": 76,
+    "verdict": "BLOCK",
+    "dangerous_count": 79,
     "expected_dangerous_count": 76,
-    "fixture_slug_count": 76,
-    "remediation_plan_slug_count": 76,
+    "fixture_slug_count": 79,
+    "remediation_plan_slug_count": 79,
     "fixture_matches_remediation_plan": true,
-    "detail": "Dangerous count and fixture slug set match committed baseline"
+    "detail": "Dangerous count 79 exceeds baseline 76"
   },
   "dangerous_slugs_all_blocked": true,
   "proven_correct_slugs_all_pass": true,
@@ -38497,7 +38480,7 @@
       "confusion_family_block_count": ".confusion_family_block_count",
       "dangerous_count_regression": ".dangerous_count_regression"
     },
-    "recommended_next_action": "Phase 2: wire learned_failure_guards into page-factory-preflight and quality-gate before any new registry rows."
+    "recommended_next_action": "Reconcile dangerous-count regression before Page Factory scaling."
   },
   "exact_repo_paths_read": [
     "data/compatibility_mappings.csv",
@@ -38513,7 +38496,7 @@
   ],
   "proven_facts": [
     "PROVEN: total_catalog_models=500 evaluated.",
-    "PROVEN: dangerous_count=76 baseline=76.",
+    "PROVEN: dangerous_count=79 baseline=76.",
     "PROVEN: dangerous_slugs_all_blocked=true.",
     "PROVEN: proven_correct_slugs_all_pass=true.",
     "PROVEN: quarantined_model_count=1.",

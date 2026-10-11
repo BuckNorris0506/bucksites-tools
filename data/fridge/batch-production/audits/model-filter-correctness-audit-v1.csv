@@ -104,7 +104,7 @@ ge-cfe29uskss,CFE29USKSS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official ma
 ge-cwe19tslss,CWE19TSLSS,opfg3f|pfmwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-cwe23sshbb,CWE23SSHBB,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-cwe23sshss,CWE23SSHSS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
-ge-cwe23sshww,CWE23SSHWW,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-cwe23sshww,CWE23SSHWW,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-cye22tp2ms1,CYE22TP2MS1,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gde21eskss,GDE21ESKSS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gfd28gslbb,GFD28GSLBB,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
@@ -112,19 +112,19 @@ ge-gfd28gslss,GFD28GSLSS,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official m
 ge-gfd28gslww,GFD28GSLWW,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gfe24jgkbb,GFE24JGKBB,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gfe24jgkbww,GFE24JGKBWW,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
-ge-gfe24jgkww,GFE24JGKWW,gswf|gswf2|smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe24jgkww,GFE24JGKWW,smartwater-mwfp|xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gfe24jskfss,GFE24JSKFSS,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gfe26jymkbb,GFE26JYMKBB,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gfe26jymkfs,GFE26JYMKFS,mwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gfe26jymkww,GFE26JYMKWW,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
-ge-gfe27jmkes,GFE27JMKES,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe27jmkes,GFE27JMKES,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gfe28gelds,GFE28GELDS,opfg3f|pfmwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gfe28ggkww,GFE28GGKWW,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
-ge-gfe28gmkbb,GFE28GMKBB,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28gmkbb,GFE28GMKBB,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gfe28gmkes,GFE28GMKES,rpwfe,PROVEN_CORRECT,data/manual-evidence/refrigerator/ge-gfe28gmkes.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
 ge-gfe28gmkww,GFE28GMKWW,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gfe28gskbb,GFE28GSKBB,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
-ge-gfe28gskes,GFE28GSKES,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28gskes,GFE28GSKES,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gfe28gskss,GFE28GSKSS,rpwfe,PROVEN_CORRECT,data/manual-evidence/refrigerator/ge-gfe28gskss.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
 ge-gfe28gskww,GFE28GSKWW,xwf|xwfe,WRONG_PART_RISK,,confusion:XWF vs XWFE (GE RFID shell mismatch),Remove wrong-family compat rows or capture model-specific proof for the correct family only.
 ge-gfe28gynbb,GFE28GYNBB,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
@@ -134,12 +134,12 @@ ge-gfe28gynww,GFE28GYNWW,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official 
 ge-gfe28hmkbb,GFE28HMKBB,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gfe28hmkes,GFE28HMKES,mswf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gfe28hmkww,GFE28HMKWW,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
-ge-gfe28hskss,GFE28HSKSS,gswf|gswf2|smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28hskss,GFE28HSKSS,rpwfe|smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gie18gsnarss,GIE18GSNARSS,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gie21gsnerss,GIE21GSNERSS,xwf|xwfe,WRONG_PART_RISK,,confusion:XWF vs XWFE (GE RFID shell mismatch),Remove wrong-family compat rows or capture model-specific proof for the correct family only.
 ge-gne25jmkbb,GNE25JMKBB,opfg3f|pfmwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gne25jmkes,GNE25JMKES,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
-ge-gne25jmkww,GNE25JMKWW,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne25jmkww,GNE25JMKWW,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gne25jskss,GNE25JSKSS,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gne27esmss,GNE27ESMSS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gne27fskss,GNE27FSKSS,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
@@ -148,7 +148,7 @@ ge-gne27jmkbs,GNE27JMKBS,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official
 ge-gne27jsmbb,GNE27JSMBB,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gne27jsmss,GNE27JSMSS,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gne27jsmww,GNE27JSMWW,mswf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
-ge-gne27jstss,GNE27JSTSS,gswf|gswf2|xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne27jstss,GNE27JSTSS,xwf|xwfe,WRONG_PART_RISK,,confusion:XWF vs XWFE (GE RFID shell mismatch),Remove wrong-family compat rows or capture model-specific proof for the correct family only.
 ge-gne27jymbb,GNE27JYMBB,opfg3f|smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gne27jymfs,GNE27JYMFS,mwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gne27jymww,GNE27JYMWW,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
@@ -158,7 +158,7 @@ ge-gne29gskww,GNE29GSKWW,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official 
 ge-gne29gymkfs,GNE29GYMKFS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gsc25frshss,GSC25FRSHSS,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gse25gshss,GSE25GSHSS,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
-ge-gse25hskss,GSE25HSKSS,gswf|gswf2|xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gse25hskss,GSE25HSKSS,xwf|xwfe,WRONG_PART_RISK,,confusion:XWF vs XWFE (GE RFID shell mismatch),Remove wrong-family compat rows or capture model-specific proof for the correct family only.
 ge-gse26gshess,GSE26GSHESS,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gss20eshbb,GSS20ESHBB,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gss20eshss,GSS20ESHSS,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
@@ -174,10 +174,10 @@ ge-gss25gshss,GSS25GSHSS,mwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official ma
 ge-gss25gshww,GSS25GSHWW,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gss25iynfs,GSS25IYNFS,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gss25lslss,GSS25LSLSS,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
-ge-gte18gsnrss,GTE18GSNRSS,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gte18gsnrss,GTE18GSNRSS,,UNKNOWN,,no_compat_mapping,Add compatibility mapping after official manufacturer filter proof.
 ge-gye22gskbb,GYE22GSKBB,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gye22gskss,GYE22GSKSS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
-ge-gye22gskww,GYE22GSKWW,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gye22gskww,GYE22GSKWW,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gye22hskbb,GYE22HSKBB,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gye22hskss,GYE22HSKSS,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-gye22hskww,GYE22HSKWW,rpwfe|xwfe,WRONG_PART_RISK,,confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
@@ -186,15 +186,15 @@ ge-pfe28kelds,PFE28KELDS,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official 
 ge-pfe28klyss,PFE28KLYSS,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-pfe28kmkbb,PFE28KMKBB,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-pfe28kmkes,PFE28KMKES,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
-ge-pfe28kmkww,PFE28KMKWW,gswf|gswf2|xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pfe28kmkww,PFE28KMKWW,rpwfe|xwf,WRONG_PART_RISK,,confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
 ge-pfe28kskbb,PFE28KSKBB,rpwfe|xwfe,WRONG_PART_RISK,,confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
 ge-pfe28kskss,PFE28KSKSS,mswf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-pfe28kskww,PFE28KSKWW,mwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
-ge-pfe28kynbb,PFE28KYNBB,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pfe28kynbb,PFE28KYNBB,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-pfe28kynfs,PFE28KYNFS,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-pfe28kynww,PFE28KYNWW,xwf|xwfe,WRONG_PART_RISK,,confusion:XWF vs XWFE (GE RFID shell mismatch),Remove wrong-family compat rows or capture model-specific proof for the correct family only.
 ge-pvd28bslss,PVD28BSLSS,opfg3f|smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
-ge-pvd28bymfs,PVD28BYMFS,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pvd28bymfs,PVD28BYMFS,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-pvd28bynfs,PVD28BYNFS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
 ge-pwe23kmkes,PWE23KMKES,rpwfe|xwfe,WRONG_PART_RISK,,confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
 ge-pwe23kskss,PWE23KSKSS,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.

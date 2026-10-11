@@ -1,20 +1,20 @@
 # Model filter correctness audit v1
 
-- generated_at: **2026-06-09T17:26:44.996Z**
+- generated_at: **2026-10-11T14:32:58.126Z**
 - total_models: **500**
 - factory_scaling.safe: **15**
-- factory_scaling.needs_evidence: **409**
-- factory_scaling.dangerous: **76**
+- factory_scaling.needs_evidence: **406**
+- factory_scaling.dangerous: **79**
 
 ## Classification counts
 
 | Classification | Count |
 | --- | ---: |
 | PROVEN_CORRECT | 15 |
-| LIKELY_CORRECT_NEEDS_EVIDENCE | 409 |
-| WRONG_PART_RISK | 75 |
+| LIKELY_CORRECT_NEEDS_EVIDENCE | 405 |
+| WRONG_PART_RISK | 78 |
 | BLOCKED | 1 |
-| UNKNOWN | 0 |
+| UNKNOWN | 1 |
 
 ## Confusion-family summary
 
@@ -22,10 +22,10 @@
 | --- | ---: |
 | haf_qin_vs_haf_cin | 0 |
 | da29_vs_da97 | 13 |
-| xwf_vs_xwfe | 4 |
+| xwf_vs_xwfe | 6 |
 | fppwfu01_vs_fppwfu02 | 0 |
 | lg_lt_generation_mixes | 34 |
-| ge_rpwfe_mixed_legacy | 3 |
+| ge_rpwfe_mixed_legacy | 4 |
 | wildcard_blocked_haf_cin | 1 |
 | wildcard_review_da29_conflict | 26 |
 
@@ -63,7 +63,10 @@ _None — no dangerous classifications intersect quality-gate indexable artifact
 - `ge-gfe28gskww` score=109 WRONG_PART_RISK — confusion:XWF vs XWFE (GE RFID shell mismatch)
 - `ge-gfe28gynes` score=109 WRONG_PART_RISK — confusion:XWF vs XWFE (GE RFID shell mismatch)
 - `ge-gie21gsnerss` score=109 WRONG_PART_RISK — confusion:XWF vs XWFE (GE RFID shell mismatch)
+- `ge-gne27jstss` score=109 WRONG_PART_RISK — confusion:XWF vs XWFE (GE RFID shell mismatch)
+- `ge-gse25hskss` score=109 WRONG_PART_RISK — confusion:XWF vs XWFE (GE RFID shell mismatch)
 - `ge-gye22hskww` score=109 WRONG_PART_RISK — confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family
+- `ge-pfe28kmkww` score=109 WRONG_PART_RISK — confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family
 - `ge-pfe28kskbb` score=109 WRONG_PART_RISK — confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family
 - `ge-pfe28kynww` score=109 WRONG_PART_RISK — confusion:XWF vs XWFE (GE RFID shell mismatch)
 - `ge-pwe23kmkes` score=109 WRONG_PART_RISK — confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family
@@ -82,9 +85,6 @@ _None — no dangerous classifications intersect quality-gate indexable artifact
 - `lg-lrfxs2503b` score=109 WRONG_PART_RISK — confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p
 - `lg-lrfxs3106w` score=109 WRONG_PART_RISK — confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p
 - `lg-lrmvc2306d` score=109 WRONG_PART_RISK — confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p
-- `lg-lsxs27366s` score=109 WRONG_PART_RISK — confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p
-- `lg-lupxs3186n` score=109 WRONG_PART_RISK — confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p
-- `samsung-rf18hfenbww` score=109 WRONG_PART_RISK — confusion:Samsung DA29 (da29-00020a) + DA97 (da97-15217d) co-mapped
 
 ## Recommended next action
 

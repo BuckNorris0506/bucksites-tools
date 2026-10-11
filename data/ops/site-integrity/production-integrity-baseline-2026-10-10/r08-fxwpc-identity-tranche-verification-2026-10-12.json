@@ -1,0 +1,25 @@
+{
+  "contract": "r08_fxwpc_identity_tranche_verification_v1",
+  "read_only": true,
+  "verified_at": "2026-10-12T00:00:00Z",
+  "classification": "FXWPC_IDENTITY_TRANCHE_COMPLETE",
+  "r08_root_status": "STILL_PRESENT",
+  "distribution_blocker": true,
+  "remaining_r08_sibling_tranche": "FXHTC interval + GXWH20S↔FXHTC size/mapping adjudication",
+  "supabase_parity_apply": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-fxwpc-identity-tranche-supabase-parity-apply-result-2026-10-12.json",
+  "executive_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-executive-decision-packet-2026-10-11.json",
+  "production_readback": {
+    "host": "https://buckparts.com",
+    "readback_at": "2026-10-12T00:00:00Z",
+    "/whole-house-water/filter/ge-fxwpc": {
+      "primary_name": "GE whole home pleated sediment filter (FXWPC)",
+      "interval": "Replace about every 3 months",
+      "notes_excerpt": "Not carbon — FXWTC is the carbon-paper SKU"
+    },
+    "/whole-house-water/model/ge-whole-house-gxwh20s": {
+      "model_notes_excerpt": "FXWPC. Carbon/chlorine in this family: FXWTC — not FXWPC",
+      "fxwpc_listing_subtitle": "GE whole home pleated sediment filter (FXWPC)",
+      "fxhtc_primary_unchanged": "Replace about every 6 months (sibling R08 scope)"
+    }
+  }
+}

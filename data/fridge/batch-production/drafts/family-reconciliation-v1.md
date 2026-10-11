@@ -1,6 +1,6 @@
 # Family reconciliation v1
 
-Generated: 2026-06-09T17:26:51.887Z
+Generated: 2026-06-08T12:00:00.000Z
 
 ## Severity counts
 
@@ -8,7 +8,7 @@ Generated: 2026-06-09T17:26:51.887Z
 - HIGH: 12
 - MEDIUM: 20
 - LOW: 0
-- NONE: 4
+- NONE: 5
 
 ## Ranked backlog (top 10)
 

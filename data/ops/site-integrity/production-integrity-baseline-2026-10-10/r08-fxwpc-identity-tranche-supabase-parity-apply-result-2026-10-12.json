@@ -1,0 +1,21 @@
+{
+  "contract": "r08_fxwpc_identity_tranche_supabase_parity_apply_result_v1",
+  "read_only": true,
+  "generated_at": "2026-10-11T23:59:03.169Z",
+  "apply_status": "APPLIED",
+  "owner_approval_decision_id": "decision-2026-10-12-r08-fxwpc-identity-tranche-supabase-parity-approve",
+  "plan_sha256": "7d1560832f2a5afe7f87f7f27fee272b6cdca6970da63d5b1a457fc58372a4cc",
+  "applied_operations": [
+    "part_update:ge-fxwpc,interval=3",
+    "model_notes_update:ge-whole-house-gxwh20s"
+  ],
+  "before_snapshot": {
+    "part_ge_fxwpc": {
+      "name": "GE whole home carbon filter",
+      "notes": "OEM carbon cartridge for select GE whole-house systems.",
+      "replacement_interval_months": 6
+    },
+    "model_gxwh20s_notes": "Often serviced with GE FXHTC (sediment) and FXWPC (carbon); confirm your installed manifold."
+  },
+  "source_command": "BUCKPARTS_IO_CAPABILITY=MUTATION BUCKPARTS_R08_FXWPC_IDENTITY_TRANCHE_SUPABASE_PARITY_MUTATION_ENABLED=1 npm run buckparts:r08-fxwpc-identity-tranche-supabase-parity-guarded-apply -- --apply"
+}

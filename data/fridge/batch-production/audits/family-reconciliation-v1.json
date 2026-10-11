@@ -4,17 +4,17 @@
   "data_mutation": false,
   "mutation_blocked_until_owner_approval": true,
   "mutation_authorized": false,
-  "generated_at": "2026-06-09T17:26:51.887Z",
-  "families_screened": 41,
+  "generated_at": "2026-06-08T12:00:00.000Z",
+  "families_screened": 42,
   "families_with_conflicts": 37,
   "severity_counts": {
     "CRITICAL": 5,
     "HIGH": 12,
     "MEDIUM": 20,
     "LOW": 0,
-    "NONE": 4
+    "NONE": 5
   },
-  "hyperagent_validation_packets_loaded": 8,
+  "hyperagent_validation_packets_loaded": 9,
   "ranked_reconciliation_backlog": [
     {
       "rank": 1,
@@ -178,6 +178,16 @@
     },
     {
       "rank": 17,
+      "family_key": "filter::ge::rpwfe",
+      "target_filter_slug": "rpwfe",
+      "severity": "MEDIUM",
+      "reconciliation_score": 3140,
+      "model_line_conflict_count": 19,
+      "estimated_factory_unlock_score": 1895,
+      "owner_review_packet_id": "57168ccb0063dbe5"
+    },
+    {
+      "rank": 18,
       "family_key": "filter::frigidaire::ultrawf",
       "target_filter_slug": "ultrawf",
       "severity": "HIGH",
@@ -187,7 +197,7 @@
       "owner_review_packet_id": "a48a3274a34a9e28"
     },
     {
-      "rank": 18,
+      "rank": 19,
       "family_key": "filter::whirlpool::edr2rxd1",
       "target_filter_slug": "edr2rxd1",
       "severity": "MEDIUM",
@@ -197,7 +207,7 @@
       "owner_review_packet_id": "a215b10a7b312103"
     },
     {
-      "rank": 19,
+      "rank": 20,
       "family_key": "filter::whirlpool::edr4rxd1",
       "target_filter_slug": "edr4rxd1",
       "severity": "MEDIUM",
@@ -207,7 +217,17 @@
       "owner_review_packet_id": "e06d910c7b9bd724"
     },
     {
-      "rank": 20,
+      "rank": 21,
+      "family_key": "filter::ge::xwfe",
+      "target_filter_slug": "xwfe",
+      "severity": "MEDIUM",
+      "reconciliation_score": 2870,
+      "model_line_conflict_count": 14,
+      "estimated_factory_unlock_score": 1700,
+      "owner_review_packet_id": "1dadcadbeb3d280f"
+    },
+    {
+      "rank": 22,
       "family_key": "filter::ge::opfg3f",
       "target_filter_slug": "opfg3f",
       "severity": "MEDIUM",
@@ -217,34 +237,14 @@
       "owner_review_packet_id": "738bdeb72d038924"
     },
     {
-      "rank": 21,
-      "family_key": "filter::ge::gswf",
-      "target_filter_slug": "gswf",
-      "severity": "MEDIUM",
-      "reconciliation_score": 2820,
-      "model_line_conflict_count": 13,
-      "estimated_factory_unlock_score": 1700,
-      "owner_review_packet_id": "2bc3ad4c35c47255"
-    },
-    {
-      "rank": 22,
-      "family_key": "filter::ge::rpwfe",
-      "target_filter_slug": "rpwfe",
-      "severity": "MEDIUM",
-      "reconciliation_score": 2783,
-      "model_line_conflict_count": 13,
-      "estimated_factory_unlock_score": 1325,
-      "owner_review_packet_id": "57168ccb0063dbe5"
-    },
-    {
       "rank": 23,
-      "family_key": "filter::ge::xwfe",
-      "target_filter_slug": "xwfe",
+      "family_key": "filter::ge::smartwater-mwfp",
+      "target_filter_slug": "smartwater-mwfp",
       "severity": "MEDIUM",
-      "reconciliation_score": 2740,
-      "model_line_conflict_count": 12,
-      "estimated_factory_unlock_score": 1400,
-      "owner_review_packet_id": "1dadcadbeb3d280f"
+      "reconciliation_score": 2670,
+      "model_line_conflict_count": 11,
+      "estimated_factory_unlock_score": 1200,
+      "owner_review_packet_id": "4fce1c927bfc9497"
     },
     {
       "rank": 24,
@@ -258,16 +258,6 @@
     },
     {
       "rank": 25,
-      "family_key": "filter::ge::smartwater-mwfp",
-      "target_filter_slug": "smartwater-mwfp",
-      "severity": "MEDIUM",
-      "reconciliation_score": 2610,
-      "model_line_conflict_count": 10,
-      "estimated_factory_unlock_score": 1100,
-      "owner_review_packet_id": "4fce1c927bfc9497"
-    },
-    {
-      "rank": 26,
       "family_key": "filter::samsung::da97-17376a",
       "target_filter_slug": "da97-17376a",
       "severity": "MEDIUM",
@@ -277,17 +267,17 @@
       "owner_review_packet_id": "c13b0b63e1e589ce"
     },
     {
-      "rank": 27,
+      "rank": 26,
       "family_key": "filter::ge::xwf",
       "target_filter_slug": "xwf",
       "severity": "MEDIUM",
-      "reconciliation_score": 2548,
+      "reconciliation_score": 2542,
       "model_line_conflict_count": 9,
-      "estimated_factory_unlock_score": 980,
+      "estimated_factory_unlock_score": 920,
       "owner_review_packet_id": "ffa366dfbdd6a937"
     },
     {
-      "rank": 28,
+      "rank": 27,
       "family_key": "filter::samsung::da97-19467c",
       "target_filter_slug": "da97-19467c",
       "severity": "MEDIUM",
@@ -297,7 +287,7 @@
       "owner_review_packet_id": "a9e9d2f57701e3b0"
     },
     {
-      "rank": 29,
+      "rank": 28,
       "family_key": "filter::samsung::da29-00003g",
       "target_filter_slug": "da29-00003g",
       "severity": "MEDIUM",
@@ -307,7 +297,7 @@
       "owner_review_packet_id": "3f45b1f047213475"
     },
     {
-      "rank": 30,
+      "rank": 29,
       "family_key": "filter::samsung::da29-00020a",
       "target_filter_slug": "da29-00020a",
       "severity": "MEDIUM",
@@ -317,7 +307,7 @@
       "owner_review_packet_id": "c95f38afa665fbf5"
     },
     {
-      "rank": 31,
+      "rank": 30,
       "family_key": "filter::ge::mswf",
       "target_filter_slug": "mswf",
       "severity": "MEDIUM",
@@ -327,7 +317,7 @@
       "owner_review_packet_id": "a1450166ad85e388"
     },
     {
-      "rank": 32,
+      "rank": 31,
       "family_key": "filter::ge::mwf",
       "target_filter_slug": "mwf",
       "severity": "MEDIUM",
@@ -337,7 +327,7 @@
       "owner_review_packet_id": "2d16f6525a87ff0b"
     },
     {
-      "rank": 33,
+      "rank": 32,
       "family_key": "filter::lg::lt700p",
       "target_filter_slug": "lt700p",
       "severity": "MEDIUM",
@@ -347,7 +337,7 @@
       "owner_review_packet_id": "18461a44bdf073d8"
     },
     {
-      "rank": 34,
+      "rank": 33,
       "family_key": "filter::whirlpool::4396841",
       "target_filter_slug": "4396841",
       "severity": "MEDIUM",
@@ -357,7 +347,7 @@
       "owner_review_packet_id": "535f0b8d013727aa"
     },
     {
-      "rank": 35,
+      "rank": 34,
       "family_key": "filter::samsung::da29-10105j",
       "target_filter_slug": "da29-10105j",
       "severity": "MEDIUM",
@@ -367,7 +357,7 @@
       "owner_review_packet_id": "5184af46d6862b3f"
     },
     {
-      "rank": 36,
+      "rank": 35,
       "family_key": "filter::lg::lt800p",
       "target_filter_slug": "lt800p",
       "severity": "MEDIUM",
@@ -375,6 +365,16 @@
       "model_line_conflict_count": 2,
       "estimated_factory_unlock_score": 300,
       "owner_review_packet_id": "f92a900a1ceebc41"
+    },
+    {
+      "rank": 36,
+      "family_key": "filter::ge::gswf",
+      "target_filter_slug": "gswf",
+      "severity": "MEDIUM",
+      "reconciliation_score": 2080,
+      "model_line_conflict_count": 1,
+      "estimated_factory_unlock_score": 300,
+      "owner_review_packet_id": "2bc3ad4c35c47255"
     },
     {
       "rank": 37,
@@ -931,6 +931,320 @@
         "anchor_frozen": false,
         "prefix_contamination_count": 0,
         "pre_research_recommendation": "NEEDS_REPO_RECONCILIATION_FIRST",
+        "hyperagent_compat_review_count": 0,
+        "learned_failure_block_count": 0
+      }
+    },
+    {
+      "contract": "family_reconciliation_owner_review_packet_v1",
+      "packet_id": "57168ccb0063dbe5",
+      "family_key": "filter::ge::rpwfe",
+      "target_filter_slug": "rpwfe",
+      "severity": "MEDIUM",
+      "title": "Family reconciliation — filter::ge::rpwfe",
+      "summary": "19 model-line conflicts across 20 unlock slugs for rpwfe.",
+      "owner_checklist": [
+        "Confirm model-line sibling mappings in data/compatibility_mappings.csv before evidence scaling.",
+        "Resolve alias/co-map WARN rows before promoting LIKELY_CORRECT slugs to PROVEN_CORRECT.",
+        "Capture owner-browser Tier-1 filter_specification proof for any slug kept in this family.",
+        "Do not apply HyperAgent compat removals until owner review closes NEEDS_COMPAT_REVIEW rows."
+      ],
+      "slug_rows": [
+        {
+          "fridge_slug": "ge-cwe23sshww",
+          "model_number": "CWE23SSHWW",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-cwe23sshbb",
+          "conflicting_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gfd28gslbb",
+          "model_number": "GFD28GSLBB",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gfd28gslss",
+          "conflicting_filter_slugs": [
+            "xwfe"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gfe24jskfss",
+          "model_number": "GFE24JSKFSS",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gfe24jgkbb",
+          "conflicting_filter_slugs": [
+            "opfg3f"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gfe26jymkbb",
+          "model_number": "GFE26JYMKBB",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gfe26jymkfs",
+          "conflicting_filter_slugs": [
+            "mwf"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gfe28gmkbb",
+          "model_number": "GFE28GMKBB",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gfe28gelds",
+          "conflicting_filter_slugs": [
+            "opfg3f",
+            "pfmwf"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gfe28gskes",
+          "model_number": "GFE28GSKES",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gfe28gelds",
+          "conflicting_filter_slugs": [
+            "opfg3f",
+            "pfmwf"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gfe28gynww",
+          "model_number": "GFE28GYNWW",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gfe28gelds",
+          "conflicting_filter_slugs": [
+            "opfg3f",
+            "pfmwf"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gfe28hskss",
+          "model_number": "GFE28HSKSS",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe",
+            "smartwater-mwfp"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gfe28gelds",
+          "conflicting_filter_slugs": [
+            "opfg3f",
+            "pfmwf"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gne27jsmss",
+          "model_number": "GNE27JSMSS",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gne27esmss",
+          "conflicting_filter_slugs": [
+            "xwf"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gne29gskww",
+          "model_number": "GNE29GSKWW",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gne29gskbb",
+          "conflicting_filter_slugs": [
+            "xwfe"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gss23hshss",
+          "model_number": "GSS23HSHSS",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gss23gskbb",
+          "conflicting_filter_slugs": [
+            "xwfe"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gss25gmkbb",
+          "model_number": "GSS25GMKBB",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gss25gmkww",
+          "conflicting_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gss25gmkes",
+          "model_number": "GSS25GMKES",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gss25gmkww",
+          "conflicting_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gss25gshww",
+          "model_number": "GSS25GSHWW",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gss25gmkww",
+          "conflicting_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gss25iynfs",
+          "model_number": "GSS25IYNFS",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gss25gmkww",
+          "conflicting_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gye22gskww",
+          "model_number": "GYE22GSKWW",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gye22gskbb",
+          "conflicting_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-pfe28kelds",
+          "model_number": "PFE28KELDS",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-pfe28kblts",
+          "conflicting_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-pfe28kmkes",
+          "model_number": "PFE28KMKES",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-pfe28kblts",
+          "conflicting_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-pfe28kynbb",
+          "model_number": "PFE28KYNBB",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "rpwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-pfe28kblts",
+          "conflicting_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        }
+      ],
+      "signals": {
+        "anchor_frozen": false,
+        "prefix_contamination_count": 0,
+        "pre_research_recommendation": "SAFE_FOR_HYPERAGENT_EVIDENCE_BATCH",
         "hyperagent_compat_review_count": 0,
         "learned_failure_block_count": 0
       }
@@ -2431,12 +2745,12 @@
     },
     {
       "contract": "family_reconciliation_owner_review_packet_v1",
-      "packet_id": "2bc3ad4c35c47255",
-      "family_key": "filter::ge::gswf",
-      "target_filter_slug": "gswf",
+      "packet_id": "1dadcadbeb3d280f",
+      "family_key": "filter::ge::xwfe",
+      "target_filter_slug": "xwfe",
       "severity": "MEDIUM",
-      "title": "Family reconciliation — filter::ge::gswf",
-      "summary": "13 model-line conflicts across 17 unlock slugs for gswf.",
+      "title": "Family reconciliation — filter::ge::xwfe",
+      "summary": "14 model-line conflicts across 17 unlock slugs for xwfe.",
       "owner_checklist": [
         "Confirm model-line sibling mappings in data/compatibility_mappings.csv before evidence scaling.",
         "Resolve alias/co-map WARN rows before promoting LIKELY_CORRECT slugs to PROVEN_CORRECT.",
@@ -2445,45 +2759,41 @@
       ],
       "slug_rows": [
         {
-          "fridge_slug": "ge-cwe23sshww",
-          "model_number": "CWE23SSHWW",
+          "fridge_slug": "ge-gfd28gslss",
+          "model_number": "GFD28GSLSS",
           "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
           "mapped_filter_slugs": [
-            "gswf",
-            "gswf2"
+            "xwfe"
           ],
           "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-cwe23sshbb",
+          "conflicting_sibling_slug": "ge-gfd28gslbb",
           "conflicting_filter_slugs": [
-            "smartwater-mwfp"
+            "rpwfe"
           ],
           "hyperagent_cursor_row_state": null,
           "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
         },
         {
-          "fridge_slug": "ge-gfe24jgkww",
-          "model_number": "GFE24JGKWW",
+          "fridge_slug": "ge-gfd28gslww",
+          "model_number": "GFD28GSLWW",
           "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
           "mapped_filter_slugs": [
-            "gswf",
-            "gswf2",
-            "smartwater-mwfp"
+            "xwfe"
           ],
           "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gfe24jgkbb",
+          "conflicting_sibling_slug": "ge-gfd28gslbb",
           "conflicting_filter_slugs": [
-            "opfg3f"
+            "rpwfe"
           ],
           "hyperagent_cursor_row_state": null,
           "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
         },
         {
-          "fridge_slug": "ge-gfe28gmkbb",
-          "model_number": "GFE28GMKBB",
+          "fridge_slug": "ge-gfe28ggkww",
+          "model_number": "GFE28GGKWW",
           "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
           "mapped_filter_slugs": [
-            "gswf",
-            "gswf2"
+            "xwfe"
           ],
           "conflict_type": "model_line_filter_split",
           "conflicting_sibling_slug": "ge-gfe28gelds",
@@ -2495,12 +2805,11 @@
           "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
         },
         {
-          "fridge_slug": "ge-gfe28gskes",
-          "model_number": "GFE28GSKES",
+          "fridge_slug": "ge-gfe28gmkww",
+          "model_number": "GFE28GMKWW",
           "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
           "mapped_filter_slugs": [
-            "gswf",
-            "gswf2"
+            "xwfe"
           ],
           "conflict_type": "model_line_filter_split",
           "conflicting_sibling_slug": "ge-gfe28gelds",
@@ -2512,33 +2821,14 @@
           "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
         },
         {
-          "fridge_slug": "ge-gfe28hmkww",
-          "model_number": "GFE28HMKWW",
+          "fridge_slug": "ge-gne25jmkes",
+          "model_number": "GNE25JMKES",
           "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
           "mapped_filter_slugs": [
-            "gswf",
-            "gswf2"
+            "xwfe"
           ],
           "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gfe28gelds",
-          "conflicting_filter_slugs": [
-            "opfg3f",
-            "pfmwf"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gfe28hskss",
-          "model_number": "GFE28HSKSS",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "gswf",
-            "gswf2",
-            "smartwater-mwfp"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gfe28gelds",
+          "conflicting_sibling_slug": "ge-gne25jmkbb",
           "conflicting_filter_slugs": [
             "opfg3f",
             "pfmwf"
@@ -2551,8 +2841,7 @@
           "model_number": "GNE25JMKWW",
           "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
           "mapped_filter_slugs": [
-            "gswf",
-            "gswf2"
+            "xwfe"
           ],
           "conflict_type": "model_line_filter_split",
           "conflicting_sibling_slug": "ge-gne25jmkbb",
@@ -2564,13 +2853,11 @@
           "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
         },
         {
-          "fridge_slug": "ge-gne27jstss",
-          "model_number": "GNE27JSTSS",
+          "fridge_slug": "ge-gne27fskss",
+          "model_number": "GNE27FSKSS",
           "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
           "mapped_filter_slugs": [
-            "gswf",
-            "gswf2",
-            "xwf"
+            "xwfe"
           ],
           "conflict_type": "model_line_filter_split",
           "conflicting_sibling_slug": "ge-gne27esmss",
@@ -2581,29 +2868,71 @@
           "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
         },
         {
-          "fridge_slug": "ge-gse25hskss",
-          "model_number": "GSE25HSKSS",
+          "fridge_slug": "ge-gne27jsmbb",
+          "model_number": "GNE27JSMBB",
           "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
           "mapped_filter_slugs": [
-            "gswf",
-            "gswf2",
-            "xwf"
+            "xwfe"
           ],
           "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gse25gshss",
+          "conflicting_sibling_slug": "ge-gne27esmss",
           "conflicting_filter_slugs": [
-            "xwfe"
+            "xwf"
           ],
           "hyperagent_cursor_row_state": null,
           "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
         },
         {
-          "fridge_slug": "ge-gye22gskww",
-          "model_number": "GYE22GSKWW",
+          "fridge_slug": "ge-gne29gskbb",
+          "model_number": "GNE29GSKBB",
           "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
           "mapped_filter_slugs": [
-            "gswf",
-            "gswf2"
+            "xwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gne29gskss",
+          "conflicting_filter_slugs": [
+            "opfg3f"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gse25gshss",
+          "model_number": "GSE25GSHSS",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "xwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gse25hskss",
+          "conflicting_filter_slugs": [
+            "xwf"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gss23gskbb",
+          "model_number": "GSS23GSKBB",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "xwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gss23gskss",
+          "conflicting_filter_slugs": [
+            "mswf"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gye22hskbb",
+          "model_number": "GYE22HSKBB",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "xwfe"
           ],
           "conflict_type": "model_line_filter_split",
           "conflicting_sibling_slug": "ge-gye22gskbb",
@@ -2614,29 +2943,11 @@
           "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
         },
         {
-          "fridge_slug": "ge-pfe28kmkww",
-          "model_number": "PFE28KMKWW",
+          "fridge_slug": "ge-pfe28kynfs",
+          "model_number": "PFE28KYNFS",
           "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
           "mapped_filter_slugs": [
-            "gswf",
-            "gswf2",
-            "xwf"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-pfe28kblts",
-          "conflicting_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-pfe28kynbb",
-          "model_number": "PFE28KYNBB",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "gswf",
-            "gswf2"
+            "xwfe"
           ],
           "conflict_type": "model_line_filter_split",
           "conflicting_sibling_slug": "ge-pfe28kblts",
@@ -2651,8 +2962,7 @@
           "model_number": "PVD28BYMFS",
           "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
           "mapped_filter_slugs": [
-            "gswf",
-            "gswf2"
+            "xwfe"
           ],
           "conflict_type": "model_line_filter_split",
           "conflicting_sibling_slug": "ge-pvd28bslss",
@@ -3911,8 +4221,7 @@
           "conflict_type": "model_line_filter_split",
           "conflicting_sibling_slug": "ge-pvd28bymfs",
           "conflicting_filter_slugs": [
-            "gswf",
-            "gswf2"
+            "xwfe"
           ],
           "hyperagent_cursor_row_state": null,
           "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
@@ -4095,215 +4404,6 @@
     },
     {
       "contract": "family_reconciliation_owner_review_packet_v1",
-      "packet_id": "1dadcadbeb3d280f",
-      "family_key": "filter::ge::xwfe",
-      "target_filter_slug": "xwfe",
-      "severity": "MEDIUM",
-      "title": "Family reconciliation — filter::ge::xwfe",
-      "summary": "12 model-line conflicts across 14 unlock slugs for xwfe.",
-      "owner_checklist": [
-        "Confirm model-line sibling mappings in data/compatibility_mappings.csv before evidence scaling.",
-        "Resolve alias/co-map WARN rows before promoting LIKELY_CORRECT slugs to PROVEN_CORRECT.",
-        "Capture owner-browser Tier-1 filter_specification proof for any slug kept in this family.",
-        "Do not apply HyperAgent compat removals until owner review closes NEEDS_COMPAT_REVIEW rows."
-      ],
-      "slug_rows": [
-        {
-          "fridge_slug": "ge-gfd28gslss",
-          "model_number": "GFD28GSLSS",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "xwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gfd28gslbb",
-          "conflicting_filter_slugs": [
-            "rpwfe"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gfd28gslww",
-          "model_number": "GFD28GSLWW",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "xwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gfd28gslbb",
-          "conflicting_filter_slugs": [
-            "rpwfe"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gfe28ggkww",
-          "model_number": "GFE28GGKWW",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "xwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gfe28gelds",
-          "conflicting_filter_slugs": [
-            "opfg3f",
-            "pfmwf"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gfe28gmkww",
-          "model_number": "GFE28GMKWW",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "xwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gfe28gelds",
-          "conflicting_filter_slugs": [
-            "opfg3f",
-            "pfmwf"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gne25jmkes",
-          "model_number": "GNE25JMKES",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "xwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gne25jmkbb",
-          "conflicting_filter_slugs": [
-            "opfg3f",
-            "pfmwf"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gne27fskss",
-          "model_number": "GNE27FSKSS",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "xwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gne27esmss",
-          "conflicting_filter_slugs": [
-            "xwf"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gne27jsmbb",
-          "model_number": "GNE27JSMBB",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "xwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gne27esmss",
-          "conflicting_filter_slugs": [
-            "xwf"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gne29gskbb",
-          "model_number": "GNE29GSKBB",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "xwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gne29gskss",
-          "conflicting_filter_slugs": [
-            "opfg3f"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gse25gshss",
-          "model_number": "GSE25GSHSS",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "xwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gse25hskss",
-          "conflicting_filter_slugs": [
-            "gswf",
-            "gswf2",
-            "xwf"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gss23gskbb",
-          "model_number": "GSS23GSKBB",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "xwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gss23gskss",
-          "conflicting_filter_slugs": [
-            "mswf"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gye22hskbb",
-          "model_number": "GYE22HSKBB",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "xwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gye22gskbb",
-          "conflicting_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-pfe28kynfs",
-          "model_number": "PFE28KYNFS",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "xwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-pfe28kblts",
-          "conflicting_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        }
-      ],
-      "signals": {
-        "anchor_frozen": false,
-        "prefix_contamination_count": 0,
-        "pre_research_recommendation": "SAFE_FOR_HYPERAGENT_EVIDENCE_BATCH",
-        "hyperagent_compat_review_count": 0,
-        "learned_failure_block_count": 0
-      }
-    },
-    {
-      "contract": "family_reconciliation_owner_review_packet_v1",
       "packet_id": "396538edbfafc8fc",
       "family_key": "filter::lg::adq73613402",
       "target_filter_slug": "adq73613402",
@@ -4419,226 +4519,6 @@
     },
     {
       "contract": "family_reconciliation_owner_review_packet_v1",
-      "packet_id": "57168ccb0063dbe5",
-      "family_key": "filter::ge::rpwfe",
-      "target_filter_slug": "rpwfe",
-      "severity": "MEDIUM",
-      "title": "Family reconciliation — filter::ge::rpwfe",
-      "summary": "13 model-line conflicts across 14 unlock slugs for rpwfe.",
-      "owner_checklist": [
-        "Confirm model-line sibling mappings in data/compatibility_mappings.csv before evidence scaling.",
-        "Resolve alias/co-map WARN rows before promoting LIKELY_CORRECT slugs to PROVEN_CORRECT.",
-        "Capture owner-browser Tier-1 filter_specification proof for any slug kept in this family.",
-        "Do not apply HyperAgent compat removals until owner review closes NEEDS_COMPAT_REVIEW rows."
-      ],
-      "slug_rows": [
-        {
-          "fridge_slug": "ge-gfd28gslbb",
-          "model_number": "GFD28GSLBB",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "rpwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gfd28gslss",
-          "conflicting_filter_slugs": [
-            "xwfe"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gfe24jskfss",
-          "model_number": "GFE24JSKFSS",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "rpwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gfe24jgkbb",
-          "conflicting_filter_slugs": [
-            "opfg3f"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gfe26jymkbb",
-          "model_number": "GFE26JYMKBB",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "rpwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gfe26jymkfs",
-          "conflicting_filter_slugs": [
-            "mwf"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gfe28gynww",
-          "model_number": "GFE28GYNWW",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "rpwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gfe28gelds",
-          "conflicting_filter_slugs": [
-            "opfg3f",
-            "pfmwf"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gne27jsmss",
-          "model_number": "GNE27JSMSS",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "rpwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gne27esmss",
-          "conflicting_filter_slugs": [
-            "xwf"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gne29gskww",
-          "model_number": "GNE29GSKWW",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "rpwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gne29gskbb",
-          "conflicting_filter_slugs": [
-            "xwfe"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gss23hshss",
-          "model_number": "GSS23HSHSS",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "rpwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gss23gskbb",
-          "conflicting_filter_slugs": [
-            "xwfe"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gss25gmkbb",
-          "model_number": "GSS25GMKBB",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "rpwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gss25gmkww",
-          "conflicting_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gss25gmkes",
-          "model_number": "GSS25GMKES",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "rpwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gss25gmkww",
-          "conflicting_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gss25gshww",
-          "model_number": "GSS25GSHWW",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "rpwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gss25gmkww",
-          "conflicting_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gss25iynfs",
-          "model_number": "GSS25IYNFS",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "rpwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gss25gmkww",
-          "conflicting_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-pfe28kelds",
-          "model_number": "PFE28KELDS",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "rpwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-pfe28kblts",
-          "conflicting_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-pfe28kmkes",
-          "model_number": "PFE28KMKES",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "rpwfe"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-pfe28kblts",
-          "conflicting_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        }
-      ],
-      "signals": {
-        "anchor_frozen": false,
-        "prefix_contamination_count": 0,
-        "pre_research_recommendation": "SAFE_FOR_HYPERAGENT_EVIDENCE_BATCH",
-        "hyperagent_compat_review_count": 0,
-        "learned_failure_block_count": 0
-      }
-    },
-    {
-      "contract": "family_reconciliation_owner_review_packet_v1",
       "packet_id": "5aafa676e9d39c4b",
       "family_key": "filter::lg::adq73613403",
       "target_filter_slug": "adq73613403",
@@ -4728,6 +4608,196 @@
         "anchor_frozen": false,
         "prefix_contamination_count": 0,
         "pre_research_recommendation": "NEEDS_REPO_RECONCILIATION_FIRST",
+        "hyperagent_compat_review_count": 0,
+        "learned_failure_block_count": 0
+      }
+    },
+    {
+      "contract": "family_reconciliation_owner_review_packet_v1",
+      "packet_id": "4fce1c927bfc9497",
+      "family_key": "filter::ge::smartwater-mwfp",
+      "target_filter_slug": "smartwater-mwfp",
+      "severity": "MEDIUM",
+      "title": "Family reconciliation — filter::ge::smartwater-mwfp",
+      "summary": "11 model-line conflicts across 12 unlock slugs for smartwater-mwfp.",
+      "owner_checklist": [
+        "Confirm model-line sibling mappings in data/compatibility_mappings.csv before evidence scaling.",
+        "Resolve alias/co-map WARN rows before promoting LIKELY_CORRECT slugs to PROVEN_CORRECT.",
+        "Capture owner-browser Tier-1 filter_specification proof for any slug kept in this family.",
+        "Do not apply HyperAgent compat removals until owner review closes NEEDS_COMPAT_REVIEW rows."
+      ],
+      "slug_rows": [
+        {
+          "fridge_slug": "ge-cwe23sshbb",
+          "model_number": "CWE23SSHBB",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-cwe23sshss",
+          "conflicting_filter_slugs": [
+            "xwf"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gfe24jgkbww",
+          "model_number": "GFE24JGKBWW",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gfe24jgkbb",
+          "conflicting_filter_slugs": [
+            "opfg3f"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gfe24jgkww",
+          "model_number": "GFE24JGKWW",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "smartwater-mwfp",
+            "xwfe"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gfe24jgkbb",
+          "conflicting_filter_slugs": [
+            "opfg3f"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gfe26jymkww",
+          "model_number": "GFE26JYMKWW",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gfe26jymkbb",
+          "conflicting_filter_slugs": [
+            "rpwfe"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gss20eshss",
+          "model_number": "GSS20ESHSS",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gss20eshbb",
+          "conflicting_filter_slugs": [
+            "opfg3f"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gss25gmkww",
+          "model_number": "GSS25GMKWW",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gss25gmkbb",
+          "conflicting_filter_slugs": [
+            "rpwfe"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gss25lslss",
+          "model_number": "GSS25LSLSS",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gss25gmkbb",
+          "conflicting_filter_slugs": [
+            "rpwfe"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-gye22gskbb",
+          "model_number": "GYE22GSKBB",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gye22gskss",
+          "conflicting_filter_slugs": [
+            "xwf"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-pfe28kblts",
+          "model_number": "PFE28KBLTS",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-pfe28kelds",
+          "conflicting_filter_slugs": [
+            "rpwfe"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-pfe28klyss",
+          "model_number": "PFE28KLYSS",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-pfe28kelds",
+          "conflicting_filter_slugs": [
+            "rpwfe"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        },
+        {
+          "fridge_slug": "ge-pfe28kmkbb",
+          "model_number": "PFE28KMKBB",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "smartwater-mwfp"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-pfe28kelds",
+          "conflicting_filter_slugs": [
+            "rpwfe"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        }
+      ],
+      "signals": {
+        "anchor_frozen": false,
+        "prefix_contamination_count": 0,
+        "pre_research_recommendation": "SAFE_FOR_HYPERAGENT_EVIDENCE_BATCH",
         "hyperagent_compat_review_count": 0,
         "learned_failure_block_count": 0
       }
@@ -4929,180 +4999,6 @@
         "anchor_frozen": false,
         "prefix_contamination_count": 0,
         "pre_research_recommendation": "NEEDS_REPO_RECONCILIATION_FIRST",
-        "hyperagent_compat_review_count": 0,
-        "learned_failure_block_count": 0
-      }
-    },
-    {
-      "contract": "family_reconciliation_owner_review_packet_v1",
-      "packet_id": "4fce1c927bfc9497",
-      "family_key": "filter::ge::smartwater-mwfp",
-      "target_filter_slug": "smartwater-mwfp",
-      "severity": "MEDIUM",
-      "title": "Family reconciliation — filter::ge::smartwater-mwfp",
-      "summary": "10 model-line conflicts across 11 unlock slugs for smartwater-mwfp.",
-      "owner_checklist": [
-        "Confirm model-line sibling mappings in data/compatibility_mappings.csv before evidence scaling.",
-        "Resolve alias/co-map WARN rows before promoting LIKELY_CORRECT slugs to PROVEN_CORRECT.",
-        "Capture owner-browser Tier-1 filter_specification proof for any slug kept in this family.",
-        "Do not apply HyperAgent compat removals until owner review closes NEEDS_COMPAT_REVIEW rows."
-      ],
-      "slug_rows": [
-        {
-          "fridge_slug": "ge-cwe23sshbb",
-          "model_number": "CWE23SSHBB",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-cwe23sshss",
-          "conflicting_filter_slugs": [
-            "xwf"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gfe24jgkbww",
-          "model_number": "GFE24JGKBWW",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gfe24jgkbb",
-          "conflicting_filter_slugs": [
-            "opfg3f"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gfe26jymkww",
-          "model_number": "GFE26JYMKWW",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gfe26jymkbb",
-          "conflicting_filter_slugs": [
-            "rpwfe"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gss20eshss",
-          "model_number": "GSS20ESHSS",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gss20eshbb",
-          "conflicting_filter_slugs": [
-            "opfg3f"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gss25gmkww",
-          "model_number": "GSS25GMKWW",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gss25gmkbb",
-          "conflicting_filter_slugs": [
-            "rpwfe"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gss25lslss",
-          "model_number": "GSS25LSLSS",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gss25gmkbb",
-          "conflicting_filter_slugs": [
-            "rpwfe"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-gye22gskbb",
-          "model_number": "GYE22GSKBB",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-gye22gskss",
-          "conflicting_filter_slugs": [
-            "xwf"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-pfe28kblts",
-          "model_number": "PFE28KBLTS",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-pfe28kelds",
-          "conflicting_filter_slugs": [
-            "rpwfe"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-pfe28klyss",
-          "model_number": "PFE28KLYSS",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-pfe28kelds",
-          "conflicting_filter_slugs": [
-            "rpwfe"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        },
-        {
-          "fridge_slug": "ge-pfe28kmkbb",
-          "model_number": "PFE28KMKBB",
-          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
-          "mapped_filter_slugs": [
-            "smartwater-mwfp"
-          ],
-          "conflict_type": "model_line_filter_split",
-          "conflicting_sibling_slug": "ge-pfe28kelds",
-          "conflicting_filter_slugs": [
-            "rpwfe"
-          ],
-          "hyperagent_cursor_row_state": null,
-          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
-        }
-      ],
-      "signals": {
-        "anchor_frozen": false,
-        "prefix_contamination_count": 0,
-        "pre_research_recommendation": "SAFE_FOR_HYPERAGENT_EVIDENCE_BATCH",
         "hyperagent_compat_review_count": 0,
         "learned_failure_block_count": 0
       }
@@ -6563,6 +6459,47 @@
     },
     {
       "contract": "family_reconciliation_owner_review_packet_v1",
+      "packet_id": "2bc3ad4c35c47255",
+      "family_key": "filter::ge::gswf",
+      "target_filter_slug": "gswf",
+      "severity": "MEDIUM",
+      "title": "Family reconciliation — filter::ge::gswf",
+      "summary": "1 model-line conflicts across 3 unlock slugs for gswf.",
+      "owner_checklist": [
+        "Confirm model-line sibling mappings in data/compatibility_mappings.csv before evidence scaling.",
+        "Resolve alias/co-map WARN rows before promoting LIKELY_CORRECT slugs to PROVEN_CORRECT.",
+        "Capture owner-browser Tier-1 filter_specification proof for any slug kept in this family.",
+        "Do not apply HyperAgent compat removals until owner review closes NEEDS_COMPAT_REVIEW rows."
+      ],
+      "slug_rows": [
+        {
+          "fridge_slug": "ge-gfe28hmkww",
+          "model_number": "GFE28HMKWW",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "mapped_filter_slugs": [
+            "gswf",
+            "gswf2"
+          ],
+          "conflict_type": "model_line_filter_split",
+          "conflicting_sibling_slug": "ge-gfe28gelds",
+          "conflicting_filter_slugs": [
+            "opfg3f",
+            "pfmwf"
+          ],
+          "hyperagent_cursor_row_state": null,
+          "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+        }
+      ],
+      "signals": {
+        "anchor_frozen": false,
+        "prefix_contamination_count": 0,
+        "pre_research_recommendation": "SAFE_FOR_HYPERAGENT_EVIDENCE_BATCH",
+        "hyperagent_compat_review_count": 0,
+        "learned_failure_block_count": 0
+      }
+    },
+    {
+      "contract": "family_reconciliation_owner_review_packet_v1",
       "packet_id": "f92a900a1ceebc41",
       "family_key": "filter::lg::lt800p",
       "target_filter_slug": "lt800p",
@@ -6919,6 +6856,20 @@
       "owner_review_packet_id": "2708fe9a2cb010fc"
     },
     {
+      "family_key": "filter::ge::rpwfe",
+      "target_filter_slug": "rpwfe",
+      "severity": "MEDIUM",
+      "model_line_conflict_count": 19,
+      "proven_anchor_slugs": [
+        "ge-gfe28gmkes",
+        "ge-gfe28gskss",
+        "ge-gfe28gynfs"
+      ],
+      "unlock_slug_count": 20,
+      "estimated_factory_unlock_score": 1895,
+      "owner_review_packet_id": "57168ccb0063dbe5"
+    },
+    {
       "family_key": "filter::frigidaire::fppwfu01",
       "target_filter_slug": "fppwfu01",
       "severity": "CRITICAL",
@@ -6974,14 +6925,14 @@
       "owner_review_packet_id": "a215b10a7b312103"
     },
     {
-      "family_key": "filter::ge::gswf",
-      "target_filter_slug": "gswf",
+      "family_key": "filter::ge::xwfe",
+      "target_filter_slug": "xwfe",
       "severity": "MEDIUM",
-      "model_line_conflict_count": 13,
+      "model_line_conflict_count": 14,
       "proven_anchor_slugs": [],
       "unlock_slug_count": 17,
       "estimated_factory_unlock_score": 1700,
-      "owner_review_packet_id": "2bc3ad4c35c47255"
+      "owner_review_packet_id": "1dadcadbeb3d280f"
     },
     {
       "family_key": "filter::lg::adq74793501",
@@ -7044,16 +6995,6 @@
       "owner_review_packet_id": "c80027d32fe337e6"
     },
     {
-      "family_key": "filter::ge::xwfe",
-      "target_filter_slug": "xwfe",
-      "severity": "MEDIUM",
-      "model_line_conflict_count": 12,
-      "proven_anchor_slugs": [],
-      "unlock_slug_count": 14,
-      "estimated_factory_unlock_score": 1400,
-      "owner_review_packet_id": "1dadcadbeb3d280f"
-    },
-    {
       "family_key": "filter::lg::adq73613402",
       "target_filter_slug": "adq73613402",
       "severity": "HIGH",
@@ -7062,20 +7003,6 @@
       "unlock_slug_count": 14,
       "estimated_factory_unlock_score": 1400,
       "owner_review_packet_id": "396538edbfafc8fc"
-    },
-    {
-      "family_key": "filter::ge::rpwfe",
-      "target_filter_slug": "rpwfe",
-      "severity": "MEDIUM",
-      "model_line_conflict_count": 13,
-      "proven_anchor_slugs": [
-        "ge-gfe28gmkes",
-        "ge-gfe28gskss",
-        "ge-gfe28gynfs"
-      ],
-      "unlock_slug_count": 14,
-      "estimated_factory_unlock_score": 1325,
-      "owner_review_packet_id": "57168ccb0063dbe5"
     },
     {
       "family_key": "filter::lg::adq73613403",
@@ -7088,6 +7015,16 @@
       "owner_review_packet_id": "5aafa676e9d39c4b"
     },
     {
+      "family_key": "filter::ge::smartwater-mwfp",
+      "target_filter_slug": "smartwater-mwfp",
+      "severity": "MEDIUM",
+      "model_line_conflict_count": 11,
+      "proven_anchor_slugs": [],
+      "unlock_slug_count": 12,
+      "estimated_factory_unlock_score": 1200,
+      "owner_review_packet_id": "4fce1c927bfc9497"
+    },
+    {
       "family_key": "filter::whirlpool::w10413645a",
       "target_filter_slug": "w10413645a",
       "severity": "HIGH",
@@ -7096,16 +7033,6 @@
       "unlock_slug_count": 12,
       "estimated_factory_unlock_score": 1200,
       "owner_review_packet_id": "72be5842d47c87f0"
-    },
-    {
-      "family_key": "filter::ge::smartwater-mwfp",
-      "target_filter_slug": "smartwater-mwfp",
-      "severity": "MEDIUM",
-      "model_line_conflict_count": 10,
-      "proven_anchor_slugs": [],
-      "unlock_slug_count": 11,
-      "estimated_factory_unlock_score": 1100,
-      "owner_review_packet_id": "4fce1c927bfc9497"
     },
     {
       "family_key": "filter::samsung::da97-08006b",
@@ -7124,7 +7051,7 @@
       "model_line_conflict_count": 9,
       "proven_anchor_slugs": [],
       "unlock_slug_count": 11,
-      "estimated_factory_unlock_score": 980,
+      "estimated_factory_unlock_score": 920,
       "owner_review_packet_id": "ffa366dfbdd6a937"
     },
     {
@@ -7220,6 +7147,16 @@
       "owner_review_packet_id": "18461a44bdf073d8"
     },
     {
+      "family_key": "filter::ge::gswf",
+      "target_filter_slug": "gswf",
+      "severity": "MEDIUM",
+      "model_line_conflict_count": 1,
+      "proven_anchor_slugs": [],
+      "unlock_slug_count": 3,
+      "estimated_factory_unlock_score": 300,
+      "owner_review_packet_id": "2bc3ad4c35c47255"
+    },
+    {
       "family_key": "filter::lg::lt800p",
       "target_filter_slug": "lt800p",
       "severity": "MEDIUM",
@@ -7297,6 +7234,16 @@
       "owner_review_packet_id": "855c0e16c6ade429"
     },
     {
+      "family_key": "filter::ge::none",
+      "target_filter_slug": "none",
+      "severity": "NONE",
+      "model_line_conflict_count": 0,
+      "proven_anchor_slugs": [],
+      "unlock_slug_count": 0,
+      "estimated_factory_unlock_score": 0,
+      "owner_review_packet_id": "538d9e5eb32fa934"
+    },
+    {
       "family_key": "filter::lg::adq36006101",
       "target_filter_slug": "adq36006101",
       "severity": "NONE",
@@ -7343,13 +7290,14 @@
     "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-assist-cursor-validation-v1.json",
     "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-cursor-validation-v1.json",
     "data/fridge/batch-production/drafts/frig-242017801-bounded-evidence-slice-046fb82e-cursor-validation-v1.json",
+    "data/fridge/batch-production/drafts/gswf-bounded-evidence-slice-5a735d4a-cursor-validation-v1.json",
     "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
     "data/fridge/batch-production/drafts/wf2cb-bounded-evidence-slice-001-cursor-validation-v1.json"
   ],
   "proven_facts": [
-    "PROVEN: families_screened=41 filter families from data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json.",
+    "PROVEN: families_screened=42 filter families from data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json.",
     "PROVEN: families_with_model_line_conflicts=37.",
-    "PROVEN: hyperagent_validation_packets_loaded=8 from drafts/*cursor-validation*.json.",
+    "PROVEN: hyperagent_validation_packets_loaded=9 from drafts/*cursor-validation*.json.",
     "PROVEN: ranked_reconciliation_backlog=37 families require owner review (severity != NONE).",
     "PROVEN: Read-only reconciliation lane — no compat, evidence, Supabase, page, or retailer mutations."
   ],

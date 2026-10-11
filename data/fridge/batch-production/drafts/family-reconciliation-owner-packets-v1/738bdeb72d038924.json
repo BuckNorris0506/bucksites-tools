@@ -207,8 +207,7 @@
       "conflict_type": "model_line_filter_split",
       "conflicting_sibling_slug": "ge-pvd28bymfs",
       "conflicting_filter_slugs": [
-        "gswf",
-        "gswf2"
+        "xwfe"
       ],
       "hyperagent_cursor_row_state": null,
       "recommended_owner_action": "NEEDS_COMPAT_REVIEW"

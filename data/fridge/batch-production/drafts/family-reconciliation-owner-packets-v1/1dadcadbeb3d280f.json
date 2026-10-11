@@ -5,7 +5,7 @@
   "target_filter_slug": "xwfe",
   "severity": "MEDIUM",
   "title": "Family reconciliation — filter::ge::xwfe",
-  "summary": "12 model-line conflicts across 14 unlock slugs for xwfe.",
+  "summary": "14 model-line conflicts across 17 unlock slugs for xwfe.",
   "owner_checklist": [
     "Confirm model-line sibling mappings in data/compatibility_mappings.csv before evidence scaling.",
     "Resolve alias/co-map WARN rows before promoting LIKELY_CORRECT slugs to PROVEN_CORRECT.",
@@ -92,6 +92,22 @@
       "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
     },
     {
+      "fridge_slug": "ge-gne25jmkww",
+      "model_number": "GNE25JMKWW",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "xwfe"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "ge-gne25jmkbb",
+      "conflicting_filter_slugs": [
+        "opfg3f",
+        "pfmwf"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
       "fridge_slug": "ge-gne27fskss",
       "model_number": "GNE27FSKSS",
       "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
@@ -146,8 +162,6 @@
       "conflict_type": "model_line_filter_split",
       "conflicting_sibling_slug": "ge-gse25hskss",
       "conflicting_filter_slugs": [
-        "gswf",
-        "gswf2",
         "xwf"
       ],
       "hyperagent_cursor_row_state": null,
@@ -193,6 +207,22 @@
       "conflict_type": "model_line_filter_split",
       "conflicting_sibling_slug": "ge-pfe28kblts",
       "conflicting_filter_slugs": [
+        "smartwater-mwfp"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "ge-pvd28bymfs",
+      "model_number": "PVD28BYMFS",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "xwfe"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "ge-pvd28bslss",
+      "conflicting_filter_slugs": [
+        "opfg3f",
         "smartwater-mwfp"
       ],
       "hyperagent_cursor_row_state": null,

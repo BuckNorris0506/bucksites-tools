@@ -21,6 +21,12 @@
   "r07_state": "VERIFIED_CLOSED",
   "r07_closure_artifact": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r07-closure-verification-2026-10-11.json",
   "r08_executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-executive-decision-packet-2026-10-11.json",
+  "r08_state": "OPEN",
+  "r08_fxwpc_identity_tranche": {
+    "status": "COMPLETE_PRODUCTION_VERIFIED",
+    "verification_artifact": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-fxwpc-identity-tranche-verification-2026-10-12.json",
+    "remaining_sibling_tranche": "FXHTC interval + GXWH20S↔FXHTC size/mapping"
+  },
   "required_pre_distribution_blockers": ["R04", "R08", "R09"],
   "next_lawful_actions": [],
   "merge_policy": "serialize_integrity_merges",
