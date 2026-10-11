@@ -17,6 +17,11 @@ import {
   assessGeMwfpXwfeApprovedRetailerLinksCloseoutAllowanceV1,
   type GeMwfpXwfeRetailerLinksShipGuardAllowanceV1,
 } from "./buckparts-ship-guard-ge-mwfp-xwfe-retailer-links-allowance-v1";
+import {
+  applyR16AmazonStoredTagAllowanceToBlockersV1,
+  assessR16AmazonStoredTagNormalizationRetailerLinksAllowanceV1,
+  type R16AmazonStoredTagShipGuardAllowanceV1,
+} from "./buckparts-ship-guard-r16-amazon-stored-tag-normalization-allowance-v1";
 
 export const BUCKPARTS_SHIP_GUARD_CONTRACT_V1 = "buckparts_ship_guard_v1" as const;
 export const BUCKPARTS_SHIP_GUARD_COMMAND_V1 = "npm run buckparts:ship-guard" as const;
@@ -90,6 +95,8 @@ export type ShipGuardReportV1 = {
   };
   /** Exact founder-approved GE MWFP/XWFE retailer_links closeout allowance (fail-closed). */
   ge_mwfp_xwfe_retailer_links_approved_closeout_allowance: GeMwfpXwfeRetailerLinksShipGuardAllowanceV1;
+  /** Founder-approved R16 refrigerator Amazon tag-only CSV closeout allowance (fail-closed). */
+  r16_amazon_stored_tag_normalization_retailer_links_allowance: R16AmazonStoredTagShipGuardAllowanceV1;
   push_assessment: "SAFE" | "BLOCKED" | "UNKNOWN";
   blockers: string[];
   recommended_validations: string[];
@@ -479,29 +486,47 @@ function buildBuckpartsShipGuardReportInternalV1(args: {
     protectedRetailer.git_diff_head_vs_origin_main === true ||
     protectedRetailer.listed_in_changed_files;
   const workingCsvAbs = path.join(rootDir, PROTECTED_RETAILER_LINKS_CSV_REL);
+  const headCsvTextForAllowance = retailerLinksDirty
+    ? (args.retailerLinksCsvTexts?.headCsvText ??
+      readGitBlobTextAtHead(rootDir, PROTECTED_RETAILER_LINKS_CSV_REL))
+    : null;
+  const workingCsvTextForAllowance = retailerLinksDirty
+    ? (args.retailerLinksCsvTexts?.workingCsvText ??
+      (existsSync(workingCsvAbs) ? readFileSync(workingCsvAbs, "utf8") : null))
+    : null;
   const geMwfpXwfeAllowance = assessGeMwfpXwfeApprovedRetailerLinksCloseoutAllowanceV1({
     rootDir,
     retailerLinksDirty,
-    headCsvText: retailerLinksDirty
-      ? (args.retailerLinksCsvTexts?.headCsvText ??
-        readGitBlobTextAtHead(rootDir, PROTECTED_RETAILER_LINKS_CSV_REL))
-      : null,
-    workingCsvText: retailerLinksDirty
-      ? (args.retailerLinksCsvTexts?.workingCsvText ??
-        (existsSync(workingCsvAbs) ? readFileSync(workingCsvAbs, "utf8") : null))
-      : null,
+    headCsvText: headCsvTextForAllowance,
+    workingCsvText: workingCsvTextForAllowance,
+  });
+  const r16AmazonTagAllowance = assessR16AmazonStoredTagNormalizationRetailerLinksAllowanceV1({
+    rootDir,
+    retailerLinksDirty,
+    headCsvText: headCsvTextForAllowance,
+    workingCsvText: workingCsvTextForAllowance,
   });
   const netlify = classifyNetlifyIgnoreDryRunBatch({ rootDir, changedFiles: changed_files });
   const credit_control =
     args.creditControl ?? loadCreditControlDeployAwarenessSummaryV1({ rootDir });
   const recommended_validations = recommendValidationCommands(changed_files);
 
-  const blockers: string[] = [
-    ...applyGeMwfpXwfeRetailerLinksAllowanceToBlockersV1({
-      driftBlockers: retailerLinksDriftBlockers(protectedRetailer),
+  let retailerLinksDrift = retailerLinksDriftBlockers(protectedRetailer);
+  if (r16AmazonTagAllowance.status === "ALLOWED") {
+    retailerLinksDrift = retailerLinksDrift.filter(
+      (b) => !b.startsWith(`${PROTECTED_RETAILER_LINKS_CSV_REL}:`),
+    );
+  } else {
+    retailerLinksDrift = applyGeMwfpXwfeRetailerLinksAllowanceToBlockersV1({
+      driftBlockers: retailerLinksDrift,
       allowance: geMwfpXwfeAllowance,
-    }),
-  ];
+    });
+    retailerLinksDrift = applyR16AmazonStoredTagAllowanceToBlockersV1({
+      driftBlockers: retailerLinksDrift,
+      allowance: r16AmazonTagAllowance,
+    });
+  }
+  const blockers: string[] = [...retailerLinksDrift];
   for (const filePath of changed_files) {
     if (filePath.startsWith("data/evidence/")) {
       blockers.push(`data/evidence/:${filePath}`);
@@ -542,6 +567,7 @@ function buildBuckpartsShipGuardReportInternalV1(args: {
     "PROVEN: GE MWFP/XWFE retailer_links closeout allowance is fail-closed and does not weaken other protected paths.",
     `PROVEN: credit_control posture=${credit_control.deployment_posture}; deploy_held=${String(credit_control.deploy_held)}; production_deploy_recommended=${String(credit_control.production_deploy_recommended)}; push_allowed=${String(credit_control.push_allowed)}.`,
     ...geMwfpXwfeAllowance.proven_facts,
+    ...r16AmazonTagAllowance.proven_facts,
   ];
   if (credit_control.deploy_held) {
     proven_facts.push(
@@ -601,6 +627,7 @@ function buildBuckpartsShipGuardReportInternalV1(args: {
     changed_files,
     protected_file_checks,
     ge_mwfp_xwfe_retailer_links_approved_closeout_allowance: geMwfpXwfeAllowance,
+    r16_amazon_stored_tag_normalization_retailer_links_allowance: r16AmazonTagAllowance,
     push_assessment,
     blockers,
     recommended_validations,

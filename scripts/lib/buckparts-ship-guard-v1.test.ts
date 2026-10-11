@@ -193,10 +193,14 @@ test("defaultShipGuardGitProvider: clean retailer_links OR exact GE MWFP/XWFE cl
     return;
   }
   const report = buildBuckpartsShipGuardReportV1({ rootDir: process.cwd(), git });
-  assert.equal(
-    report.ge_mwfp_xwfe_retailer_links_approved_closeout_allowance.status,
-    "ALLOWED",
-    JSON.stringify(report.ge_mwfp_xwfe_retailer_links_approved_closeout_allowance.blockers),
+  const geStatus = report.ge_mwfp_xwfe_retailer_links_approved_closeout_allowance.status;
+  const r16Status = report.r16_amazon_stored_tag_normalization_retailer_links_allowance.status;
+  assert.ok(
+    geStatus === "ALLOWED" || r16Status === "ALLOWED",
+    JSON.stringify({
+      ge_blockers: report.ge_mwfp_xwfe_retailer_links_approved_closeout_allowance.blockers,
+      r16_blockers: report.r16_amazon_stored_tag_normalization_retailer_links_allowance.blockers,
+    }),
   );
   assert.ok(!report.blockers.some((b) => b.startsWith(`${PROTECTED_RETAILER_LINKS_CSV_REL}:`)));
 });

@@ -1,0 +1,41 @@
+{
+  "contract": "r16_amazon_stored_tag_normalization_apply_plan_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "generated_at": "2026-10-11T02:30:00.000Z",
+  "canonical_main_sha": "110e67541533d16c8d936cc394bfd36ffeb19dc9",
+  "operation": "TAG_ONLY_STRIP",
+  "csv_target_slugs": [
+    "lt1000p",
+    "lt1000pc",
+    "lt700p",
+    "lt800p",
+    "lt600p",
+    "mdj64844601",
+    "da29-00019a",
+    "da97-15217d",
+    "edr1rxd1",
+    "edr2rxd1",
+    "ukf8001",
+    "4396508",
+    "8171413",
+    "46-9002"
+  ],
+  "supabase_target_row_count": 16,
+  "inactive_tag": "buckparts20-20",
+  "prohibited_changes": [
+    "asin",
+    "retailer",
+    "slug",
+    "row_id",
+    "is_primary",
+    "status",
+    "browser_truth_classification",
+    "browser_truth_checked_at",
+    "insert",
+    "delete",
+    "air_purifier_rows"
+  ],
+  "source_command": "npm run buckparts:r16-amazon-stored-tag-normalization"
+}

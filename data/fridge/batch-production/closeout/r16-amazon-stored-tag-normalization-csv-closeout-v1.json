@@ -1,0 +1,170 @@
+{
+  "contract": "r16_amazon_stored_tag_normalization_csv_closeout_v1",
+  "apply_status": "APPLIED",
+  "source_command": "npm run buckparts:r16-amazon-stored-tag-normalization",
+  "generated_at": "2026-10-11T02:23:44.223Z",
+  "rows_updated": 14,
+  "updated_filter_slugs": [
+    "lt1000p",
+    "lt1000pc",
+    "lt700p",
+    "lt800p",
+    "lt600p",
+    "mdj64844601",
+    "da29-00019a",
+    "da97-15217d",
+    "edr1rxd1",
+    "edr2rxd1",
+    "ukf8001",
+    "4396508",
+    "8171413",
+    "46-9002"
+  ],
+  "inserts": 0,
+  "deletes": 0,
+  "supabase_mutated": false,
+  "tag_only": true,
+  "approval_decision_id": "decision-2026-10-11-r16-amazon-stored-tag-normalization",
+  "planned_updates": [
+    {
+      "filter_slug": "lt1000p",
+      "row_index": 0,
+      "before_affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20",
+      "after_affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2",
+      "asin": "B07H9LHMR2",
+      "changed_fields": [
+        "affiliate_url"
+      ]
+    },
+    {
+      "filter_slug": "lt1000pc",
+      "row_index": 10,
+      "before_affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20",
+      "after_affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2",
+      "asin": "B07H9LHMR2",
+      "changed_fields": [
+        "affiliate_url"
+      ]
+    },
+    {
+      "filter_slug": "lt700p",
+      "row_index": 1,
+      "before_affiliate_url": "https://www.amazon.com/dp/B0042ACZU2?tag=buckparts20-20",
+      "after_affiliate_url": "https://www.amazon.com/dp/B0042ACZU2",
+      "asin": "B0042ACZU2",
+      "changed_fields": [
+        "affiliate_url"
+      ]
+    },
+    {
+      "filter_slug": "lt800p",
+      "row_index": 2,
+      "before_affiliate_url": "https://www.amazon.com/dp/B00X3DWMS4?tag=buckparts20-20",
+      "after_affiliate_url": "https://www.amazon.com/dp/B00X3DWMS4",
+      "asin": "B00X3DWMS4",
+      "changed_fields": [
+        "affiliate_url"
+      ]
+    },
+    {
+      "filter_slug": "lt600p",
+      "row_index": 3,
+      "before_affiliate_url": "https://www.amazon.com/dp/B07VGD8Z5Z?tag=buckparts20-20",
+      "after_affiliate_url": "https://www.amazon.com/dp/B07VGD8Z5Z",
+      "asin": "B07VGD8Z5Z",
+      "changed_fields": [
+        "affiliate_url"
+      ]
+    },
+    {
+      "filter_slug": "mdj64844601",
+      "row_index": 8,
+      "before_affiliate_url": "https://www.amazon.com/dp/B08HDD1PK1?tag=buckparts20-20",
+      "after_affiliate_url": "https://www.amazon.com/dp/B08HDD1PK1",
+      "asin": "B08HDD1PK1",
+      "changed_fields": [
+        "affiliate_url"
+      ]
+    },
+    {
+      "filter_slug": "da29-00019a",
+      "row_index": 16,
+      "before_affiliate_url": "https://www.amazon.com/dp/B019HPTP3G?tag=buckparts20-20",
+      "after_affiliate_url": "https://www.amazon.com/dp/B019HPTP3G",
+      "asin": "B019HPTP3G",
+      "changed_fields": [
+        "affiliate_url"
+      ]
+    },
+    {
+      "filter_slug": "da97-15217d",
+      "row_index": 19,
+      "before_affiliate_url": "https://www.amazon.com/dp/B07BHZWSCQ?tag=buckparts20-20",
+      "after_affiliate_url": "https://www.amazon.com/dp/B07BHZWSCQ",
+      "asin": "B07BHZWSCQ",
+      "changed_fields": [
+        "affiliate_url"
+      ]
+    },
+    {
+      "filter_slug": "edr1rxd1",
+      "row_index": 24,
+      "before_affiliate_url": "https://www.amazon.com/dp/B00UXG4WR8?tag=buckparts20-20",
+      "after_affiliate_url": "https://www.amazon.com/dp/B00UXG4WR8",
+      "asin": "B00UXG4WR8",
+      "changed_fields": [
+        "affiliate_url"
+      ]
+    },
+    {
+      "filter_slug": "edr2rxd1",
+      "row_index": 25,
+      "before_affiliate_url": "https://www.amazon.com/dp/B00VBP8QPO?tag=buckparts20-20",
+      "after_affiliate_url": "https://www.amazon.com/dp/B00VBP8QPO",
+      "asin": "B00VBP8QPO",
+      "changed_fields": [
+        "affiliate_url"
+      ]
+    },
+    {
+      "filter_slug": "ukf8001",
+      "row_index": 29,
+      "before_affiliate_url": "https://www.amazon.com/dp/B07C8C2VBH?tag=buckparts20-20",
+      "after_affiliate_url": "https://www.amazon.com/dp/B07C8C2VBH",
+      "asin": "B07C8C2VBH",
+      "changed_fields": [
+        "affiliate_url"
+      ]
+    },
+    {
+      "filter_slug": "4396508",
+      "row_index": 31,
+      "before_affiliate_url": "https://www.amazon.com/dp/B00NXPKBQ2?tag=buckparts20-20",
+      "after_affiliate_url": "https://www.amazon.com/dp/B00NXPKBQ2",
+      "asin": "B00NXPKBQ2",
+      "changed_fields": [
+        "affiliate_url"
+      ]
+    },
+    {
+      "filter_slug": "8171413",
+      "row_index": 33,
+      "before_affiliate_url": "https://www.amazon.com/dp/B01CA0V1VE?tag=buckparts20-20",
+      "after_affiliate_url": "https://www.amazon.com/dp/B01CA0V1VE",
+      "asin": "B01CA0V1VE",
+      "changed_fields": [
+        "affiliate_url"
+      ]
+    },
+    {
+      "filter_slug": "46-9002",
+      "row_index": 35,
+      "before_affiliate_url": "https://www.amazon.com/dp/B01IDH3IPU?tag=buckparts20-20",
+      "after_affiliate_url": "https://www.amazon.com/dp/B01IDH3IPU",
+      "asin": "B01IDH3IPU",
+      "changed_fields": [
+        "affiliate_url"
+      ]
+    }
+  ]
+}
