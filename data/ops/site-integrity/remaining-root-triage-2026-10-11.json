@@ -163,10 +163,12 @@
         "baseline_scope": "107 listed paths at baseline"
       },
       "prior_ledger_state": "NOT_STARTED",
-      "current_classification": "STILL_PRESENT",
-      "current_evidence": "Production /air-purifier/filter/winix-hepa-115115 still contains 'Filter H' (4×) and HE15FKPET-scale 115115 identity; Filter A only 1×. data/air-purifier/filters.csv identity unchanged in main.",
-      "distribution_blocker": true,
-      "smallest_next_action": "Correct Winix A/H identity and 5500 vs 5500-2 edges per baseline data boundary.",
+  "current_classification": "REPO_REPAIR_READY_RUNTIME_PARITY_BLOCKED",
+  "factual_decision": "RESOLVED",
+  "current_evidence": "Executive decision + PR #60 CSV/tests complete on branch; production/preview still read Supabase pre-repair. seed:import:air-purifier --write BLOCKED (IO READ_INDEX, trust EXPIRED, no vertical-seed founder approval).",
+  "distribution_blocker": true,
+  "repair_boundary": "mutation_authority_runtime_parity",
+  "smallest_next_action": "Lawful bounded Supabase parity apply for R07 Phase 1 deltas; merge PR #60; preview + production readback.",
       "closure_proof_required": "Production winix-hepa-115115 and affected model pages match manufacturer Filter A vs Filter H."
     },
     {

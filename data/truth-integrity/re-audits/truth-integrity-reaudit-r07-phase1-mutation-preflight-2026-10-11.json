@@ -1,0 +1,16 @@
+{
+  "contract": "truth_integrity_reaudit_record_v1",
+  "read_only": true,
+  "performed_at": "2026-10-11T20:40:00.000Z",
+  "re_audit_owner": "cursor_readonly",
+  "scope": "R07 Phase 1 bounded Supabase parity preflight — mutation gate readiness",
+  "registry_artifact": "data/truth-integrity/truth-integrity-registry-v1.json",
+  "findings_touched": ["TIR-2026-0001", "TIR-2026-0002"],
+  "evidence": [
+    "R07 executive decision packet on main",
+    "PR #60 CSV/tests",
+    "r07-phase1-supabase-parity-plan-2026-10-11.json",
+    "founder approval decision-2026-10-11-r07-winix-filter-a-h-phase1-supabase-parity-approve"
+  ],
+  "outcome": "revalidation_cadence_refreshed_for_guarded_apply_preflight"
+}

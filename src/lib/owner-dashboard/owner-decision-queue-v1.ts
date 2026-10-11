@@ -344,6 +344,10 @@ export function resolveOwnerDecisionRequestEffectiveStatusV1(args: {
     return "SUPERSEDED";
   }
 
+  if (args.request.status === "SUPERSEDED") {
+    return "SUPERSEDED";
+  }
+
   if (
     isOwnerDecisionRequestExpiredV1({
       request: args.request,

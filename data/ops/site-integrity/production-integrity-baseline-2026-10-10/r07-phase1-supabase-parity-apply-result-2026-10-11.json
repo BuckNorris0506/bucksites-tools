@@ -1,0 +1,17 @@
+{
+  "contract": "r07_phase1_supabase_parity_apply_result_v1",
+  "read_only": true,
+  "generated_at": "2026-10-11T23:21:57.912Z",
+  "apply_status": "APPLIED",
+  "owner_approval_decision_id": "decision-2026-10-11-r07-winix-filter-a-h-phase1-supabase-parity-approve",
+  "plan_sha256": "b03079f5023e69a39a017959096dc88fb432bc9fd7e8a12e4999797cccf1055d",
+  "applied_operations": [
+    "filter_update:winix-hepa-115115",
+    "compat_remove:winix-am80,winix-hepa-115115",
+    "compat_remove:winix-5500-2,winix-hepa-115115",
+    "compat_upsert:winix-am80,winix-filter-h-116130,rec=true",
+    "compat_upsert:winix-5500-2,winix-filter-h-116130,rec=true",
+    "alias_remove:winix-5500-2,WINIX 5500"
+  ],
+  "source_command": "BUCKPARTS_IO_CAPABILITY=MUTATION BUCKPARTS_R07_PHASE1_SUPABASE_PARITY_MUTATION_ENABLED=1 npm run buckparts:r07-winix-filter-a-h-phase1-supabase-parity-guarded-apply -- --apply"
+}

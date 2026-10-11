@@ -1,0 +1,64 @@
+{
+  "contract": "r07_closure_verification_v1",
+  "read_only": true,
+  "verified_at": "2026-10-11T23:25:00Z",
+  "classification": "VERIFIED_CLOSED",
+  "immutable_baseline": {
+    "artifact": "READ_ME_AUDIT_REPORT.md",
+    "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+    "root_heading": "R07 — P1 — Winix115115 mislabeled FilterH and unsafe model associations propagated"
+  },
+  "executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r07-executive-decision-packet-2026-10-11.json",
+  "product_repair": {
+    "pull_request": "https://github.com/BuckNorris0506/bucksites-tools/pull/60",
+    "repo_csv_and_tests": "fix/r07-winix-filter-a-h-phase1",
+    "supabase_parity_apply": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r07-phase1-supabase-parity-apply-result-2026-10-11.json"
+  },
+  "phase1_scope": {
+    "filter_slug": "winix-hepa-115115",
+    "models": ["winix-am80", "winix-5500-2"],
+    "bulk_115115_mappings_unchanged": true
+  },
+  "preview_readback": {
+    "host": "https://deploy-preview-60--buckparts.netlify.app",
+    "/air-purifier/filter/winix-hepa-115115": {
+      "primary_name": "Winix Filter A (115115)",
+      "filter_a_count": 6,
+      "filter_h_count": 3,
+      "115115_on_am80_model": 0,
+      "116130_on_am80_model": 8
+    },
+    "/air-purifier/model/winix-am80": {
+      "115115": 0,
+      "116130": 8
+    },
+    "/air-purifier/model/winix-5500-2": {
+      "115115": 0,
+      "116130": 8
+    }
+  },
+  "production_readback": {
+    "host": "https://buckparts.com",
+    "/air-purifier/filter/winix-hepa-115115": {
+      "primary_name": "Winix Filter A (115115)",
+      "schema_product_name": "Winix Filter A (115115)",
+      "filter_a_count": 6,
+      "filter_h_count": 3,
+      "115115": 30,
+      "116130": 0
+    },
+    "/air-purifier/model/winix-am80": {
+      "115115": 0,
+      "116130": 8
+    },
+    "/air-purifier/model/winix-5500-2": {
+      "115115": 0,
+      "116130": 8
+    }
+  },
+  "tests": {
+    "csv_regression": "node --import tsx --test src/lib/data/air-purifier/winix-filter-a-h-identity-phase1-v1.test.ts → 7/7 PASS",
+    "parity_executor": "node --import tsx --test scripts/lib/r07-winix-filter-a-h-phase1-supabase-parity-guarded-apply-v1.test.ts"
+  },
+  "note": "Residual Filter H string mentions on filter PDP may appear in retailer/cross-sell copy; primary catalog identity and AM80/5500-2 fit paths satisfy Phase 1 closure."
+}
