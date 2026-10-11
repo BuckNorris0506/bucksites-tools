@@ -423,21 +423,20 @@ If full closure cannot be established: **BLOCKED**, **AWAITING_PRODUCTION_VERIFI
 | Field | Value |
 |--------|--------|
 | **ROOT_ID** | R17 |
-| **TITLE** | UNKNOWN — per immutable October 10, 2026 baseline root **R17** (not ingested to repo) |
-| **PRIORITY** | UNKNOWN |
-| **RELEASE_BLOCKER** | UNKNOWN |
-| **CURRENT_STATE** | NOT_STARTED |
-| **CURRENT_OWNER / EXECUTOR** | UNKNOWN |
-| **ACTIVE_BRANCH / WORKTREE** | — |
-| **EXACT_SCOPE** | UNKNOWN — audit sequencing: **rerun production integrity baseline** before broad distribution |
-| **SMALLEST_REQUIRED_FIX** | UNKNOWN — likely full baseline re-execution after R01–R16 closure; confirm in immutable baseline |
-| **CLOSURE_REQUIREMENTS** | Successful baseline rerun with durable artifact; no required P0/P1 open except explicitly deferred |
-| **CLOSURE_EVIDENCE** | — |
-| **BLOCKER** | Prior roots; baseline not ingested |
-| **NEXT_LAWFUL_ACTION** | Ingest baseline root **R17** definition; execute only after sequencing gates satisfied |
-| **LAST_UPDATED** | 2026-10-10 |
-
----
+| **TITLE** | Explicit social image URL points to nonexistent extensionless endpoint |
+| **PRIORITY** | P2 |
+| **RELEASE_BLOCKER** | YES (historical baseline; closed after production readback) |
+| **CURRENT_STATE** | VERIFIED_CLOSED |
+| **ROOT_CAUSE** | Sitewide social metadata published `/opengraph-image`, and that extensionless URL 404s. `/opengraph-image.png` already existed and returned 200. |
+| **CURRENT_OWNER / EXECUTOR** | Integrity campaign R17 repair |
+| **ACTIVE_BRANCH / WORKTREE** | `main` @ `a8bd239ac020ee5a2da3b48b48bf39bd767fda98` |
+| **EXACT_SCOPE** | `SITE_SOCIAL_OG_IMAGE_PATH` in `src/lib/site-social-metadata.ts` |
+| **SMALLEST_REQUIRED_FIX** | Point the existing helper at the existing `/opengraph-image.png`. No new image. |
+| **CLOSURE_REQUIREMENTS** | Preview and Git-connected production metadata reference `/opengraph-image.png`; GET that URL returns 200. |
+| **CLOSURE_EVIDENCE** | `r17-closure-verification-2026-10-11.json`. Preview deploy `6acb8e1ec1a92c000860dc60` commit `c5a0cee0edf58780b86a9ab00c3c2d65e132443d`. Merge commit `a8bd239ac020ee5a2da3b48b48bf39bd767fda98` at 2026-10-11T13:30:04Z. Production deploy `6acb8f5ccfef520008a8ae73`: context=production, branch=main, commit_ref=a8bd239ac020ee5a2da3b48b48bf39bd767fda98, manual_deploy=false, state=ready. Production GET `/opengraph-image.png` 200 and rendered metadata uses that URL. |
+| **BLOCKER** | — |
+| **NEXT_LAWFUL_ACTION** | — (closed) |
+| **LAST_UPDATED** | 2026-10-11 |
 
 ## Ledger maintenance
 
