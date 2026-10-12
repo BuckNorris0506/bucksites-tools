@@ -11,7 +11,7 @@
   "executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r09-executive-decision-packet-2026-10-12.json",
   "tranche_verification": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r09-tranche-verification-2026-10-12.json",
   "closure_scope_note": "Bounded AP903 single-cartridge + AP910R/AP917HD/AP917HD-S identity repair on existing buyer routes. AP902/AP904 model catalog pages deferred — not required to eliminate production contradictions on baseline-listed paths.",
-  "merge_commit_sha": "PENDING_R09_MERGE",
+  "merge_commit_sha": "0122daaac159fb819280e26af4227133e5af0239",
   "sampled_production_routes": [
     "/whole-house-water/model/3m-aquapure-ap903",
     "/whole-house-water/filter/3m-ap910r",
