@@ -11,6 +11,6 @@
   "executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r04-executive-decision-packet-2026-10-12.json",
   "tranche_verification": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r04-tranche-verification-2026-10-12.json",
   "closure_scope_note": "Removed mutual GSWF↔GSWF2 filter_aliases cross-rows (repo CSV + Supabase). Caution/suppress_buy/non-interchange copy preserved. GSWF↔GSWF2 OEM relationship remains UNKNOWN — closure does not assert equivalence.",
-  "merge_commit_sha": "6d8635b",
+  "merge_commit_sha": "e6a3101aa465ddf79da0a3d4c9093e404cd81737",
   "sampled_production_routes": ["/filter/gswf", "/filter/gswf2"]
 }
