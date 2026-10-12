@@ -1,0 +1,221 @@
+{
+  "contract": "r08_sibling_fxhtc_gxwh20s_executive_decision_packet_v1",
+  "read_only": true,
+  "root_id": "R08",
+  "generated_at": "2026-10-12T00:30:00Z",
+  "root_status_unchanged": "OPEN",
+  "fxwpc_identity_tranche": "COMPLETE_PRODUCTION_VERIFIED",
+  "sibling_tranche_scope": "GE FXHTC replacement interval + GXWH20S ↔ FXHTC size/compatibility only",
+  "immutable_baseline": {
+    "artifact": "READ_ME_AUDIT_REPORT.md",
+    "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+    "root_heading": "R08 — P1 — GE cartridge media/intervals and housing-size mappings conflated"
+  },
+  "prior_packets": {
+    "r08_fxwpc": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-executive-decision-packet-2026-10-11.json",
+    "r08_fxwpc_tranche_verification": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-fxwpc-identity-tranche-verification-2026-10-12.json"
+  },
+  "authoritative_sources": [
+    {
+      "label": "GE Appliances Parts — FXHTC spec",
+      "url": "https://www.geapplianceparts.com/store/parts/spec/FXHTC",
+      "retrieved_at": "2026-10-12",
+      "role": "primary_manufacturer",
+      "claims": [
+        "Product: GE WHOLE HOUSE ADVANCED REPLACEMENT WATER FILTER (FXHTC)",
+        "Filter Life: 3 Months or 30,000 gallons",
+        "Overall dimensions: 4.5 in W × 4.5 in D × 9.625 in H",
+        "Chlorine Taste and Odor Reduction: Yes",
+        "Sand/sediment reduction features; nominal particulate ~25 µm (manufacturer internal testing)",
+        "Marketing Filter Compatibility callout: fits GXWH40L Whole House water filtration system",
+        "Accessory context lists GXWH35F housing (NLA on parts site); does not list GXWH20S as FXHTC fit target"
+      ]
+    },
+    {
+      "label": "GE Support — Water Systems Filter Specification Chart (contentId=22693)",
+      "url": "https://products.geappliances.com/appliance/gea-support-search-content?contentId=22693",
+      "retrieved_at": "2026-10-12",
+      "role": "primary_manufacturer",
+      "claims": [
+        "FXHTC filter life row: 3 mo / 30,000 gal",
+        "FXUSC / FXWPC / FXWSC inline-family row: 3 mo / 16,000 gal (distinct from FXHTC)",
+        "FXHTC grouped with larger-flow inline cartridges (4.0 gpm class in chart), not the 2.5-inch GXWH20S element family"
+      ]
+    },
+    {
+      "label": "GE GXWH20S installation instructions (49-50202)",
+      "url": "https://products-salsify.geappliances.com/image/upload/s--qbgnU6AN--/395dbdf31f13a3e741e7f42c124dcab31a741592.pdf",
+      "retrieved_at": "2026-10-12",
+      "role": "primary_manufacturer_housing_manual",
+      "claims": [
+        "Ships with Sediment filter FXUSC (Rev. 2) for GXWH20S only",
+        "Replacement element chart lists FXUSC (Rev. 2), FXWPC (Pleated), FXWTC (Rev. 2) Carbon Paper — all 3 mo / 16,000 gal (15,000 for FXWTC) sediment-family elements",
+        "FXHTC does not appear anywhere in extracted GXWH20S manual text (element chart or parts list)",
+        "Certification narrative references FXUSC (Rev. 2) for GXWH20S, not FXHTC"
+      ]
+    },
+    {
+      "label": "GE Appliances Parts — FXWPC spec (size contrast)",
+      "url": "https://www.geapplianceparts.com/store/parts/spec/FXWPC",
+      "retrieved_at": "2026-10-11",
+      "role": "cross_reference",
+      "claims": ["FXWPC Overall Width/Depth: 2.5 in — GXWH20S manual element class"]
+    },
+    {
+      "label": "Production readback — FXHTC filter PDP",
+      "url": "https://buckparts.com/whole-house-water/filter/ge-fxhtc",
+      "retrieved_at": "2026-10-12",
+      "role": "production_evidence",
+      "claims": [
+        "Primary name: GE whole home sediment filter",
+        "Rendered interval: Replace about every 6 months",
+        "Lists GXWH20S among compatible models (4 models incl. GXWH20S)"
+      ]
+    },
+    {
+      "label": "Production readback — GXWH20S model PDP",
+      "url": "https://buckparts.com/whole-house-water/model/ge-whole-house-gxwh20s",
+      "retrieved_at": "2026-10-12",
+      "role": "production_evidence",
+      "claims": [
+        "Primary part on file: FXHTC with Replace about every 6 months",
+        "recommended_compatibility_mapping drives high fit confidence for FXHTC",
+        "FXWPC appears under other parts with corrected pleated sediment identity"
+      ]
+    }
+  ],
+  "adjudication": {
+    "fxhtc_interval": {
+      "classification": "PROVEN",
+      "statement": "GE OEM FXHTC service interval is 3 months or 30,000 gallons — not 6 months. Independent of FXWPC 3 mo / 16,000 gal."
+    },
+    "fxhtc_size_class": {
+      "classification": "PROVEN",
+      "statement": "FXHTC is a 4.5-inch × 9.625-inch Advanced Replacement cartridge class per GE parts spec."
+    },
+    "gxwh20s_cartridge_class": {
+      "classification": "PROVEN",
+      "statement": "GXWH20S uses 2.5-inch-class replacement elements per GE manual element chart (FXUSC Rev. 2 in-box; alternates FXWPC pleated sediment, FXWTC carbon paper)."
+    },
+    "gxwh20s_fxhtc_oem_compatibility": {
+      "classification": "NOT_PROVEN",
+      "statement": "GE does not document FXHTC as a GXWH20S replacement element in the GXWH20S manual. GE FXHTC PDP names GXWH40L as filter compatibility. No manufacturer evidence resolves 4.5-inch FXHTC into 2.5-inch GXWH20S housing."
+    },
+    "buckparts_interval_six_months": {
+      "classification": "PROVEN_INCORRECT",
+      "statement": "BuckParts ge-fxhtc replacement_interval_months=6 contradicts GE 3 mo / 30,000 gal. This is not correct and must not be retained because baseline expected 3 months — it is incorrect on GE authority."
+    },
+    "buckparts_gxwh20s_fxhtc_recommended_mapping": {
+      "classification": "PROVEN_INCORRECT",
+      "statement": "compatibility_mappings ge-whole-house-gxwh20s → ge-fxhtc with is_recommended=true lacks GE fit support and conflicts with 4.5 vs 2.5 inch cartridge classes."
+    },
+    "fxhtc_media_copy_only": {
+      "classification": "INFERRED_SECONDARY",
+      "statement": "BuckParts FXHTC display name emphasizes sediment only; GE also documents chlorine taste/odor reduction. Incomplete copy, not the primary sibling-tranche blocker versus interval + GXWH20S fit."
+    },
+    "gxwh30c_gxwh35f_gxwh40f_fxhtc_mappings": {
+      "classification": "UNKNOWN_THIS_PACKET",
+      "statement": "Other GE model → FXHTC recommended mappings may be valid for larger housings but were not re-adjudicated with housing manuals in this packet. Sibling minimum repair scopes GXWH20S edge only; interval fix is global ge-fxhtc row."
+    }
+  },
+  "defect_structure": {
+    "count": 2,
+    "issues": [
+      {
+        "issue_id": "R08-SIB-INTERVAL-FXHTC",
+        "description": "Global ge-fxhtc replacement interval 6 months vs GE 3 months / 30,000 gallons",
+        "scope": "whole_house_water_parts slug ge-fxhtc + all routes rendering interval from that row"
+      },
+      {
+        "issue_id": "R08-SIB-MAP-GXWH20S-FXHTC",
+        "description": "Recommended compatibility GXWH20S → FXHTC without GE support; drives primary FXHTC on model PDP",
+        "scope": "compatibility_mappings row + model PDP primary selection + FXHTC filter PDP model list includes GXWH20S"
+      }
+    ]
+  },
+  "current_state_diff": [
+    {
+      "layer": "GE authority FXHTC",
+      "truth": "3 mo / 30,000 gal; 4.5 in cartridge; chlorine + sediment; GXWH40L named fit; not in GXWH20S manual element chart"
+    },
+    {
+      "layer": "data/whole-house-water/filters.csv ge-fxhtc",
+      "current": "replacement_interval_months=6; name=GE whole home sediment filter",
+      "conflict": "PROVEN interval wrong vs GE"
+    },
+    {
+      "layer": "data/whole-house-water/compatibility_mappings.csv",
+      "current": "ge-whole-house-gxwh20s,ge-fxhtc,is_recommended=true",
+      "conflict": "PROVEN unsupported / size-class conflict for GXWH20S"
+    },
+    {
+      "layer": "Supabase/runtime (post-FXWPC tranche)",
+      "current": "Assumed parity with CSV for fxhtc interval=6 and gxwh20s→fxhtc recommended=true unless separately mutated",
+      "conflict": "PROVEN same as repo unless audit shows drift"
+    },
+    {
+      "layer": "production /whole-house-water/filter/ge-fxhtc",
+      "current": "Replace about every 6 months; GXWH20S in fits list",
+      "conflict": "PROVEN interval; INFERRED GXWH20S list entry persists from mapping"
+    },
+    {
+      "layer": "production /whole-house-water/model/ge-whole-house-gxwh20s",
+      "current": "Primary FXHTC, 6 months, high fit confidence from recommended mapping",
+      "conflict": "PROVEN primary + interval wrong for FXHTC; mapping-driven"
+    }
+  ],
+  "executive_decision": {
+    "ready": true,
+    "governing_truth": {
+      "fxhtc": "GE FXHTC is a 4.5-inch-class Advanced whole-house replacement filter with OEM service interval 3 months or 30,000 gallons, with chlorine taste/odor reduction and sediment reduction per GE spec. It is not interchangeable with the 2.5-inch GXWH20S element family (FXUSC/FXWPC/FXWTC) documented in the GXWH20S manual.",
+      "gxwh20s_fxhtc": "Do not recommend or present FXHTC as the primary or recommended fit for GXWH20S without GE evidence. GE does not list FXHTC in the GXWH20S manual element chart."
+    },
+    "explicit_non_decisions": [
+      "Do not bulk-remove ge-whole-house-gxwh30c/gxwh35f/gxwh40f → ge-fxhtc mappings in this sibling tranche without per-housing GE manual proof",
+      "Do not change FXWPC-tranche-closed data",
+      "Do not touch R04 or R09"
+    ]
+  },
+  "minimum_repair_scope": {
+    "repo_csv": [
+      "data/whole-house-water/filters.csv: ge-fxhtc replacement_interval_months=3; optional notes citing GE 3 mo / 30,000 gal and 4.5 in advanced cartridge (chlorine + sediment) — name tweak optional, not required for closure if interval + mapping fixed",
+      "data/whole-house-water/compatibility_mappings.csv: remove ge-whole-house-gxwh20s → ge-fxhtc row OR set is_recommended=false and ensure sort/primary logic no longer elevates FXHTC on GXWH20S (prefer DELETE or demote per existing compat conventions — implementation must follow repo delete-capable parity pattern, not inferred ranking policy beyond demotion/removal)"
+    ],
+    "bounded_supabase_parity_expected": [
+      "whole_house_water_parts: slug ge-fxhtc replacement_interval_months=3 (+ optional name/notes if CSV updated)",
+      "whole_house_water_compatibility_mappings: remove or demote ge-whole-house-gxwh20s ↔ ge-fxhtc recommended edge only"
+    ],
+    "out_of_scope": [
+      "Other model → FXHTC mappings",
+      "Full FXHTC marketing copy rewrite for chlorine claims",
+      "R08 VERIFIED_CLOSED (may remain OPEN until all baseline R08 paths pass or scoped closure policy updated)"
+    ]
+  },
+  "runtime_architecture": {
+    "buyer_facing_source": "Supabase whole_house_water_parts, whole_house_water_models, whole_house_water_compatibility_mappings",
+    "repo_csv_role": "Seed + PR parity; runtime already demonstrated Supabase-authoritative (R07/R08 FXWPC tranche)",
+    "mutation_required": true
+  },
+  "required_validation": {
+    "tests": [
+      "New or extended fixture: ge-fxhtc interval must be 3; ge-whole-house-gxwh20s must not have is_recommended=true → ge-fxhtc (or mapping absent)",
+      "Preserve ge-fxwpc-identity-r08-tranche-v1.test.ts 4/4 PASS"
+    ],
+    "preview_readback": [
+      "GET /whole-house-water/filter/ge-fxhtc — 3-month interval surfaced",
+      "GET /whole-house-water/model/ge-whole-house-gxwh20s — FXHTC not primary recommended fit; interval 6 months not shown for FXHTC as primary",
+      "Confirm FXHTC PDP model list no longer implies GXWH20S recommended fit if mapping removed"
+    ],
+    "production_readback": [
+      "Same three URLs after authorized bounded parity + merge",
+      "FXHTC filter PDP should not list GXWH20S as compatible if mapping deleted (verify runtime join behavior)"
+    ],
+    "ship_guard": "npm run buckparts:ship-guard -- --enforce before merge"
+  },
+  "affected_routes": [
+    "/whole-house-water/filter/ge-fxhtc",
+    "/whole-house-water/model/ge-whole-house-gxwh20s",
+    "/whole-house-water",
+    "/whole-house-water/brand/ge"
+  ]
+}
