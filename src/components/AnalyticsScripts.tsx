@@ -18,9 +18,7 @@ export function isGa4ProductionHostname(hostname: string): boolean {
   return host === GA4_PRODUCTION_HOSTNAME;
 }
 
-export function resolveGaMeasurementId(
-  env: { NEXT_PUBLIC_GA_MEASUREMENT_ID?: string } = process.env,
-): string | null {
+export function resolveGaMeasurementId(env: NodeJS.ProcessEnv = process.env): string | null {
   const id = env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim();
   return id ? id : null;
 }
