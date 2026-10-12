@@ -3,13 +3,13 @@
   "campaign_id": "BUCKPARTS_PRODUCTION_INTEGRITY_2026_10_11",
   "activated_at": "2026-10-11",
   "canonical_main_sha_at_activation": "6f9dbac660f63056fb7cc2b08a88e475a73dad13",
-  "canonical_main_sha_current": "e42eb66d424a1574a7b4cb6cb13805117e3ea143",
+  "canonical_main_sha_current": "PENDING_R08_SIBLING_MERGE",
   "immutable_baseline": {
     "repo_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/READ_ME_AUDIT_REPORT.md",
     "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188"
   },
   "triage_artifact": "data/ops/site-integrity/remaining-root-triage-2026-10-11.json",
-  "roots_verified_closed": ["R01", "R02", "R03", "R05", "R06", "R07", "R13", "R16", "R17"],
+  "roots_verified_closed": ["R01", "R02", "R03", "R05", "R06", "R07", "R08", "R13", "R16", "R17"],
   "r06_closure_artifact": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r06-closure-verification-2026-10-11.json",
   "r07_executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r07-executive-decision-packet-2026-10-11.json",
   "r07_phase1_repo_repair": {
@@ -21,18 +21,22 @@
   "r07_state": "VERIFIED_CLOSED",
   "r07_closure_artifact": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r07-closure-verification-2026-10-11.json",
   "r08_executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-executive-decision-packet-2026-10-11.json",
-  "r08_state": "OPEN",
+  "r08_state": "VERIFIED_CLOSED",
+  "r08_closure_artifact": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-closure-verification-2026-10-12.json",
   "r08_fxwpc_identity_tranche": {
     "status": "COMPLETE_PRODUCTION_VERIFIED",
-    "verification_artifact": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-fxwpc-identity-tranche-verification-2026-10-12.json",
-    "remaining_sibling_tranche": "FXHTC interval + GXWH20S↔FXHTC size/mapping"
+    "verification_artifact": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-fxwpc-identity-tranche-verification-2026-10-12.json"
+  },
+  "r08_sibling_tranche": {
+    "status": "COMPLETE_PRODUCTION_VERIFIED",
+    "verification_artifact": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-sibling-fxhtc-gxwh20s-tranche-verification-2026-10-12.json"
   },
   "r08_sibling_executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-sibling-fxhtc-gxwh20s-executive-decision-packet-2026-10-12.json",
-  "required_pre_distribution_blockers": ["R04", "R08", "R09"],
+  "required_pre_distribution_blockers": ["R04", "R09"],
   "next_lawful_actions": [],
   "merge_policy": "serialize_integrity_merges",
   "max_parallel_worker_lanes": 3,
   "final_baseline_rerun": "NOT_YET",
   "broad_distribution_release_ready": false,
-  "updated_at": "2026-10-11T23:25:00Z"
+  "updated_at": "2026-10-12T00:10:00Z"
 }

@@ -180,11 +180,11 @@
         "baseline_scope": "8 listed paths at baseline"
       },
       "prior_ledger_state": "NOT_STARTED (ledger phase mis-tag)",
-      "current_classification": "STILL_PRESENT",
-      "current_evidence": "Production /whole-house-water/filter/ge-fxwpc HTML still references carbon and 6-month interval language (baseline: pleated sediment, 3-month guidance).",
-      "distribution_blocker": true,
-      "smallest_next_action": "Correct GE FXWPC/FXHTC media and interval copy; hold GXWH20S cross-size fit until manual evidence.",
-      "closure_proof_required": "Production PDP copy matches cited GE manufacturer specs on sampled routes."
+      "current_classification": "VERIFIED_CLOSED",
+      "current_evidence": "FXWPC identity tranche + sibling FXHTC interval/GXWH20S mapping tranche: production readback 2026-10-12 on ge-fxwpc, ge-fxhtc, ge-whole-house-gxwh20s matches GE-bounded repair scope.",
+      "distribution_blocker": false,
+      "smallest_next_action": "—",
+      "closure_proof_required": "—"
     },
     {
       "root_id": "R09",
@@ -332,16 +332,8 @@
     "needs_evidence": 2
   },
   "current_required_pre_distribution_roots": [
-    "R02",
-    "R03",
     "R04",
-    "R05",
-    "R06",
-    "R07",
-    "R08",
-    "R09",
-    "R13",
-    "R17"
+    "R09"
   ],
   "recommended_repair_batches": [
     {

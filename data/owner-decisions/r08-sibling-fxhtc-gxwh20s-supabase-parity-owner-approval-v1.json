@@ -1,0 +1,43 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-10-12-r08-sibling-fxhtc-gxwh20s-supabase-parity-approve",
+      "source_queue_row_id": "queue-r08-sibling-fxhtc-gxwh20s-supabase-parity",
+      "source_decision_packet_id": "r08_sibling_fxhtc_gxwh20s_supabase_parity_owner_approval_v1",
+      "decided_at": "2026-10-12T01:05:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "R08 sibling tranche explicitly authorized: ge-fxhtc interval 3 months (GE 30k gal); remove unsupported ge-whole-house-gxwh20s→ge-fxhtc recommended mapping. Excludes GXWH30C/35F/40F→FXHTC, FXWPC tranche, R04/R09, full WHW seed. Bound to r08-sibling-fxhtc-gxwh20s-supabase-parity-plan. Session apply with BUCKPARTS_IO_CAPABILITY=MUTATION and BUCKPARTS_R08_SIBLING_FXHTC_GXWH20S_SUPABASE_PARITY_MUTATION_ENABLED=1 only.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "expires_at": "2027-10-12T00:00:00.000Z",
+      "prohibited_actions_still_apply": [
+        "Do not mutate any whole_house_water row outside the two bounded operations in the bound parity plan.",
+        "Do not run npm run seed:import:whole-house-water --write or full-catalog vertical seed.",
+        "Do not change GXWH30C/GXWH35F/GXWH40F→FXHTC mappings.",
+        "Do not revert FXWPC identity tranche.",
+        "Do not touch R04 or R09.",
+        "Do not run autonomous apply — explicit founder-run --apply with IO MUTATION and R08 sibling mutation env flag required."
+      ],
+      "r08_sibling_fxhtc_gxwh20s_supabase_parity_owner_approval_context_v1": {
+        "founder_option_id": "approve_r08_sibling_fxhtc_gxwh20s_supabase_parity_plan",
+        "option_id": "approve_r08_sibling_fxhtc_gxwh20s_supabase_parity_plan",
+        "parity_plan_rel_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-sibling-fxhtc-gxwh20s-supabase-parity-plan-2026-10-12.json",
+        "expected_operation_count": 2,
+        "mutation_env_flag_required": "BUCKPARTS_R08_SIBLING_FXHTC_GXWH20S_SUPABASE_PARITY_MUTATION_ENABLED=1",
+        "io_capability_required": "BUCKPARTS_IO_CAPABILITY=MUTATION",
+        "owner_approved_by": "Jared",
+        "approved_at": "2026-10-12T01:05:00.000Z"
+      },
+      "bound_artifacts_v1": [
+        {
+          "artifact_rel_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-sibling-fxhtc-gxwh20s-supabase-parity-plan-2026-10-12.json",
+          "sha256_at_binding": "bf89e46e4ede87642036177172704065440a05f3715a6eb2fd90d8dc563aaa57",
+          "entry_type": "apply_plan"
+        }
+      ]
+    }
+  ]
+}

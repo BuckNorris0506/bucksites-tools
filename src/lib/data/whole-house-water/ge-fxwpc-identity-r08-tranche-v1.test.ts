@@ -43,13 +43,6 @@ test("ge-fxwtc remains the carbon SKU", () => {
   assert.match(`${row.name} ${row.notes}`.toLowerCase(), /carbon/);
 });
 
-test("ge-fxhtc row unchanged (6-month interval — sibling R08 scope)", () => {
-  const filters = loadCsv<FilterRow>("data/whole-house-water/filters.csv");
-  const row = filters.find((r) => r.slug === "ge-fxhtc");
-  assert.ok(row);
-  assert.equal(row.replacement_interval_months, "6");
-});
-
 test("GXWH20S notes do not describe FXWPC as carbon", () => {
   const models = loadCsv<ModelRow>("data/whole-house-water/models.csv");
   const row = models.find((r) => r.slug === "ge-whole-house-gxwh20s");

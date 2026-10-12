@@ -1,0 +1,34 @@
+{
+  "contract": "r08_sibling_fxhtc_gxwh20s_supabase_parity_plan_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "supabase_mutation_authorized": false,
+  "apply_authorized": false,
+  "generated_at": "2026-10-12T01:00:00Z",
+  "source_executive_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-sibling-fxhtc-gxwh20s-executive-decision-packet-2026-10-12.json",
+  "expected_operation_count": 2,
+  "proposed_supabase_changes": {
+    "part_updates": [
+      {
+        "part_slug": "ge-fxhtc",
+        "name": "GE whole home sediment filter",
+        "replacement_interval_months": 3,
+        "notes": "OEM sediment cartridge for select GE whole-house systems."
+      }
+    ],
+    "compatibility_mapping_deletes": [
+      {
+        "model_slug": "ge-whole-house-gxwh20s",
+        "filter_slug": "ge-fxhtc"
+      }
+    ]
+  },
+  "explicit_exclusions": [
+    "No other whole_house_water_parts rows",
+    "No whole_house_water_models notes changes",
+    "No GXWH30C/GXWH35F/GXWH40F → FXHTC mapping changes",
+    "No ge-fxwpc or other FXWPC tranche reversions",
+    "No full vertical seed",
+    "No R04/R09 scope"
+  ]
+}

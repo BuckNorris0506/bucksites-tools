@@ -1,0 +1,35 @@
+{
+  "contract": "r08_closure_verification_v1",
+  "read_only": true,
+  "verified_at": "2026-10-12T00:10:00Z",
+  "classification": "VERIFIED_CLOSED",
+  "immutable_baseline": {
+    "artifact": "READ_ME_AUDIT_REPORT.md",
+    "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+    "root_heading": "R08 — P1 — GE cartridge media/intervals and housing-size mappings conflated"
+  },
+  "executive_decision_packets": [
+    "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-executive-decision-packet-2026-10-11.json",
+    "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-sibling-fxhtc-gxwh20s-executive-decision-packet-2026-10-12.json"
+  ],
+  "tranches": {
+    "fxwpc_identity": {
+      "status": "COMPLETE_PRODUCTION_VERIFIED",
+      "verification": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-fxwpc-identity-tranche-verification-2026-10-12.json",
+      "supabase_apply": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-fxwpc-identity-tranche-supabase-parity-apply-result-2026-10-12.json"
+    },
+    "fxhtc_gxwh20s_sibling": {
+      "status": "COMPLETE_PRODUCTION_VERIFIED",
+      "verification": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-sibling-fxhtc-gxwh20s-tranche-verification-2026-10-12.json",
+      "supabase_apply": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-sibling-fxhtc-gxwh20s-supabase-parity-apply-result-2026-10-12.json"
+    }
+  },
+  "closure_scope_note": "Bounded R08 closure covers FXWPC identity + FXHTC interval + GXWH20S↔FXHTC mapping only; GXWH30C/35F/40F→FXHTC mappings intentionally not re-adjudicated.",
+  "sampled_production_routes": [
+    "/whole-house-water/filter/ge-fxwpc",
+    "/whole-house-water/filter/ge-fxhtc",
+    "/whole-house-water/model/ge-whole-house-gxwh20s"
+  ],
+  "merge_commit_sha": "PENDING_MERGE",
+  "production_readback_at_closure": "2026-10-12T00:05:00Z"
+}

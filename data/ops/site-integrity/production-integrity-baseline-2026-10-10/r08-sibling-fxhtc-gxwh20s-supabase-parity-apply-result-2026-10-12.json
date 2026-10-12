@@ -1,0 +1,23 @@
+{
+  "contract": "r08_sibling_fxhtc_gxwh20s_supabase_parity_apply_result_v1",
+  "read_only": true,
+  "generated_at": "2026-10-12T00:03:03.839Z",
+  "apply_status": "APPLIED",
+  "owner_approval_decision_id": "decision-2026-10-12-r08-sibling-fxhtc-gxwh20s-supabase-parity-approve",
+  "plan_sha256": "bf89e46e4ede87642036177172704065440a05f3715a6eb2fd90d8dc563aaa57",
+  "applied_operations": [
+    "part_update:ge-fxhtc,interval=3",
+    "compat_delete:ge-whole-house-gxwh20s,ge-fxhtc"
+  ],
+  "before_snapshot": {
+    "part_ge_fxhtc": {
+      "name": "GE whole home sediment filter",
+      "notes": "OEM sediment cartridge for select GE whole-house systems.",
+      "replacement_interval_months": 6
+    },
+    "compat_gxwh20s_fxhtc": {
+      "is_recommended": true
+    }
+  },
+  "source_command": "BUCKPARTS_IO_CAPABILITY=MUTATION BUCKPARTS_R08_SIBLING_FXHTC_GXWH20S_SUPABASE_PARITY_MUTATION_ENABLED=1 npm run buckparts:r08-sibling-fxhtc-gxwh20s-supabase-parity-guarded-apply -- --apply"
+}

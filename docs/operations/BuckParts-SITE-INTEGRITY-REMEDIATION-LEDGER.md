@@ -236,19 +236,19 @@ If full closure cannot be established: **BLOCKED**, **AWAITING_PRODUCTION_VERIFI
 | Field | Value |
 |--------|--------|
 | **ROOT_ID** | R08 |
-| **TITLE** | UNKNOWN — per immutable October 10, 2026 baseline root **R08** (not ingested to repo) |
-| **PRIORITY** | UNKNOWN |
-| **RELEASE_BLOCKER** | UNKNOWN |
-| **CURRENT_STATE** | NOT_STARTED |
-| **CURRENT_OWNER / EXECUTOR** | UNKNOWN |
-| **ACTIVE_BRANCH / WORKTREE** | — |
-| **EXACT_SCOPE** | UNKNOWN — audit phase: current commercial-link reconciliation |
-| **SMALLEST_REQUIRED_FIX** | UNKNOWN |
-| **CLOSURE_REQUIREMENTS** | Per baseline + commercial-path closure standard |
-| **CLOSURE_EVIDENCE** | — |
-| **BLOCKER** | Baseline not ingested |
-| **NEXT_LAWFUL_ACTION** | Ingest baseline root **R08** |
-| **LAST_UPDATED** | 2026-10-10 |
+| **TITLE** | GE cartridge media/intervals and housing-size mappings conflated |
+| **PRIORITY** | P1 |
+| **RELEASE_BLOCKER** | Cleared (bounded tranche closure) |
+| **CURRENT_STATE** | VERIFIED_CLOSED |
+| **CURRENT_OWNER / EXECUTOR** | Integrity campaign |
+| **ACTIVE_BRANCH / WORKTREE** | `main` |
+| **EXACT_SCOPE** | FXWPC pleated sediment identity + 3 mo; FXHTC 3 mo; remove GXWH20S→FXHTC recommended mapping |
+| **SMALLEST_REQUIRED_FIX** | Delivered via CSV + bounded Supabase parity (two tranches) |
+| **CLOSURE_REQUIREMENTS** | Sampled production WHW routes match GE-bounded truth |
+| **CLOSURE_EVIDENCE** | `data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-closure-verification-2026-10-12.json` |
+| **BLOCKER** | — |
+| **NEXT_LAWFUL_ACTION** | — |
+| **LAST_UPDATED** | 2026-10-12 |
 
 ---
 
