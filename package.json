@@ -201,6 +201,7 @@
     "buckparts:r08-fxwpc-identity-tranche-supabase-parity-guarded-apply": "tsx scripts/apply-r08-fxwpc-identity-tranche-supabase-parity-guarded-v1.ts",
     "buckparts:r08-sibling-fxhtc-gxwh20s-supabase-parity-guarded-apply": "tsx scripts/apply-r08-sibling-fxhtc-gxwh20s-supabase-parity-guarded-v1.ts",
     "buckparts:r09-ap903-standard-cartridge-supabase-parity-guarded-apply": "tsx scripts/apply-r09-ap903-standard-cartridge-supabase-parity-guarded-v1.ts",
+    "buckparts:r04-gswf-alias-trust-supabase-parity-guarded-apply": "tsx scripts/apply-r04-gswf-alias-trust-supabase-parity-guarded-v1.ts",
     "buckparts:gswf-wrong-part-repair-guarded-apply": "tsx scripts/apply-gswf-wrong-part-repair-guarded-v1.ts",
     "buckparts:gswf-partial-owner-browser-proof-packet": "tsx scripts/report-gswf-partial-owner-browser-proof-packet-v1.ts",
     "buckparts:gswf-gte18gsnrss-no-filter-suppression-apply-plan-owner-review": "tsx scripts/report-gswf-gte18gsnrss-no-filter-suppression-apply-plan-owner-review-v1.ts",

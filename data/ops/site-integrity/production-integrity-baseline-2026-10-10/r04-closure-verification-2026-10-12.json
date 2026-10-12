@@ -1,0 +1,16 @@
+{
+  "contract": "r04_closure_verification_v1",
+  "read_only": true,
+  "verified_at": "2026-10-12T00:12:00Z",
+  "classification": "VERIFIED_CLOSED",
+  "immutable_baseline": {
+    "artifact": "READ_ME_AUDIT_REPORT.md",
+    "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+    "root_heading": "R04 — P1 — Compatibility-review warning contradicted by right-place and identity-equivalence copy"
+  },
+  "executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r04-executive-decision-packet-2026-10-12.json",
+  "tranche_verification": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r04-tranche-verification-2026-10-12.json",
+  "closure_scope_note": "Removed mutual GSWF↔GSWF2 filter_aliases cross-rows (repo CSV + Supabase). Caution/suppress_buy/non-interchange copy preserved. GSWF↔GSWF2 OEM relationship remains UNKNOWN — closure does not assert equivalence.",
+  "merge_commit_sha": "6d8635b",
+  "sampled_production_routes": ["/filter/gswf", "/filter/gswf2"]
+}

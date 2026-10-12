@@ -1,0 +1,42 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-10-12-r04-gswf-alias-trust-supabase-parity-approve",
+      "source_queue_row_id": "queue-r04-gswf-alias-trust-supabase-parity",
+      "source_decision_packet_id": "r04_gswf_alias_trust_supabase_parity_owner_approval_v1",
+      "decided_at": "2026-10-12T03:05:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "R04 alias-trust tranche authorized: delete only filter_aliases gswf→GSWF2 and gswf2→GSWF. No compatibility_mappings changes. Bound to r04-gswf-alias-trust-supabase-parity-plan. Session apply with BUCKPARTS_IO_CAPABILITY=MUTATION and BUCKPARTS_R04_GSWF_ALIAS_TRUST_SUPABASE_PARITY_MUTATION_ENABLED=1 only.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "expires_at": "2027-10-12T00:00:00.000Z",
+      "prohibited_actions_still_apply": [
+        "Do not mutate any filter_aliases row outside the two bounded deletes in the bound parity plan.",
+        "Do not mutate compatibility_mappings or filters identity fields.",
+        "Do not touch any closed root repair scope.",
+        "Do not mark R04 VERIFIED_CLOSED until production readback passes.",
+        "Do not run autonomous apply — explicit founder-run --apply with IO MUTATION and R04 mutation env flag required."
+      ],
+      "r04_gswf_alias_trust_supabase_parity_owner_approval_context_v1": {
+        "founder_option_id": "approve_r04_gswf_alias_trust_supabase_parity_plan",
+        "option_id": "approve_r04_gswf_alias_trust_supabase_parity_plan",
+        "parity_plan_rel_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r04-gswf-alias-trust-supabase-parity-plan-2026-10-12.json",
+        "expected_operation_count": 2,
+        "mutation_env_flag_required": "BUCKPARTS_R04_GSWF_ALIAS_TRUST_SUPABASE_PARITY_MUTATION_ENABLED=1",
+        "io_capability_required": "BUCKPARTS_IO_CAPABILITY=MUTATION",
+        "owner_approved_by": "Jared",
+        "approved_at": "2026-10-12T03:05:00.000Z"
+      },
+      "bound_artifacts_v1": [
+        {
+          "artifact_rel_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r04-gswf-alias-trust-supabase-parity-plan-2026-10-12.json",
+          "sha256_at_binding": "d71d8d5b2746cc379396419f49be30d287defe5ef3c476cf313d84428ad08599",
+          "entry_type": "apply_plan"
+        }
+      ]
+    }
+  ]
+}

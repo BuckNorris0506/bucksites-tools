@@ -1,0 +1,357 @@
+{
+  "contract": "r04_executive_decision_packet_v1",
+  "read_only": true,
+  "root_id": "R04",
+  "generated_at": "2026-10-12T02:00:00Z",
+  "root_status_unchanged": "OPEN",
+  "immutable_baseline": {
+    "artifact": "READ_ME_AUDIT_REPORT.md",
+    "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+    "root_heading": "R04 — P1 — Compatibility-review warning contradicted by right-place and identity-equivalence copy",
+    "baseline_scope": ["/filter/gswf", "/filter/gswf2"]
+  },
+  "triage_artifact": {
+    "path": "data/ops/site-integrity/remaining-root-triage-2026-10-11.json",
+    "current_classification": "PARTIALLY_RESOLVED",
+    "current_evidence": "Production GSWF/GSWF2: review/caution copy present; no 'right place' string; 'Also listed as GSWF2' alias block remains on /filter/gswf."
+  },
+  "prior_in_repo_evidence": [
+    {
+      "label": "GE GSWF official spec PDP capture (Playwright)",
+      "path": "data/fridge/batch-production/drafts/fridge-safe-link-gswf-ge-official-owner-browser-proof-v1.json",
+      "role": "manufacturer_primary",
+      "notes": "PASS on https://www.geapplianceparts.com/store/parts/spec/GSWF; literal GSWF in title/H1; Add to Cart; explicitly notes no GSWF2 primary identity on GSWF URL."
+    },
+    {
+      "label": "GE GSWF normalization packet",
+      "path": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-gswf-v1.json",
+      "role": "manufacturer_capture_status",
+      "notes": "normalization_status=CAPTURE_REQUIRED_UNKNOWN; no committed normalization draft — identity proof relies on browser-proof artifact above."
+    },
+    {
+      "label": "GE GSWF2 normalization packet",
+      "path": "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-gswf2-v1.json",
+      "role": "manufacturer_capture_status",
+      "notes": "normalization_status=CAPTURE_REQUIRED_UNKNOWN; source_ge_evidence_artifact_rel=null; prepared_verdict=NEEDS_OWNER_BROWSER_REVIEW."
+    },
+    {
+      "label": "GSWF family reconciliation (compat contamination)",
+      "path": "data/fridge/batch-production/drafts/gswf-family-reconciliation-owner-review-v1.json",
+      "role": "internal_fit_risk",
+      "notes": "17/17 mission slugs co-mapped to gswf in CSV flagged; HyperAgent wrong-part discovery vs repo LIKELY_CORRECT_NEEDS_EVIDENCE; separate from GSWF↔GSWF2 token relationship but explains review banner."
+    },
+    {
+      "label": "Amazon GSWF OEM PDP evidence",
+      "path": "data/evidence/amazon-gswf-owner-review-pdp-evidence.2026-05-18.json",
+      "role": "retailer_secondary",
+      "notes": "Confirms GSWF single-pack OEM listing only; not authority for GSWF2 equivalence."
+    },
+    {
+      "label": "Committed CSV alias rows",
+      "path": "data/filter_aliases.csv",
+      "role": "repo_truth",
+      "notes": "Mutual cross-slug aliases: gswf→GSWF2, gswf2→GSWF."
+    },
+    {
+      "label": "Committed CSV compat duplicates",
+      "path": "data/compatibility_mappings.csv",
+      "role": "repo_truth",
+      "notes": "ge-gfe28hmkww, ge-gsc25frshss, ge-gse26gshess each mapped to both gswf and gswf2."
+    },
+    {
+      "label": "Filter PDP customer safety constants",
+      "path": "src/lib/fridge/fridge-filter-pdp-customer-safety-v1.ts",
+      "role": "runtime_copy",
+      "notes": "GSWF_FILTER_PAGE_CAUTION_NOTE_V1 + GSWF2_FILTER_PAGE_VERIFY_HOUSING_NOTE_V1 (non-interchange explicit on gswf2 only)."
+    }
+  ],
+  "authoritative_sources": [
+    {
+      "label": "GE Appliances support — GSWF/MSWF SmartWater filtration",
+      "url": "https://products.geappliances.com/appliance/gea-support-search-content?contentId=16933",
+      "retrieved_at": "2026-10-12",
+      "role": "primary_manufacturer",
+      "claims": [
+        "GSWF and MSWF are cylindrical SmartWater filters for select top/bottom freezer refrigerators.",
+        "GSWF filter is not interchangeable with MWF/GWF.",
+        "GSWF and MSWF are not interchangeable with each other.",
+        "Documentation names GSWF and MSWF as distinct cartridges — no GSWF2 token."
+      ],
+      "classification": "PROVEN"
+    },
+    {
+      "label": "GE Appliance Parts — GSWF spec PDP",
+      "url": "https://www.geapplianceparts.com/store/parts/spec/GSWF",
+      "retrieved_at": "2026-06-04",
+      "role": "primary_manufacturer",
+      "mirror_evidence": "data/fridge/batch-production/drafts/fridge-safe-link-gswf-ge-official-owner-browser-proof-v1.json",
+      "claims": [
+        "Official OEM SKU GSWF — GE GSWF refrigerator water filter.",
+        "GE guaranteed fit for select GE top-freezer and bottom-freezer refrigerators.",
+        "Twist-and-lock cylindrical cartridge; carbon block; ~6 month / 750 gal rated capacity in current spec table.",
+        "Accessories list GSWF3PK (3-pack of GSWF) — not GSWF2."
+      ],
+      "classification": "PROVEN"
+    },
+    {
+      "label": "GE Appliance Parts — GSWF2 spec PDP",
+      "url": "https://www.geapplianceparts.com/store/parts/spec/GSWF2",
+      "retrieved_at": "2026-10-12",
+      "role": "primary_manufacturer_absence",
+      "claims": [
+        "No indexed official GE Appliance Parts spec PDP for token GSWF2 found in this pass (site search and spec path probe; GSWF2 path returned 403/blocked without committed capture artifact)."
+      ],
+      "classification": "UNKNOWN"
+    },
+    {
+      "label": "Production readback — /filter/gswf",
+      "url": "https://buckparts.com/filter/gswf",
+      "retrieved_at": "2026-10-12",
+      "role": "production_evidence",
+      "claims": [
+        "Caution: reviewing GSWF compatibility; verify housing.",
+        "Also listed as: GSWF2 (trust-soft card).",
+        "No 'right place' / unconditional fit copy.",
+        "Compatible models (3): GFE28HMKWW, GSC25FRSHSS, GSE26GSHESS.",
+        "suppress_buy; no verified buying link."
+      ],
+      "classification": "PROVEN"
+    },
+    {
+      "label": "Production readback — /filter/gswf2",
+      "url": "https://buckparts.com/filter/gswf2",
+      "retrieved_at": "2026-10-12",
+      "role": "production_evidence",
+      "claims": [
+        "Title line: GE GSWF2 listing (verify housing).",
+        "Caution includes explicit: do not assume GSWF and GSWF2 are interchangeable.",
+        "Also listed as: GSWF (trust-soft card).",
+        "Same 3 compatible models as gswf page.",
+        "suppress_buy; no verified buying link."
+      ],
+      "classification": "PROVEN"
+    }
+  ],
+  "semantic_authority_matrix": {
+    "A_search_alias": {
+      "definition": "Token discoverable via search RPC / flexible alias index — does not prove fit or OEM sameness.",
+      "gswf_gswf2_status": "INFERRED: cross-alias rows may help discovery but must not surface as PDP equivalence.",
+      "classification": "INFERRED"
+    },
+    "B_naming_alias": {
+      "definition": "Manufacturer or BuckParts-verified alternate print string for the same SKU.",
+      "gswf_gswf2_status": "NOT PROVEN — no GE doc treating GSWF2 as print alias of GSWF.",
+      "classification": "UNKNOWN"
+    },
+    "C_supersession_replacement": {
+      "definition": "Directional OEM replace X with Y.",
+      "gswf_gswf2_status": "NOT PROVEN — no supersession chain in preserved GE sources.",
+      "classification": "UNKNOWN"
+    },
+    "D_fit_compatibility": {
+      "definition": "Same refrigerator models / housing accept both cartridges interchangeably.",
+      "gswf_gswf2_status": "NOT PROVEN — repo maps overlap on 3 models but family reconciliation flags broader GSWF compat risk; caution copy explicitly denies interchange.",
+      "classification": "UNKNOWN"
+    },
+    "E_oem_identity": {
+      "definition": "Distinct manufacturer catalog SKU with official PDP.",
+      "GSWF": "PROVEN distinct GE OEM SKU (GE Appliance Parts spec GSWF).",
+      "GSWF2": "UNKNOWN — no committed official GE GSWF2 capture; filters.csv name is 'GE GSWF2 listing (verify housing)'.",
+      "classification": "SPLIT_PROVEN_UNKNOWN"
+    }
+  },
+  "proven": [
+    "GE documents GSWF as a distinct cylindrical SmartWater OEM cartridge for select GE top/bottom freezer refrigerators; not interchangeable with MWF/GWF or MSWF (GE support contentId=16933).",
+    "Committed Playwright capture proves official GE Appliance Parts spec PDP for GSWF with literal token GSWF and purchase path (fridge-safe-link-gswf-ge-official-owner-browser-proof-v1.json).",
+    "GE GSWF official accessories reference GSWF3PK as a 3-pack of GSWF — not GSWF2 (GE spec PDP accessories section; GSWF3PK NLA as of capture snapshot).",
+    "Production /filter/gswf and /filter/gswf2 render compatibility-review caution (GSWF_FILTER_PAGE_CAUTION_NOTE_V1) and suppress buy; baseline 'right place' string is absent on 2026-10-12 readback.",
+    "Production /filter/gswf2 appends explicit non-interchange language (GSWF2_FILTER_PAGE_VERIFY_HOUSING_NOTE_V1).",
+    "Repo mutual alias rows exist (filter_aliases.csv gswf↔GSWF2) and render as customer-facing 'Also listed as' via VisualReplacementMatchCard (aliases from Supabase filter_aliases at runtime).",
+    "Repo duplicate compatibility_mappings.csv edges map the same three GE models to both gswf and gswf2 slugs.",
+    "Baseline R04 defect class: identity-equivalence copy contradicting review state — partially remediated (caution yes, mutual alias block still contradicts)."
+  ],
+  "inferred": [
+    "GSWF2 token in BuckParts catalog likely originated from retailer/marketplace/search normalization (discovery vocabulary) rather than a captured GE official spec PDP.",
+    "Retailer co-listing of GSWF and GSWF2 on third-party pages must not be treated as fit authority without GE OEM proof.",
+    "Removing mutual cross-slug PDP alias surfacing is sufficient to align with baseline regression intent without first proving GSWF↔GSWF2 sameness.",
+    "Optional retained search-only alias (if policy allows) must use neutral discovery labeling — never 'Also listed as' equivalence on filter PDPs while relationship is UNKNOWN."
+  ],
+  "unknown": [
+    "Whether GSWF2 is an official GE OEM part number, a marketplace typo/variant label, a pack suffix convention, or a distinct cartridge SKU.",
+    "Whether GSWF2 supersedes, replaces, or is interchangeable with GSWF for any model or housing.",
+    "Whether GSWF and GSWF2 share identical dimensions, media, or appliance lists per GE.",
+    "Whether the three shared model mappings (GFE28HMKWW, GSC25FRSHSS, GSE26GSHESS) should retain gswf, gswf2, both, or neither — family reconciliation and partial browser proof packets remain owner-gated.",
+    "Live Supabase filter_aliases parity vs CSV without query this pass — production HTML matches mutual alias behavior expected from committed CSV."
+  ],
+  "manufacturer_governing_truth": {
+    "GSWF": {
+      "oem_identity": "Distinct GE refrigerator water filter SKU GSWF with official GE Appliance Parts spec PDP.",
+      "interchange": "Not interchangeable with MWF/GWF or MSWF per GE support.",
+      "classification": "PROVEN"
+    },
+    "GSWF2": {
+      "oem_identity": "Not established from preserved GE official documentation in repo.",
+      "relationship_to_GSWF": "No GE supersession, alias, or interchange statement preserved.",
+      "classification": "UNKNOWN"
+    },
+    "GSWF_GSWF2_pair": {
+      "statement": "BuckParts must treat GSWF and GSWF2 as separate unresolved tokens until GE OEM evidence proves otherwise.",
+      "classification": "EXECUTIVE_GOVERNING_RULE"
+    }
+  },
+  "repo_truth_snapshot": {
+    "filters_csv": {
+      "gswf": "ge,gswf,GSWF,GE GSWF,6mo generic notes",
+      "gswf2": "ge,gswf2,GSWF2,GE GSWF2 listing (verify housing),6mo generic notes"
+    },
+    "filter_aliases_csv": [
+      "gswf → GSWF, GSWF2",
+      "gswf2 → GSWF2, GSWF"
+    ],
+    "compatibility_mappings_csv": [
+      "ge-gfe28hmkww → gswf AND gswf2",
+      "ge-gsc25frshss → gswf AND gswf2",
+      "ge-gse26gshess → gswf AND gswf2"
+    ],
+    "ui_surfaces": [
+      "VisualReplacementMatchCard: 'Also listed as' from filter.also_known_as",
+      "fridge-filter-pdp-customer-safety-v1: caution notes",
+      "FridgeModelFilterSection: 'Also listed as:' on model pages when aliases present"
+    ],
+    "regression_tests": [
+      "src/lib/fridge/fridge-filter-pdp-customer-safety-v1.test.ts (GSWF caution, GSWF2 verify-housing)",
+      "src/lib/fridge/fridge-single-filter-family-ambiguity-v1.test.ts (GSWF WARN ambiguity)",
+      "src/app/filter/filter-pdp-homeowner.test.ts (expects 'Also listed as' generically — not GSWF-specific guard)",
+      "src/components/trust/visual-replacement-match-card.test.ts"
+    ]
+  },
+  "runtime_architecture": {
+    "buyer_facing_filter_pdps": "Supabase tables filters, filter_aliases, compatibility_mappings, retailer_links (getFilterBySlug in src/lib/data/filters.ts).",
+    "repo_csv_role": "Seed source and parity target for fridge vertical; R04 alias repair requires CSV + Supabase parity apply pattern (see R07/R09 GSWF compat sync precedent in r07-mutation-authority-bottleneck).",
+    "supabase_inspect_this_pass": "Not live-queried; production HTML consistent with committed mutual alias semantics.",
+    "classification": "PROVEN both for eventual alias repair"
+  },
+  "current_state_diff": [
+    {
+      "topic": "Unconditional fit / right-place copy",
+      "authoritative": "N/A — must not claim fit without evidence",
+      "repo_production": "Absent on 2026-10-12 production readback",
+      "conflict": "RESOLVED vs baseline snapshot"
+    },
+    {
+      "topic": "Compatibility review caution",
+      "authoritative": "Verify housing / manual when uncertain",
+      "repo_production": "Present on both PDPs; gswf2 adds non-interchange sentence",
+      "conflict": "NONE"
+    },
+    {
+      "topic": "GSWF ↔ GSWF2 identity equivalence",
+      "authoritative": "UNKNOWN — no GE mutual alias proof",
+      "repo_production": "Mutual 'Also listed as' cross-links GSWF2 on gswf and GSWF on gswf2",
+      "conflict": "PROVEN — contradicts review state and baseline regression"
+    },
+    {
+      "topic": "GSWF OEM identity",
+      "authoritative": "GE GSWF official SKU",
+      "repo_production": "GE GSWF product name on gswf PDP",
+      "conflict": "NONE"
+    },
+    {
+      "topic": "GSWF2 OEM identity",
+      "authoritative": "UNKNOWN official GE PDP",
+      "repo_production": "GE GSWF2 listing (verify housing)",
+      "conflict": "NONE (appropriately qualified)"
+    },
+    {
+      "topic": "Shared model compat list",
+      "authoritative": "UNKNOWN per-model fit for either token",
+      "repo_production": "Identical 3-model lists on both PDPs with mapping copy",
+      "conflict": "INFERRED secondary — mapping reconciliation is separate owner tranche; R04 minimum scope is alias/equivalence surfacing"
+    }
+  ],
+  "defect_structure": {
+    "primary": "Mutual PDP 'Also listed as' cross-alias implies naming/fit equivalence while caution banner denies interchange.",
+    "secondary": "Duplicate gswf+gswf2 compatibility_mappings for same models amplifies ambiguity but is not required to fix for R04 copy-trust closure if equivalence surfacing is removed.",
+    "defect_type": "combination",
+    "defect_type_detail": "copy/trust-language (Also listed as) + data (filter_aliases mutual rows); mapping duplication is related but out of minimum R04 tranche unless authorized"
+  },
+  "closure_without_equivalence_proof": {
+    "allowed": true,
+    "rationale": "Baseline regression requires absence of unconditional identity-equivalence copy under review — not proof that GSWF equals GSWF2. Safe product behavior is to stop claiming equivalence.",
+    "production_already_partially_safe": "Caution + suppress_buy + no right-place; remaining gap is mutual alias card only."
+  },
+  "executive_decision": {
+    "ready": true,
+    "governing_truth_statement": "GSWF is a proven distinct GE OEM refrigerator filter SKU. The GSWF↔GSWF2 relationship (alias, supersession, pack variant, or shared fit) is UNKNOWN on preserved GE authority. BuckParts must not present GSWF and GSWF2 as the same part, printable alias, or interchangeable replacement on filter PDPs until GE OEM evidence supports a typed claim.",
+    "safe_copy_rule": {
+      "gswf_pdp": "Keep page H1 OEM token GSWF and GE GSWF product name. Keep GSWF_FILTER_PAGE_CAUTION_NOTE_V1. Do not state GSWF2 is the same part, a replacement, or 'also listed as' equivalent. Use only compare-printed-number / manual / housing-verify language already in trust sections.",
+      "gswf2_pdp": "Keep GSWF2 H1 and 'GE GSWF2 listing (verify housing)' qualified name. Keep combined caution + GSWF2_FILTER_PAGE_VERIFY_HOUSING_NOTE_V1 (explicit non-interchange). Do not surface GSWF as 'Also listed as' or any equivalence alias.",
+      "model_pages_and_recommendations": "No confident recommendation language tying GSWF and GSWF2 together; preserve suppress_buy / under-review semantics.",
+      "metadata": "Generic 'compatible models' meta description is acceptable only alongside on-page caution — do not add equivalence in meta."
+    },
+    "alias_surface_rule": {
+      "decision": "remove",
+      "scope": "Remove mutual cross-token rows from customer-facing PDP alias surfaces for gswf and gswf2 (filter_aliases gswf→GSWF2 and gswf2→GSWF). Retain within-slug OEM echo aliases (gswf→GSWF, gswf2→GSWF2) only if needed for search normalization — they should not render on PDP because they duplicate H1.",
+      "rationale": "'Also listed as' is interpreted by homeowners as naming/fit authority; it contradicts caution copy and baseline R04 regression. Search discovery may retain internal alias indexing only if relabeled and gated — default minimum tranche is removal of cross-slug rows, not relabel, to fail closed.",
+      "optional_future": "If GE later proves typed relationship, re-introduce via FilterPdpLegacySuccessorSection or evidence-gated successor copy — not generic alias card."
+    },
+    "preserve_without_change": [
+      "GSWF official browser proof artifact and gswf filter slug identity.",
+      "GSWF2 caution-only positioning until GE GSWF2 official capture passes owner gates.",
+      "suppress_buy on both PDPs until separate safe-link/compat tranches authorize buy CTAs."
+    ],
+    "explicit_non_decisions": [
+      "Do not assert GSWF2 is or is not a GE OEM SKU in new copy beyond existing verify-housing qualification.",
+      "Do not merge gswf and gswf2 catalog slugs.",
+      "Do not bulk-edit the 17-slug GSWF family compat reconciliation in the R04 minimum tranche.",
+      "Do not mark R04 VERIFIED_CLOSED in this packet — implementation + readback required."
+    ]
+  },
+  "minimum_repair_scope": {
+    "repo_csv": [
+      "data/filter_aliases.csv: delete alias GSWF2 from slug gswf; delete alias GSWF from slug gswf2 (keep slug-native OEM rows if present for search importers)."
+    ],
+    "bounded_code_optional": [
+      "Optional defense-in-depth: suppress Also listed as block on VisualReplacementMatchCard when filterSlug in {gswf,gswf2} and cross-family alias detected — only if data repair alone is insufficient after Supabase parity."
+    ],
+    "bounded_supabase_parity_expected": [
+      "filter_aliases: delete mutual cross-filter_id rows matching CSV delta for gswf and gswf2 filter IDs"
+    ],
+    "tests": [
+      "Add src/lib/fridge/gswf-gswf2-r04-alias-trust-v1.test.ts — static or render fixture asserting /filter/gswf and /filter/gswf2 HTML must not contain mutual cross-token 'Also listed as' pairing while caution notes remain.",
+      "Extend fridge-filter-pdp-customer-safety-v1.test.ts only if copy constants change.",
+      "Do not weaken generic VisualReplacementMatchCard tests unrelated to GSWF pair."
+    ],
+    "preview_readback": [
+      "GET /filter/gswf — caution present; no Also listed as GSWF2; no right-place",
+      "GET /filter/gswf2 — caution + non-interchange present; no Also listed as GSWF"
+    ],
+    "production_readback": "Same routes after bounded Supabase parity + merge",
+    "ship_guard": "npm run buckparts:ship-guard -- --enforce before merge"
+  },
+  "required_validation": {
+    "tests": [
+      "gswf-gswf2-r04-alias-trust-v1.test.ts PASS",
+      "fridge-filter-pdp-customer-safety-v1.test.ts PASS (existing GSWF/GSWF2 notes)"
+    ],
+    "production_readback_strings_absent": [
+      "Also listed as</p>…GSWF2 on gswf",
+      "Also listed as</p>…GSWF on gswf2 (when GSWF is only cross-alias)"
+    ],
+    "production_readback_strings_present": [
+      "reviewing GSWF compatibility",
+      "do not assume GSWF and GSWF2 are interchangeable on gswf2"
+    ]
+  },
+  "affected_routes": [
+    "/filter/gswf",
+    "/filter/gswf2",
+    "/fridge/ge-gfe28hmkww",
+    "/fridge/ge-gsc25frshss",
+    "/fridge/ge-gse26gshess"
+  ],
+  "minimum_authoritative_source_to_clear_unknown_relationship": [
+    "Owner-committed GE Appliance Parts browser capture for token GSWF2 (official spec PDP path or documented NLA/replacement pointer), OR",
+    "GE support article explicitly defining GSWF2 relative to GSWF (alias, supersession, or distinct SKU with model list)."
+  ]
+}

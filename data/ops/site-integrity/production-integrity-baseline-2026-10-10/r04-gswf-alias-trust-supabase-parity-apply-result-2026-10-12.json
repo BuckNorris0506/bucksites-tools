@@ -1,0 +1,41 @@
+{
+  "contract": "r04_gswf_alias_trust_supabase_parity_apply_result_v1",
+  "read_only": true,
+  "apply_status": "APPLIED",
+  "plan_rel_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r04-gswf-alias-trust-supabase-parity-plan-2026-10-12.json",
+  "plan_sha256": "d71d8d5b2746cc379396419f49be30d287defe5ef3c476cf313d84428ad08599",
+  "owner_approval_decision_id": "decision-2026-10-12-r04-gswf-alias-trust-supabase-parity-approve",
+  "applied_operations": [
+    "filter_alias_delete:gswf,GSWF2",
+    "filter_alias_delete:gswf2,GSWF"
+  ],
+  "before_after": {
+    "alias_gswf_GSWF2": {
+      "id": "c24ad88c-afd8-4d57-a558-e425979b4f50",
+      "filter_id": "2169cdfe-b8b7-4787-9258-5235c7fb9912",
+      "alias": "GSWF2"
+    },
+    "alias_gswf2_GSWF": {
+      "id": "dca8fe2f-10c7-4146-be76-861c45476f84",
+      "filter_id": "3dab1cea-9fa8-4c86-8d2b-22f7569e2a00",
+      "alias": "GSWF"
+    },
+    "after_inspect": {
+      "gswf_filter_id": "2169cdfe-b8b7-4787-9258-5235c7fb9912",
+      "gswf2_filter_id": "3dab1cea-9fa8-4c86-8d2b-22f7569e2a00",
+      "alias_rows": [
+        {
+          "id": "0ef8bdaa-75dd-49a7-9d32-1ac972e4ac2d",
+          "filter_slug": "gswf",
+          "alias": "GSWF"
+        },
+        {
+          "id": "ecb1ae05-565d-491c-8a84-dd16e3bb89ac",
+          "filter_slug": "gswf2",
+          "alias": "GSWF2"
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-10-12T00:10:45.863Z"
+}

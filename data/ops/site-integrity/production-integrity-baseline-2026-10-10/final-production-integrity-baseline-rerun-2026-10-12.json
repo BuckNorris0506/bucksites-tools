@@ -1,0 +1,30 @@
+{
+  "contract": "final_production_integrity_baseline_rerun_v1",
+  "read_only": true,
+  "executed_at": "2026-10-12T00:15:00Z",
+  "campaign_id": "BUCKPARTS_PRODUCTION_INTEGRITY_2026_10_11",
+  "immutable_baseline_sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+  "required_pre_distribution_blockers_at_rerun": [],
+  "classification": "PASS_BOUNDED_POST_BLOCKER_GATE",
+  "scope_note": "Campaign pre-distribution blockers cleared (R04 VERIFIED_CLOSED). This rerun re-validates R04 baseline paths and ship guard; it does not re-execute the full 127-page October 10 audit union in one automated job.",
+  "validations": [
+    {
+      "command": "node --import tsx --test src/lib/fridge/gswf-gswf2-r04-alias-trust-v1.test.ts",
+      "result": "7/7 PASS"
+    },
+    {
+      "command": "npm run buckparts:ship-guard -- --enforce",
+      "result": "SAFE/PASS"
+    },
+    {
+      "command": "production GET https://buckparts.com/filter/gswf",
+      "result": "no Also listed as GSWF2; caution present; suppress_buy"
+    },
+    {
+      "command": "production GET https://buckparts.com/filter/gswf2",
+      "result": "no Also listed as GSWF; caution + non-interchange present; suppress_buy"
+    }
+  ],
+  "broad_distribution_release_ready": false,
+  "release_ready_note": "Campaign policy step 7 (broad distribution) remains false until operator explicitly re-evaluates full baseline scope and non-campaign roots (e.g. R17 og:image, anchor disputes)."
+}

@@ -1,0 +1,22 @@
+{
+  "contract": "r04_gswf_alias_trust_supabase_parity_plan_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "supabase_mutation_authorized": false,
+  "apply_authorized": false,
+  "generated_at": "2026-10-12T03:00:00Z",
+  "source_executive_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r04-executive-decision-packet-2026-10-12.json",
+  "expected_operation_count": 2,
+  "proposed_supabase_changes": {
+    "filter_alias_deletes": [
+      { "filter_slug": "gswf", "alias": "GSWF2" },
+      { "filter_slug": "gswf2", "alias": "GSWF" }
+    ]
+  },
+  "explicit_out_of_scope": [
+    "compatibility_mappings",
+    "filters identity fields",
+    "any closed root",
+    "any other filter_aliases row"
+  ]
+}

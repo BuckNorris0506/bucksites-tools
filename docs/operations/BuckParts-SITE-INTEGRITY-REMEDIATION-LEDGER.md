@@ -150,19 +150,20 @@ If full closure cannot be established: **BLOCKED**, **AWAITING_PRODUCTION_VERIFI
 | Field | Value |
 |--------|--------|
 | **ROOT_ID** | R04 |
-| **TITLE** | UNKNOWN — per immutable October 10, 2026 baseline root **R04** (not ingested to repo) |
-| **PRIORITY** | UNKNOWN |
-| **RELEASE_BLOCKER** | UNKNOWN |
-| **CURRENT_STATE** | NOT_STARTED |
-| **CURRENT_OWNER / EXECUTOR** | UNKNOWN |
-| **ACTIVE_BRANCH / WORKTREE** | — |
-| **EXACT_SCOPE** | UNKNOWN — audit phase: P1 truth / claim / data corrections |
-| **SMALLEST_REQUIRED_FIX** | UNKNOWN |
-| **CLOSURE_REQUIREMENTS** | Per baseline + truth closure standard |
-| **CLOSURE_EVIDENCE** | — |
-| **BLOCKER** | Baseline not ingested; R01 release gate |
-| **NEXT_LAWFUL_ACTION** | Ingest baseline root **R04** |
-| **LAST_UPDATED** | 2026-10-10 |
+| **TITLE** | Compatibility-review warning contradicted by right-place and identity-equivalence copy |
+| **PRIORITY** | P1 |
+| **RELEASE_BLOCKER** | YES (historical baseline; closed after production readback) |
+| **CURRENT_STATE** | VERIFIED_CLOSED |
+| **ROOT_CAUSE** | Mutual filter_aliases GSWF↔GSWF2 rendered as customer-facing “Also listed as” equivalence while GSWF/GSWF2 relationship is UNKNOWN and caution copy denied interchange. |
+| **CURRENT_OWNER / EXECUTOR** | Integrity campaign R04 alias-trust tranche |
+| **ACTIVE_BRANCH / WORKTREE** | `main` @ merge pending |
+| **EXACT_SCOPE** | `/filter/gswf`, `/filter/gswf2` — remove cross-token alias surfacing only; compat mappings unchanged. |
+| **SMALLEST_REQUIRED_FIX** | Delete filter_aliases gswf→GSWF2 and gswf2→GSWF (CSV + Supabase parity). |
+| **CLOSURE_REQUIREMENTS** | No cross-token “Also listed as”; caution + gswf2 non-interchange copy retained; suppress_buy intact. |
+| **CLOSURE_EVIDENCE** | `data/ops/site-integrity/production-integrity-baseline-2026-10-10/r04-closure-verification-2026-10-12.json` |
+| **BLOCKER** | — |
+| **NEXT_LAWFUL_ACTION** | — |
+| **LAST_UPDATED** | 2026-10-12 |
 
 ---
 

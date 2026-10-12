@@ -118,11 +118,11 @@
         "baseline_scope": "2 paths (/filter/gswf, /filter/gswf2)"
       },
       "prior_ledger_state": "NOT_STARTED",
-      "current_classification": "PARTIALLY_RESOLVED",
-      "current_evidence": "Production GSWF/GSWF2: review/caution copy present; no 'right place' string; 'Also listed as GSWF2' alias block remains on /filter/gswf.",
-      "distribution_blocker": true,
-      "smallest_next_action": "Align alias/identity copy with unresolved compatibility state per baseline regression fixtures.",
-      "closure_proof_required": "Rendered GSWF/GSWF2 without unconditional fit authority; typed successor only with evidence."
+      "current_classification": "VERIFIED_CLOSED",
+      "current_evidence": "R04 alias-trust tranche: mutual Also listed as removed; production /filter/gswf and /filter/gswf2 readback 2026-10-12; r04-closure-verification-2026-10-12.json.",
+      "distribution_blocker": false,
+      "smallest_next_action": "—",
+      "closure_proof_required": "Met via r04-tranche-verification-2026-10-12.json production readback."
     },
     {
       "root_id": "R05",
