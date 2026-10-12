@@ -195,11 +195,11 @@
         "baseline_scope": "4 listed paths at baseline"
       },
       "prior_ledger_state": "NOT_STARTED (ledger phase mis-tag)",
-      "current_classification": "STILL_PRESENT",
-      "current_evidence": "Production /whole-house-water/model/3m-aquapure-ap903 contains dual-stage, AP910R, AP917HD, carbon strings consistent with baseline contradiction.",
-      "distribution_blocker": true,
-      "smallest_next_action": "Correct AP902/AP903/AP904 standard-cartridge story in data + rendered copy.",
-      "closure_proof_required": "AP903 model page matches manufacturer single-cartridge configuration."
+      "current_classification": "VERIFIED_CLOSED",
+      "current_evidence": "Production readback 2026-10-12: AP903 single-cartridge AP917HD primary; AP910R pleated/AP902 identity; AP917HD-S AP904 framing; /filter/3m-ap917hd live.",
+      "distribution_blocker": false,
+      "smallest_next_action": "—",
+      "closure_proof_required": "—"
     },
     {
       "root_id": "R10",
@@ -332,8 +332,7 @@
     "needs_evidence": 2
   },
   "current_required_pre_distribution_roots": [
-    "R04",
-    "R09"
+    "R04"
   ],
   "recommended_repair_batches": [
     {

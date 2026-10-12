@@ -1,0 +1,61 @@
+{
+  "contract": "r09_ap903_standard_cartridge_supabase_parity_plan_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "supabase_mutation_authorized": false,
+  "apply_authorized": false,
+  "generated_at": "2026-10-12T02:00:00Z",
+  "source_executive_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r09-executive-decision-packet-2026-10-12.json",
+  "expected_operation_count": 7,
+  "proposed_supabase_changes": {
+    "model_notes_updates": [
+      {
+        "model_slug": "3m-aquapure-ap903",
+        "notes": "Single-cartridge AP903 system; OEM replacement cartridge AP917HD (particulate + chlorine taste & odor). Confirm sticker on your head."
+      }
+    ],
+    "part_updates": [
+      {
+        "part_slug": "3m-ap910r",
+        "oem_part_number": "AP910R",
+        "name": "3M Aqua-Pure pleated sediment cartridge for AP902 whole house system",
+        "replacement_interval_months": 12,
+        "notes": "OEM AP902 cartridge: non-woven pleated particulate reduction (~5 µm nominal). Not carbon block — not for AP903 (AP917HD)."
+      },
+      {
+        "part_slug": "3m-ap917hd-s",
+        "oem_part_number": "AP917HD-S",
+        "name": "3M Aqua-Pure replacement cartridge for AP904 whole house system",
+        "replacement_interval_months": 6,
+        "notes": "OEM AP904 cartridge: carbon block with pleated media plus scale inhibition for sediment, chlorine taste & odor, and scale reduction. Not the AP903 factory cartridge (AP917HD)."
+      }
+    ],
+    "part_upserts": [
+      {
+        "part_slug": "3m-ap917hd",
+        "brand_slug": "3m",
+        "oem_part_number": "AP917HD",
+        "name": "3M Aqua-Pure replacement cartridge for AP903 whole house system",
+        "replacement_interval_months": 12,
+        "notes": "OEM AP903 cartridge: carbon block with pleated media for sediment and chlorine taste & odor reduction (5 µm nominal). Single-cartridge AP903 system — not AP917HD-S."
+      }
+    ],
+    "compatibility_mapping_deletes": [
+      { "model_slug": "3m-aquapure-ap903", "filter_slug": "3m-ap910r" },
+      { "model_slug": "3m-aquapure-ap903", "filter_slug": "3m-ap917hd-s" }
+    ],
+    "compatibility_mapping_upserts": [
+      {
+        "model_slug": "3m-aquapure-ap903",
+        "filter_slug": "3m-ap917hd",
+        "is_recommended": true
+      }
+    ]
+  },
+  "explicit_exclusions": [
+    "No AP902 or AP904 model rows",
+    "No other whole_house_water_compatibility_mappings",
+    "No full vertical seed",
+    "No R04 scope"
+  ]
+}

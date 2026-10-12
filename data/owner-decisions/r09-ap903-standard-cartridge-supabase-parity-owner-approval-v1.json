@@ -1,0 +1,43 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-10-12-r09-ap903-standard-cartridge-supabase-parity-approve",
+      "source_queue_row_id": "queue-r09-ap903-standard-cartridge-supabase-parity",
+      "source_decision_packet_id": "r09_ap903_standard_cartridge_supabase_parity_owner_approval_v1",
+      "decided_at": "2026-10-12T02:05:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "R09 minimum tranche authorized: AP903 single-cartridge AP917HD; correct AP910R particulate/AP902 and AP917HD-S AP904 identity; remove AP903→AP910R and AP903→AP917HD-S recommended mappings; upsert AP917HD. No AP902/AP904 model rows, no R04, no full WHW seed. Bound to r09-ap903-standard-cartridge-supabase-parity-plan. Session apply with BUCKPARTS_IO_CAPABILITY=MUTATION and BUCKPARTS_R09_AP903_STANDARD_CARTRIDGE_SUPABASE_PARITY_MUTATION_ENABLED=1 only.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "expires_at": "2027-10-12T00:00:00.000Z",
+      "prohibited_actions_still_apply": [
+        "Do not mutate any whole_house_water row outside the seven bounded operations in the bound parity plan.",
+        "Do not run npm run seed:import:whole-house-water --write or full-catalog vertical seed.",
+        "Do not add AP902/AP904 model rows in this tranche.",
+        "Do not touch R04.",
+        "Do not mark R09 VERIFIED_CLOSED until production readback passes.",
+        "Do not run autonomous apply — explicit founder-run --apply with IO MUTATION and R09 mutation env flag required."
+      ],
+      "r09_ap903_standard_cartridge_supabase_parity_owner_approval_context_v1": {
+        "founder_option_id": "approve_r09_ap903_standard_cartridge_supabase_parity_plan",
+        "option_id": "approve_r09_ap903_standard_cartridge_supabase_parity_plan",
+        "parity_plan_rel_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r09-ap903-standard-cartridge-supabase-parity-plan-2026-10-12.json",
+        "expected_operation_count": 7,
+        "mutation_env_flag_required": "BUCKPARTS_R09_AP903_STANDARD_CARTRIDGE_SUPABASE_PARITY_MUTATION_ENABLED=1",
+        "io_capability_required": "BUCKPARTS_IO_CAPABILITY=MUTATION",
+        "owner_approved_by": "Jared",
+        "approved_at": "2026-10-12T02:05:00.000Z"
+      },
+      "bound_artifacts_v1": [
+        {
+          "artifact_rel_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r09-ap903-standard-cartridge-supabase-parity-plan-2026-10-12.json",
+          "sha256_at_binding": "05eccc6dea37a514470ee4ea86bb76b5de379690fb905c960c4d81922a23e52d",
+          "entry_type": "apply_plan"
+        }
+      ]
+    }
+  ]
+}

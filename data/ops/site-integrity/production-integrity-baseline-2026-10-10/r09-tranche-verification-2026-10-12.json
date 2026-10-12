@@ -1,0 +1,28 @@
+{
+  "contract": "r09_tranche_verification_v1",
+  "read_only": true,
+  "verified_at": "2026-10-12T00:10:00Z",
+  "classification": "AP903_STANDARD_CARTRIDGE_TRANCHE_COMPLETE",
+  "supabase_parity_apply": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r09-ap903-standard-cartridge-supabase-parity-apply-result-2026-10-12.json",
+  "production_readback": {
+    "host": "https://buckparts.com",
+    "/whole-house-water/model/3m-aquapure-ap903": {
+      "primary_part": "AP917HD",
+      "single_cartridge_notes": true,
+      "dual_or_ap910r_primary": false
+    },
+    "/whole-house-water/filter/3m-ap910r": {
+      "pleated_ap902_identity": true,
+      "lists_ap903": false,
+      "compatible_models_count": 0
+    },
+    "/whole-house-water/filter/3m-ap917hd-s": {
+      "ap904_framing": true
+    },
+    "/whole-house-water/filter/3m-ap917hd": {
+      "route_exists": true,
+      "ap903_oem_copy": true
+    }
+  },
+  "ap902_ap904_model_pages_required_for_closure": "NO"
+}

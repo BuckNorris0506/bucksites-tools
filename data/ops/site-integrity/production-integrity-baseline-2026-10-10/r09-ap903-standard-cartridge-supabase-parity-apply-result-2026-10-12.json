@@ -1,0 +1,18 @@
+{
+  "contract": "r09_ap903_standard_cartridge_supabase_parity_apply_result_v1",
+  "read_only": true,
+  "generated_at": "2026-10-12T00:06:35.648Z",
+  "apply_status": "APPLIED",
+  "owner_approval_decision_id": "decision-2026-10-12-r09-ap903-standard-cartridge-supabase-parity-approve",
+  "plan_sha256": "05eccc6dea37a514470ee4ea86bb76b5de379690fb905c960c4d81922a23e52d",
+  "applied_operations": [
+    "model_notes_update:3m-aquapure-ap903",
+    "part_update:3m-ap910r",
+    "part_update:3m-ap917hd-s",
+    "part_upsert:3m-ap917hd",
+    "compat_delete:3m-aquapure-ap903,3m-ap910r",
+    "compat_delete:3m-aquapure-ap903,3m-ap917hd-s",
+    "compat_upsert:3m-aquapure-ap903,3m-ap917hd,rec=true"
+  ],
+  "source_command": "BUCKPARTS_IO_CAPABILITY=MUTATION BUCKPARTS_R09_AP903_STANDARD_CARTRIDGE_SUPABASE_PARITY_MUTATION_ENABLED=1 npm run buckparts:r09-ap903-standard-cartridge-supabase-parity-guarded-apply -- --apply"
+}

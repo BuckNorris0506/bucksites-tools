@@ -1,0 +1,22 @@
+{
+  "contract": "r09_closure_verification_v1",
+  "read_only": true,
+  "verified_at": "2026-10-12T00:10:00Z",
+  "classification": "VERIFIED_CLOSED",
+  "immutable_baseline": {
+    "artifact": "READ_ME_AUDIT_REPORT.md",
+    "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+    "root_heading": "R09 — P1 — AP903 configuration and AP910R media contradict manufacturer"
+  },
+  "executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r09-executive-decision-packet-2026-10-12.json",
+  "tranche_verification": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r09-tranche-verification-2026-10-12.json",
+  "closure_scope_note": "Bounded AP903 single-cartridge + AP910R/AP917HD/AP917HD-S identity repair on existing buyer routes. AP902/AP904 model catalog pages deferred — not required to eliminate production contradictions on baseline-listed paths.",
+  "merge_commit_sha": "PENDING_R09_MERGE",
+  "sampled_production_routes": [
+    "/whole-house-water/model/3m-aquapure-ap903",
+    "/whole-house-water/filter/3m-ap910r",
+    "/whole-house-water/filter/3m-ap917hd-s",
+    "/whole-house-water/filter/3m-ap917hd",
+    "/whole-house-water/brand/3m"
+  ]
+}

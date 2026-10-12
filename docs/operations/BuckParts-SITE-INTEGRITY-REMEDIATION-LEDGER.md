@@ -257,19 +257,19 @@ If full closure cannot be established: **BLOCKED**, **AWAITING_PRODUCTION_VERIFI
 | Field | Value |
 |--------|--------|
 | **ROOT_ID** | R09 |
-| **TITLE** | UNKNOWN — per immutable October 10, 2026 baseline root **R09** (not ingested to repo) |
-| **PRIORITY** | UNKNOWN |
-| **RELEASE_BLOCKER** | UNKNOWN |
-| **CURRENT_STATE** | NOT_STARTED |
-| **CURRENT_OWNER / EXECUTOR** | UNKNOWN |
-| **ACTIVE_BRANCH / WORKTREE** | — |
-| **EXACT_SCOPE** | UNKNOWN — audit phase: current commercial-link reconciliation |
-| **SMALLEST_REQUIRED_FIX** | UNKNOWN |
-| **CLOSURE_REQUIREMENTS** | Per baseline + commercial-path closure standard |
-| **CLOSURE_EVIDENCE** | — |
-| **BLOCKER** | Baseline not ingested |
-| **NEXT_LAWFUL_ACTION** | Ingest baseline root **R09** |
-| **LAST_UPDATED** | 2026-10-10 |
+| **TITLE** | AP903 configuration and AP910R media contradict manufacturer |
+| **PRIORITY** | P1 |
+| **RELEASE_BLOCKER** | Cleared (bounded AP903 tranche) |
+| **CURRENT_STATE** | VERIFIED_CLOSED |
+| **CURRENT_OWNER / EXECUTOR** | Integrity campaign |
+| **ACTIVE_BRANCH / WORKTREE** | `main` |
+| **EXACT_SCOPE** | AP903 single AP917HD; AP910R/AP917HD-S identity; remove wrong AP903 mappings |
+| **SMALLEST_REQUIRED_FIX** | Delivered via CSV + bounded Supabase parity (7 ops) |
+| **CLOSURE_REQUIREMENTS** | Sampled production WHW routes match 3M AP900 standard-cartridge truth |
+| **CLOSURE_EVIDENCE** | `data/ops/site-integrity/production-integrity-baseline-2026-10-10/r09-closure-verification-2026-10-12.json` |
+| **BLOCKER** | — |
+| **NEXT_LAWFUL_ACTION** | — |
+| **LAST_UPDATED** | 2026-10-12 |
 
 ---
 
