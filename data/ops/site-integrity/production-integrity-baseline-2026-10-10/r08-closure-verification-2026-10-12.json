@@ -30,6 +30,6 @@
     "/whole-house-water/filter/ge-fxhtc",
     "/whole-house-water/model/ge-whole-house-gxwh20s"
   ],
-  "merge_commit_sha": "PENDING_MERGE",
+  "merge_commit_sha": "d5b1ad6753736842969800a27e37f56580e3e170",
   "production_readback_at_closure": "2026-10-12T00:05:00Z"
 }
