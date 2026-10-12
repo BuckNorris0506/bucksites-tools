@@ -93,6 +93,36 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
     },
     {
       rel_path:
+        "scripts/lib/r04-gswf-alias-trust-supabase-parity-guarded-apply-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "r04_gswf_alias_trust_supabase_parity_guarded_apply_v1",
+    },
+    {
+      rel_path:
+        "scripts/lib/r07-winix-filter-a-h-phase1-supabase-parity-guarded-apply-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "r07_winix_filter_a_h_phase1_supabase_parity_guarded_apply_v1",
+    },
+    {
+      rel_path:
+        "scripts/lib/r08-fxwpc-identity-tranche-supabase-parity-guarded-apply-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "r08_fxwpc_identity_tranche_supabase_parity_guarded_apply_v1",
+    },
+    {
+      rel_path:
+        "scripts/lib/r08-sibling-fxhtc-gxwh20s-supabase-parity-guarded-apply-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "r08_sibling_fxhtc_gxwh20s_supabase_parity_guarded_apply_v1",
+    },
+    {
+      rel_path:
+        "scripts/lib/r09-ap903-standard-cartridge-supabase-parity-guarded-apply-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "r09_ap903_standard_cartridge_supabase_parity_guarded_apply_v1",
+    },
+    {
+      rel_path:
         "scripts/lib/refrigerator-model-first-qa-batch-supabase-compat-sync-guarded-apply-v1.ts",
       access_class: "write_guarded",
       mutation_lane: "refrigerator_model_first_qa_batch_supabase_compat_sync_guarded_apply_v1",
