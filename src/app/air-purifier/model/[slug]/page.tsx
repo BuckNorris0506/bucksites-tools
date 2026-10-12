@@ -20,6 +20,7 @@ import {
   ModelTruthPanelCopyProvider,
 } from "@/components/trust/ModelTruthPanel";
 import { buildModelPageTrust } from "@/lib/trust/part-trust";
+import { manufacturerSupportedModelPageCopyV1 } from "@/lib/air-purifier/manufacturer-supported-cluster-copy-v1";
 import {
   getAirPurifierModelReviewOverride,
   isAirPurifierModelUnderOwnerReview,
@@ -54,6 +55,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Model not found" };
   }
   const underOwnerReview = isAirPurifierModelUnderOwnerReview(params.slug);
+  const clusterCopy = manufacturerSupportedModelPageCopyV1({
+    modelSlug: params.slug,
+    primaryFilterSlug: model.filters[0]?.slug ?? null,
+  });
   const validCtaCount = model.filters.reduce(
     (count, filter) => count + filter.retailer_links.length,
     0,
@@ -63,11 +68,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     mappedFilterCount: model.filters.length,
     validCtaCount,
   });
-  const title = `${model.model_number} air purifier filters`;
+  const title = clusterCopy
+    ? { absolute: clusterCopy.documentTitle }
+    : `${model.model_number} air purifier filters`;
   return {
     title,
     description: `Replacement filter numbers for ${model.brand.name} air purifier model ${model.model_number}. Confirm fit, see alternates if listed, compare buying options.`,
-    openGraph: { title: `${model.model_number} · ${model.brand.name}` },
+    openGraph: {
+      title: clusterCopy?.documentTitle ?? `${model.model_number} · ${model.brand.name}`,
+    },
     robots: getRobotsFromPageState(pageState),
     ...canonicalAlternatesForIndexablePath(`/air-purifier/model/${params.slug}`, pageState),
   };
@@ -77,6 +86,10 @@ export default async function AirPurifierModelPage({ params }: Props) {
   const model = await getAirPurifierModelBySlug(params.slug);
   if (!model) notFound();
   const reviewOverride = getAirPurifierModelReviewOverride(params.slug);
+  const clusterCopy = manufacturerSupportedModelPageCopyV1({
+    modelSlug: model.slug,
+    primaryFilterSlug: model.filters[0]?.slug ?? null,
+  });
 
   let primaryTrustBuy: VerticalModelPrimaryTrustBuy | undefined;
   if (!reviewOverride && model.filters.length > 0) {
@@ -96,7 +109,9 @@ export default async function AirPurifierModelPage({ params }: Props) {
       buyPathSortContext,
     });
     primaryTrustBuy = {
-      trust,
+      trust: clusterCopy
+        ? { ...trust, replacement_reasoning_summary: clusterCopy.fitSentence }
+        : trust,
       mappedPartOptionsCount: model.filters.length,
       hasPrimaryPartNotes: Boolean(primary.notes),
       retailerLinks: primary.retailer_links,
@@ -140,6 +155,8 @@ export default async function AirPurifierModelPage({ params }: Props) {
         utilityIntro={AIR_PURIFIER_MODEL_PAGE_INTRO}
         notesSectionTitle="Notes & next steps"
         expandedSearchFooter
+        heading={clusterCopy?.h1}
+        detailLinkLabel={clusterCopy?.detailAnchor}
         wayfinding={
           <p className="text-sm text-bp-muted">
             <Link

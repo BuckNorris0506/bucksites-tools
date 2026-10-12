@@ -33,3 +33,16 @@ test("blueair-particle-411 hides 411a-max compat and surfaces caution note", () 
     ["blueair-411", "blueair-mini-max"],
   );
 });
+
+test("HP302 customer display no longer special-cases the deleted stale parts", () => {
+  const hp400Models = filterCompatModelsForCustomerDisplayV1("shark-hepa-hp400", [
+    { slug: "shark-hp401" },
+    { slug: "shark-hp302" },
+  ]);
+  assert.deepEqual(
+    hp400Models.map((model) => model.slug),
+    ["shark-hp401", "shark-hp302"],
+  );
+  assert.equal(filterPageCompatExclusionNoteV1("shark-hepa-hp400"), null);
+  assert.equal(filterPageCompatExclusionNoteV1("shark-carbon-foam"), null);
+});

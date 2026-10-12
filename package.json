@@ -198,6 +198,7 @@
     "buckparts:gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review": "tsx scripts/report-gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.ts",
     "buckparts:gswf-wrong-part-repair-supabase-compat-sync-guarded-apply": "tsx scripts/apply-gswf-wrong-part-repair-supabase-compat-sync-guarded-v1.ts",
     "buckparts:r07-winix-filter-a-h-phase1-supabase-parity-guarded-apply": "tsx scripts/apply-r07-winix-filter-a-h-phase1-supabase-parity-guarded-v1.ts",
+    "buckparts:hp302-stale-compat-delete-guarded-apply": "tsx scripts/apply-hp302-stale-compat-delete-guarded-v1.ts",
     "buckparts:r08-fxwpc-identity-tranche-supabase-parity-guarded-apply": "tsx scripts/apply-r08-fxwpc-identity-tranche-supabase-parity-guarded-v1.ts",
     "buckparts:r08-sibling-fxhtc-gxwh20s-supabase-parity-guarded-apply": "tsx scripts/apply-r08-sibling-fxhtc-gxwh20s-supabase-parity-guarded-v1.ts",
     "buckparts:r09-ap903-standard-cartridge-supabase-parity-guarded-apply": "tsx scripts/apply-r09-ap903-standard-cartridge-supabase-parity-guarded-v1.ts",

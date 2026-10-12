@@ -30,8 +30,10 @@ export type SupabaseMutationGateAuthorizationInputV1 = Pick<
   "mode" | "mutation_authorized" | "blockers"
 >;
 
-export function resolveIoCapabilityFromEnvV1(): BuckpartsIoCapabilityV1 {
-  const raw = process.env[BUCKPARTS_IO_CAPABILITY_ENV_V1]?.trim().toUpperCase();
+export function resolveIoCapabilityFromEnvV1(
+  env: NodeJS.ProcessEnv = process.env,
+): BuckpartsIoCapabilityV1 {
+  const raw = env[BUCKPARTS_IO_CAPABILITY_ENV_V1]?.trim().toUpperCase();
   if (raw === "MUTATION") return "MUTATION";
   return "READ_INDEX";
 }
