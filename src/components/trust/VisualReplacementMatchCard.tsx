@@ -23,6 +23,10 @@ import {
   isWhirlpool4396395SuccessorPage,
   WHIRLPOOL_4396395_HERO_MODEL_LIST_CUE,
 } from "@/lib/fridge/fridge-filter-4396395-successor-v1";
+import {
+  isWhirlpool4396710Page,
+  WHIRLPOOL_4396710_H1,
+} from "@/lib/fridge/fridge-filter-4396710-identity-v1";
 
 /** Plain homeowner-facing store status — no gate internals. */
 export type VisualMatchStorePlainStatus =
@@ -224,6 +228,7 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
   void _storePlainStatus;
   void compatibleModelCount;
   const successor4396395 = filterSlug ? isWhirlpool4396395SuccessorPage(filterSlug) : false;
+  const identity4396710 = filterSlug ? isWhirlpool4396710Page(filterSlug) : false;
 
   return (
     <section
@@ -233,11 +238,17 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
       <div className="min-w-0 space-y-5">
         <div className="space-y-2">
           <p className={fieldLabel}>This part</p>
-          {productName ? (
+          {productName && !identity4396710 ? (
             <p className="text-lg font-semibold text-bp-text">{productName}</p>
           ) : null}
-          <h1 className="bp-code text-3xl font-bold tracking-tight text-bp-text sm:text-[2rem]">
-            {oemPartNumber}
+          <h1
+            className={
+              identity4396710
+                ? "text-3xl font-bold tracking-tight text-bp-text sm:text-[2rem]"
+                : "bp-code text-3xl font-bold tracking-tight text-bp-text sm:text-[2rem]"
+            }
+          >
+            {identity4396710 ? WHIRLPOOL_4396710_H1 : oemPartNumber}
           </h1>
           <p className="text-base text-bp-text/90">
             <Link

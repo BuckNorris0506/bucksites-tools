@@ -78,8 +78,8 @@ describe("4396395 Filter 4 successor PDP (Phase 20B)", () => {
     assert.ok(!/\bOEM\b/i.test(html));
   });
 
-  it("preserves compatibility_mappings.csv row counts for 4396395 and edr4rxd1", () => {
-    assert.equal(countCompatRows("4396395"), 16);
+  it("leaves edr4rxd1 mappings in place after the completeness-sweep removal", () => {
+    assert.equal(countCompatRows("4396395"), 0);
     assert.equal(countCompatRows("edr4rxd1"), 21);
   });
 
