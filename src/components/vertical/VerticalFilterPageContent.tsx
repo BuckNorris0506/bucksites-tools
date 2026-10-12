@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import type { BuyLinkRow } from "@/components/BuyLinks";
 import { PartTruthPanel } from "@/components/trust/PartTruthPanel";
@@ -59,6 +60,12 @@ type Props = {
   officialReferenceLinks?: BuyLinkRow[];
   /** When set (AP phase 1), forwarded to buy CTAs for `/go` click_events attribution. */
   goAttribution?: ApGoAttributionV1 | null;
+  /** Replaces the part-number H1 when a manufacturer-supported cluster applies. */
+  heading?: string;
+  /** Sentence rendered directly under the H1. */
+  headingSupport?: string;
+  /** Replaces the default “Fits these models” heading. */
+  modelsSectionTitle?: string;
 };
 
 export function VerticalFilterPageContent({
@@ -83,6 +90,9 @@ export function VerticalFilterPageContent({
   buySuppressMessage,
   officialReferenceLinks,
   goAttribution,
+  heading,
+  headingSupport,
+  modelsSectionTitle,
 }: Props) {
   const mBase = modelBasePath.replace(/\/$/, "");
   const buyPathSortContext = buyPathSortContextForFilter(filterSlug ?? oemPartNumber, name, oemPartNumber);
@@ -116,9 +126,20 @@ export function VerticalFilterPageContent({
           {fitConfirmation}
         </p>
 
-        <h1 className="bp-code mt-6 inline-block text-2xl font-semibold tracking-tight text-bp-text">
-          {oemPartNumber}
-        </h1>
+        {heading ? (
+          <h1 className="mt-6 text-2xl font-semibold tracking-tight text-bp-text">
+            {heading}
+          </h1>
+        ) : (
+          <h1 className="bp-code mt-6 inline-block text-2xl font-semibold tracking-tight text-bp-text">
+            {oemPartNumber}
+          </h1>
+        )}
+        {headingSupport ? (
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-bp-text/90">
+            {headingSupport}
+          </p>
+        ) : null}
         {name && (
           <p className="mt-2 text-base text-bp-text/90">{name}</p>
         )}
@@ -161,7 +182,7 @@ export function VerticalFilterPageContent({
 
       <section className="space-y-3">
         <h2 className="text-sm font-semibold text-bp-text">
-          Fits these models ({count})
+          {modelsSectionTitle ?? `Fits these models (${count})`}
         </h2>
         {count === 0 ? (
           <p className="text-sm text-bp-muted">

@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import type { BuyLinkRow } from "@/components/BuyLinks";
 import { ModelTruthPanel } from "@/components/trust/ModelTruthPanel";
@@ -66,6 +67,10 @@ type Props = {
   primaryTrustBuy?: VerticalModelPrimaryTrustBuy | null;
   /** When set (AP phase 1), forwarded to buy CTAs for `/go` click_events attribution. */
   goAttribution?: ApGoAttributionV1 | null;
+  /** Replaces the “Model {number}” H1 when a manufacturer-supported cluster applies. */
+  heading?: string;
+  /** Replaces the generic primary-part detail anchor. */
+  detailLinkLabel?: string;
 };
 
 export function VerticalModelPageContent({
@@ -85,6 +90,8 @@ export function VerticalModelPageContent({
   expandedSearchFooter = false,
   primaryTrustBuy,
   goAttribution,
+  heading,
+  detailLinkLabel,
 }: Props) {
   const path = filterBasePath.replace(/\/$/, "");
   const primary = filters[0];
@@ -106,7 +113,11 @@ export function VerticalModelPageContent({
         <p className="text-lg font-semibold text-bp-text">{brandName}</p>
 
         <h1 className="mt-4 text-2xl font-semibold tracking-tight text-bp-text">
-          Model <span className="bp-code">{modelNumber}</span>
+          {heading ?? (
+            <>
+              Model <span className="bp-code">{modelNumber}</span>
+            </>
+          )}
         </h1>
         <p className="mt-1 text-sm leading-relaxed text-bp-text/90">
           {title}
@@ -190,7 +201,7 @@ export function VerticalModelPageContent({
 
               <p className="mt-4 text-sm">
                 <Link href={`${path}/${primary.slug}`} className={detailLinkClass}>
-                  All details for this part
+                  {detailLinkLabel ?? "All details for this part"}
                 </Link>
                 <span className="text-bp-muted">
                   {" "}

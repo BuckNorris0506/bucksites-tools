@@ -1,0 +1,40 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-10-12-hp302-stale-compat-delete",
+      "source_queue_row_id": "queue-hp302-stale-compat-delete",
+      "source_decision_packet_id": "hp302_stale_compat_delete_owner_approval_v1",
+      "decided_at": "2026-10-12T21:20:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "Authorizes one guarded production delete of exactly two air_purifier_compatibility_mappings rows: shark-hp302 to shark-hepa-hp400 and shark-hp302 to shark-carbon-foam, bound to the plan sha256. Does not authorize deleting shark-hp302 to shark-hepa-he3fkp, any other HP model, a filter-wide delete, a model-wide delete, or any other table.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "expires_at": "2026-10-19T21:20:00.000Z",
+      "prohibited_actions_still_apply": [
+        "Do not delete shark-hp302 → shark-hepa-he3fkp.",
+        "Do not delete HP300, HP301, or HP305 → HE3FKPET.",
+        "Do not delete HP401, HP402, HP452, HP462, HP602, or HP652 → shark-hepa-hp400.",
+        "Do not delete by filter id or model id alone.",
+        "Do not mutate any table other than air_purifier_compatibility_mappings.",
+        "Do not apply unless BUCKPARTS_IO_CAPABILITY=MUTATION and BUCKPARTS_HP302_STALE_COMPAT_DELETE_MUTATION_ENABLED=1 are set for that explicit --apply."
+      ],
+      "hp302_stale_compat_delete_owner_approval_context_v1": {
+        "founder_option_id": "approve_hp302_stale_compat_delete_plan",
+        "parity_plan_rel_path": "data/ops/site-integrity/hp302-stale-compat-delete-2026-10-12/hp302-stale-compat-delete-plan-v1.json",
+        "expected_delete_count": 2,
+        "mutation_authorized": false,
+        "autonomous_apply_authorized": false
+      },
+      "bound_artifacts_v1": [
+        {
+          "artifact_rel_path": "data/ops/site-integrity/hp302-stale-compat-delete-2026-10-12/hp302-stale-compat-delete-plan-v1.json",
+          "sha256_at_binding": "3ba1beb4ad401eb2f285b3eb37eac7cadccc0d668a7d5db3dd42b9340c4dd5c5",
+          "entry_type": "apply_plan"
+        }
+      ]
+    }
+  ]
+}

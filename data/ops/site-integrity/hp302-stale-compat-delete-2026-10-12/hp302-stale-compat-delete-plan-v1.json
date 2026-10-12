@@ -1,0 +1,33 @@
+{
+  "contract": "hp302_stale_compat_delete_plan_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "supabase_mutation_authorized": false,
+  "table": "air_purifier_compatibility_mappings",
+  "primary_key": ["air_purifier_model_id", "air_purifier_filter_id"],
+  "expected_delete_count": 2,
+  "compatibility_deletes": [
+    {
+      "model_slug": "shark-hp302",
+      "model_id": "b48de95e-d482-4ea3-9328-b324f4d7aae8",
+      "filter_slug": "shark-hepa-hp400",
+      "filter_id": "872f09f1-f8d6-4eb2-8e82-898af41ec8cf",
+      "oem_part_number": "SHARK-HEPA-HP400"
+    },
+    {
+      "model_slug": "shark-hp302",
+      "model_id": "b48de95e-d482-4ea3-9328-b324f4d7aae8",
+      "filter_slug": "shark-carbon-foam",
+      "filter_id": "43e0608a-570b-4326-98e9-0827e7764465",
+      "oem_part_number": "SHARK-CARBON-FOAM"
+    }
+  ],
+  "explicit_exclusions": [
+    "No delete of shark-hp302 → shark-hepa-he3fkp",
+    "No delete of HP401, HP402, HP452, HP462, HP602, or HP652 → shark-hepa-hp400",
+    "No filter-wide or model-wide delete",
+    "No other air_purifier tables",
+    "No CSV mutation",
+    "No full vertical seed"
+  ]
+}

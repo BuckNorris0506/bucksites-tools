@@ -13,6 +13,7 @@ import {
   filterCompatModelsForCustomerDisplayV1,
   filterPageCompatExclusionNoteV1,
 } from "@/lib/air-purifier/air-purifier-compat-display-overrides-v1";
+import { manufacturerSupportedFilterPageCopyV1 } from "@/lib/air-purifier/manufacturer-supported-cluster-copy-v1";
 import { getApHomeownerFilterPageCopy } from "@/lib/copy/ap-homeowner-filter-copy-v1";
 import {
   AIR_PURIFIER_FILTER_PAGE_INTRO,
@@ -68,13 +69,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     displayModelCount: displayModels.length,
     gatedRetailerLinkCount: filter.retailer_links.length,
   });
-  const title = `${filter.oem_part_number} air purifier filter`;
+  const clusterCopy = manufacturerSupportedFilterPageCopyV1(
+    filter.slug,
+    displayModels.map((model) => model.slug),
+  );
+  const title = clusterCopy
+    ? { absolute: clusterCopy.documentTitle }
+    : `${filter.oem_part_number} air purifier filter`;
   const description = `Replacement cartridge ${filter.oem_part_number}${
     filter.brand.name ? ` (${filter.brand.name})` : ""
   }—which purifier models it fits, change interval if listed, and where to buy.`;
   return {
     title,
     description,
+    ...(clusterCopy ? { openGraph: { title: clusterCopy.documentTitle } } : {}),
     robots: getRobotsFromPageState(pageState),
     ...canonicalAlternatesForIndexablePath(`/air-purifier/filter/${params.slug}`, pageState),
   };
@@ -87,6 +95,10 @@ export default async function AirPurifierFilterPage({ params }: Props) {
   const showHoneywellRail = isHoneywellHrfSlug(filter.slug);
   const compatNote = filterPageCompatExclusionNoteV1(filter.slug);
   const displayModels = filterCompatModelsForCustomerDisplayV1(filter.slug, filter.models);
+  const clusterCopy = manufacturerSupportedFilterPageCopyV1(
+    filter.slug,
+    displayModels.map((model) => model.slug),
+  );
   const usefulFilterIds = await loadAirPurifierUsefulFilterIds();
   const pageState = classifyAirPurifierFilterPageState({
     filterId: filter.id,
@@ -169,6 +181,9 @@ export default async function AirPurifierFilterPage({ params }: Props) {
           utilityIntro={AIR_PURIFIER_FILTER_PAGE_INTRO}
           notesSectionTitle="Notes & next steps"
           expandedSearchFooter
+          heading={clusterCopy?.h1}
+          headingSupport={clusterCopy?.nearH1}
+          modelsSectionTitle={clusterCopy?.modelsSectionTitle}
           alsoKnownAs={filter.also_known_as}
           goAttribution={buildAirPurifierFilterGoAttribution(filter.slug) ?? undefined}
           wayfinding={

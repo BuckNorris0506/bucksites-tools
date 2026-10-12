@@ -140,6 +140,11 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
       mutation_lane: "catalog_completeness_mirror_compat_removal_guarded_apply_v1",
     },
     {
+      rel_path: "scripts/lib/hp302-stale-compat-delete-guarded-apply-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "hp302_stale_compat_delete_guarded_apply_v1",
+    },
+    {
       rel_path:
         "scripts/lib/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-apply-v1.ts",
       access_class: "write_guarded",
