@@ -7,6 +7,10 @@ import {
   whirlpool4396395CompatibleModelsHeading,
   WHIRLPOOL_4396395_COMPAT_MODELS_INTRO,
 } from "@/lib/fridge/fridge-filter-4396395-successor-v1";
+import {
+  isWhirlpool4396710Page,
+  WHIRLPOOL_4396710_EMPTY_MODELS_COPY,
+} from "@/lib/fridge/fridge-filter-4396710-identity-v1";
 
 export type FilterPdpCompatibleModelRowV1 = {
   id: string;
@@ -66,6 +70,8 @@ export function FilterPdpCompatibleModelsSection({
               Refrigerator models we had linked to this filter are under compatibility review. Open your
               exact model page from search and compare part numbers before buying any replacement filter.
             </>
+          ) : isWhirlpool4396710Page(filterSlug) ? (
+            <>{WHIRLPOOL_4396710_EMPTY_MODELS_COPY}</>
           ) : (
             <>
               No refrigerator models are linked to this part number on file yet. If you have your fridge model or

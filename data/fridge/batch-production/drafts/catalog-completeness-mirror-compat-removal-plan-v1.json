@@ -1,0 +1,1012 @@
+{
+  "contract": "catalog_completeness_mirror_compat_removal_plan_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "supabase_mutation_authorized": false,
+  "apply_authorized": false,
+  "derivation": "git_diff_head_vs_working_tree:data/compatibility_mappings.csv",
+  "delete_scope": "exact_row_keys_present_in_head_csv_and_absent_from_working_csv",
+  "not_a_filter_wide_delete": true,
+  "not_a_missing_csv_reconciliation": true,
+  "head_csv_sha256": "637415514a12a1788d95a3120000f92f26b3c7064d070123b41949e5f183e024",
+  "working_csv_sha256": "4f9dc8767e20b0a4e07042dc22c128bf13da6f337e144c70d211883b973f9bc2",
+  "expected_delete_count": 194,
+  "filter_slugs": [
+    "4396395",
+    "4396508",
+    "4396710",
+    "8171413",
+    "adq36006101",
+    "adq74793502",
+    "frig-242017801",
+    "lt1000pc",
+    "mdj64844601",
+    "purepour",
+    "wfcb"
+  ],
+  "counts_by_filter": {
+    "4396395": 16,
+    "4396508": 16,
+    "4396710": 16,
+    "8171413": 16,
+    "adq36006101": 17,
+    "adq74793502": 17,
+    "frig-242017801": 19,
+    "lt1000pc": 22,
+    "mdj64844601": 17,
+    "purepour": 19,
+    "wfcb": 19
+  },
+  "deletes": [
+    {
+      "fridge_slug": "frigidaire-ffhb2740lb",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-ffhb2740lb::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-ffhb2740lb",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-ffhb2740lb::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-ffhb2740lb",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-ffhb2740lb::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-ffhb2740pe",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-ffhb2740pe::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-ffhb2740pe",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-ffhb2740pe::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-ffhb2740pe",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-ffhb2740pe::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-ffhb2740td",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-ffhb2740td::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-ffhb2740td",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-ffhb2740td::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-ffhb2740td",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-ffhb2740td::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-ffhd2250te",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-ffhd2250te::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-ffhd2250te",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-ffhd2250te::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-ffhd2250te",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-ffhd2250te::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-ffss2615ts3",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-ffss2615ts3::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-ffss2615ts3",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-ffss2615ts3::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-ffss2615ts3",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-ffss2615ts3::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-ffss2615ts4",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-ffss2615ts4::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-ffss2615ts4",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-ffss2615ts4::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-ffss2615ts4",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-ffss2615ts4::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-fghb2868pe2",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-fghb2868pe2::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-fghb2868pe2",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-fghb2868pe2::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-fghb2868pe2",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-fghb2868pe2::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-fghb2868pf2",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-fghb2868pf2::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-fghb2868pf2",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-fghb2868pf2::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-fghb2868pf2",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-fghb2868pf2::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-fghb2868pf5",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-fghb2868pf5::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-fghb2868pf5",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-fghb2868pf5::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-fghb2868pf5",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-fghb2868pf5::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-fghd2365tf",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-fghd2365tf::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-fghd2365tf",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-fghd2365tf::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-fghd2365tf",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-fghd2365tf::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-fgsc2335tf2",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-fgsc2335tf2::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-fgsc2335tf2",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-fgsc2335tf2::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-fgsc2335tf2",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-fgsc2335tf2::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-fgsc2335tw",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-fgsc2335tw::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-fgsc2335tw",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-fgsc2335tw::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-fgsc2335tw",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-fgsc2335tw::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-frfs2613as",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-frfs2613as::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-frfs2613as",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-frfs2613as::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-frfs2613as",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-frfs2613as::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-frss2623as",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-frss2623as::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-frss2623as",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-frss2623as::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-frss2623as",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-frss2623as::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-grfs2633af",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-grfs2633af::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-grfs2633af",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-grfs2633af::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-grfs2633af",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-grfs2633af::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-grfs2833af",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-grfs2833af::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-grfs2833af",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-grfs2833af::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-grfs2833af",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-grfs2833af::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-grfs2873af",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-grfs2873af::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-grfs2873af",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-grfs2873af::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-grfs2873af",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-grfs2873af::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-grfs2873as",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-grfs2873as::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-grfs2873as",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-grfs2873as::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-grfs2873as",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-grfs2873as::wfcb"
+    },
+    {
+      "fridge_slug": "frigidaire-lfhb2741pf",
+      "filter_slug": "frig-242017801",
+      "row_key": "frigidaire-lfhb2741pf::frig-242017801"
+    },
+    {
+      "fridge_slug": "frigidaire-lfhb2741pf",
+      "filter_slug": "purepour",
+      "row_key": "frigidaire-lfhb2741pf::purepour"
+    },
+    {
+      "fridge_slug": "frigidaire-lfhb2741pf",
+      "filter_slug": "wfcb",
+      "row_key": "frigidaire-lfhb2741pf::wfcb"
+    },
+    {
+      "fridge_slug": "lg-lfcc22426s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfcc22426s::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lfcc22426s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfcc22426s::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lfcc22426s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfcc22426s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfcc22426s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfcc22426s::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lfcs22520s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfcs22520s::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lfcs22520s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfcs22520s::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lfcs22520s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfcs22520s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfcs22520s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfcs22520s::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lfds22520s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfds22520s::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lfds22520s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfds22520s::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lfds22520s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfds22520s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfds22520s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfds22520s::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lfxc22526s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfxc22526s::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lfxc22526s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfxc22526s::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lfxc22526s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfxc22526s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfxc22526s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfxc22526s::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lfxc22596s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfxc22596s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfxc24796d",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfxc24796d::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lfxc24796d",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfxc24796d::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lfxc24796d",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfxc24796d::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfxc24796d",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfxc24796d::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lfxs26596s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfxs26596s::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lfxs26596s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfxs26596s::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lfxs26596s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfxs26596s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfxs26596s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfxs26596s::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lfxs26973d",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfxs26973d::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lfxs26973d",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfxs26973d::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lfxs26973d",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfxs26973d::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfxs26973d",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfxs26973d::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lfxs26973s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfxs26973s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfxs28566s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfxs28566s::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lfxs28566s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfxs28566s::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lfxs28566s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfxs28566s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfxs28566s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfxs28566s::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lfxs28596s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfxs28596s::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lfxs28596s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfxs28596s::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lfxs28596s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfxs28596s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfxs28596s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfxs28596s::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lfxs28968d",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfxs28968d::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lfxs28968d",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfxs28968d::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lfxs28968d",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfxs28968d::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfxs28968d",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfxs28968d::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lfxs28968s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfxs28968s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfxs28991s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfxs28991s::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lfxs28991s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfxs28991s::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lfxs28991s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfxs28991s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfxs28991s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfxs28991s::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lfxs30796d",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lfxs30796d::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lfxs30796d",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lfxs30796d::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lfxs30796d",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lfxs30796d::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lfxs30796d",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lfxs30796d::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lmws27626s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lmws27626s::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lmws27626s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lmws27626s::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lmws27626s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lmws27626s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lmws27626s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lmws27626s::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lmxs28626s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lmxs28626s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lmxs30796s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lmxs30796s::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lmxs30796s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lmxs30796s::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lmxs30796s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lmxs30796s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lmxs30796s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lmxs30796s::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lrfvs3006s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lrfvs3006s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lrmvc2306s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lrmvc2306s::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lrmvc2306s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lrmvc2306s::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lrmvc2306s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lrmvc2306s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lrmvc2306s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lrmvc2306s::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lrsxs2706s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lrsxs2706s::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lrsxs2706s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lrsxs2706s::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lrsxs2706s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lrsxs2706s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lrsxs2706s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lrsxs2706s::mdj64844601"
+    },
+    {
+      "fridge_slug": "lg-lsxs26366s",
+      "filter_slug": "adq36006101",
+      "row_key": "lg-lsxs26366s::adq36006101"
+    },
+    {
+      "fridge_slug": "lg-lsxs26366s",
+      "filter_slug": "adq74793502",
+      "row_key": "lg-lsxs26366s::adq74793502"
+    },
+    {
+      "fridge_slug": "lg-lsxs26366s",
+      "filter_slug": "lt1000pc",
+      "row_key": "lg-lsxs26366s::lt1000pc"
+    },
+    {
+      "fridge_slug": "lg-lsxs26366s",
+      "filter_slug": "mdj64844601",
+      "row_key": "lg-lsxs26366s::mdj64844601"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf535swhz",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrf535swhz::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf535swhz",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrf535swhz::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf535swhz",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrf535swhz::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf535swhz",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrf535swhz::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf555sdfz",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrf555sdfz::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf555sdfz",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrf555sdfz::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf555sdfz",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrf555sdfz::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf555sdfz",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrf555sdfz::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf555sdhb",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrf555sdhb::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf555sdhb",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrf555sdhb::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf555sdhb",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrf555sdhb::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf555sdhb",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrf555sdhb::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf757sdam",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrf757sdam::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf757sdam",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrf757sdam::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf757sdam",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrf757sdam::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf757sdam",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrf757sdam::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf757sihv",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrf757sihv::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf757sihv",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrf757sihv::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf757sihv",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrf757sihv::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf757sihv",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrf757sihv::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf767sdhm",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrf767sdhm::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf767sdhm",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrf767sdhm::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf767sdhm",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrf767sdhm::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf767sdhm",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrf767sdhm::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf991bohz",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrf991bohz::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf991bohz",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrf991bohz::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf991bohz",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrf991bohz::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf991bohz",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrf991bohz::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs315sdam",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrs315sdam::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs315sdam",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrs315sdam::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs315sdam",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrs315sdam::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs315sdam",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrs315sdam::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs315snhm",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrs315snhm::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs315snhm",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrs315snhm::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs315snhm",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrs315snhm::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs315snhm",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrs315snhm::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs321snam",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrs321snam::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs321snam",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrs321snam::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs321snam",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrs321snam::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs321snam",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrs321snam::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs325sdhm",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrs325sdhm::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs325sdhm",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrs325sdhm::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs325sdhm",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrs325sdhm::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs325sdhm",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrs325sdhm::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs325sibz",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrs325sibz::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs325sibz",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrs325sibz::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs325sibz",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrs325sibz::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs325sibz",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrs325sibz::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs571cihv",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrs571cihv::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs571cihv",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrs571cihv::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs571cihv",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrs571cihv::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs571cihv",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrs571cihv::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs588fihv",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrs588fihv::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs588fihv",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrs588fihv::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs588fihv",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrs588fihv::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs588fihv",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrs588fihv::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs588sihz",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrs588sihz::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs588sihz",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrs588sihz::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs588sihz",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrs588sihz::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs588sihz",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrs588sihz::8171413"
+    },
+    {
+      "fridge_slug": "whirlpool-wrx735sdav",
+      "filter_slug": "4396395",
+      "row_key": "whirlpool-wrx735sdav::4396395"
+    },
+    {
+      "fridge_slug": "whirlpool-wrx735sdav",
+      "filter_slug": "4396508",
+      "row_key": "whirlpool-wrx735sdav::4396508"
+    },
+    {
+      "fridge_slug": "whirlpool-wrx735sdav",
+      "filter_slug": "4396710",
+      "row_key": "whirlpool-wrx735sdav::4396710"
+    },
+    {
+      "fridge_slug": "whirlpool-wrx735sdav",
+      "filter_slug": "8171413",
+      "row_key": "whirlpool-wrx735sdav::8171413"
+    }
+  ]
+}

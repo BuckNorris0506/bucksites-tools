@@ -144,6 +144,10 @@ test("fridge guarded Supabase apply writers are write_guarded with mutation_lane
       "samsung_pass_repair_supabase_compat_sync_guarded_apply_v1",
     ],
     [
+      "scripts/lib/catalog-completeness-mirror-compat-removal-guarded-apply-v1.ts",
+      "catalog_completeness_mirror_compat_removal_guarded_apply_v1",
+    ],
+    [
       "scripts/lib/buckparts-fridge-model-pdp-ge-mwfp-xwfe-retailer-links-supabase-sync-apply-v1.ts",
       "fridge_model_pdp_ge_mwfp_xwfe_retailer_links_supabase_sync_apply_v1",
     ],

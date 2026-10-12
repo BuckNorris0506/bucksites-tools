@@ -1,0 +1,41 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-10-12-catalog-completeness-mirror-compat-removal",
+      "source_queue_row_id": "queue-catalog-completeness-mirror-compat-removal",
+      "source_decision_packet_id": "catalog_completeness_mirror_compat_removal_owner_approval_v1",
+      "decided_at": "2026-10-12T21:00:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "Authorizes one guarded production delete of only the compatibility_mappings rows whose slug keys were removed from data/compatibility_mappings.csv by the catalog-completeness mirror repair. The allowlist is the bound plan file, expected count 194, and must match that plan sha256. This does not authorize a fridge-catalog prune, a filter-wide delete, a missing-from-CSV reconciliation, any other table mutation, or deletion of a row that is not in the bound plan.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "expires_at": "2026-10-19T21:00:00.000Z",
+      "prohibited_actions_still_apply": [
+        "Do not run --prune-fridge-catalog.",
+        "Do not delete compatibility rows whose keys are outside the bound plan.",
+        "Do not delete every row for a filter id.",
+        "Do not reconcile by deleting rows merely because they are absent from the current CSV.",
+        "Do not mutate retailer_links, aliases, fridge_models, filters, or any table other than compatibility_mappings.",
+        "Do not apply unless the dry-run snapshot still matches production and BUCKPARTS_IO_CAPABILITY=MUTATION plus BUCKPARTS_CATALOG_COMPLETENESS_MIRROR_COMPAT_REMOVAL_MUTATION_ENABLED=1 are set for that explicit --apply."
+      ],
+      "catalog_completeness_mirror_compat_removal_owner_approval_context_v1": {
+        "founder_option_id": "approve_exact_catalog_completeness_mirror_compat_removal",
+        "option_id": "approve_exact_catalog_completeness_mirror_compat_removal",
+        "plan_rel_path": "data/fridge/batch-production/drafts/catalog-completeness-mirror-compat-removal-plan-v1.json",
+        "approved_delete_count": 194,
+        "mutation_authorized": false,
+        "autonomous_apply_authorized": false
+      },
+      "bound_artifacts_v1": [
+        {
+          "artifact_rel_path": "data/fridge/batch-production/drafts/catalog-completeness-mirror-compat-removal-plan-v1.json",
+          "sha256_at_binding": "776397102eeb64ff143c9fd33e4aadd750beab3af5b5c870f7565aa32d83a47d",
+          "entry_type": "apply_plan"
+        }
+      ]
+    }
+  ]
+}

@@ -661,17 +661,7 @@ function mirrorCompatFromFilterSlug(
   }
 }
 
-function filterSlugsUsedInCompat(compatRows: string[]): Set<string> {
-  const s = new Set<string>();
-  for (const line of compatRows.slice(1)) {
-    const parts = line.split(",");
-    const slug = parts[1];
-    if (slug) s.add(slug);
-  }
-  return s;
-}
-
-/** Credible OEM-family mirrors (target ← source) for SKUs pickFiltersForModel rarely hits. */
+/** Explicit family mirrors (target ← source). Not a completeness copy onto every unmapped part. */
 const ORPHAN_FILTER_COMPAT_MIRROR: Record<string, string> = {
   "frig-242086201": "ultrawf",
   "frig-242294502": "eptwfu01",
@@ -815,19 +805,8 @@ function main() {
     );
   }
 
-  /** Ensure every filter SKU has ≥1 fridge mapping (catalog completeness sweep). */
-  let usedSlugs = filterSlugsUsedInCompat(compatRows);
-  for (const b of BRANDS) {
-    const pool = FILTERS[b.slug] ?? [];
-    const anchorSlug =
-      pool.find((p) => usedSlugs.has(p.slug))?.slug ?? pool[0]?.slug;
-    if (!anchorSlug) continue;
-    for (const f of pool) {
-      if (usedSlugs.has(f.slug)) continue;
-      mirrorCompatFromFilterSlug(compatRows, compatSeen, anchorSlug, f.slug);
-    }
-    usedSlugs = filterSlugsUsedInCompat(compatRows);
-  }
+  // Unmapped filter parts stay unmapped. Do not copy another filter's model
+  // list onto them to make the catalog look complete.
 
   const retailerRows: string[] = [
     "filter_slug,retailer_name,affiliate_url,is_primary,sort_order,retailer_key",

@@ -9,6 +9,7 @@ import {
   VisualReplacementMatchCard,
 } from "@/components/trust/VisualReplacementMatchCard";
 import { FridgeWinnerFamilyRail } from "@/components/fridge/FridgeWinnerFamilyRail";
+import { FilterPdp4396710IdentitySection } from "@/components/fridge/FilterPdp4396710IdentitySection";
 import { FilterPdpCompatibleModelsSection } from "@/components/fridge/FilterPdpCompatibleModelsSection";
 import { FilterPdpLegacySuccessorSection } from "@/components/fridge/FilterPdpLegacySuccessorSection";
 import { FilterPdpRepoEvidenceSection } from "@/components/fridge/FilterPdpRepoEvidenceSection";
@@ -38,6 +39,10 @@ import {
   BUCKPARTS_VERIFIED_LINK_PROMINENT_NONE_YET,
   BUCKPARTS_VERIFIED_LINK_VIEW_AT_PREFIX,
 } from "@/lib/copy/buckparts-verified-link-copy";
+import {
+  refrigeratorFilterPageDescription,
+  refrigeratorFilterPageTitle,
+} from "@/lib/fridge/fridge-filter-4396710-identity-v1";
 import { resolveFridgeFilterPdpCustomerSafetyV1 } from "@/lib/fridge/fridge-filter-pdp-customer-safety-v1";
 import {
   buildFilterPdpRepoEvidencePaths,
@@ -79,9 +84,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         : "show_buy",
     hasDemandSignal: null,
   });
-  const title = `${filter.oem_part_number} refrigerator filter`;
-  const description = refrigeratorFilterMetadataDescription(filter.oem_part_number);
-  const ogTitle = `${filter.oem_part_number} · ${SITE_DISPLAY_NAME}`;
+  const title = refrigeratorFilterPageTitle({
+    slug: filter.slug,
+    oemPartNumber: filter.oem_part_number,
+  });
+  const description = refrigeratorFilterPageDescription({
+    slug: filter.slug,
+    oemPartNumber: filter.oem_part_number,
+    genericDescription: refrigeratorFilterMetadataDescription(filter.oem_part_number),
+  });
+  const ogTitle = `${title} · ${SITE_DISPLAY_NAME}`;
   return {
     title,
     description,
@@ -215,6 +227,8 @@ export default async function FilterPage({ params, searchParams }: Props) {
             ...filterTelemetryBase,
           }}
         />
+
+        <FilterPdp4396710IdentitySection filterSlug={filter.slug} />
 
         <FilterPdpLegacySuccessorSection filterSlug={filter.slug} />
 
