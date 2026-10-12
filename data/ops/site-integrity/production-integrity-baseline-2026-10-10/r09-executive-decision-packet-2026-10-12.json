@@ -1,0 +1,283 @@
+{
+  "contract": "r09_executive_decision_packet_v1",
+  "read_only": true,
+  "root_id": "R09",
+  "generated_at": "2026-10-12T01:30:00Z",
+  "root_status_unchanged": "OPEN",
+  "immutable_baseline": {
+    "artifact": "READ_ME_AUDIT_REPORT.md",
+    "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188",
+    "root_heading": "R09 — P1 — AP903 configuration and AP910R media contradict manufacturer"
+  },
+  "prior_in_repo_evidence": [
+    {
+      "label": "WHW model-first batch evidence module",
+      "path": "scripts/lib/whole-house-water-model-first-batch-evidence-result-v1.ts",
+      "role": "internal_partial_read",
+      "notes": "Flags AP910R/AP917HD-S as PARTIAL/UNKNOWN vs official AP900 chart; cites search-placeholder OEM URLs only."
+    },
+    {
+      "label": "Official AP800 housing PDF (repo constant)",
+      "url": "https://multimedia.3m.com/mws/media/1903341O/3m-aqua-pure-ap800-series-whole-house-filter-housings.pdf",
+      "role": "manufacturer_adjacent",
+      "notes": "AP801/AP802 class — not AP900 series; preserved for AP801/AP802 rows only."
+    },
+    {
+      "label": "Residential Aqua-Pure comparison chart PDF (repo constant)",
+      "url": "https://multimedia.3m.com/mws/media/2337401O/residential-aqua-pure-home-water-filter-comparison-chart.pdf",
+      "role": "manufacturer_chart",
+      "notes": "Not re-fetched in this packet; AP900 system chart used as primary for AP902/903/904."
+    }
+  ],
+  "authoritative_sources": [
+    {
+      "label": "3M / Solventum — AP900 Series whole house systems spec (AP902/AP903/AP904)",
+      "url": "https://multimedia.3m.com/mws/media/517695O/3m-aqua-pure-whole-house-water-filtration-system-ap900-series.pdf",
+      "mirror_url": "https://www.solventum.com/content/dam/public/language-masters/en/pfb/document/2012/Aqua-Pure-AP902_AP903_AP904-Series.pdf.coredownload.inline.pdf",
+      "retrieved_at": "2026-10-12",
+      "role": "primary_manufacturer",
+      "claims": [
+        "Each AP902, AP903, AP904 is a single-cartridge whole-house system (one head + one cartridge).",
+        "AP902 ships/includes standard replacement AP910R (5621001) — particulate; non-woven pleat media; 5 µm nominal; not described as carbon block.",
+        "AP903 ships/includes standard replacement AP917HD (5621006) — particulate + chlorine taste & odor; carbon block with non-woven pleat media.",
+        "AP904 ships/includes standard replacement AP917HD-S (5621008) — particulate + CT&O + scale inhibition; carbon block with pleat + scale media.",
+        "Comparison table pairs one system model to one standard replacement cartridge only.",
+        "Capacity ~100,000 gallons (~one year under typical conditions) at AP900 series level."
+      ]
+    },
+    {
+      "label": "3M / Lenntech mirror — AP902/AP903 data sheet excerpt",
+      "url": "https://www.lenntech.com/Data-sheets/3M-Filter-AP902-AP903-L.pdf",
+      "retrieved_at": "2026-10-12",
+      "role": "primary_manufacturer_mirror",
+      "claims": [
+        "Confirms single-cartridge AP902 (AP910R) and AP903 (AP917HD) systems.",
+        "AP917HD-S documented as replacement cartridge with scale inhibition (AP904 class), not AP903 in-box cartridge.",
+        "AP910R: non-woven blended pleat media; AP917HD: carbon block + pleat; AP917HD-S: carbon block + pleat + scale inhibition."
+      ]
+    },
+    {
+      "label": "Solventum product page — AP917HD cartridge",
+      "url": "https://www.solventum.com/en-nz/home/v/v000207777/",
+      "retrieved_at": "2026-10-12",
+      "role": "primary_manufacturer_product",
+      "claims": [
+        "AP917HD (5621006) manufactured for AP903 system.",
+        "Activated carbon block with nominal 5 µm particulate; reduces sediment and chlorine taste/odor."
+      ]
+    },
+    {
+      "label": "3M regional product page — AP910R cartridge",
+      "url": "https://www.3m.com.my/3M/en_MY/p/d/v000181940/",
+      "retrieved_at": "2026-10-12",
+      "role": "primary_manufacturer_product",
+      "claims": [
+        "AP910R (5621001) Sanitary Quick-Change cartridge for AP902 system.",
+        "Particulate / pleat-class cartridge — not marketed as carbon block."
+      ]
+    },
+    {
+      "label": "Production readback — AP903 model PDP",
+      "url": "https://buckparts.com/whole-house-water/model/3m-aquapure-ap903",
+      "retrieved_at": "2026-10-12",
+      "role": "production_evidence",
+      "claims": [
+        "Primary part on file: AP910R with carbon naming and 12-month interval.",
+        "Model notes reference dual-stage AP917HD-S + AP910R.",
+        "Both AP910R and AP917HD-S appear as recommended mapped parts."
+      ]
+    },
+    {
+      "label": "Production readback — AP910R filter PDP",
+      "url": "https://buckparts.com/whole-house-water/filter/3m-ap910r",
+      "retrieved_at": "2026-10-12",
+      "role": "production_evidence",
+      "claims": [
+        "Title copy: carbon cartridge for AP900-series.",
+        "Lists AP903 as only compatible model (1 model).",
+        "Notes cite AP903/AP904 installs."
+      ]
+    },
+    {
+      "label": "Production readback — AP917HD-S filter PDP",
+      "url": "https://buckparts.com/whole-house-water/filter/3m-ap917hd-s",
+      "retrieved_at": "2026-10-12",
+      "role": "production_evidence",
+      "claims": [
+        "Named sediment cartridge; notes reference AP903/AP904.",
+        "Recommended mapping from AP903 drives model-page association."
+      ]
+    }
+  ],
+  "manufacturer_governing_truth": {
+    "AP902": {
+      "configuration": "Single-cartridge system; standard replacement AP910R (particulate / non-woven pleat, 5 µm nominal).",
+      "classification": "PROVEN"
+    },
+    "AP903": {
+      "configuration": "Single-cartridge system; standard replacement AP917HD (carbon block + pleat; particulate + chlorine taste & odor).",
+      "classification": "PROVEN"
+    },
+    "AP904": {
+      "configuration": "Single-cartridge system; standard replacement AP917HD-S (carbon block + pleat + scale inhibition; particulate + CT&O + scale).",
+      "classification": "PROVEN"
+    },
+    "AP910R": {
+      "oem_system_association": "Standard cartridge for AP902; not the AP903 or AP904 factory cartridge.",
+      "media_identity": "Non-woven pleat particulate reduction — not a carbon-block cartridge.",
+      "classification": "PROVEN"
+    },
+    "AP917HD": {
+      "oem_system_association": "Standard cartridge for AP903.",
+      "media_identity": "Carbon block with pleat — CT&O + sediment.",
+      "classification": "PROVEN"
+    },
+    "AP917HD-S": {
+      "oem_system_association": "Standard cartridge for AP904 (scale-inhibition variant).",
+      "media_identity": "Carbon block with pleat + scale inhibition — not AP903 factory cartridge.",
+      "classification": "PROVEN"
+    },
+    "cross_system_physical_interchange": {
+      "statement": "3M documentation assigns one OEM cartridge per AP900 system model; field substitution or dual-cartridge installs are not documented in the AP900 series spec.",
+      "classification": "UNKNOWN"
+    }
+  },
+  "repo_truth_snapshot": {
+    "models_csv_3m_aquapure_ap903": "Notes: dual-stage AP917HD-S + AP910R on AP903 — contradicts single AP917HD OEM story.",
+    "filters_csv_3m_ap910r": "Name/notes: carbon cartridge; notes cite AP903/AP904 — contradicts AP902/AP910R particulate identity.",
+    "filters_csv_3m_ap917hd_s": "Name: sediment-only framing; notes cite AP903/AP904 — mispositions SKU vs AP917HD (AP903) and AP904 (AP917HD-S).",
+    "missing_catalog_rows": "No filters.csv row for AP917HD (5621006); no models.csv rows for AP902 or AP904.",
+    "compatibility_mappings": {
+      "3m-aquapure-ap903_to_3m-ap910r": "is_recommended=true — PROVEN conflict (AP910R is AP902 cartridge).",
+      "3m-aquapure-ap903_to_3m-ap917hd-s": "is_recommended=true — PROVEN conflict (AP903 OEM is AP917HD, not AP917HD-S)."
+    },
+    "aliases": "filter_aliases: AP917HDS → 3m-ap917hd-s; AP910R → 3m-ap910r — slug binding OK; identity/copy is wrong.",
+    "regression_tests": "No dedicated AP902/AP903/AP904 standard-cartridge fixture (baseline called for one)."
+  },
+  "runtime_architecture": {
+    "buyer_facing_whw_pages": "Supabase tables whole_house_water_parts, whole_house_water_models, whole_house_water_compatibility_mappings (same pattern as R07/R08 closure).",
+    "repo_csv_role": "Seed source and parity target; production readback matches committed CSV semantics on sampled routes.",
+    "supabase_inspect_this_pass": "Not live-queried; production HTML aligns with repo mappings (AP903 primary AP910R, dual notes).",
+    "classification": "PROVEN both for eventual repair"
+  },
+  "current_state_diff": [
+    {
+      "topic": "AP903 system configuration",
+      "manufacturer": "Single cartridge AP917HD",
+      "repo_production": "Dual AP917HD-S + AP910R narrative; two recommended mappings",
+      "conflict": "PROVEN"
+    },
+    {
+      "topic": "AP910R media + fit",
+      "manufacturer": "Particulate pleat for AP902",
+      "repo_production": "Carbon cartridge; recommended for AP903; lists AP903 only",
+      "conflict": "PROVEN"
+    },
+    {
+      "topic": "AP917HD-S on AP903",
+      "manufacturer": "AP917HD-S is AP904 standard cartridge",
+      "repo_production": "Recommended AP903 fit; sediment-only naming",
+      "conflict": "PROVEN"
+    },
+    {
+      "topic": "AP917HD catalog presence",
+      "manufacturer": "Required OEM SKU for AP903",
+      "repo_production": "Absent; AP917HD-S used instead on AP903 mapping",
+      "conflict": "PROVEN"
+    },
+    {
+      "topic": "AP902 / AP904 model coverage",
+      "manufacturer": "Distinct systems with AP910R / AP917HD-S pairings",
+      "repo_production": "No model rows; cartridges folded onto AP903 anchor",
+      "conflict": "PROVEN catalog gap (secondary to AP903 page defect)"
+    },
+    {
+      "topic": "Service intervals (6 / 12 mo)",
+      "manufacturer": "~100k gal / ~1 year series guidance",
+      "repo_production": "6 mo AP917HD-S; 12 mo AP910R",
+      "conflict": "INFERRED secondary vs baseline P1 (configuration/media is primary blocker)"
+    }
+  ],
+  "defect_structure": {
+    "count": 5,
+    "independent_issues": [
+      {
+        "issue_id": "R09-AP903-DUAL-NARRATIVE",
+        "description": "AP903 documented/surfaced as dual-cartridge (AP917HD-S + AP910R) vs OEM single AP917HD"
+      },
+      {
+        "issue_id": "R09-AP903-MAP-AP910R",
+        "description": "Recommended compatibility AP903 → AP910R (OEM pairing is AP902 → AP910R)"
+      },
+      {
+        "issue_id": "R09-AP903-MAP-AP917HD-S",
+        "description": "Recommended compatibility AP903 → AP917HD-S (OEM pairing is AP903 → AP917HD; AP917HD-S is AP904)"
+      },
+      {
+        "issue_id": "R09-AP910R-IDENTITY",
+        "description": "AP910R labeled carbon / AP903–AP904 notes vs pleated particulate AP902 cartridge"
+      },
+      {
+        "issue_id": "R09-MISSING-AP917HD-SKU",
+        "description": "No AP917HD part row; wrong surrogate SKU on AP903 recommended path"
+      }
+    ],
+    "coordination_note": "Issues 1–3 drive AP903 PDP primary selection (AP910R today); fixing only copy without mappings would leave primary/high-confidence wrong."
+  },
+  "executive_decision": {
+    "ready": true,
+    "governing_truth_statement": "3M AP900 series: AP902→AP910R (particulate pleat); AP903→AP917HD (carbon block + pleat, CT&O + sediment); AP904→AP917HD-S (carbon block + pleat + scale). Each system is single-cartridge. AP910R is not carbon block and is not the AP903 OEM cartridge.",
+    "preserve_without_change": [
+      "AP801/AP802 + AP810/AP811 mappings (AP800-class dual-stage — separate evidence chain).",
+      "Do not bulk-delete AP917HD-S or AP910R SKUs — correct identity, associations, and mappings only."
+    ],
+    "explicit_non_decisions": [
+      "Do not assert cross-fit interchange between AP917HD and AP917HD-S without separate 3M evidence.",
+      "Do not add AP902/AP904 model pages in minimum tranche unless required for mapping truth (optional follow-on).",
+      "Do not touch R04."
+    ]
+  },
+  "minimum_repair_scope": {
+    "repo_csv": [
+      "models.csv 3m-aquapure-ap903: replace dual-stage notes with single AP917HD OEM cartridge guidance.",
+      "filters.csv: add ge-equivalent row 3m-ap917hd (AP917HD) with carbon-block + CT&O + sediment identity; or rename/reslug only if alias policy allows — prefer new slug 3m-ap917hd to preserve AP917HD-S for AP904.",
+      "filters.csv 3m-ap910r: correct name/notes to particulate/non-woven pleat AP902 cartridge; remove AP903/AP904 OEM implications.",
+      "filters.csv 3m-ap917hd-s: correct name/notes to AP904 scale cartridge (CT&O + sediment + scale); stop implying AP903 OEM.",
+      "compatibility_mappings.csv: remove or demote 3m-aquapure-ap903 → 3m-ap910r; remove or demote 3m-aquapure-ap903 → 3m-ap917hd-s; add 3m-aquapure-ap903 → 3m-ap917hd is_recommended=true.",
+      "compatibility_mappings.csv (bounded addition): add 3m-aquapure-ap902 → 3m-ap910r recommended if AP902 model row added; add 3m-aquapure-ap904 → 3m-ap917hd-s if AP904 model row added — optional second slice, not required to fix AP903 PDP if AP903→AP917HD is primary and AP903→AP910R/AP917HD-S demoted/removed."
+    ],
+    "bounded_supabase_parity_expected": [
+      "whole_house_water_parts: insert/update AP917HD row; update AP910R and AP917HD-S name/notes/intervals if changed in CSV",
+      "whole_house_water_compatibility_mappings: same mapping edges as CSV for AP903 tranche only unless AP902/AP904 models authorized",
+      "whole_house_water_models: update AP903 notes"
+    ],
+    "out_of_scope": [
+      "Full AP900 family model page build-out beyond notes/mappings needed for truth on existing routes",
+      "Retailer link enrichment",
+      "R09 VERIFIED_CLOSED until authorized apply + readback"
+    ]
+  },
+  "required_validation": {
+    "tests": [
+      "New fixture: ap902-ap903-ap904-standard-cartridge-r09-v1.test.ts — AP903 recommends AP917HD only; AP903 must not recommend AP910R or AP917HD-S; AP910R copy must not assert carbon; AP910R must not map recommended to AP903",
+      "Optional: AP802/AP801 regressions unchanged"
+    ],
+    "preview_readback": [
+      "GET /whole-house-water/model/3m-aquapure-ap903 — primary AP917HD (or AP917HD-S demoted absent), no dual-stage copy, no AP910R primary",
+      "GET /whole-house-water/filter/3m-ap910r — particulate/AP902 association; AP903 not sole recommended model",
+      "GET /whole-house-water/filter/3m-ap917hd-s — AP904-class copy; not AP903 OEM sediment framing",
+      "GET /whole-house-water/filter/3m-ap917hd (new) — AP903 OEM copy",
+      "GET /whole-house-water/brand/3m — no regression"
+    ],
+    "production_readback": "Same routes after bounded Supabase parity + merge",
+    "ship_guard": "npm run buckparts:ship-guard -- --enforce before merge"
+  },
+  "affected_routes": [
+    "/whole-house-water/model/3m-aquapure-ap903",
+    "/whole-house-water/filter/3m-ap910r",
+    "/whole-house-water/filter/3m-ap917hd-s",
+    "/whole-house-water/filter/3m-ap917hd",
+    "/whole-house-water/brand/3m",
+    "/whole-house-water"
+  ]
+}

@@ -32,6 +32,8 @@
     "verification_artifact": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-sibling-fxhtc-gxwh20s-tranche-verification-2026-10-12.json"
   },
   "r08_sibling_executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r08-sibling-fxhtc-gxwh20s-executive-decision-packet-2026-10-12.json",
+  "r09_executive_decision_packet": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/r09-executive-decision-packet-2026-10-12.json",
+  "r09_state": "OPEN",
   "required_pre_distribution_blockers": ["R04", "R09"],
   "next_lawful_actions": [],
   "merge_policy": "serialize_integrity_merges",
