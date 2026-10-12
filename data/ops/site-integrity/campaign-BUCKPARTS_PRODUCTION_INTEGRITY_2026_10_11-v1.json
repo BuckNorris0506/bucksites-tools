@@ -3,7 +3,7 @@
   "campaign_id": "BUCKPARTS_PRODUCTION_INTEGRITY_2026_10_11",
   "activated_at": "2026-10-11",
   "canonical_main_sha_at_activation": "6f9dbac660f63056fb7cc2b08a88e475a73dad13",
-  "canonical_main_sha_current": "e6a3101aa465ddf79da0a3d4c9093e404cd81737",
+  "canonical_main_sha_current": "b6d27be",
   "immutable_baseline": {
     "repo_path": "data/ops/site-integrity/production-integrity-baseline-2026-10-10/READ_ME_AUDIT_REPORT.md",
     "sha256": "45b8ad9587718d30fd3fb8e42b376b1f9d43ff1c5999245178675e1ceffbd188"
