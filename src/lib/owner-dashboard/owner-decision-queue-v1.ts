@@ -39,17 +39,25 @@ export type OwnerDecisionRequestStatusV1 =
   | "STALE"
   | "SUPERSEDED";
 
+export const OWNER_DECISION_TYPE_MODEL_FIRST_EVIDENCE_RESULT_WRITE_V1 =
+  "model_first_evidence_result_write" as const;
+
 export type OwnerDecisionTypeV1 =
   | "owner_mutation_approval"
   | "csv_apply_authorization"
   | "supabase_csv_parity_export"
   | "manufacturer_rescue_apply"
-  | "guarded_apply_bridge";
+  | "guarded_apply_bridge"
+  | typeof OWNER_DECISION_TYPE_MODEL_FIRST_EVIDENCE_RESULT_WRITE_V1;
 
 export type OwnerDecisionOptionV1 = {
   option_id: string;
   label: string;
-  founder_registry_scope_hint: "owner_mutation_approved" | "read_only_agent" | "none";
+  founder_registry_scope_hint:
+    | "owner_mutation_approved"
+    | "owner_model_first_evidence_result_write_approved"
+    | "read_only_agent"
+    | "none";
 };
 
 export type OwnerDecisionRequestV1 = {
@@ -79,7 +87,9 @@ export type OwnerDecisionRequestV1 = {
    */
   precedent_clause?: string;
   founder_decision_registry_bridge: {
-    expected_allowed_next_scope: "owner_mutation_approved";
+    expected_allowed_next_scope:
+      | "owner_mutation_approved"
+      | "owner_model_first_evidence_result_write_approved";
     matching_registry_sources: string[];
     active_mutation_approval_decision_id: string | null;
   };
@@ -221,6 +231,7 @@ export function extractTargetSlugsFromReportJsonV1(parsed: unknown): string[] {
 }
 
 export function inferDecisionTypeFromRunnerStepV1(stepId: string): OwnerDecisionTypeV1 {
+  // model_first_evidence_result_write is never inferred from Runner halt steps.
   if (stepId.includes("supabase_csv") || stepId.includes("parity")) {
     return "supabase_csv_parity_export";
   }
