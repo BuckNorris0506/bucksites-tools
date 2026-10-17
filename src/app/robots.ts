@@ -14,6 +14,8 @@ export default function robots(): MetadataRoute.Robots {
         "/vacuum/go/",
         "/humidifier/go/",
         "/appliance-air/go/",
+        "/office",
+        "/office/",
       ],
     },
     sitemap: `${base}/sitemap.xml`,

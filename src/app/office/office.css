@@ -1,0 +1,253 @@
+.j-office {
+  --jo-bg: #0c1016;
+  --jo-panel: #141b24;
+  --jo-panel-2: #1a2330;
+  --jo-line: #2a3544;
+  --jo-text: #e8eef6;
+  --jo-muted: #93a3b8;
+  --jo-need: #e11d48;
+  --jo-warn: #f59e0b;
+  --jo-ok: #34d399;
+  --jo-unknown: #c4b5fd;
+  --jo-zero: #cbd5e1;
+  min-height: 100vh;
+  background: var(--jo-bg);
+  color: var(--jo-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow-x: hidden;
+}
+
+.j-office * {
+  box-sizing: border-box;
+}
+
+.jo-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem 1rem;
+  padding: 0.7rem 1.1rem;
+  border-bottom: 1px solid var(--jo-line);
+  background: #0a0e13;
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+
+.jo-brand {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-size: 0.92rem;
+}
+
+.jo-meta,
+.jo-chip {
+  font-size: 0.78rem;
+  color: var(--jo-muted);
+}
+
+.jo-chip {
+  border: 1px solid var(--jo-line);
+  border-radius: 999px;
+  padding: 0.12rem 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+
+.jo-chip-need {
+  color: #fff;
+  background: var(--jo-need);
+  border-color: var(--jo-need);
+}
+
+.jo-chip-ok {
+  color: #052e1b;
+  background: var(--jo-ok);
+  border-color: var(--jo-ok);
+}
+
+.jo-chip-warn {
+  color: #1c1403;
+  background: var(--jo-warn);
+  border-color: var(--jo-warn);
+}
+
+.jo-scopes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.55rem 1.1rem 0;
+}
+
+.jo-scopes button {
+  appearance: none;
+  background: var(--jo-panel);
+  color: var(--jo-text);
+  border: 1px solid var(--jo-line);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.jo-scopes button[aria-pressed="true"] {
+  background: #e8eef6;
+  color: #0c1016;
+  font-weight: 700;
+}
+
+.jo-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 1.1rem 2rem;
+  max-width: 92rem;
+  margin: 0 auto;
+}
+
+.jo-panel {
+  background: var(--jo-panel);
+  border: 1px solid var(--jo-line);
+  border-radius: 10px;
+  padding: 0.85rem 0.95rem;
+  min-width: 0;
+}
+
+.jo-panel h2 {
+  margin: 0 0 0.55rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--jo-muted);
+}
+
+.jo-panel h3 {
+  margin: 0;
+  font-size: 1.02rem;
+}
+
+.jo-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.55rem 0.85rem;
+  margin: 0;
+}
+
+.jo-facts > div {
+  min-width: 0;
+}
+
+.jo-facts dt {
+  color: var(--jo-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.jo-facts dd {
+  margin: 0.15rem 0 0;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.jo-unknown {
+  color: var(--jo-unknown);
+  font-weight: 700;
+}
+
+.jo-zero {
+  color: var(--jo-zero);
+  font-variant-numeric: tabular-nums;
+}
+
+.jo-note,
+.jo-list {
+  color: var(--jo-text);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.jo-note {
+  margin: 0.55rem 0 0;
+  color: var(--jo-muted);
+}
+
+.jo-list {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.jo-empty {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.jo-row {
+  border-top: 1px solid var(--jo-line);
+  padding-top: 0.55rem;
+  margin-top: 0.55rem;
+}
+
+.jo-row:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.jo-outlook { order: 1; }
+.jo-now { order: 2; }
+.jo-needs { order: 3; }
+.jo-queue { order: 4; }
+.jo-obligations { order: 5; }
+.jo-disappear { order: 6; }
+.jo-funnel { order: 7; }
+.jo-stuck { order: 8; }
+.jo-changed { order: 9; }
+.jo-learning { order: 10; }
+
+.jo-secondary {
+  margin-top: 0.65rem;
+  color: var(--jo-muted);
+  font-size: 0.85rem;
+}
+
+.jo-secondary > summary {
+  cursor: pointer;
+  font-weight: 650;
+}
+
+@media (min-width: 1024px) {
+  .jo-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(19rem, 0.82fr);
+    grid-template-areas:
+      "outlook needs"
+      "now needs"
+      "queue obligations"
+      "queue disappear"
+      "funnel funnel"
+      "stuck stuck"
+      "changed learning";
+    align-items: start;
+  }
+
+  .jo-outlook { grid-area: outlook; order: unset; }
+  .jo-now { grid-area: now; order: unset; }
+  .jo-queue { grid-area: queue; order: unset; }
+  .jo-needs { grid-area: needs; order: unset; }
+  .jo-obligations { grid-area: obligations; order: unset; }
+  .jo-disappear { grid-area: disappear; order: unset; }
+  .jo-funnel { grid-area: funnel; order: unset; }
+  .jo-stuck { grid-area: stuck; order: unset; }
+  .jo-changed { grid-area: changed; order: unset; }
+  .jo-learning { grid-area: learning; order: unset; }
+
+  .jo-outlook,
+  .jo-now,
+  .jo-needs {
+    min-height: 8.5rem;
+  }
+}

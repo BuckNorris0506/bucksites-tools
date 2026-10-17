@@ -1,0 +1,888 @@
+{
+  "authority_effect": "NONE",
+  "business_isolation": true,
+  "business_scopes": [
+    {
+      "id": "all",
+      "label": "ALL"
+    },
+    {
+      "id": "accessline",
+      "label": "AccessLine"
+    },
+    {
+      "id": "buckparts",
+      "label": "BuckParts"
+    },
+    {
+      "id": "deskcrew",
+      "label": "DeskCrew"
+    },
+    {
+      "id": "drivendata",
+      "label": "DrivenData"
+    },
+    {
+      "id": "upwork",
+      "label": "Upwork"
+    }
+  ],
+  "durable_fingerprint": "7eb898cbe90a6b6afe90c008a1623b731ff9f343348549759b6e9dc8f94e8a79",
+  "economic_outlook": {
+    "AUTHORIZED_CAPITAL_USD": {
+      "display": "$0.00",
+      "is_unknown": false,
+      "is_zero": true,
+      "kind": "money",
+      "value": 0.0
+    },
+    "CASH_AVAILABLE_USD": {
+      "display": "$0.00",
+      "is_unknown": false,
+      "is_zero": true,
+      "kind": "money",
+      "value": 0.0
+    },
+    "CASH_COMMITTED_USD": {
+      "display": "$0.00",
+      "is_unknown": false,
+      "is_zero": true,
+      "kind": "money",
+      "value": 0.0
+    },
+    "CASH_SPENT_USD": {
+      "display": "$0.00",
+      "is_unknown": false,
+      "is_zero": true,
+      "kind": "money",
+      "value": 0.0
+    },
+    "PENDING_REVENUE_USD": {
+      "display": "$0.00",
+      "is_unknown": false,
+      "is_zero": true,
+      "kind": "money",
+      "value": 0.0
+    },
+    "SETTLED_PROFIT_USD": {
+      "display": "$0.00",
+      "is_unknown": false,
+      "is_zero": true,
+      "kind": "money",
+      "value": 0.0
+    },
+    "SETTLED_REVENUE_USD": {
+      "display": "$0.00",
+      "is_unknown": false,
+      "is_zero": true,
+      "kind": "money",
+      "value": 0.0
+    },
+    "buckparts": {
+      "amazon": {
+        "business_id": "buckparts",
+        "channel": "amazon_associates",
+        "clicks": {
+          "display": "3",
+          "is_unknown": false,
+          "is_zero": false,
+          "kind": "count",
+          "value": 3.0
+        },
+        "clicks_are_not_revenue": true,
+        "conversion_pct": 0.0,
+        "dashboard_last_updated": "2026-09-09",
+        "earnings_shown_are_not_pending_settlement_proof": true,
+        "earnings_shown_usd": {
+          "display": "$0.00",
+          "is_unknown": false,
+          "is_zero": true,
+          "kind": "money",
+          "value": 0.0
+        },
+        "freshness_label": "CURRENT",
+        "google_search_attribution": "NOT_PROVEN",
+        "observed_at": "2026-09-10",
+        "ordered_items": {
+          "display": "0",
+          "is_unknown": false,
+          "is_zero": true,
+          "kind": "count",
+          "value": 0.0
+        },
+        "ordered_items_are_not_revenue": true,
+        "period": "current_month",
+        "settlement_status": "UNKNOWN",
+        "shipped_items": {
+          "display": "0",
+          "is_unknown": false,
+          "is_zero": true,
+          "kind": "count",
+          "value": 0.0
+        },
+        "source": "founder_authenticated_amazon_associates_dashboard_screenshot",
+        "stale": false,
+        "total_earnings_usd": 0.0,
+        "total_items_shipped": 0,
+        "total_ordered_items": 0,
+        "truth_state": "PROVEN"
+      },
+      "business_id": "buckparts",
+      "do_not_attribute_amazon_clicks_to_google": true,
+      "gsc": {
+        "average_position": 29.85769154654603,
+        "clicks": {
+          "display": "0",
+          "is_unknown": false,
+          "is_zero": true,
+          "kind": "count",
+          "value": 0.0
+        },
+        "ctr": 0,
+        "freshness_label": "SETTLED_THROUGH_2026-09-08",
+        "impressions": {
+          "display": "449",
+          "is_unknown": false,
+          "is_zero": false,
+          "kind": "count",
+          "value": 449.0
+        },
+        "property": "sc-domain:buckparts.com",
+        "settled_through": "2026-09-08",
+        "stale": false,
+        "unsettled_from": "2026-09-09",
+        "unsettled_warning": "GSC 2026-09-09 onward was not yet settled.",
+        "windows": [
+          {
+            "average_position": 30.338362068965516,
+            "business_id": "buckparts",
+            "clicks": 0,
+            "clicks_are_not_revenue": true,
+            "ctr": 0,
+            "end_date": "2026-09-06",
+            "impressions": 464,
+            "impressions_are_not_revenue": true,
+            "maturity": "historical_window",
+            "property": "sc-domain:buckparts.com",
+            "start_date": "2026-08-08",
+            "truth_state": "PROVEN"
+          },
+          {
+            "average_position": 31.483870967741936,
+            "business_id": "buckparts",
+            "clicks": 0,
+            "clicks_are_not_revenue": true,
+            "ctr": 0,
+            "end_date": "2026-09-08",
+            "impressions": 62,
+            "impressions_are_not_revenue": true,
+            "maturity": "settled",
+            "property": "sc-domain:buckparts.com",
+            "start_date": "2026-09-07",
+            "truth_state": "PROVEN"
+          },
+          {
+            "average_position": 29.85769154654603,
+            "business_id": "buckparts",
+            "clicks": 0,
+            "clicks_are_not_revenue": true,
+            "ctr": 0,
+            "end_date": "2026-09-08",
+            "impressions": 449,
+            "impressions_are_not_revenue": true,
+            "maturity": "settled_28_day_summary",
+            "property": "sc-domain:buckparts.com",
+            "settled_through": "2026-09-08",
+            "start_date": "2026-08-12",
+            "truth_state": "PROVEN",
+            "unsettled_from": "2026-09-09"
+          }
+        ]
+      },
+      "j_is_not_buckparts": true
+    },
+    "configured_ceiling_is_not_authorized_capital": true,
+    "configured_ceiling_usd": {
+      "display": "$50.00",
+      "is_unknown": false,
+      "is_zero": false,
+      "kind": "money",
+      "value": 50.0
+    },
+    "conflicts": [],
+    "current_revenue_producing_paths": [
+      {
+        "business_id": "buckparts",
+        "clicks": {
+          "display": "3",
+          "is_unknown": false,
+          "is_zero": false,
+          "kind": "count",
+          "value": 3.0
+        },
+        "clicks_are_not_revenue": true,
+        "earnings_shown_usd": {
+          "display": "$0.00",
+          "is_unknown": false,
+          "is_zero": true,
+          "kind": "money",
+          "value": 0.0
+        },
+        "ordered_items": {
+          "display": "0",
+          "is_unknown": false,
+          "is_zero": true,
+          "kind": "count",
+          "value": 0.0
+        },
+        "path": "Amazon Associates tag buckparts20-20",
+        "settlement_status": "UNKNOWN",
+        "shipped_items": {
+          "display": "0",
+          "is_unknown": false,
+          "is_zero": true,
+          "kind": "count",
+          "value": 0.0
+        },
+        "status": "APPROVED"
+      }
+    ],
+    "envelope_founder_authorized": false,
+    "envelope_state": "INACTIVE",
+    "material_current_economic_exposure": [
+      {
+        "business_id": "buckparts",
+        "detail": "External revenue-producing exposure exists; shown earnings $0.00.",
+        "item": "Live BuckParts Amazon Associates links",
+        "settled_revenue": {
+          "display": "$0.00",
+          "is_unknown": false,
+          "is_zero": true,
+          "kind": "money",
+          "value": 0.0
+        }
+      },
+      {
+        "authorized": {
+          "display": "$0.00",
+          "is_unknown": false,
+          "is_zero": true,
+          "kind": "money",
+          "value": 0.0
+        },
+        "detail": "Configured, not founder-authorized spendable capital.",
+        "item": "Phase 5 configured $50 ceiling"
+      }
+    ],
+    "model_research_cost_usd": {
+      "display": "UNKNOWN",
+      "is_unknown": true,
+      "is_zero": false,
+      "kind": "money",
+      "value": "UNKNOWN"
+    },
+    "next_event_that_could_change_economics": "Amazon Associates dashboard refresh (possible ordered/shipped/earnings change) or GSC settlement of 2026-09-09 onward. Neither clicks nor impressions are revenue.",
+    "outlook_truth": {
+      "inferred": [
+        "acquisition_or_distribution is the current objective constraint on BuckParts search traffic."
+      ],
+      "proven": [
+        "J-wide SETTLED_REVENUE_USD is 0.",
+        "Amazon Associates current-month shown earnings are $0.00.",
+        "Amazon Associates current-month ordered/shipped items are 0.",
+        "GSC settled through 2026-09-08: 0 clicks, impressions present.",
+        "Experiment envelope is not founder-authorized; authorized capital is $0.00."
+      ],
+      "unknown": [
+        "Source of the 3 Amazon Associates clicks.",
+        "Amazon payout/settlement pipeline status.",
+        "Model / Phase-5 attributable inference cost.",
+        "Founder minutes and exact burn/runway."
+      ]
+    },
+    "source_freshness": {
+      "amazon_dashboard_last_updated": "2026-09-09",
+      "amazon_observed_at": "2026-09-10",
+      "amazon_stale": false,
+      "gsc_settled_through": "2026-09-08",
+      "gsc_stale": false
+    }
+  },
+  "freshness": {
+    "amazon_stale": false,
+    "generated_at": "2026-09-11T02:04:43+00:00",
+    "gsc_stale": false,
+    "gsc_unsettled_warning": "GSC 2026-09-09 onward was not yet settled."
+  },
+  "funnel": {
+    "counts": {
+      "active": 1,
+      "originated": 10,
+      "passed_first_filter": 10,
+      "passed_second_filter": 4,
+      "rejected_or_closed": 8,
+      "stuck_after_first_filter": 6,
+      "waiting": 1
+    },
+    "records": [
+      {
+        "active": false,
+        "blocker": "Worker returned a live municipal consulting RFP, not a first-dollar buyer J can truthfully serve now. Madison Metropolitan Sewerage District's AI Use and Governance Policy RFP is first-party and still open, but payment is UNKNOWN, the buyer seeks a qualified consulting firm for a six-month four-phase engagement, and 15 of 100 points require demonstrated municipal/utility AI-governance past work pl",
+        "business_id": null,
+        "evidence_missing": null,
+        "id": "cwor_fdac_001",
+        "name": "Madison Metropolitan Sewerage District \u2014 Comprehensive AI Use and Governance Policy RFP",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": false,
+        "permanence": "permanent_unless_materially_new_evidence",
+        "rejected_or_closed": true,
+        "source": "data/current_world_research/cwor_fdac_001.json",
+        "stage_reached": "j_second_filter_close_path",
+        "waiting": false
+      },
+      {
+        "active": false,
+        "blocker": "Worker returned a live named buyer with proven $350 and a live pitch form, but J cannot truthfully fulfill the work. Percona pays for a first-hand practitioner post about MySQL/PostgreSQL/MongoDB/Percona stack production work. Durable founder-capability inventory shows websites, Next.js/Supabase catalog work, and dormant marketing assets \u2014 not first-hand Percona/database-ops production incidents. ",
+        "business_id": null,
+        "evidence_missing": null,
+        "id": "cwor_fdac_002",
+        "name": "Percona Community Writers Program \u2014 one commissioned technical blog post",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": false,
+        "permanence": "permanent_unless_materially_new_evidence",
+        "rejected_or_closed": true,
+        "source": "data/current_world_research/cwor_fdac_002.json",
+        "stage_reached": "j_second_filter_close_path",
+        "waiting": false
+      },
+      {
+        "active": false,
+        "blocker": "Worker returned DataAnnotation coding-track contractor intake, not a concrete current paid project J can put an offer in front of now. DataAnnotation is a live labor platform with advertised coding rates ($50\u2013$100+/hr FAQ; $75\u2013$150+/hr on the Software Engineer page) and a PayPal payout mechanism, but there is no named current deliverable. The only immediate action is a 1\u20132 hour Starter Assessment ",
+        "business_id": null,
+        "evidence_missing": null,
+        "id": "cwor_fdac_003",
+        "name": "DataAnnotation \u2014 Coding track (Software Engineer / Full Stack Engineer)",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": false,
+        "permanence": "permanent_unless_materially_new_evidence",
+        "rejected_or_closed": true,
+        "source": "data/current_world_research/cwor_fdac_003.json",
+        "stage_reached": "j_second_filter_close_path",
+        "waiting": false
+      },
+      {
+        "active": false,
+        "blocker": "Worker returned a competitive Algora/GitHub bounty, not a customer contract, invoice, or procurement path. Escrow/pre-funding is UNKNOWN. No attempt on gyroflow/gyroflow#742 has been rewarded. Acceptance is maintainer-discretionary review, not objective payment-on-merge. Required work is a Rust/Qt Gyroflow lens-profile refactor plus a short demo video, which is not a proven J capability. No alread",
+        "business_id": null,
+        "evidence_missing": null,
+        "id": "cwor_portfolio_empty_origination_001",
+        "name": "Open $500 bounty on GitHub issue gyroflow/gyroflow#742 \u2014 \"Refactor lens profile handling\" (lens profile database refactor: structured camera/model/lens metadata, LensFun import path, profile search flow, validation, tests \u2014 Rust/Qt codebase)",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": false,
+        "permanence": "permanent_one_shot_consumed",
+        "rejected_or_closed": true,
+        "source": "data/current_world_research/cwor_portfolio_empty_origination_001.json",
+        "stage_reached": "j_second_filter_close_path",
+        "waiting": false
+      },
+      {
+        "active": false,
+        "blocker": "Worker returned a time-boxed audit contest, not a repeatable customer/payment path. Preferred invoice/contract surfaces were disqualified on worker evidence. AI-authored eligibility is CONFLICTED. Required work is a 137k-line security audit plus PoC in six days, which exceeds proven J capabilities. No already-authorized external test exists. Named-counterparty + final-specific-blocker exception is",
+        "business_id": null,
+        "evidence_missing": null,
+        "id": "cwor_economic_use_001",
+        "name": "Audit Competition | ENS (Immunefi)",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": false,
+        "permanence": "permanent_unless_materially_new_evidence",
+        "rejected_or_closed": true,
+        "source": "data/current_world_research/cwor_economic_use_001.json",
+        "stage_reached": "j_second_filter_close_path",
+        "waiting": false
+      },
+      {
+        "active": false,
+        "blocker": "No defensible advantage: task is generic documentation/explanation that GPT + public docs can produce. J has no demonstrated durable edge on this work class.",
+        "business_id": "deskcrew",
+        "evidence_missing": null,
+        "id": "opp_deskcrew_286",
+        "name": "How does an AI agent pay for an API call with x402, step by step, and what exactly is in the 402 response and the retry?",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": false,
+        "permanence": "permanent_unless_materially_new_evidence",
+        "rejected_or_closed": true,
+        "source": "data/economic_opportunities/opp_deskcrew_286.json",
+        "stage_reached": "QUALIFIED_REJECTED",
+        "waiting": false
+      },
+      {
+        "active": false,
+        "blocker": "Existing CALL-E recording path failed live founder acceptance and is not a credible bounded submission path. Remaining work is founder recording plus public upload plus Devpost terms/submit. Expected prize value is UNKNOWN and is not repeatable customer demand. Closed by executive economic decision; no further spend or work on this path.",
+        "business_id": "accessline",
+        "evidence_missing": null,
+        "id": "cand_live026_calle_your_code_is_calling_001",
+        "name": "CALL-E / AccessLine",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": true,
+        "permanence": "closed_this_path",
+        "rejected_or_closed": true,
+        "source": "fixtures/classifications/live_029_calle_close_001.json",
+        "stage_reached": "closed_after_live_founder_recording_failed",
+        "waiting": false
+      },
+      {
+        "active": false,
+        "blocker": "External job closed; proposal archived.",
+        "business_id": "upwork",
+        "evidence_missing": null,
+        "id": "opp_upwork_website_qa_onetime_audit_001",
+        "name": "Upwork \u2014 website QA audit",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": true,
+        "permanence": "closed",
+        "rejected_or_closed": true,
+        "source": "fixtures/classifications/live_025_upwork_archived_closed_return_001.json",
+        "stage_reached": "closed_without_interview",
+        "waiting": false
+      },
+      {
+        "active": false,
+        "blocker": "Awaiting decision-changing evidence. Submission forbidden without new authority.",
+        "business_id": "drivendata",
+        "evidence_missing": "decision-changing quality or authority signal",
+        "id": "opp_drivendata_lost_transcription_prize_001",
+        "name": "DrivenData \u2014 Lost in Transcription",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": true,
+        "permanence": "waiting_revisitable",
+        "rejected_or_closed": false,
+        "source": "fixtures/classifications/live_020_reevaluation_030.json",
+        "stage_reached": "OPEN_PAUSED_AFTER_QWEN_NO_MATERIAL_QUALITY_SIGNAL",
+        "waiting": true
+      },
+      {
+        "active": true,
+        "blocker": "Google Search 0 clicks despite impressions; Amazon clicks unattributed; $0 earnings.",
+        "business_id": "buckparts",
+        "evidence_missing": "Amazon click source; GSC 2026-09-09+ unsettled",
+        "id": "owned_asset_first_dollar_001",
+        "name": "Owned-asset first dollar \u2014 BuckParts",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": true,
+        "permanence": "active",
+        "rejected_or_closed": false,
+        "source": "data/phase5/owned_asset_first_dollar_001.json",
+        "stage_reached": "active_observation_investigate_distribution",
+        "waiting": false
+      }
+    ],
+    "semantics": "originated = durable origination/research record; passed_first_filter = worker/ingest produced a named candidate (not NO_GO); passed_second_filter = J did not CLOSE_PATH at independent verification; active/waiting/closed = existing lifecycle, not a new funnel product.",
+    "stuck_after_first_filter": [
+      {
+        "active": false,
+        "blocker": "Worker returned a live municipal consulting RFP, not a first-dollar buyer J can truthfully serve now. Madison Metropolitan Sewerage District's AI Use and Governance Policy RFP is first-party and still open, but payment is UNKNOWN, the buyer seeks a qualified consulting firm for a six-month four-phase engagement, and 15 of 100 points require demonstrated municipal/utility AI-governance past work pl",
+        "business_id": null,
+        "evidence_missing": null,
+        "id": "cwor_fdac_001",
+        "name": "Madison Metropolitan Sewerage District \u2014 Comprehensive AI Use and Governance Policy RFP",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": false,
+        "permanence": "permanent_unless_materially_new_evidence",
+        "rejected_or_closed": true,
+        "source": "data/current_world_research/cwor_fdac_001.json",
+        "stage_reached": "j_second_filter_close_path",
+        "waiting": false
+      },
+      {
+        "active": false,
+        "blocker": "Worker returned a live named buyer with proven $350 and a live pitch form, but J cannot truthfully fulfill the work. Percona pays for a first-hand practitioner post about MySQL/PostgreSQL/MongoDB/Percona stack production work. Durable founder-capability inventory shows websites, Next.js/Supabase catalog work, and dormant marketing assets \u2014 not first-hand Percona/database-ops production incidents. ",
+        "business_id": null,
+        "evidence_missing": null,
+        "id": "cwor_fdac_002",
+        "name": "Percona Community Writers Program \u2014 one commissioned technical blog post",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": false,
+        "permanence": "permanent_unless_materially_new_evidence",
+        "rejected_or_closed": true,
+        "source": "data/current_world_research/cwor_fdac_002.json",
+        "stage_reached": "j_second_filter_close_path",
+        "waiting": false
+      },
+      {
+        "active": false,
+        "blocker": "Worker returned DataAnnotation coding-track contractor intake, not a concrete current paid project J can put an offer in front of now. DataAnnotation is a live labor platform with advertised coding rates ($50\u2013$100+/hr FAQ; $75\u2013$150+/hr on the Software Engineer page) and a PayPal payout mechanism, but there is no named current deliverable. The only immediate action is a 1\u20132 hour Starter Assessment ",
+        "business_id": null,
+        "evidence_missing": null,
+        "id": "cwor_fdac_003",
+        "name": "DataAnnotation \u2014 Coding track (Software Engineer / Full Stack Engineer)",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": false,
+        "permanence": "permanent_unless_materially_new_evidence",
+        "rejected_or_closed": true,
+        "source": "data/current_world_research/cwor_fdac_003.json",
+        "stage_reached": "j_second_filter_close_path",
+        "waiting": false
+      },
+      {
+        "active": false,
+        "blocker": "Worker returned a competitive Algora/GitHub bounty, not a customer contract, invoice, or procurement path. Escrow/pre-funding is UNKNOWN. No attempt on gyroflow/gyroflow#742 has been rewarded. Acceptance is maintainer-discretionary review, not objective payment-on-merge. Required work is a Rust/Qt Gyroflow lens-profile refactor plus a short demo video, which is not a proven J capability. No alread",
+        "business_id": null,
+        "evidence_missing": null,
+        "id": "cwor_portfolio_empty_origination_001",
+        "name": "Open $500 bounty on GitHub issue gyroflow/gyroflow#742 \u2014 \"Refactor lens profile handling\" (lens profile database refactor: structured camera/model/lens metadata, LensFun import path, profile search flow, validation, tests \u2014 Rust/Qt codebase)",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": false,
+        "permanence": "permanent_one_shot_consumed",
+        "rejected_or_closed": true,
+        "source": "data/current_world_research/cwor_portfolio_empty_origination_001.json",
+        "stage_reached": "j_second_filter_close_path",
+        "waiting": false
+      },
+      {
+        "active": false,
+        "blocker": "Worker returned a time-boxed audit contest, not a repeatable customer/payment path. Preferred invoice/contract surfaces were disqualified on worker evidence. AI-authored eligibility is CONFLICTED. Required work is a 137k-line security audit plus PoC in six days, which exceeds proven J capabilities. No already-authorized external test exists. Named-counterparty + final-specific-blocker exception is",
+        "business_id": null,
+        "evidence_missing": null,
+        "id": "cwor_economic_use_001",
+        "name": "Audit Competition | ENS (Immunefi)",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": false,
+        "permanence": "permanent_unless_materially_new_evidence",
+        "rejected_or_closed": true,
+        "source": "data/current_world_research/cwor_economic_use_001.json",
+        "stage_reached": "j_second_filter_close_path",
+        "waiting": false
+      },
+      {
+        "active": false,
+        "blocker": "No defensible advantage: task is generic documentation/explanation that GPT + public docs can produce. J has no demonstrated durable edge on this work class.",
+        "business_id": "deskcrew",
+        "evidence_missing": null,
+        "id": "opp_deskcrew_286",
+        "name": "How does an AI agent pay for an API call with x402, step by step, and what exactly is in the 402 response and the retry?",
+        "originated": true,
+        "passed_first_filter": true,
+        "passed_second_filter": false,
+        "permanence": "permanent_unless_materially_new_evidence",
+        "rejected_or_closed": true,
+        "source": "data/economic_opportunities/opp_deskcrew_286.json",
+        "stage_reached": "QUALIFIED_REJECTED",
+        "waiting": false
+      }
+    ]
+  },
+  "generated_at": "2026-09-11T02:04:43+00:00",
+  "host_agnostic": true,
+  "if_jared_disappears_24h": {
+    "does_not_claim_unpossessed_capabilities": true,
+    "envelope_inactive": true,
+    "what_could_become_time_sensitive": [
+      {
+        "at": "2026-09-20T14:23:58+00:00",
+        "item": "Phase 5 end"
+      },
+      {
+        "at": "2026-09-25T00:00:00Z",
+        "item": "DrivenData external deadline"
+      }
+    ],
+    "what_j_will_continue_doing": [
+      "Regenerate this read-only Founder Operating Picture from durable state.",
+      "Keep observing persisted BuckParts GSC/Amazon facts; do not invent metrics.",
+      "Honor emergency-stop, concurrency=1, and existing closed paths.",
+      "Continue the owned-asset first-dollar inspection already selected; no new search cycle."
+    ],
+    "what_j_will_monitor": [
+      "Emergency stop state.",
+      "Phase 5 clock remaining.",
+      "Whether new settled GSC or Amazon Associates observations arrive in durable state."
+    ],
+    "what_j_will_not_do_for_missing_authority": [
+      "Will not spend the $50 experiment envelope (inactive; authorized capital $0.00).",
+      "Will not self-approve capital, contact buyers, publish, or expand authority.",
+      "Will not reopen CALL-E, t21, closed first-dollar candidates, or 4396395.",
+      "Will not attribute Amazon clicks to Google Search.",
+      "Will not treat impressions, clicks, or prizes as revenue.",
+      "Will not dispatch a second empty-portfolio origination."
+    ],
+    "what_will_wait": [
+      "DrivenData remains paused until decision-changing evidence.",
+      "GSC 2026-09-09 onward remains unsettled until API maturity.",
+      "Amazon click source remains UNKNOWN."
+    ]
+  },
+  "mutates": false,
+  "needs_jared": [],
+  "needs_jared_empty": true,
+  "next_queue": [
+    {
+      "active": false,
+      "blocker": "NONE_AWAITING_DECISION_CHANGING_EVIDENCE",
+      "business": "DrivenData",
+      "business_id": "drivendata",
+      "closed": false,
+      "defer": "Current state: already deferred/paused.",
+      "id": "opp_drivendata_lost_transcription_prize_001",
+      "item": "DrivenData \u2014 Lost in Transcription",
+      "kill": "Founder or J closes the prize path.",
+      "promote": "New quality or authority evidence that changes live_020_reevaluation_030.",
+      "source": "fixtures/classifications/live_020_reevaluation_030.json",
+      "stage": "OPEN_PAUSED_AFTER_QWEN_NO_MATERIAL_QUALITY_SIGNAL",
+      "visual": "PAUSED",
+      "why_behind_now": "Durable decision is do_nothing until decision-changing evidence. NOW is owned-asset first dollar."
+    },
+    {
+      "active": false,
+      "blocker": "Generic search restart is forbidden.",
+      "business": "J-wide",
+      "business_id": null,
+      "closed": true,
+      "defer": "Already closed.",
+      "id": "first_dollar_acquisition_cycle",
+      "item": "First-dollar acquisition candidate cycle",
+      "kill": "Already closed.",
+      "promote": "Not promotable as a new search candidate under current cycle rules.",
+      "source": "data/phase5/bounded_commercial_trial_001.json",
+      "stage": "CLOSED_AFTER_THREE_CANDIDATES",
+      "visual": "CLOSED",
+      "why_behind_now": "Three candidates closed; cycle is not pursuing a fourth search candidate."
+    },
+    {
+      "active": false,
+      "blocker": "None. Closed.",
+      "business": "J-wide",
+      "business_id": null,
+      "closed": true,
+      "defer": "Already closed.",
+      "id": "PORTFOLIO_EMPTY_ORIGINATION",
+      "item": "Empty-portfolio origination",
+      "kill": "Already closed.",
+      "promote": "Not promotable. Second origination forbidden.",
+      "source": "data/current_world_research/cwor_portfolio_empty_origination_001.json",
+      "stage": "CLOSED",
+      "visual": "CLOSED",
+      "why_behind_now": "One-shot origination consumed and closed."
+    }
+  ],
+  "now": {
+    "business": "BuckParts (owned asset; J is not BuckParts)",
+    "concurrency": "IDLE",
+    "constraint": {
+      "decision": "investigate",
+      "disposition": "investigate_distribution",
+      "objective_constraint": "acquisition_or_distribution",
+      "reason": "objective_constraint_dominates_local_monetization_task"
+    },
+    "cycle": {
+      "candidates_closed": 3,
+      "owned_asset_inspection_done": false,
+      "owned_asset_inspection_required": true
+    },
+    "economic_relevance": "Only live revenue-producing exposure currently under inspection. Shown earnings $0.00. Settled revenue $0.00.",
+    "empty_slot": false,
+    "empty_slot_response": null,
+    "execution_allowed": true,
+    "founder_action_required": false,
+    "identity": "Owned-asset first dollar \u2014 BuckParts revenue-truth check",
+    "next_action": "Investigate BuckParts distribution: Google Search has impressions and 0 settled clicks through 2026-09-08; Amazon shows 3 unattributed clicks, 0 orders, $0 earnings.",
+    "next_external_milestone": "Amazon Associates dashboard refresh or GSC settlement of 2026-09-09+.",
+    "operating_state": "RUNNING",
+    "source": "data/owner_dashboard/current_work_item.json",
+    "state": "ACTIVE",
+    "what_j_can_do_without_jared": "Re-read durable GSC/Amazon observations, regenerate this picture, and wait for settled channel data. Cannot spend, contact buyers, or start the $50 experiment.",
+    "why_selected": "Acquisition search cycle finished after three CLOSED candidates. Inspected BuckParts durable/live truth. No public Verified Link CTA on sampled pages. Next: founder read-only payout/click truth. Do not modify BuckParts in this execution."
+  },
+  "office_route_hint": "/office",
+  "open_obligations": [
+    {
+      "detail": "2026-09-25T00:00:00Z",
+      "founder_action_required": false,
+      "item": "DrivenData prize deadline",
+      "kind": "deadline",
+      "material": true,
+      "source": "fixtures/classifications/live_020_reevaluation_030.json",
+      "state": "PAUSED"
+    },
+    {
+      "detail": "Ends 2026-09-20T14:23:58+00:00",
+      "founder_action_required": false,
+      "item": "Phase 5 bounded commercial trial clock",
+      "kind": "deadline",
+      "material": true,
+      "source": "data/phase5/bounded_commercial_trial_001.json",
+      "state": "ACTIVE"
+    },
+    {
+      "business_id": "buckparts",
+      "detail": "Payment/settlement status not shown on the Amazon dashboard observation.",
+      "founder_action_required": false,
+      "item": "BuckParts Amazon settlement status",
+      "kind": "unknown",
+      "material": true,
+      "source": "data/phase5/owned_asset_first_dollar_001.json",
+      "state": "UNKNOWN"
+    },
+    {
+      "business_id": "buckparts",
+      "detail": "2026-09-09",
+      "founder_action_required": false,
+      "item": "GSC 2026-09-09 onward unsettled",
+      "kind": "unsettled_evidence",
+      "material": true,
+      "source": "data/phase5/owned_asset_first_dollar_001.json",
+      "state": "UNSETTLED"
+    },
+    {
+      "deadline": "2026-09-25T00:00:00Z",
+      "detail": "Advance Lost in Transcription / MDC prize commitment toward terminal outcome",
+      "founder_action_required": false,
+      "item": "opp_drivendata_lost_transcription_prize_001",
+      "kind": "external_commitment",
+      "material": true,
+      "source": "fixtures/classifications/live_020_reevaluation_030.json",
+      "stale": false,
+      "state": "WAITING_EXTERNAL_RESULT"
+    }
+  ],
+  "read_only": true,
+  "results_learning": [
+    {
+      "economic_consequence": "$0 settled revenue. Clicks/impressions/prizes are not revenue.",
+      "expected": "Named buyer with a current paid path that J could first-dollar.",
+      "id": "cwor_fdac_001",
+      "learning": "Worker returned a live municipal consulting RFP, not a first-dollar buyer J can truthfully serve now. Madison Metropolitan Sewerage District's AI Use and Governance Policy RFP is first-party and still open, but payment is UNKNOWN, the buyer seeks a qualified consulting firm for a six-month four-phase engagement, and 15 of 100 points require demonstrated municipal/utility AI-governance past work plus two references that J cannot truthfully claim. Insurance ($1M E&O, $1M Cyber, GL additional insur",
+      "observed": "CLOSE_PATH",
+      "resulting_decision_change": "CLOSE_PATH",
+      "source": "data/current_world_research/cwor_fdac_001.json"
+    },
+    {
+      "economic_consequence": "$0 settled revenue. Clicks/impressions/prizes are not revenue.",
+      "expected": "Named buyer, explicit money, pitchable now, inside capability envelope.",
+      "id": "cwor_fdac_002",
+      "learning": "Worker returned a live named buyer with proven $350 and a live pitch form, but J cannot truthfully fulfill the work. Percona pays for a first-hand practitioner post about MySQL/PostgreSQL/MongoDB/Percona stack production work. Durable founder-capability inventory shows websites, Next.js/Supabase catalog work, and dormant marketing assets \u2014 not first-hand Percona/database-ops production incidents. Pitching anyway would fabricate history. The program also forbids AI-generated content and screens w",
+      "observed": "CLOSE_PATH",
+      "resulting_decision_change": "CLOSE_PATH",
+      "source": "data/current_world_research/cwor_fdac_002.json"
+    },
+    {
+      "economic_consequence": "$0 settled revenue. Clicks/impressions/prizes are not revenue.",
+      "expected": "Named current project inside capability envelope with explicit money.",
+      "id": "cwor_fdac_003",
+      "learning": "Worker returned DataAnnotation coding-track contractor intake, not a concrete current paid project J can put an offer in front of now. DataAnnotation is a live labor platform with advertised coding rates ($50\u2013$100+/hr FAQ; $75\u2013$150+/hr on the Software Engineer page) and a PayPal payout mechanism, but there is no named current deliverable. The only immediate action is a 1\u20132 hour Starter Assessment that is not stated as paid (unpaid tests are rejected), can be taken only once, and cannot be prepar",
+      "observed": "CLOSE_PATH",
+      "resulting_decision_change": "CLOSE_PATH",
+      "source": "data/current_world_research/cwor_fdac_003.json"
+    },
+    {
+      "economic_consequence": "$0 settled revenue. Clicks/impressions/prizes are not revenue.",
+      "expected": "One strongest current named transaction surface after empty portfolio.",
+      "id": "cwor_portfolio_empty_origination_001",
+      "learning": "Worker returned a competitive Algora/GitHub bounty, not a customer contract, invoice, or procurement path. Escrow/pre-funding is UNKNOWN. No attempt on gyroflow/gyroflow#742 has been rewarded. Acceptance is maintainer-discretionary review, not objective payment-on-merge. Required work is a Rust/Qt Gyroflow lens-profile refactor plus a short demo video, which is not a proven J capability. No already-authorized external test exists. A founder comment to check funding is contact and does not leave ",
+      "observed": "CLOSE_PATH_AND_STOP_MODEL_SPEND",
+      "resulting_decision_change": "CLOSE_PATH_AND_STOP_MODEL_SPEND",
+      "source": "data/current_world_research/cwor_portfolio_empty_origination_001.json"
+    },
+    {
+      "economic_consequence": "$0 settled revenue. Clicks/impressions/prizes are not revenue.",
+      "expected": "Repeatable customer/payment mechanism, not a prize trap.",
+      "id": "cwor_economic_use_001",
+      "learning": "Worker returned a time-boxed audit contest, not a repeatable customer/payment path. Preferred invoice/contract surfaces were disqualified on worker evidence. AI-authored eligibility is CONFLICTED. Required work is a 137k-line security audit plus PoC in six days, which exceeds proven J capabilities. No already-authorized external test exists. Named-counterparty + final-specific-blocker exception is not proven, so another research run is inadmissible. Phase 5 is not incremented.",
+      "observed": "CLOSE_PATH_AND_STOP_MODEL_SPEND",
+      "resulting_decision_change": "CLOSE_PATH_AND_STOP_MODEL_SPEND",
+      "source": "data/current_world_research/cwor_economic_use_001.json"
+    },
+    {
+      "economic_consequence": "$0 settled revenue. Clicks/impressions/prizes are not revenue.",
+      "expected": "Buyer-facing Upwork attempt that could convert to paid work.",
+      "id": "opp_upwork_website_qa_onetime_audit_001",
+      "learning": "UNKNOWN",
+      "observed": "UPWORK_JOB_CLOSED_PROPOSAL_ARCHIVED_NO_INTERVIEW",
+      "resulting_decision_change": "UPWORK_JOB_CLOSED_PROPOSAL_ARCHIVED_NO_INTERVIEW",
+      "source": "fixtures/classifications/live_025_upwork_archived_closed_return_001.json"
+    },
+    {
+      "economic_consequence": "$0 settled revenue. Clicks/impressions/prizes are not revenue.",
+      "expected": "Founder recording package would unblock a bounded CALL-E submission.",
+      "id": "cand_live026_calle_your_code_is_calling_001",
+      "learning": "Existing CALL-E recording path failed live founder acceptance and is not a credible bounded submission path. Remaining work is founder recording plus public upload plus Devpost terms/submit. Expected prize value is UNKNOWN and is not repeatable customer demand. Closed by executive economic decision; no further spend or work on this path.",
+      "observed": "CALL_E_CLOSED_NO_GO",
+      "resulting_decision_change": "CALL_E_CLOSED_NO_GO",
+      "source": "fixtures/classifications/live_029_calle_close_001.json"
+    },
+    {
+      "economic_consequence": "$0 settled revenue. Amazon clicks not attributed to Google.",
+      "expected": "Owned BuckParts asset would show a current paid path with attributable demand.",
+      "id": "owned_asset_first_dollar_001",
+      "learning": "objective_constraint_dominates_local_monetization_task",
+      "observed": "GSC 0 clicks / 449 settled-28d impressions; Amazon 3 clicks, 0 ordered, $0.00 earnings.",
+      "resulting_decision_change": "investigate_distribution",
+      "source": "data/phase5/owned_asset_first_dollar_001.json"
+    }
+  ],
+  "schema_version": "j.founder_operating_picture.v1",
+  "what_changed": [
+    {
+      "detail": "Amazon: 3 clicks, 0 ordered, 0 shipped, $0.00 earnings, 0% conversion, dashboard last updated 2026-09-09. GSC settled through 2026-09-08: 0 clicks, impressions present. Not attributed to each other.",
+      "kind": "external_signal",
+      "title": "BuckParts Amazon Associates + GSC observations persisted",
+      "when": "2026-09-10T00:00:00+00:00"
+    },
+    {
+      "detail": "objective_constraint_dominates_local_monetization_task",
+      "kind": "belief_constraint_changed",
+      "title": "Constraint assessment after new channel evidence",
+      "when": "2026-09-11T01:30:02+00:00"
+    },
+    {
+      "detail": "Worker returned a competitive Algora/GitHub bounty, not a customer contract, invoice, or procurement path. Escrow/pre-funding is UNKNOWN. No attempt on gyroflow/gyroflow#742 has been rewarded. Acceptance is maintainer-discretionary review, not objective payment-on-merge. Required work is a Rust/Qt Gyroflow lens-profile refactor plus a short demo video, which is not a proven J capability. No already-authorized external test exists. A founder comment to check funding is contact and does not leave the path execution-ready. PORTFOLIO_EMPTY_ORIGINATION is already consumed, so another research run is inadmissible. CLOSE_PATH_AND_STOP_MODEL_SPEND is the only currently available forced choice.",
+      "kind": "killed",
+      "title": "Empty-portfolio origination closed",
+      "when": "2026-09-08T21:44:10+00:00"
+    },
+    {
+      "detail": "Prize path closed after live founder recording failed. Prize is not revenue.",
+      "kind": "killed",
+      "title": "CALL-E / AccessLine closed",
+      "when": "2026-09-08T18:51:00+00:00"
+    },
+    {
+      "detail": "CLOSE_PATH_AND_STOP_MODEL_SPEND",
+      "kind": "killed",
+      "title": "t21 path closed",
+      "when": "UNKNOWN"
+    },
+    {
+      "detail": "Worker returned a live municipal consulting RFP, not a first-dollar buyer J can truthfully serve now. Madison Metropolitan Sewerage District's AI Use and Governance Policy RFP is first-party and still open, but payment is UNKNOWN, the buyer seeks a qualified consulting firm for a six-month four-phase engagement, and 15 of 100 points require demonstrated municipal/utility AI-governance past work pl",
+      "kind": "killed",
+      "title": "First-dollar candidate closed: Madison Metropolitan Sewerage District \u2014 Comprehensive AI Use and Governance Policy RFP",
+      "when": "2026-09-08T22:03:00+00:00"
+    },
+    {
+      "detail": "Worker returned a live named buyer with proven $350 and a live pitch form, but J cannot truthfully fulfill the work. Percona pays for a first-hand practitioner post about MySQL/PostgreSQL/MongoDB/Percona stack production work. Durable founder-capability inventory shows websites, Next.js/Supabase catalog work, and dormant marketing assets \u2014 not first-hand Percona/database-ops production incidents. ",
+      "kind": "killed",
+      "title": "First-dollar candidate closed: Percona Community Writers Program \u2014 one commissioned technical blog post",
+      "when": "2026-09-08T22:28:21+00:00"
+    },
+    {
+      "detail": "Worker returned DataAnnotation coding-track contractor intake, not a concrete current paid project J can put an offer in front of now. DataAnnotation is a live labor platform with advertised coding rates ($50\u2013$100+/hr FAQ; $75\u2013$150+/hr on the Software Engineer page) and a PayPal payout mechanism, but there is no named current deliverable. The only immediate action is a 1\u20132 hour Starter Assessment ",
+      "kind": "killed",
+      "title": "First-dollar candidate closed: DataAnnotation \u2014 Coding track (Software Engineer / Full Stack Engineer)",
+      "when": "2026-09-08T23:06:40+00:00"
+    }
+  ]
+}
