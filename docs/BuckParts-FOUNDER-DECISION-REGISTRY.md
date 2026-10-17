@@ -46,6 +46,7 @@
 | `prohibited_actions_still_apply` | string[] | yes | Non-empty; typically copied from the decision packet snapshot. |
 | `codex_output_review_context_v1` | object | no | When present, records owner judgment for **`codex_output_review_packet_v1`** (digest/dashboard read model counts + digest correlation only). See subsection below. |
 | `batch_production_owner_review_context_v1` | object | no | When present, records owner judgment for **`batch_owner_screenshot_draft_packet_v1`** / batch owner approval checklist. See subsection below. |
+| `executive_recommendation_decision_priors` | string[] | no | Decision Priors Framework v1 (**INSTANTIATED_ZERO_AUTHORITY** — existence ≠ permission) — optional **labels only** that influenced the Executive recommendation. Catalog ids from `docs/BuckParts-DECISION-PRIORS-FRAMEWORK-CONTRACT-V1.md`. Retained on OAR / disagreement-shaped rows; no scoring, weighting, or behavior change. Any future non-zero Executive permission requires a fresh Evolution Gate authority-claim packet. |
 
 ### `codex_output_review_context_v1` (optional)
 
