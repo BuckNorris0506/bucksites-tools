@@ -134,6 +134,33 @@ export type SteeringCandidateInputV1 = {
   active: boolean;
 };
 
+/**
+ * Closed map: executable Work Queue items may activate an EXISTING source only.
+ * Unmapped work_ids are not candidates. This is not a second selector.
+ */
+const WORK_QUEUE_EXISTING_SOURCE_V1: Readonly<Record<string, CanonicalSteeringSourceV1>> = {
+  ap_model_first_evidence: "model_first",
+  ap_model_first_mapping_review: "model_first",
+};
+
+export function existingCanonicalSourceForWorkQueueItemV1(
+  work_id: string,
+): CanonicalSteeringSourceV1 | null {
+  return WORK_QUEUE_EXISTING_SOURCE_V1[work_id] ?? null;
+}
+
+export function workQueueItemMayBecomeCanonicalCandidateV1(args: {
+  work_id: string;
+  executable: boolean;
+  exact_command: string | null;
+}): boolean {
+  if (args.executable !== true) return false;
+  const cmd = (args.exact_command ?? "").trim();
+  if (!cmd) return false;
+  if (existingCanonicalSourceForWorkQueueItemV1(args.work_id) === null) return false;
+  return lookupDispatchAllowlistEntryV1(cmd) !== null;
+}
+
 function rankOf(source: CanonicalSteeringSourceV1): number {
   const i = CANONICAL_STEERING_PRECEDENCE_V1.indexOf(source);
   return i === -1 ? 999 : i;
