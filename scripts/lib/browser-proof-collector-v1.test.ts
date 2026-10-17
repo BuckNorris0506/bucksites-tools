@@ -16,6 +16,8 @@ import {
   rankBrowserProofCandidateV1,
   resolveForbiddenTokensV1,
   selectBestBrowserProofCandidateV1,
+  selectFollowOnProductUrlsFromHrefsV1,
+  isBrowserProofFollowSourceCaptureV1,
   type BrowserProofCaptureAttemptV1,
 } from "./browser-proof-collector-v1";
 
@@ -259,6 +261,7 @@ test("capture failure remains UNKNOWN and records attempt errors", () => {
 
 
   assert.equal(draft.overall_verdict, "UNKNOWN");
+  assert.equal(draft.capture_outcome, "TRANSIENT_NETWORK_FAILURE");
   assert.equal(draft.capture_attempts.length, 2);
   assert.ok(draft.capture_attempts.every((a) => a.success === false));
   assert.ok(draft.capture_attempts.every((a) => Boolean(a.error)));
@@ -326,6 +329,27 @@ test("capture attempt plan includes load, networkidle, desktop UA, and http2 mit
   assert.ok(plan.some((p) => p.launch_args.includes("--disable-http2")));
   assert.ok(plan.every((p) => p.wait_ms === 3000));
   assert.ok(plan.every((p) => p.timeout_ms === 60000));
+});
+
+test("default plan appends one bounded headed fallback after headless attempts", () => {
+  const plan = buildCaptureAttemptPlanV1();
+  assert.equal(plan.length, 6);
+  assert.ok(plan.slice(0, 5).every((p) => p.headed === false));
+  const fallback = plan[5];
+  assert.equal(fallback?.attempt_id, "a6_headed_load_desktop_chrome_ua_disable_http2");
+  assert.equal(fallback?.headed, true);
+  assert.equal(fallback?.wait_until, "load");
+  assert.ok(fallback?.launch_args.includes("--disable-http2"));
+});
+
+test("--headed plan does not add a second headed fallback", () => {
+  const plan = buildCaptureAttemptPlanV1({ headed: true });
+  assert.equal(plan.length, 5);
+  assert.ok(plan.every((p) => p.headed === true));
+  assert.equal(
+    plan.some((p) => p.attempt_id === "a6_headed_load_desktop_chrome_ua_disable_http2"),
+    false,
+  );
 });
 
 function candidateFixture(args: {
@@ -440,4 +464,136 @@ test("CLI accepts repeated --url and --collect-all", () => {
   assert.equal(parsed.urls.length, 3);
   assert.equal(parsed.collect_all, true);
   assert.equal(parsed.headed, true);
+  assert.equal("follow_search_to_product_links" in parsed, false);
+});
+
+test("Shark /products/ PDP is official manufacturer product_pdp", () => {
+  const facts = extractBrowserProofVisibleFactsV1({
+    candidateUrl:
+      "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE2FKBAS",
+    finalUrl:
+      "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE2FKBAS",
+    title: "Shark Air Purifier Anti-Allergen Filter",
+    h1: "Anti-Allergen Filter",
+    textSample: "HE2FKBAS $39.99 In Stock Add to Cart",
+    purchaseActions: ["Add to Cart"],
+    expectedToken: "SHARK-HEPA-HP200",
+    forbiddenTokens: [],
+    captureSucceeded: true,
+    navigationError: null,
+  });
+  assert.equal(facts.page_type, "product_pdp");
+  assert.equal(facts.source_class, "official_manufacturer_pdp");
+});
+
+test("infer page type and source class for SharkNinja html PDP vs search", () => {
+  assert.equal(
+    inferBrowserProofPageTypeV1({
+      finalUrl: "https://www.sharkninja.com/hp150-hepa-filter/HE15FKPET.html",
+      title: "HP150 HEPA Filter",
+      textSample: "HE15FKPET",
+    }),
+    "product_pdp",
+  );
+  assert.equal(
+    inferBrowserProofSourceClassV1({
+      finalUrl: "https://www.sharkninja.com/hp150-hepa-filter/HE15FKPET.html",
+      pageType: "product_pdp",
+    }),
+    "official_manufacturer_pdp",
+  );
+  assert.equal(
+    inferBrowserProofPageTypeV1({
+      finalUrl: "https://www.sharkninja.com/?q=HE2FKBAS",
+      title: "SharkNinja",
+      textSample: "Home",
+    }),
+    "search_page",
+  );
+});
+
+test("search-follow keeps same-host product hrefs, drops search/other hosts, caps at 3", () => {
+  const pageUrl = "https://www.sharkclean.com/collections/air-purifiers";
+  const selected = selectFollowOnProductUrlsFromHrefsV1({
+    pageUrl,
+    hrefs: [
+      "/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE2FKBAS",
+      "https://www.sharkclean.com/products/shark-air-purifier-with-true-hepa-zidHP201",
+      "https://www.sharkclean.com/search?q=HP200",
+      "https://www.amazon.com/dp/B0EXAMPLE",
+      "/products/a",
+      "/products/b",
+      "/products/c",
+    ],
+    maxFollow: 3,
+  });
+  assert.equal(selected.length, 3);
+  assert.ok(selected.every((u) => u.includes("sharkclean.com/products/")));
+  assert.ok(selected.every((u) => !u.includes("/search")));
+  assert.ok(!selected.some((u) => u.includes("amazon.com")));
+});
+
+test("search-follow across sharkclean→sharkninja prefers q= token PDPs and drops cookie-notice", () => {
+  const pageUrl = "https://www.sharkninja.com/?q=HE2FKBAS";
+  const selected = selectFollowOnProductUrlsFromHrefsV1({
+    pageUrl,
+    hrefs: [
+      "https://www.sharkninja.com/cookie-notice.html",
+      "https://www.sharkninja.com/navigator-vacuum/NV123.html",
+      "https://www.sharkninja.com/hp200-hepa-filter/HE2FKBAS.html",
+      "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE2FKBAS",
+      "https://www.amazon.com/dp/B0EXAMPLE",
+    ],
+    maxFollow: 3,
+  });
+  assert.equal(selected.length, 2);
+  assert.ok(selected.some((u) => u.includes("HE2FKBAS.html")));
+  assert.ok(selected.some((u) => u.includes("zidHE2FKBAS")));
+  assert.ok(!selected.some((u) => u.includes("cookie-notice")));
+  assert.ok(!selected.some((u) => u.includes("NV123")));
+  assert.ok(!selected.some((u) => u.includes("amazon.com")));
+});
+
+test("search-follow with catalog-token q= and no matching PDP hrefs follows nothing", () => {
+  const selected = selectFollowOnProductUrlsFromHrefsV1({
+    pageUrl: "https://www.sharkninja.com/?q=SHARK-HEPA-HP200",
+    hrefs: [
+      "https://www.sharkninja.com/navigator-vacuum/NV123.html",
+      "https://www.sharkclean.com/products/unrelated-filter-zidXXXX",
+    ],
+    maxFollow: 3,
+  });
+  assert.deepEqual(selected, []);
+});
+
+test("search-follow uses preferTokens when homepage stripped q=", () => {
+  const selected = selectFollowOnProductUrlsFromHrefsV1({
+    pageUrl: "https://www.sharkninja.com/",
+    hrefs: [
+      "https://www.sharkninja.com/navigator-vacuum/NV123.html",
+      "https://www.sharkninja.com/hp200-hepa-filter/HE2FKBAS.html",
+    ],
+    preferTokens: ["HE2FKBAS"],
+    maxFollow: 3,
+  });
+  assert.deepEqual(selected, ["https://www.sharkninja.com/hp200-hepa-filter/HE2FKBAS.html"]);
+});
+
+test("manufacturer search seeds that redirect to homepage remain follow sources", () => {
+  assert.equal(
+    isBrowserProofFollowSourceCaptureV1({
+      pageType: "unknown",
+      candidateUrl: "https://www.sharkclean.com/search?q=HE2FKBAS",
+      finalUrl: "https://www.sharkninja.com/",
+    }),
+    true,
+  );
+  assert.equal(
+    isBrowserProofFollowSourceCaptureV1({
+      pageType: "product_pdp",
+      candidateUrl: "https://www.sharkninja.com/hp200-hepa-filter/HE2FKBAS.html",
+      finalUrl: "https://www.sharkninja.com/hp200-hepa-filter/HE2FKBAS.html",
+    }),
+    false,
+  );
 });
