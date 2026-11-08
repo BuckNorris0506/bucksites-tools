@@ -17,14 +17,20 @@ import {
   buildTrackedPageSliceFromFilteredRows,
 } from "./lib/gsc-tracked-page-slices-v1";
 import {
+  GSC_QUERY_DEMAND_PAGE_SIZE,
+  GSC_QUERY_DEMAND_REPORTING_LAG_DAYS,
+  GSC_QUERY_DEMAND_SCHEMA,
   parseGscSearchAnalyticsArtifact,
   type GscArtifactTopEntry,
+  type GscQueryDemandV1,
   type GscSearchAnalyticsArtifact,
   type GscTrackedPageSliceV1,
 } from "@/lib/owner-dashboard/gsc-api-artifact";
 import { writeGscArtifactToSupabase } from "@/lib/owner-dashboard/gsc-durable-artifact-store";
 
 export const GSC_LOCAL_ARTIFACT_RELATIVE_PATH = "data/reports/buckparts-gsc-search-analytics.json";
+export const GSC_MAX_QUERY_PAGES = 8;
+export const GSC_QUERY_DEMAND_BYTE_BUDGET = 600_000;
 
 export function gscFetchRequestsLocalOnly(argv: readonly string[]): boolean {
   return argv.includes("--local-only");
@@ -124,11 +130,28 @@ function toDateIso(date: Date): string {
 }
 
 function buildDateRange(now = new Date()): { start_date: string; end_date: string } {
-  const lagDays = 3;
   const windowDays = 30;
-  const end = new Date(now.getTime() - lagDays * 86400000);
+  const end = new Date(now.getTime() - GSC_QUERY_DEMAND_REPORTING_LAG_DAYS * 86400000);
   const start = new Date(end.getTime() - (windowDays - 1) * 86400000);
   return { start_date: toDateIso(start), end_date: toDateIso(end) };
+}
+
+function mapSearchAnalyticsRows(raw: SearchConsoleApiRow[]): SearchAnalyticsRow[] {
+  return raw
+    .map((row) => {
+      const key = Array.isArray(row.keys) ? row.keys[0] : null;
+      if (typeof key !== "string" || key.length === 0) return null;
+      const impressions = asFiniteNumber(row.impressions);
+      const clicks = asFiniteNumber(row.clicks);
+      return {
+        key,
+        impressions,
+        clicks,
+        ctr: impressions > 0 ? clicks / impressions : ("UNKNOWN" as const),
+        average_position: typeof row.position === "number" && Number.isFinite(row.position) ? row.position : "UNKNOWN",
+      };
+    })
+    .filter((row): row is SearchAnalyticsRow => row !== null);
 }
 
 async function queryDimension(args: {
@@ -144,25 +167,82 @@ async function queryDimension(args: {
     startDate: args.dateRange.start_date,
     endDate: args.dateRange.end_date,
     dimensions: [args.dimension],
-    rowLimit: 250,
+    rowLimit: GSC_QUERY_DEMAND_PAGE_SIZE,
     fetchImpl: args.fetchImpl,
     startRow: 0,
   });
-  return rows
-    .map((row) => {
-      const key = Array.isArray(row.keys) ? row.keys[0] : null;
-      if (typeof key !== "string" || key.length === 0) return null;
-      const impressions = asFiniteNumber(row.impressions);
-      const clicks = asFiniteNumber(row.clicks);
-      return {
-        key,
-        impressions,
-        clicks,
-        ctr: impressions > 0 ? clicks / impressions : ("UNKNOWN" as const),
-        average_position: typeof row.position === "number" && Number.isFinite(row.position) ? row.position : "UNKNOWN",
-      };
-    })
-    .filter((row): row is SearchAnalyticsRow => row !== null);
+  return mapSearchAnalyticsRows(rows);
+}
+
+export async function collectBoundedQueryDemand(args: {
+  accessToken: string;
+  property: string;
+  dateRange: { start_date: string; end_date: string };
+  fetchImpl?: typeof fetch;
+  maxPages?: number;
+  byteBudget?: number;
+}): Promise<GscQueryDemandV1> {
+  const maxPages = args.maxPages ?? GSC_MAX_QUERY_PAGES;
+  const byteBudget = args.byteBudget ?? GSC_QUERY_DEMAND_BYTE_BUDGET;
+  const rows: SearchAnalyticsRow[] = [];
+  let pagesFetched = 0;
+  let completeness: GscQueryDemandV1["completeness"] = "COMPLETE";
+  let partialReason: string | null = null;
+
+  while (pagesFetched < maxPages) {
+    const raw = await querySearchAnalytics({
+      accessToken: args.accessToken,
+      property: args.property,
+      startDate: args.dateRange.start_date,
+      endDate: args.dateRange.end_date,
+      dimensions: ["query"],
+      rowLimit: GSC_QUERY_DEMAND_PAGE_SIZE,
+      startRow: pagesFetched * GSC_QUERY_DEMAND_PAGE_SIZE,
+      fetchImpl: args.fetchImpl,
+    });
+    pagesFetched += 1;
+    const mapped = mapSearchAnalyticsRows(raw);
+    const candidate = rows.concat(mapped);
+    if (Buffer.byteLength(JSON.stringify(candidate), "utf8") > byteBudget) {
+      for (const row of mapped) {
+        const next = rows.concat([row]);
+        if (Buffer.byteLength(JSON.stringify(next), "utf8") > byteBudget) break;
+        rows.push(row);
+      }
+      completeness = "PARTIAL";
+      partialReason = "byte_budget";
+      break;
+    }
+    rows.push(...mapped);
+    if (raw.length < GSC_QUERY_DEMAND_PAGE_SIZE) {
+      completeness = "COMPLETE";
+      partialReason = null;
+      break;
+    }
+    if (pagesFetched >= maxPages) {
+      completeness = "PARTIAL";
+      partialReason = "row_budget";
+      break;
+    }
+  }
+
+  return {
+    schema_version: GSC_QUERY_DEMAND_SCHEMA,
+    dimension: "query",
+    property: args.property,
+    date_range: args.dateRange,
+    reporting_lag_days: GSC_QUERY_DEMAND_REPORTING_LAG_DAYS,
+    page_size: GSC_QUERY_DEMAND_PAGE_SIZE,
+    pages_fetched: pagesFetched,
+    start_row: 0,
+    returned_row_count: rows.length,
+    completeness,
+    partial_reason: partialReason,
+    authorizes_publication: false,
+    authorizes_action: false,
+    opportunity_instruction: "NONE",
+    rows,
+  };
 }
 
 function toTopEntries(rows: SearchAnalyticsRow[], sortBy: "clicks" | "impressions"): GscArtifactTopEntry[] {
@@ -299,6 +379,8 @@ export async function buildGscSearchAnalyticsArtifact(args?: {
   now?: Date;
   env?: Record<string, string | undefined>;
   fetchImpl?: typeof fetch;
+  maxQueryPages?: number;
+  queryDemandByteBudget?: number;
 }): Promise<GscSearchAnalyticsArtifact> {
   const dateRange = buildDateRange(args?.now);
   const client = createSearchConsoleClientFromEnv({
@@ -318,19 +400,20 @@ export async function buildGscSearchAnalyticsArtifact(args?: {
 
   try {
     const accessToken = await client.getAccessToken();
-    const [totals, queryRows, pageRows, tracked_page_slices_v1] = await Promise.all([
+    const [totals, queryDemand, pageRows, tracked_page_slices_v1] = await Promise.all([
       queryTotals({
         accessToken,
         property: client.property,
         dateRange,
         fetchImpl: args?.fetchImpl,
       }),
-      queryDimension({
+      collectBoundedQueryDemand({
         accessToken,
         property: client.property,
         dateRange,
-        dimension: "query",
         fetchImpl: args?.fetchImpl,
+        maxPages: args?.maxQueryPages,
+        byteBudget: args?.queryDemandByteBudget,
       }),
       queryDimension({
         accessToken,
@@ -347,6 +430,7 @@ export async function buildGscSearchAnalyticsArtifact(args?: {
         fetchImpl: args?.fetchImpl,
       }),
     ]);
+    const queryRows = queryDemand.rows;
     const averageCtr =
       totals.total_impressions > 0 ? totals.total_clicks / totals.total_impressions : ("UNKNOWN" as const);
     const topQueriesByClicks = toTopEntries(queryRows, "clicks");
@@ -372,14 +456,21 @@ export async function buildGscSearchAnalyticsArtifact(args?: {
       top_pages_by_impressions: topPagesByImpressions.length > 0 ? topPagesByImpressions : "UNKNOWN",
       high_impression_low_click_opportunities: opportunities,
       tracked_page_slices_v1,
+      query_demand_v1: queryDemand,
       proven_facts: [
         `Fetched Search Analytics via readonly API auth_mode=${client.auth_mode}.`,
         `Property=${client.property}.`,
         `Date range=${dateRange.start_date}..${dateRange.end_date}.`,
+        `Reporting lag days=${GSC_QUERY_DEMAND_REPORTING_LAG_DAYS}.`,
         `Totals clicks=${totals.total_clicks}, impressions=${totals.total_impressions}.`,
+        `Query demand rows=${queryDemand.returned_row_count}; pages=${queryDemand.pages_fetched}; completeness=${queryDemand.completeness}.`,
+        "Low CTR is a discovery signal, not proof that page content is inadequate.",
         `Tracked exact-page slices=${tracked_page_slices_v1.length} (AP homeowner pilots).`,
       ],
-      unknown_facts: [],
+      unknown_facts:
+        queryDemand.completeness === "PARTIAL"
+          ? [`Query demand is partial: ${queryDemand.partial_reason}.`]
+          : [],
       provenance: {
         source: "google_search_console_api",
         scope: "https://www.googleapis.com/auth/webmasters.readonly",

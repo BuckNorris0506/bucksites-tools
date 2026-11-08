@@ -1,3 +1,27 @@
+export const GSC_QUERY_DEMAND_SCHEMA = "buckparts.gsc.query_demand.v1";
+export const GSC_QUERY_DEMAND_PAGE_SIZE = 250;
+export const GSC_QUERY_DEMAND_REPORTING_LAG_DAYS = 3;
+
+export type GscQueryDemandCompleteness = "COMPLETE" | "PARTIAL" | "UNKNOWN";
+
+export type GscQueryDemandV1 = {
+  schema_version: typeof GSC_QUERY_DEMAND_SCHEMA;
+  dimension: "query";
+  property: string;
+  date_range: GscArtifactDateRange;
+  reporting_lag_days: number;
+  page_size: number;
+  pages_fetched: number;
+  start_row: 0;
+  returned_row_count: number;
+  completeness: GscQueryDemandCompleteness;
+  partial_reason: string | null;
+  authorizes_publication: false;
+  authorizes_action: false;
+  opportunity_instruction: "NONE";
+  rows: GscArtifactTopEntry[];
+};
+
 export type GscArtifactStatus = "OK" | "UNKNOWN_CONFIG" | "UNKNOWN_API_ERROR";
 
 export type GscArtifactDateRange = {
@@ -46,6 +70,12 @@ export type GscSearchAnalyticsArtifact = {
   high_impression_low_click_opportunities: GscArtifactTopEntry[] | "UNKNOWN";
   /** Exact-page demand slices for tracked URLs (optional on older artifacts). */
   tracked_page_slices_v1?: GscTrackedPageSliceV1[];
+  /**
+   * Query rows retained for a later opportunity decision.
+   * Absent on historical artifacts. Absence is UNKNOWN, not COMPLETE.
+   * This evidence does not authorize a page.
+   */
+  query_demand_v1?: GscQueryDemandV1;
   proven_facts: string[];
   unknown_facts: string[];
   provenance: {
@@ -112,6 +142,63 @@ function isTrackedPageSlice(value: unknown): value is GscTrackedPageSliceV1 {
   return true;
 }
 
+function isDemandRow(value: unknown): value is GscArtifactTopEntry {
+  if (!isTopEntry(value)) return false;
+  return value.average_position === "UNKNOWN" || (typeof value.average_position === "number" && Number.isFinite(value.average_position));
+}
+
+function isQueryDemandV1(value: unknown, artifact: Record<string, unknown>): value is GscQueryDemandV1 {
+  if (!isRecord(value)) return false;
+  if (value.schema_version !== GSC_QUERY_DEMAND_SCHEMA) return false;
+  if (value.dimension !== "query") return false;
+  if (typeof value.property !== "string" || value.property.length === 0) return false;
+  if (typeof artifact.property === "string" && artifact.property !== "UNKNOWN" && value.property !== artifact.property) {
+    return false;
+  }
+  if (
+    !isRecord(value.date_range) ||
+    typeof value.date_range.start_date !== "string" ||
+    typeof value.date_range.end_date !== "string" ||
+    value.date_range.start_date.length === 0 ||
+    value.date_range.end_date.length === 0
+  ) {
+    return false;
+  }
+  if (isRecord(artifact.date_range)) {
+    if (value.date_range.start_date !== artifact.date_range.start_date) return false;
+    if (value.date_range.end_date !== artifact.date_range.end_date) return false;
+  }
+  if (value.reporting_lag_days !== GSC_QUERY_DEMAND_REPORTING_LAG_DAYS) return false;
+  if (value.page_size !== GSC_QUERY_DEMAND_PAGE_SIZE) return false;
+  if (typeof value.pages_fetched !== "number" || !Number.isInteger(value.pages_fetched) || value.pages_fetched < 0) {
+    return false;
+  }
+  if (value.start_row !== 0) return false;
+  if (!Array.isArray(value.rows) || !value.rows.every(isDemandRow)) return false;
+  if (value.returned_row_count !== value.rows.length) return false;
+  if (value.authorizes_publication !== false || value.authorizes_action !== false) return false;
+  if (value.opportunity_instruction !== "NONE") return false;
+  if (value.completeness === "COMPLETE") {
+    return value.partial_reason === null && value.pages_fetched >= 1;
+  }
+  if (value.completeness === "PARTIAL") {
+    return typeof value.partial_reason === "string" && value.partial_reason.length > 0 && value.pages_fetched >= 1;
+  }
+  if (value.completeness === "UNKNOWN") {
+    return value.partial_reason === null && value.rows.length === 0 && value.pages_fetched === 0;
+  }
+  return false;
+}
+
+/** Missing query evidence is UNKNOWN. It is not a complete observation. */
+export function queryDemandCompleteness(
+  artifact: { query_demand_v1?: { completeness?: string } | undefined },
+): GscQueryDemandCompleteness {
+  const completeness = artifact.query_demand_v1?.completeness;
+  if (completeness === "COMPLETE" || completeness === "PARTIAL") return completeness;
+  return "UNKNOWN";
+}
+
 function isTrackedPageSlices(value: unknown): value is GscTrackedPageSliceV1[] | undefined {
   if (value === undefined) return true;
   if (!Array.isArray(value)) return false;
@@ -167,6 +254,9 @@ export function parseGscSearchAnalyticsArtifact(
   }
   if (!isTrackedPageSlices(parsed.tracked_page_slices_v1)) {
     return { ok: false, reason: "Artifact tracked_page_slices_v1 is invalid." };
+  }
+  if ("query_demand_v1" in parsed && !isQueryDemandV1(parsed.query_demand_v1, parsed)) {
+    return { ok: false, reason: "Artifact query_demand_v1 is invalid." };
   }
   if (!Array.isArray(parsed.proven_facts) || !parsed.proven_facts.every((v) => typeof v === "string")) {
     return { ok: false, reason: "Artifact proven_facts is invalid." };

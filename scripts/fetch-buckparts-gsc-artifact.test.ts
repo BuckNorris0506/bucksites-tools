@@ -4,8 +4,10 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 
+import { queryDemandCompleteness } from "@/lib/owner-dashboard/gsc-api-artifact";
 import {
   GscLocalOnlyCollectionError,
+  GSC_QUERY_DEMAND_BYTE_BUDGET,
   buildGscSearchAnalyticsArtifact,
   buildHighImpressionLowClickOpportunities,
   gscFetchRequestsLocalOnly,
@@ -616,4 +618,142 @@ test("local-only zero-row Search Console response is a successful observation", 
   } finally {
     fixture.cleanup();
   }
+});
+
+const DEMAND_ENV = {
+  GSC_PROPERTY_SITE_URL: "sc-domain:buckparts.com",
+  GSC_OAUTH_CLIENT_ID: "client-id",
+  GSC_OAUTH_CLIENT_SECRET: "secret",
+  GSC_OAUTH_REFRESH_TOKEN: "refresh",
+};
+
+function queryPageFetch(pages: Record<number, Array<{ key: string; impressions: number; clicks: number; position: number }>>): typeof fetch {
+  return (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    if (url.includes("oauth2.googleapis.com/token")) return tokenResponse();
+    const body = init?.body ? JSON.parse(String(init.body)) : {};
+    if (body.dimensionFilterGroups) {
+      return { ok: true, status: 200, json: async () => ({ rows: [] }), text: async () => "" } as Response;
+    }
+    if (Array.isArray(body.dimensions) && body.dimensions[0] === "query") {
+      const startRow = Number(body.startRow ?? 0);
+      const rows = pages[startRow] ?? [];
+      return { ok: true, status: 200, json: async () => ({ rows: rows.map((row) => ({ keys: [row.key], ...row })) }), text: async () => "" } as Response;
+    }
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({ rows: [{ clicks: 1, impressions: 10, position: 4 }] }),
+      text: async () => "",
+    } as Response;
+  }) as typeof fetch;
+}
+
+test("query demand pages until a short page and keeps every returned query", async () => {
+  const fullPage = Array.from({ length: 250 }, (_, index) => ({
+    key: `query-${index}`,
+    impressions: 10 + index,
+    clicks: index % 3,
+    position: 8,
+  }));
+  const artifact = await buildGscSearchAnalyticsArtifact({
+    now: new Date("2026-06-10T12:00:00.000Z"),
+    env: DEMAND_ENV,
+    maxQueryPages: 4,
+    fetchImpl: queryPageFetch({
+      0: fullPage,
+      250: [
+        { key: "query-last", impressions: 40, clicks: 0, position: 19 },
+        { key: "query-last-2", impressions: 12, clicks: 1, position: 6 },
+      ],
+    }),
+  });
+  assert.equal(artifact.status, "OK");
+  assert.equal(artifact.query_demand_v1?.completeness, "COMPLETE");
+  assert.equal(artifact.query_demand_v1?.pages_fetched, 2);
+  assert.equal(artifact.query_demand_v1?.returned_row_count, 252);
+  assert.equal(artifact.query_demand_v1?.rows.length, 252);
+  assert.equal(artifact.query_demand_v1?.reporting_lag_days, 3);
+  assert.deepEqual(artifact.query_demand_v1?.date_range, {
+    start_date: "2026-05-09",
+    end_date: "2026-06-07",
+  });
+  assert.equal(artifact.query_demand_v1?.authorizes_publication, false);
+  assert.equal(artifact.query_demand_v1?.opportunity_instruction, "NONE");
+  assert.equal(artifact.top_queries_by_impressions === "UNKNOWN", false);
+  if (artifact.top_queries_by_impressions !== "UNKNOWN") {
+    assert.equal(artifact.top_queries_by_impressions.length, 10);
+  }
+  assert.equal(queryDemandCompleteness(artifact), "COMPLETE");
+});
+
+test("a full final page is partial rather than a silent truncation", async () => {
+  const fullPage = Array.from({ length: 250 }, (_, index) => ({
+    key: `capped-${index}`,
+    impressions: 5,
+    clicks: 0,
+    position: 11,
+  }));
+  const artifact = await buildGscSearchAnalyticsArtifact({
+    now: new Date("2026-06-10T12:00:00.000Z"),
+    env: DEMAND_ENV,
+    maxQueryPages: 1,
+    fetchImpl: queryPageFetch({ 0: fullPage, 250: [{ key: "unfetched", impressions: 99, clicks: 0, position: 3 }] }),
+  });
+  assert.equal(artifact.query_demand_v1?.completeness, "PARTIAL");
+  assert.equal(artifact.query_demand_v1?.partial_reason, "row_budget");
+  assert.equal(artifact.query_demand_v1?.returned_row_count, 250);
+  assert.equal(artifact.query_demand_v1?.pages_fetched, 1);
+  assert.equal(artifact.unknown_facts.some((fact) => fact.includes("row_budget")), true);
+  assert.equal(artifact.query_demand_v1?.rows.some((row) => row.key === "unfetched"), false);
+});
+
+test("crossing the byte budget keeps a partial prefix", async () => {
+  const artifact = await buildGscSearchAnalyticsArtifact({
+    now: new Date("2026-06-10T12:00:00.000Z"),
+    env: DEMAND_ENV,
+    queryDemandByteBudget: 80,
+    fetchImpl: queryPageFetch({
+      0: [
+        { key: "kept-query", impressions: 20, clicks: 1, position: 4 },
+        { key: "dropped-because-the-serialized-row-does-not-fit", impressions: 20, clicks: 1, position: 5 },
+      ],
+    }),
+  });
+  assert.equal(artifact.query_demand_v1?.completeness, "PARTIAL");
+  assert.equal(artifact.query_demand_v1?.partial_reason, "byte_budget");
+  assert.equal(artifact.query_demand_v1?.returned_row_count, artifact.query_demand_v1?.rows.length);
+  assert.ok((artifact.query_demand_v1?.returned_row_count ?? 0) < 2);
+});
+
+test("a later query page error fails closed instead of looking complete", async () => {
+  const fullPage = Array.from({ length: 250 }, (_, index) => ({
+    key: `page-${index}`,
+    impressions: 3,
+    clicks: 0,
+    position: 10,
+  }));
+  const artifact = await buildGscSearchAnalyticsArtifact({
+    now: new Date("2026-06-10T12:00:00.000Z"),
+    env: DEMAND_ENV,
+    fetchImpl: (async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url.includes("oauth2.googleapis.com/token")) return tokenResponse();
+      const body = init?.body ? JSON.parse(String(init.body)) : {};
+      if (Array.isArray(body.dimensions) && body.dimensions[0] === "query" && Number(body.startRow ?? 0) > 0) {
+        return { ok: false, status: 500, json: async () => ({ error: { code: 500, message: "backend" } }), text: async () => "{\"error\":{\"code\":500}}" } as Response;
+      }
+      if (Array.isArray(body.dimensions) && body.dimensions[0] === "query") {
+        return { ok: true, status: 200, json: async () => ({ rows: fullPage.map((row) => ({ keys: [row.key], ...row })) }), text: async () => "" } as Response;
+      }
+      return { ok: true, status: 200, json: async () => ({ rows: [] }), text: async () => "" } as Response;
+    }) as typeof fetch,
+  });
+  assert.equal(artifact.status, "UNKNOWN_API_ERROR");
+  assert.equal(artifact.query_demand_v1, undefined);
+  assert.equal(queryDemandCompleteness(artifact), "UNKNOWN");
+});
+
+test("the retained query evidence stays under the artifact byte ceiling", () => {
+  assert.ok(GSC_QUERY_DEMAND_BYTE_BUDGET < 1_048_576);
 });

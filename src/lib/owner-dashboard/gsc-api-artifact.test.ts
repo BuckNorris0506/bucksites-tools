@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { parseGscSearchAnalyticsArtifact } from "@/lib/owner-dashboard/gsc-api-artifact";
+import {
+  parseGscSearchAnalyticsArtifact,
+  queryDemandCompleteness,
+} from "@/lib/owner-dashboard/gsc-api-artifact";
 
 describe("gsc api artifact parser", () => {
   it("parses valid normalized artifact", () => {
@@ -115,6 +118,97 @@ describe("gsc api artifact parser", () => {
     assert.equal(parsed.ok, true);
     if (parsed.ok) {
       assert.equal(parsed.artifact.tracked_page_slices_v1, undefined);
+      assert.equal(queryDemandCompleteness(parsed.artifact), "UNKNOWN");
     }
+  });
+
+  it("rejects a complete claim whose row count does not match", () => {
+    const parsed = parseGscSearchAnalyticsArtifact(
+      JSON.stringify({
+        status: "OK",
+        fetched_at: "2026-05-08T14:00:00.000Z",
+        property: "sc-domain:buckparts.com",
+        date_range: { start_date: "2026-04-05", end_date: "2026-05-04" },
+        total_clicks: 1,
+        total_impressions: 10,
+        average_ctr: 0.1,
+        average_position: 4,
+        top_queries_by_clicks: "UNKNOWN",
+        top_queries_by_impressions: "UNKNOWN",
+        top_pages_by_clicks: "UNKNOWN",
+        top_pages_by_impressions: "UNKNOWN",
+        high_impression_low_click_opportunities: "UNKNOWN",
+        query_demand_v1: {
+          schema_version: "buckparts.gsc.query_demand.v1",
+          dimension: "query",
+          property: "sc-domain:buckparts.com",
+          date_range: { start_date: "2026-04-05", end_date: "2026-05-04" },
+          reporting_lag_days: 3,
+          page_size: 250,
+          pages_fetched: 1,
+          start_row: 0,
+          returned_row_count: 2,
+          completeness: "COMPLETE",
+          partial_reason: null,
+          authorizes_publication: false,
+          authorizes_action: false,
+          opportunity_instruction: "NONE",
+          rows: [{ key: "only-one", impressions: 10, clicks: 1, ctr: 0.1, average_position: 4 }],
+        },
+        proven_facts: ["ok"],
+        unknown_facts: [],
+        provenance: {
+          source: "google_search_console_api",
+          scope: "https://www.googleapis.com/auth/webmasters.readonly",
+          writer: "scripts/fetch-buckparts-gsc-artifact.ts",
+        },
+      }),
+    );
+    assert.equal(parsed.ok, false);
+  });
+
+  it("rejects query evidence that authorizes publication", () => {
+    const parsed = parseGscSearchAnalyticsArtifact(
+      JSON.stringify({
+        status: "OK",
+        fetched_at: "2026-05-08T14:00:00.000Z",
+        property: "sc-domain:buckparts.com",
+        date_range: { start_date: "2026-04-05", end_date: "2026-05-04" },
+        total_clicks: 1,
+        total_impressions: 10,
+        average_ctr: 0.1,
+        average_position: 4,
+        top_queries_by_clicks: "UNKNOWN",
+        top_queries_by_impressions: "UNKNOWN",
+        top_pages_by_clicks: "UNKNOWN",
+        top_pages_by_impressions: "UNKNOWN",
+        high_impression_low_click_opportunities: "UNKNOWN",
+        query_demand_v1: {
+          schema_version: "buckparts.gsc.query_demand.v1",
+          dimension: "query",
+          property: "sc-domain:buckparts.com",
+          date_range: { start_date: "2026-04-05", end_date: "2026-05-04" },
+          reporting_lag_days: 3,
+          page_size: 250,
+          pages_fetched: 1,
+          start_row: 0,
+          returned_row_count: 0,
+          completeness: "COMPLETE",
+          partial_reason: null,
+          authorizes_publication: true,
+          authorizes_action: false,
+          opportunity_instruction: "NONE",
+          rows: [],
+        },
+        proven_facts: ["ok"],
+        unknown_facts: [],
+        provenance: {
+          source: "google_search_console_api",
+          scope: "https://www.googleapis.com/auth/webmasters.readonly",
+          writer: "scripts/fetch-buckparts-gsc-artifact.ts",
+        },
+      }),
+    );
+    assert.equal(parsed.ok, false);
   });
 });
