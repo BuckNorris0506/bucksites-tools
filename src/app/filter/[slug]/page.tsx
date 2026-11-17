@@ -9,6 +9,10 @@ import {
   VisualReplacementMatchCard,
 } from "@/components/trust/VisualReplacementMatchCard";
 import { FridgeWinnerFamilyRail } from "@/components/fridge/FridgeWinnerFamilyRail";
+import {
+  lt1000pSpellingAliases,
+  FilterPdpLt1000pDecisionSection,
+} from "@/components/fridge/FilterPdpLt1000pDecisionSection";
 import { FilterPdp4396710IdentitySection } from "@/components/fridge/FilterPdp4396710IdentitySection";
 import { FilterPdpCompatibleModelsSection } from "@/components/fridge/FilterPdpCompatibleModelsSection";
 import { FilterPdpLegacySuccessorSection } from "@/components/fridge/FilterPdpLegacySuccessorSection";
@@ -157,7 +161,8 @@ export default async function FilterPage({ params, searchParams }: Props) {
     buyerPathShowsStoreButtons: trustSummary.buyer_path_state !== "suppress_buy",
   });
 
-  const publicNotes = publicFacingRefrigeratorFilterNotes(filter.notes);
+  const isLt1000p = filter.slug === "lt1000p";
+  const publicNotes = isLt1000p ? null : publicFacingRefrigeratorFilterNotes(filter.notes);
   const usefulFilterIds = await loadRefrigeratorUsefulFilterIds();
   const filterPageState = classifyPageState({
     isIndexable: pdpSafety.prefer_noindex ? false : usefulFilterIds.has(filter.id),
@@ -218,7 +223,7 @@ export default async function FilterPage({ params, searchParams }: Props) {
           brandSlug={filter.brand.slug}
           oemPartNumber={filter.oem_part_number}
           productName={filter.name}
-          aliases={filter.also_known_as}
+          aliases={isLt1000p ? lt1000pSpellingAliases(filter.also_known_as) : filter.also_known_as}
           intervalLabel={interval ?? undefined}
           compatibleModelCount={pdpSafety.display_models_count}
           filterSlug={filter.slug}
@@ -227,6 +232,13 @@ export default async function FilterPage({ params, searchParams }: Props) {
             ...filterTelemetryBase,
           }}
         />
+
+        {isLt1000p ? (
+          <FilterPdpLt1000pDecisionSection
+            compatibleModelCount={pdpSafety.display_models_count}
+            buyingOptionsShown={buyingOptionsShown}
+          />
+        ) : null}
 
         <FilterPdp4396710IdentitySection filterSlug={filter.slug} />
 
@@ -269,12 +281,14 @@ export default async function FilterPage({ params, searchParams }: Props) {
           </div>
         </div>
 
-        <FilterPdpTrustDecisionSection
-          filterSlug={filter.slug}
-          oemPartNumber={filter.oem_part_number}
-          compatibleModelCount={pdpSafety.display_models_count}
-          buyingOptionsShown={buyingOptionsShown}
-        />
+        {!isLt1000p ? (
+          <FilterPdpTrustDecisionSection
+            filterSlug={filter.slug}
+            oemPartNumber={filter.oem_part_number}
+            compatibleModelCount={pdpSafety.display_models_count}
+            buyingOptionsShown={buyingOptionsShown}
+          />
+        ) : null}
 
         <FilterPdpRepoEvidenceSection
           repoEvidencePaths={repoEvidencePaths}
