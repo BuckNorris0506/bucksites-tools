@@ -1,40 +1,20 @@
-import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import test from "node:test";
-import { createElement } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
-import { FilterPdpTrustDecisionSection } from "./FilterPdpTrustDecisionSection";
-import { lt1000pSpellingAliases, FilterPdpLt1000pDecisionSection } from "./FilterPdpLt1000pDecisionSection";
-
-test("LT1000P distinguishes original, marketed replacement and unresolved interchangeability without buying authority", () => {
-  const html = renderToStaticMarkup(createElement(FilterPdpLt1000pDecisionSection, { compatibleModelCount: 0, buyingOptionsShown: false }));
-  const listing = JSON.parse(readFileSync("data/evidence/amazon-lt1000p-live-outcome.2026-05-03.json", "utf8"));
-  const manual = JSON.parse(readFileSync("data/manual-evidence/refrigerator/lg-lfxc22596s.json", "utf8"));
-  assert.equal(manual.operator_reviewed, true);
-  assert.ok(html.includes(manual.source_url));
-  assert.match(listing.committed_live_row.browser_truth_notes, /Aftermarket Waterdrop compatible replacement for LT1000P.*not LG OEM/);
-  assert.match(html, /has not established verified interchangeability/);
-  assert.match(html, /not an LG-made filter/);
-  assert.match(html, /does not resolve a model-fit warning/);
-  assert.ok(!html.includes('/go/'));
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {createElement} from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
+import {FilterPdpLt1000pDecisionSection} from './FilterPdpLt1000pDecisionSection';
+import {filterOfficialReferenceRetailerLinks, filterRealBuyRetailerLinks} from '@/lib/retailers/launch-buy-links';
+import {isAffiliateUrlSafeForGoRedirect} from '@/lib/retailers/go-redirect-gate';
+import row from '../../../data/evidence/lg-lt1000p-official-reference.2026-11-18.json';
+test('exact LG reference passes without buying or redirect authority',()=>{
+ assert.equal(filterOfficialReferenceRetailerLinks([row]).length,1);
+ assert.equal(filterRealBuyRetailerLinks([row]).length,0);
+ assert.equal(isAffiliateUrlSafeForGoRedirect(row.retailer_key,row.affiliate_url,row.browser_truth_classification),false);
+ for(const affiliate_url of [row.affiliate_url+'?tag=x',row.affiliate_url+'/',row.affiliate_url.replace('lt1000p','lt1000pc'), 'https://www.lg.com/search?q=lt1000p','https://www.lg.com/us/appliances-accessories/other','https://www.lg.com.evil.test/product.html']) assert.equal(filterOfficialReferenceRetailerLinks([{...row,affiliate_url}]).length,0);
+ for(const override of [{browser_truth_classification:'direct_buyable'},{browser_truth_notes:''},{browser_truth_checked_at:''},{retailer_key:'shark-official'}]) assert.equal(filterOfficialReferenceRetailerLinks([{...row,...override}]).length,0);
 });
-
-test("LT1000P keeps search spellings without promoting other LG codes", () => {
-  const aliases = ["LT1000P", "LT 1000 P", "LG LT1000", "LT-1000-P"];
-  assert.deepEqual(lt1000pSpellingAliases([...aliases, "LT1000PC", "ADQ74793501", "ADQ74793502", "MDJ64844601"]), aliases);
-});
-
-test("LT1000P preserves universal guidance for both model and buying states", () => {
-  for (const compatibleModelCount of [0, 2]) {
-    for (const buyingOptionsShown of [false, true]) {
-      const html = renderToStaticMarkup(createElement(FilterPdpLt1000pDecisionSection, { compatibleModelCount, buyingOptionsShown }));
-      const universal = renderToStaticMarkup(createElement(FilterPdpTrustDecisionSection, {
-        filterSlug: "lt1000p", oemPartNumber: "LT1000P", compatibleModelCount, buyingOptionsShown,
-      }));
-      assert.ok(html.includes(universal));
-      for (const heading of ["What to compare", "What is uncertain", "Buying options", "What to avoid"]) {
-        assert.ok(html.includes(heading));
-      }
-    }
-  }
+test('final homeowner content and collapsed support',()=>{
+ const html=renderToStaticMarkup(createElement(FilterPdpLt1000pDecisionSection,{compatibleModelCount:0,buyingOptionsShown:false}));
+ for(const text of ['LG LT1000P water filter','Confirmed: LG LFXC22596S','ADQ74793501','ADQ74793502, MDJ64844601, LT1000PC','$54.99','Notify Me / Find a Retailer',row.affiliate_url]) assert.ok(html.includes(text));
+ assert.ok(!html.includes('/go/'));assert.ok(!/<details[^>]* open/.test(html));
 });

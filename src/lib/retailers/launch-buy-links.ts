@@ -771,7 +771,7 @@ export function selectBestVerifiedBuyLink<T extends WinnerSelectableBuyLink>(
 }
 
 /** Official manufacturer storefront keys eligible for non-buy reference links (narrow allowlist). */
-export const OFFICIAL_REFERENCE_RETAILER_KEYS = new Set(["shark-official"]);
+export const OFFICIAL_REFERENCE_RETAILER_KEYS = new Set(["shark-official", "lg-lt1000p-official"]);
 
 export type OfficialReferenceRetailerLink = {
   retailer_key?: string | null;
@@ -797,6 +797,9 @@ export function isOfficialReferencePdpUrl(url: string): boolean {
   if (isKnownBrokenUrl(url)) return false;
   if (isManufacturerSiteSearchUrl(url)) return false;
 
+  if (u.hostname === "www.lg.com" || u.hostname.endsWith(".lg.com") || u.hostname === "lg.com") {
+    return url === "https://www.lg.com/us/appliances-accessories/lg-lt1000p-refrigerator-water-filter";
+  }
   const path = u.pathname.toLowerCase();
   if (isSerpStylePath(path) && hasSearchIntentQuery(u)) return false;
 
@@ -835,6 +838,8 @@ export function filterOfficialReferenceRetailerLinks<
     if (!key || !OFFICIAL_REFERENCE_RETAILER_KEYS.has(key)) return false;
 
     const url = link.affiliate_url?.trim() ?? "";
+    const lgUrl = "https://www.lg.com/us/appliances-accessories/lg-lt1000p-refrigerator-water-filter";
+    if ((key === "lg-lt1000p-official") !== (url === lgUrl)) return false;
     if (!url || !isOfficialReferencePdpUrl(url)) return false;
 
     if (!hasOfficialReferenceBrowserTruthProof(link.browser_truth_notes, link.browser_truth_checked_at)) {

@@ -217,6 +217,13 @@ export default async function FilterPage({ params, searchParams }: Props) {
           }}
         />
 
+        {isLt1000p ? (
+          <FilterPdpLt1000pDecisionSection
+            compatibleModelCount={pdpSafety.display_models_count}
+            buyingOptionsShown={buyingOptionsShown}
+          />
+        ) : null}
+
         <VisualReplacementMatchCard
           variant="fridge_filter"
           brandName={filter.brand.name}
@@ -232,13 +239,6 @@ export default async function FilterPage({ params, searchParams }: Props) {
             ...filterTelemetryBase,
           }}
         />
-
-        {isLt1000p ? (
-          <FilterPdpLt1000pDecisionSection
-            compatibleModelCount={pdpSafety.display_models_count}
-            buyingOptionsShown={buyingOptionsShown}
-          />
-        ) : null}
 
         <FilterPdp4396710IdentitySection filterSlug={filter.slug} />
 

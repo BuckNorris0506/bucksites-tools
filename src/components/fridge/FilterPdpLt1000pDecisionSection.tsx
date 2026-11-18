@@ -1,4 +1,6 @@
 import React from "react";
+import lgReference from "../../../data/evidence/lg-lt1000p-official-reference.2026-11-18.json";
+import { filterOfficialReferenceRetailerLinks } from "@/lib/retailers/launch-buy-links";
 import { FilterPdpTrustDecisionSection } from "./FilterPdpTrustDecisionSection";
 
 /** Search spellings only; distinct LG part codes require manufacturer evidence. */
@@ -14,45 +16,38 @@ export function FilterPdpLt1000pDecisionSection({
   compatibleModelCount: number;
   buyingOptionsShown: boolean;
 }) {
+  const references = filterOfficialReferenceRetailerLinks([lgReference]);
   return (
-    <>
-      <section className="rounded-2xl border border-bp-border bg-bp-surface p-6 sm:p-7" aria-label="LT1000P part numbers and purchase checks">
-        <h2 className="text-lg font-semibold text-bp-text">LG part numbers and replacement filters</h2>
-        <div className="mt-4 space-y-4 text-sm leading-relaxed text-bp-text/90">
-          <p>LT 1000 P and LG LT1000 are search spellings used for this page. Confirm LT1000P on your old filter or in your exact model’s manual before ordering.</p>
-          <p>
-            <strong>Original LG filter:</strong> LT1000P is the filter number named in LG’s{" "}
-            <a className="underline" href="https://www.lg.com/us/business/refrigerators/lg-lfxc22596s">LFXC22596S specifications</a>.
-            That model-specific evidence does not establish fit for every LG refrigerator.
-          </p>
-          <p>
-            <strong>Other LG codes:</strong> BuckParts has not established verified interchangeability here for
-            ADQ74793501, ADQ74793502, MDJ64844601, or LT1000PC. A similar code or a shared refrigerator list
-            is not enough to treat two cartridges as equivalent.
-          </p>
-          <p>
-            <strong>Third-party replacements:</strong> A retailer listing checked on May 3, 2026 identified
-            Waterdrop B07H9LHMR2 as a replacement marketed for LT1000P, not an LG-made filter.
-            This historical listing check does not prove interchangeability, filtration performance,
-            or current availability. Buying options below depend on separate, current checks.
-          </p>
-          <div>
-            <h3 className="font-semibold">Before ordering</h3>
-            <ol className="mt-2 list-decimal space-y-2 pl-5">
-              <li>Find the filter number in your exact refrigerator model’s manual and compare it with your old cartridge.</li>
-              <li>If the numbers differ, confirm the replacement relationship with LG for that model. Do not infer fit from appearance or a similar part number.</li>
-              <li>Check the retailer’s exact product number and maker. A replacement advertised for LT1000P is not necessarily an original LG part.</li>
-            </ol>
-          </div>
-          <p>Unresolved refrigerator compatibility remains under review below. A retailer listing check does not resolve a model-fit warning.</p>
-        </div>
+    <div className="space-y-5 text-sm leading-relaxed">
+      <h1 className="text-3xl font-bold tracking-tight">LG LT1000P water filter</h1>
+      <section className="rounded-xl border border-bp-border bg-bp-surface p-4">
+        <h2 className="text-lg font-semibold">Does it fit your fridge?</h2>
+        <p className="mt-2 text-lg font-semibold">Confirmed: LG LFXC22596S</p>
+        <p>LG&apos;s specifications name LT1000P as its water filter.</p>
+        <p className="mt-2">Not your model? We haven&apos;t verified yours. Check your fridge&apos;s manual or the number on the old cartridge.</p>
       </section>
-      <FilterPdpTrustDecisionSection
-        filterSlug="lt1000p"
-        oemPartNumber="LT1000P"
-        compatibleModelCount={compatibleModelCount}
-        buyingOptionsShown={buyingOptionsShown}
-      />
-    </>
+      <section>
+        <h2 className="text-lg font-semibold">Where to buy</h2>
+        <p className="mt-2 font-semibold">LG LT1000P — official LG product listing</p>
+        <p>$54.99 — checked November 18, 2026.</p>
+        {references.map(link => <a key={link.id} className="mt-2 inline-block rounded-lg bg-bp-text px-4 py-2 font-semibold text-white underline" href={link.affiliate_url} rel="nofollow noopener noreferrer">{link.retailer_name}</a>)}
+        <p className="mt-2">Last observed: Notify Me / Find a Retailer. Direct purchasing availability is not currently verified.</p>
+      </section>
+      <section>
+        <h2 className="text-lg font-semibold">Other numbers you may see</h2>
+        <p>Your old cartridge might read <strong>ADQ74793501</strong>. LG lists that as a part number for LT1000P.</p>
+        <p className="mt-2">These are not established as the same filter on this page: <strong>ADQ74793502, MDJ64844601, LT1000PC</strong>.</p>
+        <p>Ask LG before ordering if your cartridge shows one of those unresolved numbers.</p>
+      </section>
+      <details className="rounded-xl border border-bp-border p-4">
+        <summary className="cursor-pointer font-semibold">How we know this</summary>
+        <div className="mt-3 space-y-3">
+          <p><a className="underline" href="https://www.lg.com/us/business/refrigerators/lg-lfxc22596s">LG LFXC22596S specifications</a> name LT1000P. This does not establish fit for other models.</p>
+          <p>LG&apos;s product listing checked November 18, 2026 names ADQ74793501, AGF80300704, AGF80300705, ADQ74793507 and AGF80300703 under LT1000P. The displayed price is a dated observation, not a current price or availability guarantee.</p>
+          <p>A May 3, 2026 retailer check described Waterdrop B07H9LHMR2 as an aftermarket replacement, not an LG-made filter. Historical retailer evidence does not prove current availability or model fit.</p>
+          <FilterPdpTrustDecisionSection filterSlug="lt1000p" oemPartNumber="LT1000P" compatibleModelCount={compatibleModelCount} buyingOptionsShown={buyingOptionsShown} />
+        </div>
+      </details>
+    </div>
   );
 }

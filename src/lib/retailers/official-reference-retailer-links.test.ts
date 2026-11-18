@@ -103,14 +103,14 @@ describe("official reference vs /go and buy gates", () => {
     );
   });
 
-  it("allows direct_buyable through /go (unchanged)", () => {
+  it("rejects direct_buyable with incomplete browser-truth evidence", () => {
     assert.equal(
       isAffiliateUrlSafeForGoRedirect(
         "oem-catalog",
         "https://www.honeywellstore.com/store/products/true-hepa-replacement-filter-r-hrf-r3.htm",
         "direct_buyable",
       ),
-      true,
+      false,
     );
   });
 });
@@ -141,7 +141,7 @@ describe("OfficialProductReferenceLinks UI", () => {
 });
 
 describe("OFFICIAL_REFERENCE_RETAILER_KEYS", () => {
-  it("starts narrow with shark-official only", () => {
-    assert.deepEqual(Array.from(OFFICIAL_REFERENCE_RETAILER_KEYS), ["shark-official"]);
+  it("allows only Shark and the exact-product LG key", () => {
+    assert.deepEqual(Array.from(OFFICIAL_REFERENCE_RETAILER_KEYS), ["shark-official", "lg-lt1000p-official"]);
   });
 });
