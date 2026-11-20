@@ -218,10 +218,7 @@ export default async function FilterPage({ params, searchParams }: Props) {
         />
 
         {isLt1000p ? (
-          <FilterPdpLt1000pDecisionSection
-            compatibleModelCount={pdpSafety.display_models_count}
-            buyingOptionsShown={buyingOptionsShown}
-          />
+          <FilterPdpLt1000pDecisionSection />
         ) : null}
 
         <VisualReplacementMatchCard

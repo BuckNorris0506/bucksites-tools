@@ -1,7 +1,6 @@
 import React from "react";
 import lgReference from "../../../data/evidence/lg-lt1000p-official-reference.2026-11-18.json";
 import { filterOfficialReferenceRetailerLinks } from "@/lib/retailers/launch-buy-links";
-import { FilterPdpTrustDecisionSection } from "./FilterPdpTrustDecisionSection";
 
 /** Search spellings only; distinct LG part codes require manufacturer evidence. */
 export function lt1000pSpellingAliases(aliases: string[]): string[] {
@@ -9,13 +8,7 @@ export function lt1000pSpellingAliases(aliases: string[]): string[] {
 }
 
 /** LT1000P only. Explains evidence without granting compatibility or buying authority. */
-export function FilterPdpLt1000pDecisionSection({
-  compatibleModelCount,
-  buyingOptionsShown,
-}: {
-  compatibleModelCount: number;
-  buyingOptionsShown: boolean;
-}) {
+export function FilterPdpLt1000pDecisionSection() {
   const references = filterOfficialReferenceRetailerLinks([lgReference]);
   return (
     <div className="space-y-5 text-sm leading-relaxed">
@@ -28,10 +21,18 @@ export function FilterPdpLt1000pDecisionSection({
       </section>
       <section>
         <h2 className="text-lg font-semibold">Where to buy</h2>
-        <p className="mt-2 font-semibold">LG LT1000P — official LG product listing</p>
         <p>$54.99 — checked November 18, 2026.</p>
-        {references.map(link => <a key={link.id} className="mt-2 inline-block rounded-lg bg-bp-text px-4 py-2 font-semibold text-white underline" href={link.affiliate_url} rel="nofollow noopener noreferrer">{link.retailer_name}</a>)}
-        <p className="mt-2">Last observed: Notify Me / Find a Retailer. Direct purchasing availability is not currently verified.</p>
+        {references.map(link => (
+          <div key={link.id} className="mt-3 space-y-3">
+            <a className="inline-block rounded-lg bg-bp-text px-4 py-2 font-semibold text-white underline" href={link.affiliate_url} rel="nofollow noopener noreferrer">
+              View LG LT1000P on LG&apos;s official site
+            </a>
+            <p>
+              Or <a className="font-semibold underline" href={link.affiliate_url} rel="nofollow noopener noreferrer">find a retailer through LG</a> — select Find a Retailer on LG&apos;s product page.
+            </p>
+          </div>
+        ))}
+        <p className="mt-2">Availability as checked November 18, 2026: LG showed Notify Me / Find a Retailer. Direct purchase availability is not currently verified.</p>
       </section>
       <section>
         <h2 className="text-lg font-semibold">Other numbers you may see</h2>
@@ -45,7 +46,6 @@ export function FilterPdpLt1000pDecisionSection({
           <p><a className="underline" href="https://www.lg.com/us/business/refrigerators/lg-lfxc22596s">LG LFXC22596S specifications</a> name LT1000P. This does not establish fit for other models.</p>
           <p>LG&apos;s product listing checked November 18, 2026 names ADQ74793501, AGF80300704, AGF80300705, ADQ74793507 and AGF80300703 under LT1000P. The displayed price is a dated observation, not a current price or availability guarantee.</p>
           <p>A May 3, 2026 retailer check described Waterdrop B07H9LHMR2 as an aftermarket replacement, not an LG-made filter. Historical retailer evidence does not prove current availability or model fit.</p>
-          <FilterPdpTrustDecisionSection filterSlug="lt1000p" oemPartNumber="LT1000P" compatibleModelCount={compatibleModelCount} buyingOptionsShown={buyingOptionsShown} />
         </div>
       </details>
     </div>
