@@ -55,31 +55,9 @@ export function FilterPdpLt1000pDecisionSection() {
   );
 }
 
-/** Safety-filtered catalog context only; quarantined associations must never be passed in. */
-export function FilterPdpLt1000pPageEnd({ models }: {
-  models: { id: string; slug: string; model_number: string }[];
-}) {
-  const additionalModels = models.filter(model => model.slug !== "lg-lfxc22596s");
+export function FilterPdpLt1000pPageEnd() {
   return (
     <footer className="space-y-5 text-sm leading-relaxed">
-      <section aria-labelledby="lt1000p-catalog-heading" className={LT1000P_CARD}>
-        <h2 id="lt1000p-catalog-heading" className="text-lg font-semibold">Models linked in the catalog</h2>
-        <p className="mt-2">Independently manufacturer-confirmed: LG LFXC22596S — LG&apos;s specifications name LT1000P.</p>
-        {additionalModels.length > 0 ? (
-          <details className="mt-3">
-            <summary className="cursor-pointer font-semibold">Additional catalog-linked models ({additionalModels.length})</summary>
-            <ul className="mt-3 divide-y divide-bp-border rounded-xl border border-bp-border bg-bp-surface px-4">
-              {additionalModels.map(model => (
-                <li key={model.id} className="py-3">
-                  <span className="font-semibold">{model.model_number}</span>{" — catalog-linked, not fit-verified"}
-                </li>
-              ))}
-            </ul>
-          </details>
-        ) : (
-          <p className="mt-2">No other models are shown for this filter. Check your refrigerator manual or ask LG to confirm the required filter number.</p>
-        )}
-      </section>
       <nav aria-label="Related LG filters" className={`${LT1000P_CARD} space-y-2`}>
         <h2 className="text-lg font-semibold">Related LG filter pages</h2>
         <p>Different part numbers, not interchangeable alternatives. Check the number required by your refrigerator.</p>

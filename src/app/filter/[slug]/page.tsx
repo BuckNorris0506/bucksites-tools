@@ -312,7 +312,7 @@ export default async function FilterPage({ params, searchParams }: Props) {
         ) : null}
 
         <FridgeHomeownerHelpCollapsible telemetryBase={filterTelemetryBase} />
-        {isLt1000p ? <FilterPdpLt1000pPageEnd models={pdpSafety.display_fridge_models} /> : null}
+        {isLt1000p ? <FilterPdpLt1000pPageEnd /> : null}
       </article>
       {filterProductJsonLd ? <JsonLdScript data={filterProductJsonLd} /> : null}
     </section>
