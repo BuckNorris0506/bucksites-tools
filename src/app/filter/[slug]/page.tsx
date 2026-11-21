@@ -11,6 +11,7 @@ import {
 import { FridgeWinnerFamilyRail } from "@/components/fridge/FridgeWinnerFamilyRail";
 import {
   lt1000pSpellingAliases,
+  FilterPdpLt1000pPageEnd,
   FilterPdpLt1000pDecisionSection,
 } from "@/components/fridge/FilterPdpLt1000pDecisionSection";
 import { FilterPdp4396710IdentitySection } from "@/components/fridge/FilterPdp4396710IdentitySection";
@@ -207,7 +208,7 @@ export default async function FilterPage({ params, searchParams }: Props) {
 
   return (
     <section className="-mx-4 bg-bp-bg px-4 py-8 sm:-mx-6 sm:px-6 sm:py-10 lg:-mx-8 lg:px-8 lg:py-12">
-      <article className="mx-auto max-w-2xl space-y-10 sm:space-y-12">
+      <article className={`mx-auto max-w-2xl space-y-10 sm:space-y-12${isLt1000p ? " [&>section]:rounded-3xl [&>section]:p-6 sm:[&>section]:p-8 [&>details]:rounded-3xl [&>details]:bg-bp-surface [&>details]:p-6 sm:[&>details]:p-8" : ""}`}>
         <FridgeTrustFunnelViewTracker
           onceKey={`fridge_filter_view:${filter.slug}`}
           payload={{
@@ -226,7 +227,7 @@ export default async function FilterPage({ params, searchParams }: Props) {
           brandName={filter.brand.name}
           brandSlug={filter.brand.slug}
           oemPartNumber={filter.oem_part_number}
-          productName={filter.name}
+          productName={isLt1000p ? "LG LT1000P water filter" : filter.name}
           aliases={isLt1000p ? lt1000pSpellingAliases(filter.also_known_as) : filter.also_known_as}
           intervalLabel={interval ?? undefined}
           compatibleModelCount={pdpSafety.display_models_count}
@@ -241,7 +242,7 @@ export default async function FilterPage({ params, searchParams }: Props) {
 
         <FilterPdpLegacySuccessorSection filterSlug={filter.slug} />
 
-        <FridgeWinnerFamilyRail currentSlug={filter.slug} />
+        {!isLt1000p ? <FridgeWinnerFamilyRail currentSlug={filter.slug} /> : null}
 
         {showDirectPartFitPrompt ? (
           <div className="bp-search-customer">
@@ -249,34 +250,36 @@ export default async function FilterPage({ params, searchParams }: Props) {
           </div>
         ) : null}
 
-        {pdpSafety.filter_page_caution_note ? (
+        {!isLt1000p && pdpSafety.filter_page_caution_note ? (
           <div className="rounded-2xl border border-bp-caution/40 bg-bp-caution-soft p-6 text-[15px] leading-relaxed text-bp-caution">
             {pdpSafety.filter_page_caution_note}
           </div>
         ) : null}
 
-        <div className="overflow-hidden rounded-2xl border border-bp-border bg-bp-surface p-6 sm:p-7">
-          {publicNotes ? (
-            <div className="max-w-prose text-sm text-bp-text/90">
-              <Prose>{publicNotes}</Prose>
-            </div>
-          ) : null}
+        {!isLt1000p ? (
+          <div className="overflow-hidden rounded-2xl border border-bp-border bg-bp-surface p-6 sm:p-7">
+            {publicNotes ? (
+              <div className="max-w-prose text-sm text-bp-text/90">
+                <Prose>{publicNotes}</Prose>
+              </div>
+            ) : null}
 
-          <div className={publicNotes ? "mt-7 border-t border-bp-border pt-7" : ""}>
-            <BuckPartsVerifiedLinksSection>
-              <TrustAwareBuySection
-                trust={trustSummary}
-                links={filter.retailer_links}
-                goBase="/go"
-                primaryCtaLabel={BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX}
-                suppressMessage={FRIDGE_FILTER_BUY_SUPPRESS}
-                gateSuppressionSummary={filter.buy_path_gate_suppression}
-                buyPathSortContext={buyPathSortContext}
-                visiblePrimaryPrefix={BUCKPARTS_VERIFIED_LINK_VIEW_AT_PREFIX}
-              />
-            </BuckPartsVerifiedLinksSection>
+            <div className={publicNotes ? "mt-7 border-t border-bp-border pt-7" : ""}>
+              <BuckPartsVerifiedLinksSection>
+                <TrustAwareBuySection
+                  trust={trustSummary}
+                  links={filter.retailer_links}
+                  goBase="/go"
+                  primaryCtaLabel={BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX}
+                  suppressMessage={FRIDGE_FILTER_BUY_SUPPRESS}
+                  gateSuppressionSummary={filter.buy_path_gate_suppression}
+                  buyPathSortContext={buyPathSortContext}
+                  visiblePrimaryPrefix={BUCKPARTS_VERIFIED_LINK_VIEW_AT_PREFIX}
+                />
+              </BuckPartsVerifiedLinksSection>
+            </div>
           </div>
-        </div>
+        ) : null}
 
         {!isLt1000p ? (
           <FilterPdpTrustDecisionSection
@@ -293,20 +296,23 @@ export default async function FilterPage({ params, searchParams }: Props) {
           browserProofClassification={browserProofMeta.classification}
         />
 
-        <FilterPdpCompatibleModelsSection
-          filterSlug={filter.slug}
-          oemPartNumber={filter.oem_part_number}
-          displayModelCount={pdpSafety.display_models_count}
-          hiddenQuarantinedModelCount={pdpSafety.hidden_quarantined_model_count}
-          models={displayFridgeModels.map((m) => ({
-            id: m.id,
-            slug: m.slug,
-            model_number: m.model_number,
-            brand_name: m.brand.name,
-          }))}
-        />
+        {!isLt1000p ? (
+          <FilterPdpCompatibleModelsSection
+            filterSlug={filter.slug}
+            oemPartNumber={filter.oem_part_number}
+            displayModelCount={pdpSafety.display_models_count}
+            hiddenQuarantinedModelCount={pdpSafety.hidden_quarantined_model_count}
+            models={displayFridgeModels.map((m) => ({
+              id: m.id,
+              slug: m.slug,
+              model_number: m.model_number,
+              brand_name: m.brand.name,
+            }))}
+          />
+        ) : null}
 
         <FridgeHomeownerHelpCollapsible telemetryBase={filterTelemetryBase} />
+        {isLt1000p ? <FilterPdpLt1000pPageEnd models={pdpSafety.display_fridge_models} /> : null}
       </article>
       {filterProductJsonLd ? <JsonLdScript data={filterProductJsonLd} /> : null}
     </section>
