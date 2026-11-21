@@ -23,7 +23,7 @@ export function FilterPdpLt1000pDecisionSection() {
         <p className="mt-2">Not your model? We haven&apos;t verified yours. Check your fridge&apos;s manual or the number on the old cartridge.</p>
       </section>
       <section className={LT1000P_CARD}>
-        <h2 className="text-lg font-semibold">Where to buy</h2>
+        <h2 className="text-lg font-semibold">Where to find LT1000P</h2>
         <p>$54.99 — checked November 18, 2026.</p>
         {references.map(link => (
           <div key={link.id} className="mt-3 space-y-3">
@@ -64,7 +64,7 @@ export function FilterPdpLt1000pPageEnd({ models }: {
     <footer className="space-y-5 text-sm leading-relaxed">
       <section aria-labelledby="lt1000p-catalog-heading" className={LT1000P_CARD}>
         <h2 id="lt1000p-catalog-heading" className="text-lg font-semibold">Models linked in the catalog</h2>
-        <p className="mt-2">Independently manufacturer-confirmed: LG LFXC22596S — LG&apos;s specifications name LT1000P. This source statement does not change catalog review status.</p>
+        <p className="mt-2">Independently manufacturer-confirmed: LG LFXC22596S — LG&apos;s specifications name LT1000P.</p>
         {additionalModels.length > 0 ? (
           <details className="mt-3">
             <summary className="cursor-pointer font-semibold">Additional catalog-linked models ({additionalModels.length})</summary>
@@ -77,7 +77,7 @@ export function FilterPdpLt1000pPageEnd({ models }: {
             </ul>
           </details>
         ) : (
-          <p className="mt-2">No catalog model list is available to display. Check your refrigerator manual or ask LG to confirm the required filter number.</p>
+          <p className="mt-2">No other models are shown for this filter. Check your refrigerator manual or ask LG to confirm the required filter number.</p>
         )}
       </section>
       <nav aria-label="Related LG filters" className={`${LT1000P_CARD} space-y-2`}>
